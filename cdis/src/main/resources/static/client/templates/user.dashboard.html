@@ -1,0 +1,78 @@
+<div id="ub_dashboard" class="ubody_dashboard uss">
+	<h1>Welcome <span id="w_username"></span></h1>
+	
+	<div class="messages-div">
+		<div class="messages-design"></div>
+		<div class="section-title">
+			<span class="messages-icon"></span><label>Messages</label>
+		</div>
+		<div class="section">
+			<div id="messages-tabs">
+				  <ul>
+				    <li><a href="#tabs-1">Received messages</a></li>
+				    <li><a href="#tabs-2">Sent messages</a></li>
+				    <li><a href="#tabs-3">New message</a></li>
+				  </ul>
+				  <div id="tabs-1">
+				    <table id="messages-received"></table>
+				    <div class="messages-received-detail"></div>
+				  </div>
+				  <div id="tabs-2">
+				    <table id="messages-sent"></table>
+				    <div class="messages-sent-detail"></div>
+				  </div>
+				  <div id="tabs-3">
+				    <div class="messages-new-detail"></div>
+				  </div>
+			</div>
+		</div>
+	</div>
+
+	<div class="stats-div">
+		<div class="stats-design"></div>
+		<div class="section-title">
+			<span class="stats-icon"></span><label>User Journal</label>
+		</div>
+		<div class="section-labels">
+			<ul id="w_stats_labels">
+				<li><label>Last Login</label></li>
+				<li><label>Last patient viewed</label></li>
+				<li><label>Last report generated</label></li>
+			</ul>
+		</div>
+		<div class="section-values">
+			<ul id="w_stats_values">
+				<li><span id="w_s_l"></span></li>
+				<li><span id="w_s_p"></span></li>
+				<li><span id="w_s_r"></span></li>
+			</ul>
+		</div>
+		<div class="panel">
+			<div id="chart1" class="logs"></div>
+		</div>
+		<div class="section-buttons">
+			<span id="reportsbutton" class="section-button"></span><div class="label reports-label uss">Reports</div>
+		</div>
+	</div>
+	<div class="apps-div">
+		<div class="apps-design"></div>
+		<div class="section-title">
+			<span class="apps-icon"></span><label>Applications</label>
+		</div>
+		<div class="section-values">
+			<ul id="w_apps">
+				<li id="w_apps_cdis" class="appbox_large uss" onclick="startApp('cdis')">CDIS</li>
+				<!-- <li id="w_apps_other1" class="appbox_large uss" onclick="startApp('app1')">App 1</li>
+				<li id="w_apps_other2" class="appbox_large uss" onclick="startApp('app2')">App 2</li>
+				 -->
+			</ul>
+		</div>
+	</div>
+	<div>&nbsp;<br/>&nbsp;</div>
+</div>
+<script>
+$( "#messages-tabs" ).tabs({
+  active: 0,
+  heightStyle: "fill"
+});
+</script>

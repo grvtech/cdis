@@ -1,0 +1,277 @@
+<style>
+<!--
+	.cdisbody_users{background-color:#ffffff;min-height:300px;font-family:roboto;color:#4d4d4d;}
+	.cdisbody_users h1{font-family:roboto-thin; padding:10px;}
+	#users-toolbar{position:relative;width:100%;height:30px;text-align:right;}
+	#users-container{position:relative;width:100%;height:400px;margin-top:10px;}
+	#users-form{position:relative;width:100%;height:400px;margin-top:10px; display:none;}
+	#users-table{width:97%;height:100%;margin-left:10px;padding:0px;}
+	#filter-input{position:absolute;left:10px;width:300px;height:30px;}
+	#filter-input input{padding:5px;font-size:100%;color:#4d4d4d;width:100%;}
+	
+	#user-form table{width:97%;height:100%;margin-left:10px;padding:0px;}
+	#user-form table tr{background-color:#ffffff;}
+	
+	#users-table thead {width: calc( 100% - 1em );}
+	#users-table thead td{font-size:130%;background-color:#cdcdcd;padding:5px;}
+	
+	#users-table tbody{display:block;height:365px;overflow:auto;}
+	#users-table tbody td{font-size:90%;}
+    #users-table tbody tr:nth-child(even) {background-color: #f2f2f2;}
+    #users-table tbody tr:hover {background-color:#db4437;color:#ffffff;}
+    #users-table tbody tr.selected{background-color: #4d90fe; color:#ffffff;font-weight:bold;}
+    #users-table tbody td{overflow:hidden; padding:5px;cursor:pointer;}
+    #users-table thead, tbody tr {display:table;width:100%;table-layout:fixed;}
+    #user-form .td-label{width:200px;}
+    #user-form .label-editpatient{font-family: roboto; font-size: 100%;color:#4d4d4d;}
+	#user-form .diabet-editpatient{background-color:#cdcdcd;}
+	#user-form input{font-family: roboto; font-size: 100%;color:#4d4d4d;}
+	#user-form select{font-family: roboto; font-size: 100%;color:#4d4d4d;}
+	#user-form .text{margin:3px;padding:5px;border:none;font-weight:bold;background-color:#ececec;}
+-->
+</style>
+
+<div class="cdisbody_users uss">
+	<h1>Users Administration</h1>
+	<div id="users-toolbar">
+		<div id="filter-input"><input name="filter" id="filter-id" class="filter-input" placeholder="Filter Users"/></div>
+		<div id="adduser-button" class="cisbutton"><i class="fa fa-plus"></i> Add User</div>
+		<div id="edituser-button" class="cisbutton"><i class="fa fa-pencil"></i> Edit User</div>
+		<div id="deleteuser-button" class="cisbutton"><i class="fa fa-trash"></i> Delete User</div>
+	</div>
+	<div id="users-container">
+		<table border=0 id="users-table" cellpadding=0 cellspacing=0>
+			<thead>
+				<tr>
+					<td>First Name</td>
+					<td>Last Name</td>
+					<td>Username</td>
+					<td>Email</td>
+					<td>Phone</td>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+	
+	<div id="users-form">
+		<form action="" name="userForm" id="user-form">
+			<input name="iduser" id="iduser-id" type="hidden"/>
+			<table border="0">
+				<tr>
+					<td class="td-label"><label for="firstname">First Name</label></td>
+					<td><input name="firstname" id="firstname-id" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="td-label"><label for="lastname">Last Name</label></td>
+					<td><input name="lastname" id="lastname-id" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="td-label"><label for="username">Username</label></td>
+					<td><input name="username" id="username-id" type="text" class="text" /></td>
+				</tr>
+				<tr>
+					<td class="td-label"><label for="password">Password</label></td>
+					<td><input name="password" id="password-id" type="text" class="text" /></td>
+				</tr>
+				<tr>
+					<td class="td-label"><label for="role">Role</label></td>
+					<td><select name="role" id="role-id"></select></td>
+				</tr>
+				<tr>
+					<td class="td-label"><label for="profession">HCP Profession</label></td>
+					<td><select name="profession" id="profession-id"></select></td>
+				</tr>
+				<tr>
+					<td class="td-label"><label for="idcommunity">Community access</label></td>
+					<td>
+						<select name="idcommunity" id="idcommunity-id"></select>
+					</td>
+				</tr>
+				<tr>
+					<td class="td-label"><label for="email">Email Address</label></td>
+					<td><input name="email" id="email-id" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td class="td-label"><label for="phone">Phone Number</label></td>
+					<td><input name="phone" id="phone-id" type="text" class="text"/></td>
+				</tr>
+				<tr><td colspan="2"></td></tr>
+				<tr>
+					<td colspan="2" align="right"><div class="cisbutton" id="save-edituser-button">Save</div> <div class="cisbutton" id="cancel-edituser-button">Cancel</div></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	
+	
+	
+	<div>&nbsp;</div>
+</div>
+
+<script>
+var usersArray = getUsers();
+drawUsers(usersArray);
+$("#filter-id").empty();
+$("#filter-id").focus();
+/*
+$("#filter-id").change(function(){
+	var v = $(this).val();
+	filterUsers(v,usersArray);
+});
+*/
+
+$("#filter-id").keyup(function(event){
+	if ( event.which == 13 ) {
+	     event.preventDefault();
+	  }
+	var v = $(this).val();
+	filterUsers(v,usersArray);
+});
+
+
+
+
+$(report_idcommunity).each(function(index, value) {
+    $("#idcommunity-id").append($("<option />").val(index).text(value));
+});
+
+$(role).each(function(index, value) {
+    $("#role-id").append($("<option />").val(index).text(value));
+});
+
+$(report_profession).each(function(index, value) {
+    $("#profession-id").append($("<option />").val(index).text(value));
+});
+
+$("#deleteuser-button").click(function(){
+	var lineid = $("#users-table tbody .selected").attr("id");
+	var userid = lineid.substring(5);
+	var request = $.ajax({
+		  url: "/ncdis/service/data/deleteUser?iduser="+userid+"&language=en",
+		  type: "GET",
+		  async : false,
+		  cache : false,
+		  dataType: "json"
+		});
+		request.done(function( json ) {
+			usersArray = json.objs;
+			drawUsers(usersArray);
+			$("#filter-id").val("");
+			$("#filter-id").focus();
+		});
+		request.fail(function( jqXHR, textStatus ) {
+		  alert( "Request failed: " + textStatus );
+		});
+});
+
+
+$("#edituser-button").click(function(){
+	var lineid = $("#users-table tbody .selected").attr("id");
+	
+	if(lineid != null){
+		var userid = lineid.substring(5);
+		$("#users-container").hide();
+		$("#users-toolbar").hide();
+		$("#users-form").fadeIn(350);
+	}
+	
+});
+
+$("#adduser-button").click(function(){
+	resetForm($("#users-form"));
+	$("#iduser-id").val("0");
+	$("#users-table tbody tr").removeClass("selected");
+	$("#users-container").hide();
+	$("#users-toolbar").hide();
+	$("#users-form").fadeIn(350);
+});
+
+
+
+$("#cancel-edituser-button").click(function(){
+	$("#users-table tbody tr").removeClass("selected");
+	$("#users-form").hide();
+	$("#users-container").fadeIn(350);
+	$("#users-toolbar").fadeIn(350);
+});
+
+
+$("#save-edituser-button").click(function(){
+	
+	var data = $("#user-form").serialize();
+	console.log(data);
+	var request = $.ajax({
+		  url: "/ncdis/service/data/saveUser?language=en",
+		  type: "POST",
+		  async : false,
+		  cache : false,
+		  data : data,
+		  dataType: "json"
+		});
+		request.done(function( json ) {
+			usersArray = json.objs;
+			drawUsers(usersArray);
+			$("#users-table tbody tr").removeClass("selected");
+			$("#users-form").hide();
+			$("#users-container").fadeIn(350);
+			$("#users-toolbar").fadeIn(350);
+		});
+		request.fail(function( jqXHR, textStatus ) {
+		  alert( "Request failed: " + textStatus );
+	});
+	
+	
+	
+	
+});
+
+
+function drawUsers(usersArray){
+	$("#users-table tbody").empty();
+	$.each(usersArray, function(key, uobj){
+		var tr = $("<tr>",{id:"user-"+uobj.iduser}).appendTo($("#users-table tbody"));
+		tr.click(function(){
+		    $(this).addClass("selected").siblings().removeClass("selected");
+		    var upObj = getUserProfile(uobj.iduser,1);
+		    uobj["role"] = upObj.role.idrole;
+		    populateForm($("#user-form"),uobj);
+		});
+		
+		
+		$("<td>").appendTo(tr).text(uobj.firstname);
+		$("<td>").appendTo(tr).text(uobj.lastname);
+		$("<td>").appendTo(tr).text(uobj.username);
+		$("<td>").appendTo(tr).text(uobj.email);
+		$("<td>").appendTo(tr).text(uobj.phone);
+	});
+}
+	
+
+
+function filterUsers(criteria, usersArray){
+	var uArr = [];
+	if (criteria == ""){
+		drawUsers(usersArray);
+	}else{
+		if(criteria.length >= 1){
+			$.each(usersArray, function(key, uobj){
+				var fn = (uobj.firstname!=null)?uobj.firstname.toLowerCase():"";
+				var ln = (uobj.lastname!=null)?uobj.lastname.toLowerCase():"";
+				var usr = (uobj.username!=null)?uobj.username.toLowerCase():"";
+				var mail = (uobj.email!=null)?uobj.email.toLowerCase():"";
+				var ph = (uobj.phone!=null)?uobj.phone.toLowerCase():"";
+				if(fn.indexOf(criteria) >= 0 || ln.indexOf(criteria) >= 0 || usr.indexOf(criteria) >= 0 || mail.indexOf(criteria) >= 0 || ph.indexOf(criteria) >= 0){
+					uArr.push(uobj);
+				}
+			});
+			drawUsers(uArr);	
+		}
+			
+	}	
+}
+
+
+</script>

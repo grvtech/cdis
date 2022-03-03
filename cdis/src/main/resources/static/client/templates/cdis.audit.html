@@ -1,0 +1,126 @@
+<style>
+<!--
+	.cdisbody_audit{background-color:#ffffff;min-height:700px;font-family:roboto;color:#4d4d4d;}
+	.cdisbody_audit h1{font-family:roboto-thin; padding:10px;}
+	#audit-toolbar{position:relative;width:100%;height:30px;text-align:right;}
+	#audit-graphs{position:relative;width:980px;height:200px;}
+	#audit-top5actions{position:absolute;width:470px;height:200px;top:0px;left:10px;background-color:#cdcdcd;}
+	#audit-top5users{position:absolute;width:470px;height:200px;top:0px;left:490px;background-color:#cdcdcd;}
+	#audit-container{position:relative;width:98%;height:400px;margin:10px 0px 0px 10px;}
+	
+	
+	#audit-form{position:relative;width:100%;height:400px;margin-top:10px; display:none;}
+	#audit-table{width:97%;height:100%;margin-left:10px;padding:0px;}
+	#filter-input{position:absolute;left:10px;width:300px;height:30px;}
+	#filter-input input{padding:5px;font-size:100%;color:#4d4d4d;width:100%;}
+	
+	#user-form table{width:97%;height:100%;margin-left:10px;padding:0px;}
+	#user-form table tr{background-color:#ffffff;}
+	
+	#audit-table thead {width: calc( 100% - 1em );}
+	#audit-table thead td{font-size:130%;background-color:#cdcdcd;padding:5px;}
+	
+	#audit-table tbody{display:block;height:365px;overflow:auto;}
+	#audit-table tbody td{font-size:90%;}
+    #audit-table tbody tr:nth-child(even) {background-color: #f2f2f2;}
+    #audit-table tbody tr:hover {background-color:#db4437;color:#ffffff;}
+    #audit-table tbody tr.selected{background-color: #4d90fe; color:#ffffff;font-weight:bold;}
+    #audit-table tbody td{overflow:hidden; padding:5px;cursor:pointer;}
+    #audit-table thead, tbody tr {display:table;width:100%;table-layout:fixed;}
+   
+   
+-->
+</style>
+
+<div class="cdisbody_audit uss">
+	<h1>Users log history</h1>
+	<div id="audit-graphs">
+		<div id="audit-top5actions"></div>
+		<div id="audit-top5users"></div>
+	</div>
+	<div id="audit-container">
+		<table border=0 id="audit-table" cellpadding=0 cellspacing=0>
+			<thead>
+				<tr>
+					<td>First Name</td>
+					<td>Last Name</td>
+					<td>Action</td>
+					<td>Detail</td>
+					<td>Timestamp</td>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+	
+	
+	
+	
+	
+	<div>&nbsp;</div>
+</div>
+
+<script>
+var userActionArray = getUserActions();
+drawUserActions(userActionArray);
+var userTop5Array = getUsersTop5Dataset();
+drawTop5Users(userTop5Array);
+var userActionsTop5Array = getUserActionsTop5Dataset();
+drawTop5UserActions(userActionsTop5Array);
+
+
+
+function drawUserActions(usersArray){
+	$("#users-table tbody").empty();
+	$.each(userActionArray, function(index, data){
+		var tr = $("<tr>",{id:"action-"+index}).appendTo($("#audit-table tbody"));
+		$.each(data, function(i, v){
+			if(v == null) v = '';
+			$("<td>").appendTo(tr).text(v);
+		})
+	});
+}
+	
+function drawTop5Users(userTop5Array){
+	
+	$('#audit-top5users').jqplot(userTop5Array, {
+        title:'Top 5 active users last 7 days',
+        seriesDefaults:{
+            renderer:$.jqplot.BarRenderer,
+            pointLabels: { show: true }
+        },
+        axes:{
+            xaxis:{
+                renderer: $.jqplot.CategoryAxisRenderer
+            }
+        }
+    });
+	
+	
+}
+
+function drawTop5UserActions(userActionsTop5Array){
+	
+	$('#audit-top5actions').jqplot(userActionsTop5Array, {
+        title:'Top 5 actions used last 7 days',
+        seriesDefaults:{
+            renderer:$.jqplot.BarRenderer,
+            rendererOptions: {
+                // Set the varyBarColor option to true to use different colors for each bar.
+                // The default series colors are used.
+                varyBarColor: true
+            },
+            pointLabels: { show: true }
+        },
+        
+        axes:{
+            xaxis:{
+                renderer: $.jqplot.CategoryAxisRenderer
+            }
+        }
+    });
+}
+
+</script>

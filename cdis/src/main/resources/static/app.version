@@ -1,0 +1,63 @@
+CDIS APPLICATION
+
+Release Notes:
+Version: 3.14.2.0
+1. FEATURE: Add optimisation forloading graph for Indicators and Outcomes section
+2. BUG: Fix display issues for HBA1C target graph in Indicators and Outcomes section
+3. BUG: Fix display issues for Incidence and Prevalence graphs  
+
+Version: 3.13.0.0
+1. FEATURE: Add popup warning to print confidential list
+
+Version: 3.12.0.0
+1. FEATURE: Change graphs in Incidence and Prevalence Section
+2. FEATURE: Add new widget to select multiple communities
+3. BUG: Fix wording in various pages and popups. 
+
+Version: 3.10.3.0
+1. FEATURE: Adding Incidence and Prevalence section in reports module of CDIS
+2. FEATURE: Add live notification of patient message
+3. BUG: Close all expired sessions of users on the next login 
+
+Version: 3.9.0.0
+1. FEATURE: Add Patient Validation tool. 
+
+Version: 3.8.0.0
+1. FEATURE: Add surveillance data tool. 
+
+Version: 3.7.1.14
+1. BUG: Filter by custom age is text instead of number. As text 2 is higher than 18 so no results.Fiter should interpret min and max as numbers. 
+2. CHANGE: Remove HbA1c All Values filter
+3. CHANGE: Add in list Patients by HbA1c stats header for patients Type 1 and Type 2 Less than 0.07  and Less than 0.08
+4. BUG: Calculate percentage of patients wits no HbA1c data based on selected community   
+ 
+Version: 3.7.1.10
+1. CHANGE: Change “Patient Local List” to “Local Patient List”
+2. CHANGE: Remove the customizable HbA1C parameter setting/0.075 setting. Instead, use all values. 
+3. CHANGE: For the subheader for Patients with no HbA1c in the last “x”:Show total and percentage and Remove “more than 5 years” and “more than 10 years”
+4. BUG: For prediabetes reports, change the subheader on Tab 3 (Patients by HbA1C”) to less than 0.06 with total and percentage  (it currently says 0.07 and 0.08)
+5. FEATURE: Add a link to get back to front page
+6. BUG: Default data periods: 12 months for all 3 lists
+7. BUG: Age should override data period - in other words, if generate an under 18 list, everyone on that list should CURRENTLY  be under 18 
+8. FEATURE: Take away the GDM option completely 
+9. FEATURE: Remove “Type of diabetes” column. Replace it with “Duration of diabetes (years)” and “Duration of prediabetes (years)”. Use round numbers for years, rounding down  for ex if duration of diagnosis is 8 months, report as “ < 1”. If 1 year and 10 months, report it as “1”. Etc.Allow list to be sorted by this parameter by clicking on the subheader “duration…”
+10. FEATURE: Add version file and release notes
+
+Version: 3.7.0.10
+1. BUG: Changing the result of the list “Patients with no HbA1C in the last 12 months”to show patients that does not have data in the period mentioned. Before, the list returned the patients that had data in the mentioned period.Patients with no HbA1C in the last 12 months
+2. CHANGE: Change the label Improved to Decreased everywhere it appears in the tool
+3. CHANGE:Change the stats header of list “Patients with no HbA1C in the last 12 months” to show patients with no data in last 5 and 10 years
+4. CHANGE:Change the name of the list “Patients with HbA1c value” to “Patients by HbA1c”
+5. CHANGE:Change the stats header of the list “Patients by HbA1c” to show the number and percentage of patients with HbA1c less than 0.007 and 0.08
+6. CHANGE:Change the layout of the print list page
+7. CHANGE:Change the style and location of “Generate List” button to make it more visible
+
+Version: 3.7.0.1
+1. BUG: Error showing statistical graphs in clinical list
+2. FEATURE: Local list tool implements a new view of CDSI patients in relation with HbA1c. The tool presents the data in a clinical manner with a lot of filtering options and in a statistical manner as well presenting historical views of trends and evolutions of HbA1c data.
+
+Version: 3.6.2.0
+1. BUG: Adjust display for certain browser height resolutions
+2. BUG: Exporting of clinical lists in excel CSV format 
+3. BUG: Error showing statistical graphs in clinical list
+4. FEATURE:Automatic adjustment on change of browser dimensions

@@ -1,0 +1,72 @@
+<div class="pagebody">
+	<div class="admin_frontpage ">
+		<h1>Front Page Message</h1>
+		<div id="errortext-frontpage" class="errormessage"></div>
+		<form name="frontpage" id="frontpage-form">
+			<table border="0" width="100%">
+				<tr>
+					<td valign="top">
+						<textarea name="fpmessage" class="jqte-test" id="fpmessage"></textarea>
+					</td>
+				</tr>
+			</table>
+			<div id='cancel-frontpage-button' class="cisbutton">Cancel</div> 
+			<div id="save-frontpage-button" class="cisbutton">Save Front Page Message</div>
+			<div id="clear-frontpage-button" class="cisbutton">Clear Front Page Message</div>
+		</form>
+		<div>&nbsp;</div>
+	</div>
+</div>
+
+<script>
+var message = "";
+var mes = $.ajax({
+	  url: "/ncdis/service/action/getFrontPageMessage?sid="+sid+"&language=en",
+	  type: "GET",
+	  async : false,
+	  cache : false,
+	  dataType: "json"
+	});
+	mes.done(function( json ) {
+		message = json.objs[0].message;
+	});
+	mes.fail(function( jqXHR, textStatus ) {
+	  alert( "Request failed: " + textStatus );
+	});	
+
+$(".jqte-test").jqte();
+$(".jqte-test").jqteVal(message);
+
+$("#cancel-frontpage-button").click(function() {
+	gts(sid,"en");
+});
+
+$("#save-frontpage-button").click(function() {
+	var data = $('#frontpage-form').serialize();
+	data+="&sid="+sid+"&language=en";
+	var reps = $.ajax({
+		  url: "/ncdis/service/action/setFrontPageMessage?sid="+sid+"&language=en",
+		  method: 'POST',
+		  async : false,
+		  data: data,
+		  cache : false,
+		  dataType: "json"
+		});
+		reps.done(function( json ) {
+			gta(sid,"en","frontpage");
+					
+		});
+		reps.fail(function( jqXHR, textStatus ) {
+		  alert( "Request failed: " + textStatus );
+		});
+});
+
+
+$("#clear-frontpage-button").click(function() {
+	$(".jqte-test").jqteVal("");
+	$(".jqte_editor").html("");
+	$("#message").val("");
+	$("#save-frontpage-button").click();
+});
+
+</script>

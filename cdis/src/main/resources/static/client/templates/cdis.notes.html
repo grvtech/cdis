@@ -1,0 +1,116 @@
+<div class="pagebody">
+	<div class="panel-section uss">
+		<div class="section-header">
+			<span class="section-title">Patient Messages</span>
+		</div>
+		<div id="errortext-frontpage" class="errormessage"></div>
+		<form name="notes" id="notes-form">
+			<table border="0" width="100%">
+				<tr><td valign="top" align="right">
+					<div id="save-notes-disclaimer">
+						The Messages section in CDIS is provided to share information between HCPs.   The CDIS Patient 
+						Notes does not replace documentation in the chart.  
+						<br/><b>The CDIS is not a medicolegal document.</b></div>
+				</td></tr>
+				<tr><td valign="top" align="right" class="form-notes">
+					<div id="save-notes-select-label">Note to</div>
+					<div id="save-notes-select-container">
+						<select id="note-user">
+							<option value="-1">Please Select</option>
+							<option value="0">All users</option>
+						</select>
+					</div>
+					<div id="save-notes-button" class="cisbutton disabled">Save Patient Note</div>
+				</td></tr>
+				<tr><td valign="top" style="padding:40px;">
+						<textarea name="note" class="jqte-test" id="note"></textarea>
+					</td>
+				</tr>
+				<tr><td valign="top">
+					<div class="notesTextNew"></div>
+					<div class="notesText"></div>
+				</td></tr>
+			</table>
+		</form>
+		<div>&nbsp;</div>
+	</div>
+</div>
+<div class="pageside">
+	<div class="panel-record uss">
+	</div>
+</div>
+
+
+
+<script>
+
+
+$(".jqte-test").jqte({
+	fsizes: ["10", "15", "20"],
+	funit: "px",
+	format: false,
+	i: false,
+	indent: false,
+	link: false,
+	ol: false,
+	outdent: false,
+	right: false,
+	rule: false,
+	source: false,
+	sub: false,
+	strike: false,
+	sup: false,
+	u: false,
+	ul: false,
+	unlink: false
+});
+
+
+$.each(usersArray,function(index,obj){
+	if(obj.active == 1){
+		$('#note-user').append($('<option>', {
+		    value: obj.iduser,
+		    text: obj.firstname+' '+obj.lastname
+		}));	
+	}
+	
+});
+
+$('#note-user').change(function(){
+	if($(this).val() >= 0){
+		$("#save-notes-button").removeClass("disabled");
+	}else{
+		$("#save-notes-button").addClass("disabled");
+	}
+});
+
+
+$("#save-notes-button").click(function() {
+	var n = $("textarea[name='note']").val();
+	var u = $("#note-user").val();
+	if( n != ""){
+		if(u >= 0){
+			var data = $('#notes-form').serialize();
+			data+="&sid="+sid+"&language=en&ramq="+getParameterByName("ramq")+"&iduserto="+u;
+			var reps = $.ajax({
+				  url: "/ncdis/service/data/setPatientNotes?sid="+sid+"&language=en&iduserto="+u,
+				  method: 'POST',
+				  async : false,
+				  data: data,
+				  cache : false,
+				  dataType: "json"
+				});
+				reps.done(function( json ) {
+					getPatientNotes("notes");
+				});
+				reps.fail(function( jqXHR, textStatus ) {
+				  console.log(this.url);
+				});
+		}
+	}
+	$(".jqte-test").jqteVal("");
+});
+
+
+
+</script>

@@ -1,0 +1,33 @@
+<div class="reportsbody_personal">
+
+</div>
+<script>
+//console.log(reportsObject);
+$.each(reportsObject.admin, function(i, v){
+	var raport = prepareDefinedReport(v.code);
+	var columns = "";
+	$.each(raport.criteria,function(i,v){
+		if(v.value == "all"){
+			columns+= "<span>"+v.display+"</span>";
+		}else{
+			columns+= "<span>"+v.display+" "+v.operator+" "+v.value+"</span>";	
+		}
+		
+	});
+	
+	var reportContainer = $("<div>",{class:"container"})
+		.appendTo($(".reportsbody_personal"))
+		.append($("<label>",{class:""}).text(raport.title))
+		.append($("<div>",{class:"properties"})
+			.append($("<span>",{class:""}).text("Report properties"))
+			.append($("<span>",{class:""}).html("<b>Type </b>: "+raport.type))
+			.append($("<span>",{class:""}).html("<b>Generated </b>: "+raport.generated))
+		)
+		.append($("<div>",{class:"columns"}).html(columns));
+	$(reportContainer).click(function(){
+		//executeReport(raport);
+		executeAsyncReport(raport);
+	});
+});
+
+</script>

@@ -1,0 +1,97 @@
+{
+	"id":"REP1",
+	"type":"list",
+	"title":"Report personal 3333",
+	"generated":"2015-10-09 14:34:23",
+	"owner":"System",
+	"graphtype":"none",
+	"subcriteria":[],
+	"criteria":[
+		{	"name":"ramq",
+			"value":"all",
+			"operator":"equal",
+			"display":"RAMQ",
+			"section":"1",
+			"date":"no",
+			"datedisplay":"",
+			"datename":"",
+			"dateoperator":"",
+			"datevalue":"",
+			"type":"all"
+		},		
+		{	"name":"chart",
+			"value":"all",
+			"operator":"equal",
+			"display":"Chart Number",
+			"section":"1",
+			"date":"no",
+			"datedisplay":"",
+			"datename":"",
+			"dateoperator":"",
+			"datevalue":"",
+			"type":"all"
+		},
+		
+		{	"name":"dtype",
+			"value":"all",
+			"operator":"equal",
+			"display":"Diabetes Type",
+			"section":"2",
+			"date":"yes",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"set"
+		},
+		{	"name":"idcommunity",
+			"value":"1",
+			"operator":"equal",
+			"display":"Community",
+			"section":"1",
+			"date":"no",
+			"datedisplay":"",
+			"datename":"",
+			"dateoperator":"",
+			"datevalue":"",
+			"type":"set"
+		},
+		{	"name":"sex",
+			"value":"2",
+			"operator":"equal",
+			"display":"Sex",
+			"section":"1",
+			"date":"no",
+			"datedisplay":"",
+			"datename":"",
+			"dateoperator":"",
+			"datevalue":"",
+			"type":"set"
+		},
+		{	"name":"hba1c",
+			"value":"0.06",
+			"operator":"more than",
+			"display":"HBA1C",
+			"section":"7",
+			"date":"yes",
+			"datedisplay":"HBA1C Collected Date",
+			"datename":"hba1c_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"set"
+		}
+		
+	]
+	
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,108 @@
+
+@media print {
+	* {-webkit-print-color-adjust: exact;}
+}
+
+.page {page-break-after: always;}
+thead {display: table-header-group;} 
+tfoot {display: table-footer-group;}
+body {margin: 0;}
+    
+	.locallist-print-container-header, .page-header-space{height:215px;}
+	.locallist-print-container-footer, .page-footer-space{height:20px;}
+
+	.locallist-print-container-header{position: fixed;top: 0mm;width: 100%;}
+
+	.locallist-print-container-header-buffer{/*border: 1px solid black;*/}
+	.locallist-print-container-header-content{border-bottom: 1px solid black;}
+
+	.locallist-print-container-footer{position: fixed;bottom: 0;width: 100%;font-size: 12px;font-style:italic;}
+	.locallist-print-container-footer-content{border-top: 1px solid black;}
+	
+	.locallist-print-container-body{}
+	.locallist-print-container-body-content{width:100%;}
+	.header-cell-logo{width:45px;}
+	.table-header{font-size:15px;}
+	
+	.header-logo{width: 45px;height: 50px;background: no-repeat url(http://localhost:8080/ncdis/client/libs/images/cdis-logo50.png) center center;background-size: 35px 40px !important;}
+	.header-section{font-size:12px;font-family:Arial;text-align: right;vertical-align:bottom;}
+	.header-cell-header{text-align:center;height:30px;font-size:15px;font-family:Arial;background-color:#cdcdcd;font-weight:bold;}
+
+	.chart{width:50px;}
+	.page-body-line .chart{text-align:center;}
+	.age{width:50px;}
+	.page-body-line .age{text-align:center;}
+	.mrv{width:120px;}
+	.page-body-line .mrv{text-align:center;}
+	.notes{width:100px;}
+	
+	.header-report-title{font-size:17px;font-family:Arial;padding:7px;}
+	.header-app{vertical-align:bottom;}
+	.header-app label{font-size:15px;font-weight: bold;font-family:Sans-Serif, Arial;}
+	.header-app span{font-size:10px;font-family:Sans-Serif, Arial;}
+
+.page-body-line .patient-details{
+	width:80%;
+	font-size:13px;
+	font-family:Arial;
+	border-bottom:1px solid #cdcdcd;
+}
+
+.page-body-line .patient-comments{
+	width:20%;
+	font-size:13px;
+	text-align:center;
+	border-bottom:1px solid #cdcdcd;
+	border-left:1px solid #cdcdcd;
+}
+
+.page-body-line .patient-details span{padding:4px;}
+
+.page-body-line{
+	border-bottom:1px solid #cdcdcd;
+}
+
+.page-body-line:nth-child(even){
+	background-color:#faf8f7;
+}
+
+.page-body-line .patient-details{
+	width:70%;
+	font-size:13px;
+	font-family:Arial;
+	border-bottom:1px solid #cdcdcd;
+}
+
+.page-body-line .patient-comments{
+	width:30%;
+	font-size:13px;
+	text-align:center;
+	border-bottom:1px solid #cdcdcd;
+}
+
+
+.table-header.patient-details{
+	width:70%;
+	font-family:Arial;
+}
+
+.table-header.patient-comments{
+	width:30%;
+	text-align:center;
+}
+
+.patient-graph{text-align: center;}
+.patient-graph-title {text-align:left;padding:10px;vertical-align:center;font-size:17px;font-weight:bold;border-bottom:1px solid #4d4d4d;}
+.patient-graph-table thead tr{background-color:#cdcdcd;font-size:15px;border-bottom:1px solid#4d4d4d;color:#4d4d4d;}
+.patient-graph-table thead td{text-align:center;padding:10px;}
+.patient-graph-table tbody td{font-size:14px;color:#4d4d4d;text-align:center;}
+.patient-graph-table tbody tr{border-bottom:1px solid #4d4d4d;}
+.patient-graph-table tbody tr:nth-child(even){
+	background-color:#faf8f7;
+}
+    
+    
+    
+
+
+

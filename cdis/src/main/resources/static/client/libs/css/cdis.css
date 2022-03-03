@@ -1,0 +1,464 @@
+/**
+CDIS PAGE CSS
+*/
+.mainpage .main .side{min-width:250px;max-width:250px;height:100%;flex:1;}
+.mainpage .main .page{display: -webkit-box;display: -moz-box;display: -ms-flexbox;display: -webkit-flex;display: flex;-webkit-flex-flow: row nowrap;flex-flow: row nowrap;font-family: Sans-Serif,Tahoma,Verdana,Arial;color:#4d4d4d;justify-content:flex-start;}
+.mainpage .main .page >*{margin:0px;}
+
+
+/*HEADER SEARCH*/
+.cdisheader {grid-template-columns:50px 100px 120px auto 300px;}
+.cdisheader .search{position:relative;width:100%;height:40px;margin:auto;display: -webkit-box;display: -moz-box;display: -ms-flexbox;display: -webkit-flex;display: flex;-webkit-flex-flow: row nowrap;flex-flow: row nowrap;justify-content: flex-start;align-items: flex-start;}
+.cdisheader .search > *{}
+.cdisheader .search .ssearch{height:100%;flex:1;}
+.cdisheader .search .ssearch .searchtext{width:100%;height:100%;color:#000000;margin:0px;padding:0px 0px 0px 10px;border:1px solid #ffffff;text-transform: uppercase;}
+.cdisheader .search #criteria{border:1px solid #ffffff;width:150px;height:40px;line-height:40px;text-transform: uppercase;text-align: center;cursor:pointer;color:#ffffff;background-color:#4b3b3b;}
+.cdisheader .search .scriteria{position:absolute;width:150px;left:0;margin: 0;border:1px solid #ffffff;display:none;}
+.cdisheader .search #radios .ui-button.ui-state-active {color: #ffffff;background-color: #4b3b3b;}
+.cdisheader .search #radios .ui-state-default {border: 1px solid #4b3b3b;background: #ececec url("../images/ui-bg_glass_75_f7f5f5_1x400.png") 50% 50% repeat-x;font-weight: normal;color: #000000;}
+.cdisheader .search #radios .ui-widget {font-family: Sans-Serif ,Verdana,Arial,sans-serif;font-size: 100%;line-height:40px;height:40px;border:none;}
+.cdisheader .search #radios .ui-widget:hover {background-color:#db4437;color:#ffffff;}
+#radios{border-color:#4b3b3b;}
+#radios .btn-default{background-color:#ececec;margin-bottom:0px;}
+#radios .btn-default.active{background-color:#4b3b3b;color:#ffffff;font-weight:bold;}
+#radios .btn.focus {  outline: none;box-shadow:none;}
+.ui-autocomplete{height:400px;overflow: auto;font-size:105%;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;padding:3px;}
+.search-line{display:grid;grid-template-columns:300px 130px 50px 200px 100px;}
+.ui-menu-item .ui-state-active {
+	background-color:#4b3b3b;
+	border:none;
+}
+.ui-menu-item  strong{background-color:#db4437;color:#fff;}
+
+/*
+.searchname {display:inline-block;width:300px;overflow:hidden;vertical-align:top;padding:3px;}
+.searchname span{padding:3px;}
+.searchname strong{background-color:#db4437;color:#ffffff;}
+.searchcommunity {display:inline-block;width:130px;overflow:hidden;vertical-align:top;padding:3px;text-align: center;}
+.searchchart {display:inline-block;width:50px;overflow:hidden;padding:3px;text-align:center;}
+.searchchart label{padding:3px;}
+.searchchart span{padding:3px;}
+.searchchart strong{font-weight:normal;background-color:#db4437;color:#ffffff;}
+.searchramq {display:inline-block;width:200px;overflow:hidden;padding:3px;text-align:center;}
+.searchramq label{padding:3px;}
+.searchramq span{padding:3px;}
+.searchramq strong{background-color:#db4437;color:#ffffff;}
+.searchgiu {display:inline-block;width:100px;overflow:hidden;padding:3px;text-align:center;}
+.searchgiu label{padding:3px;}
+.searchgiu span{padding:3px;}
+.searchgiu strong{background-color:#db4437;color:#ffffff;}
+*/
+
+
+
+/*CDIS MENU*/
+.cdismenu {position:fixed;left:0px;top:0px;width:250px; height:100%;color:#ffffff;}
+.cdismenu #menu{margin-top:110px;width:100%;height:80%; /*border:1px solid #000ff0;*/ text-align: left;list-style: none;padding: 0;cursor:pointer;}
+.cdismenu #menu li{display: block;margin: 0;padding: 0px 0px 0px 0px; height:50px;line-height:50px;cursor:pointer;}
+.cdismenu #menu li:hover {background-color:#db4437;}
+.cdismenu #menu li label{margin:0px 5px 0px 20px;font-size: 100%;}
+.cdismenu .selected{background-color:#4b3b3b;color:#ffffff;}
+.cdismenu .selected label{color:#ffffff;}
+.cdismenu .patient_icon{background:no-repeat url(../../images/work/record_off.png) center center;}
+.cdismenu .selected .patient_icon{background:no-repeat url(../../images/work/record_on.png) center center;}  
+.cdismenu .mdvisits_icon{background:no-repeat url(../../images/work/mdvisits_off.png) center center;}
+.cdismenu .lab_icon{background:no-repeat url(../../images/work/lab_off.png) center center;}
+.cdismenu .lab_icon_{position:absolute;background-color:#efefef;width:3px;height:40px;padding:3px;margin:2px 0px 2px 5px;}
+.cdismenu .renal_icon{background:no-repeat url(../../images/work/renal_off.png) center center;}
+.cdismenu .renal_icon_{position:absolute;background-color:#efefef;width:3px;height:40px;padding:3px;margin:2px 0px 2px 5px;}
+.cdismenu .lipid_icon{background:no-repeat url(../../images/work/lipid_off.png) center center;}
+.cdismenu .lipid_icon_{position:absolute;background-color:#efefef;width:3px;height:40px;padding:3px;margin:2px 0px 2px 5px;}
+.cdismenu .complications_icon{background:no-repeat url(../../images/work/complications_off.png) center center;}
+.cdismenu .meds_icon{background:no-repeat url(../../images/work/meds_off.png) center center;}
+.cdismenu .miscellaneous_icon{background:no-repeat url(../../images/work/miscellaneous_off.png) center center;}
+.cdismenu .svisits_icon{background:no-repeat url(../../images/work/visits_off.png) center center;}
+.cdismenu .medication_icon{background:no-repeat url(../../images/work/medication_off.png) center center;}
+.cdismenu .notes_icon_{}
+
+/*PATIENT RECORD*/
+#patient-record{width:100%;background-color:#ededed;overflow-y:auto;font-size:90%;}
+#patient-record .name-label-deceased{color:#ffffff;background-color:#000000;}
+#patient-record-buttons{text-align:right; padding:0px;}
+#patient-record .patient-record-name{padding:5px;font-size: 150%;text-transform: uppercase;font-weight:bold;}
+#patient-record .patient-record-label{display:inline-block;width:45%;padding:2px 1px 2px 5px;}
+#patient-record .patient-record-value{display:inline-block;width:auto;padding:2px 1px 2px 0px;font-weight:bold;}
+.summary-title{font-weight:bold;color:#ffffff;background:#db4437;padding:5px;text-align:center;font-size:110%;}
+#diabet-history {/*border:1px solid #4d4d4d;*/background:#ffffff;margin-bottom:7px;}
+#diabet-history .diabet-history-title{font-size:100%;color:#ffffff;font-weight:bold;background-color:#8aa5f7;}
+#diabet-history .diabet-history-header{font-size:80%;color:#ffffff;background-color:#000000;text-align:center;}
+#diabet-history .diabet-history-value{font-size:80%;text-align:center;font-weight:bold;}
+#hcp {/*border:1px solid #4d4d4d;*/background:#ffffff;margin-bottom:7px;}
+#hcp .hcp-title{font-size:100%;color:#ffffff;background-color:#8aa5f7;font-weight:bold;width:30%;}
+#hcp .hcp-profession{font-size:90%;color:#ffffff;background-color:#000000;text-align:center;width:30%;}
+#hcp .hcp-name{font-size:90%;font-weight:bold;}
+
+
+/*ABC GRAPHS*/
+.cdisbody_abcgraphs{width:100%;padding:0px;margin:0px;background-color:#ededed;top:0px;}
+
+/*CDIS FULL VERSION BUTTON*/
+.cdisfull{position:absolute;cursor:pointer;height:35px;line-height:35px;font-weight:bold;color:#ffffff;background-color:#db4437;top:100%;	width:230px;text-align:center;margin-top:-45px;}
+.cdisfull:hover{background-color:#4b3b3b;}
+
+
+
+
+
+.cdisbody_addpatient{display:block;margin:auto;width:60%;min-width:900px;background-color:#ededed;}
+.cdisbody_addpatient h1{margin:0px 0px 10px 0px; padding:20px;font-size: 120%;}
+#addpatient-form table {padding:20px;}
+#addpatient-form .label-addpatient{font-family: Sans-Serif; font-size: 100%;color:#000000;font-weight:bold;}
+#addpatient-form .diabet-addpatient{background-color:#cdcdcd;padding:10px;}
+#addpatient-form input{color:#000000;border:none;}
+#addpatient-form select{color:#000000;padding:5px;border:none;background:#ffffff;}
+#addpatient-form .textField{margin:3px;padding:5px;border:none;font-weight:bold;background-color:#ffffff;}
+#addpatient-form .ui-state-default .ui-button-text{font-size: 100%;font-family: Sans-Serif;}
+#addpatient-form .ui-state-active .ui-button-text{font-size: 100%;font-family: Sans-Serif;background-color:#4b3b3b;color:#ffffff;font-weight:bold;}
+#addpatient-form #cancel-addpatient{margin:10px;}
+#addpatient-form #save-addpatient{margin:10px;}
+
+
+.cdisbody_editpatient{display:block;margin:auto;background-color:#ededed;padding:20px;min-width:900px;width:60%;}
+#errortext-patient{position:relative;width:auto;height:auto;}
+#errortext-patient p{margin:2px;}
+#editpatient-form table {padding:20px;}
+#editpatient-form .label-editpatient{font-family: Sans-Serif; font-size: 100%;color:#000000;font-weight:bold;}
+.diabet-editpatient{background-color:#cdcdcd;}
+.diabet-editpatient td{padding:5px;}
+#editpatient-form input{color:#000000;border:none;}
+#editpatient-form select{color:#000000;padding:5px;border:none;}
+#editpatient-form .textField{margin:3px;padding:5px;border:none;font-weight:bold;background-color:#ffffff;}
+#editpatient-form .ui-state-default .ui-button-text{font-size: 100%;font-family: Sans-Serif;}
+#editpatient-form .ui-state-active .ui-button-text{font-size: 100%;font-family: Sans-Serif;background-color:#4b3b3b;color:#ffffff;font-weight:bold;}
+#editpatient-form #cancel-editpatient{margin:10px;}
+#editpatient-form #save-editpatient{margin:10px;}
+#hcp-edit{background-color:#cdcdcd;}
+#hcp-edit td{font-family: Sans-Serif; font-size: 100%;color:#000000;padding:5px;}
+
+
+
+
+.panel-section{background-color:#ededed;height:100%;overflow-y:auto;overflow-x:hidden;}
+.panel-section h1{font-size:120%;padding-left:20px;}
+.panel-record{background-color:#ededed;margin:0px 0px 0px 0px;}
+.panel-record-name{padding:5px;font-size:140%;font-weight:bold;text-align:right;}
+.panel-record-community{padding:5px;font-size:90%;text-align:right;color:#000000;font-weight:bold;}
+.panel-record-ramq{padding:5px;font-size:90%;text-align:right;color:#000000;font-weight:bold;}
+.panel-record-chart{padding:5px;font-size:90%;text-align:right;color:#ffffff;font-weight:bold;background-color:#4d4d4d;}
+.panel-record-dtype{padding:10px;font-size:100%;font-weight:bold;text-align:center;background:#4b3b3b;color:#ffffff;}
+
+.panel-visit{background-color:#ededed;margin:5px 0px 5px 0px;}
+.cdisbody_patient_alerts{position:fixed;top:20px;width:600px;height:70px;left:50%;margin-left:-300px;background:#fefefe;z-index:100000;text-align:center;vertical-align:middle;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);display:none;}
+
+
+.visit{width:auto;margin:10px;background:#fefefe;}
+.visit-title{padding:5px;background:#8aa5f7;color:#ffffff;font-weight:bold;}
+.visit-date{text-align:center;font-weight:bold;}
+.visit-body{padding:10px;font-size:80%;}
+
+.ui-selectmenu-open .ui-widget{max-height:200px;}
+.schedule-select{width:170px;margin:5px;}
+.schedule-input{vertical-align:top;	margin-left:10px;width:130px;}
+.schedule-table{width:100%;border:1px solid #cdcdcd;border-spacing: 0;border-collapse: collapse;}
+.schedule-table-header{background:#cdcdcd;color:#4d4d4d;padding:7px;font-weight:bold;}
+.schedule-table-value{color:#4d4d4d;padding:7px;font-size:110%;}
+
+
+.currentvisits{background:#c4ffc8;}
+.futurevisits{background:#c4e9ff;}
+
+.my-jqplot-normal-title{position:absolute;text-align:left;padding:1px;font-weight:bold;color:#b5b5b5;right:15px;font-size:90%;}
+
+
+
+
+
+#cdisPage .cdisbody .cdisbody_dashboard{position:relative;left:0px;width:100%;min-height:80px;}
+#cdisPage .cdisbody .cdisbody_dashboard>h1{margin:15px 0px 20px 20px;padding-top:10px;font-size: 100%;font-family: Tahoma;font-weight:normal;}
+#cdisPage .cdisbody .cdisbody_dashboard .panel{position: relative;width:950px;height: 280px;margin: 50px 0px 10px 25px;/*background-color:#ffffff;*/font-size: 13px;font-family: Sans-Serif;}
+#cdisPage .cdisbody .cdisbody_dashboard .panel>div{position:relative;float:left;padding:3px;margin:5px 5px 5px 20px;/*border:1px solid #000000;*/}
+#cdisPage .cdisbody .cdisbody_dashboard .panel h1{margin:5px;font-size: 14px;font-family: Sans-Serif;/*border:1px solid #000000;*/}
+#cdisPage .cdisbody .cdisbody_patient{position:relative;left:0px;width:100%;min-height:800px;display:none;}
+#cdisPage .cdisbody .cdisbody_mdvisits{position:relative;left:0px;width:100%;min-height:800px;display:none;}
+#cdisPage .cdisbody .cdisbody_lab{position:relative;left:0px;width:100%;min-height:500px;display:none;}
+#cdisPage .cdisbody .cdisbody_lipid{position:relative;left:0px;width:100%;min-height:500px;display:none;}
+#cdisPage .cdisbody .cdisbody_renal{position:relative;left:0px;width:100%;min-height:500px;display:none;}
+#cdisPage .cdisbody .cdisbody_complications{position:relative;left:0px;width:100%;min-height:600px;display:none;}
+#cdisPage .cdisbody .cdisbody_meds{position:relative;left:0px;width:100%;min-height:400px;display:none;}
+#cdisPage .cdisbody .cdisbody_miscellaneous{position:relative;left:0px;width:100%;min-height:400px;display:none;}
+#cdisPage .cdisbody .cdisbody_depression{position:relative;left:0px;width:100%;min-height:400px;display:none;}
+
+#cdisPage .ubody .ubody_personalinfo{position:relative;left:0px;width:100%;min-height:400px;background-color:#ffffff;display:none;}
+#cdisPage .ubody .ubody_messages{position:relative;left:0px;width:100%;min-height:400px;background-color:#ffffff;display:none;}
+#cdisPage .ubody .ubody_users{position:relative;left:0px;width:100%;min-height:400px;background-color:#ffffff;display:none;}
+#cdisPage .ubody .ubody_frontpage{position:relative;left:0px;width:100%;min-height:400px;background-color:#ffffff;display:none;}
+#cdisPage .ubody .ubody_uoptions{position:relative;left:0px;width:100%;min-height:400px;background-color:#ffffff;display:none;}
+
+#cdisPage .cdisfooter-left{position:fixed;left:0px;top:100%;height:80px;width:200px;;;margin-top:-80px;z-index: 2;}
+#cdisPage .cdisfooter-left .leftfootermenu{position:absolute;left:35px;margin:0px;padding:0px;list-style-type: none;top:5px;width:auto;}
+#cdisPage .cdisfooter-left .leftfootermenu li{display:inline-block;width:50px;height:50px;margin:5px 20px 0px 0px;background-color:#db4437;}
+.flogout span{display:block;width:100%;height:100%;margin:0px;background:no-repeat url(../../images/work/logout_off.png) center center;-webkit-transition: 0.3s ease-in;-moz-transition: 0.3s ease-in;-o-transition: 0.3s ease-in;transition: 0.3s ease-in;}
+.flogout:hover span{background:no-repeat url(../../images/work/logout_on.png) center center;-webkit-transform: rotateX(180deg);transform: rotateX(180deg);}
+.flogout:hover + .flogoutlabel{display:block;}
+.flogoutlabel{left:-10px;margin-top:-70px;}
+
+.fback span{display:block;width:100%;height:100%;margin:0px;background:no-repeat url(../images/ic_search_wht_24dp_r1_1.png) center center;-webkit-transition: 0.3s ease-in;-moz-transition: 0.3s ease-in;-o-transition: 0.3s ease-in;transition: 0.3s ease-in;}
+.fback:hover + .fbacklabel{display:block;}
+.fbacklabel{left:72px;margin-top:-70px;}
+
+#cdisPage .cdisfooter-left .leftfootermenu li.freports {background-color:#4b3b3b;}
+.freports span{display:block;width:100%;height:100%;margin:0px;background:no-repeat url(../../images/work/reports_off.png) center center;-webkit-transition: 0.3s ease-in;-moz-transition: 0.3s ease-in;-o-transition: 0.3s ease-in;transition: 0.3s ease-in;}
+.freports:hover span{background:no-repeat url(../../images/work/reports_on.png) center center;-webkit-transform: rotateY(360deg);transform: rotateY(360deg);}
+.freports:hover + .freportslabel{display:block;}
+.freportslabel{left:140px;margin-top:-70px;}
+
+#cdisPage .cdisfooter-left .leftfootermenu li.fnew {background-color:#4b3b3b;}
+.fnew span{display:block;width:100%;height:100%;margin:0px;background:no-repeat url(../../images/work/add_off.png) center center;-webkit-transition: 0.3s ease-in;-moz-transition: 0.3s ease-in;-o-transition: 0.3s ease-in;transition: 0.3s ease-in;}
+.fnew span:hover{background:no-repeat url(../../images/work/add_on.png) center center;-webkit-transform: rotate(180deg);}
+.fnew:hover + .fnewlabel{display:block;}
+.fnewlabel{left:195px;margin-top:-70px;}
+
+.fsendmessage span{display:block;width:100%;height:100%;margin:0px;background:no-repeat url(../../images/work/smessage_off.png) center center;-webkit-transition: 0.3s ease-in;-moz-transition: 0.3s ease-in;-o-transition: 0.3s ease-in;transition: 0.3s ease-in;}
+.fsendmessage span:hover{background:no-repeat url(../../images/work/smessage_on.png) center center;-webkit-transform: rotateX(360deg);transform: rotateX(360deg);}
+.fsendmessage:hover + .fsendmessagelabel{display:block;}
+.fsendmessagelabel{left:120px;margin-top:-70px;}
+
+
+
+.cdisbody_patient_lastdata{position:relative;left:0px;width:100%;background-color:#fcfcfc;min-height:75px;margin:0px 0px 20px 0px; padding:0px 0px 20px 0px;}
+
+/*
+BUTTONS
+*/
+
+#abcgraphs-button{}
+#editpatient-button{}
+#save-addpatient{}
+#flowchart-button{}
+#printsection-button{display:none;}
+#printgraphs-button{position:absolute;top:10px;right:10px;}
+#closegraphs-button{margin:10px;right:10px;}
+#record-button{position:absolute;top:10px;right:10px;width:30px;height:30px;background:#ffffff;border:1px solid #000000;color:#000000;line-height:30px;font-family:Sans-Serif;font-size:35px;text-align:center;cursor:pointer;}
+#record-button:hover{background:#4b3b3b;color:#ffffff;border:1px solid #4b3b3b;}
+#record-button-label{display:none;position:absolute;top:10px;right:45px;width:130px;height:30px;background:#000000;color:#ffffff;;border:1px solid #000000;line-height:30px;font-family:Sans-Serif;font-size:15px;text-align:center;cursor:pointer;}
+#record-button.selected{position:absolute;top:10px;right:10px;width:30px;height:30px;background:#4b3b3b;border:1px solid #4b3b3b;color:#ffffff;line-height:30px;font-family:Sans-Serif;font-size:35px;text-align:center;cursor:pointer;}
+
+
+.mdvisits_title_icon{position:absolute;margin:5px 5px 0px 10px; width:10px;height:40px;/*background:no-repeat url(../../images/work/mdvisits_off.png) center center;*/}
+.lab_title_icon{position:absolute;margin:5px 5px 0px 10px; width:10px;height:40px;/*background:no-repeat url(../../images/work/lab_off.png) center center;*/}
+.renal_title_icon{position:absolute;margin:5px 5px 0px 10px; width:10px;height:40px;/*background:no-repeat url(../../images/work/renal_off.png) center center;*/}
+.lipid_title_icon{position:absolute;margin:5px 5px 0px 10px; width:10px;height:40px;/*background:no-repeat url(../../images/work/lipid_off.png) center center;*/}
+.complications_title_icon{position:absolute;margin:5px 5px 0px 10px; width:10px;height:40px;/*background:no-repeat url(../../images/work/complications_off.png) center center;*/}
+.meds_title_icon{position:absolute;margin:5px 5px 0px 10px; width:10px;height:40px;/*background:no-repeat url(../../images/work/meds_off.png) center center;*/}
+.miscellaneous_title_icon{position:absolute;margin:5px 5px 0px 10px; width:10px;height:40px;/*background:no-repeat url(../../images/work/miscellaneous_off.png) center center;*/}
+
+
+.section-value{position:relative;height:auto;margin:10px 0px 10px 15px;width:470px;display:inline-block;vertical-align:top;background-color:#e0e0e0;-moz-box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.5);-webkit-box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.5);box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.5);}
+.section-line-line{position:relative;height:50px;margin:0; padding:0;}
+.section-button-line{position:absolute;height:40px;right:5px;top:5px;/*background-color:#cdcdcd;border:1px solid #000000;*/}
+.section-button-value{position:absolute;height:40px;right:5px;top:5px;/*background-color:#cdcdcd;border:1px solid #000000;*/}
+.section-button-line-table:hover{color:#000000;}
+.section-button-line-table-label{position:absolute;display:none;z-index:50;left:0px;top:40px;;width:100%;height:30px;background-color:#000000;cursor:pointer;text-align: center;color:#ffffff;line-height:30px;font-size:100%;font-family:Sans-Serif;}
+.section-button-line-table:hover+.section-button-line-table-label{display:block;}
+.section-button-value-table{position:relative;width:40px;height:30px;background-color:#4b3b3b;cursor:pointer;display:inline-block;margin:5px 5px 5px 5px;text-align: center;color:#ffffff;line-height:30px;font-size:22px;}
+.section-button-value-table:hover{color:#000000;}
+.section-button-value-table-label{position:absolute;display:none;z-index:50;left:0px;top:40px;;width:100%;height:30px;background-color:#000000;cursor:pointer;text-align: center;color:#ffffff;line-height:30px;font-size:100%;font-family:Sans-Serif;}
+.section-button-value-table:hover+.section-button-value-table-label{display:block;}
+
+
+.section-button-line-add{position:relative;width:40px;height:30px;background-color:#4b3b3b;cursor:pointer;display:inline-block;margin:5px 5px 5px 5px;text-align: center;color:#ffffff;line-height:30px;font-size:22px;}
+.section-button-line-add:hover{color:#000000;}
+.section-button-line-add-label{position:absolute;z-index:50;left:0px;top:40px;;width:100%;min-width:150px;height:30px;background-color:#000000;cursor:pointer;display:none;text-align: center;color:#ffffff;line-height:30px;font-size:100%;font-family:Sans-Serif;}
+.section-button-line-add:hover+.section-button-line-add-label{display:block;}
+
+.section-button-value-add{position:relative;width:40px;height:30px;background-color:#4b3b3b;cursor:pointer;display:inline-block;margin:5px 5px 5px 5px;text-align: center;color:#ffffff;line-height:30px;font-size:22px;}
+.section-button-value-add:hover{color:#000000;}
+.section-button-value-add-label{position:absolute;z-index:50;left:0px;top:40px;;width:100%;min-width:150px;height:30px;background-color:#000000;cursor:pointer;display:none;text-align: center;color:#ffffff;line-height:30px;font-size:100%;font-family:Sans-Serif;}
+.section-button-value-add:hover+.section-button-value-add-label{display:block;}
+
+.section-button-line-control{position:relative;width:40px;height:30px;background-color:#4b3b3b;cursor:pointer;display:inline-block;margin:5px 5px 5px 5px;text-align: center;color:#ffffff;line-height:30px;font-size:22px;}
+.section-button-line-control:hover{color:#000000;}
+.section-button-line-control-label{position:absolute;left:0px;z-index:50;top:40px;;width:100%;height:30px;background-color:#000000;cursor:pointer;display:none;text-align: center;color:#ffffff;line-height:30px;font-size:100%;font-family:Sans-Serif;}
+.section-button-line-control:hover+.section-button-line-control-label{display:block;}
+.section-button-line-graph-label{position:absolute;left:0px;z-index:50;top:40px;;width:100%;height:30px;background-color:#000000;cursor:pointer;display:none;text-align: center;color:#ffffff;line-height:30px;font-size:100%;font-family:Sans-Serif;}
+
+
+.section-button-line-history{position:relative;width:40px;height:30px;background-color:#4b3b3b;cursor:pointer;display:inline-block;margin:5px 5px 5px 5px;text-align: center;color:#ffffff;line-height:30px;font-size:22px;}
+.section-button-line-history:hover{color:#000000;}
+.section-button-line-history-label{position:absolute;left:0px;z-index:50;top:40px;;width:100%;height:30px;background-color:#000000;cursor:pointer;display:none;text-align: center;color:#ffffff;line-height:30px;font-size:100%;font-family:Sans-Serif;}
+.section-button-line-history:hover+.section-button-line-history-label{display:block;}
+
+
+
+.section-button-line-selected{background-color:#db4437;color:#ffffff;}
+.section-button-value-selected{background-color:#db4437;color:#ffffff;}
+
+
+.mdvisists-value{position:relative;width:98%;height:70px;background-color:#f1f4f5;}
+.mdvisists-value-design{left:0px;width:4px;background-color:#8CA5AE;height:70px;margin:0; padding:0;}
+.lab-value{position:relative;margin:10px 0px 10px 0px;width:98%;height:70px;background-color:#f1f4f5;}
+.lab-value-design{position:absolute;left:0px;width:4px;background-color:#8CA5AE;height:100%;margin:0; padding:0px;}
+
+
+
+#cdisPage .cdisbody .cdisbody_notes{position:relative;left:0px;width:100%;min-height:400px;font-family:Sans-Serif;}
+#cdisPage .cdisbody .cdisbody_notes h1{margin:0px 0px 5px 20px;padding:20px;font-size: 120%;font-family: Sans-Serif;color:#4d4d4d;}
+#notes-form table {padding:10px;}
+#notes-form .form-notes div {display:inline-block;margin:0px;height:100%;vertical-align:middle;}
+#notes-form .form-notes #save-notes-select-label {font-weight:bold;line-height:25px;padding:5px;}
+#notes-form .form-notes #save-notes-select-container select{line-height:25px;height:30px;background-color:#efefef;color:#4d4d4d;font-size:90%; padding:5px;text-transform:capitalize;}
+#notes-form #save-notes-button{margin:10px;}
+#notes-form #save-notes-button.disabled{background-color:#cdcdcd;color:#fefefe;}
+#notes-form #save-notes-disclaimer{ padding:5px; font-size:100%;text-align:left;border:1px solid #ff0000;margin:20px;background-color:#fcfcfc;}
+.note-header{position:absolute;top:0px;right:10px;}
+.note-header-buttons{display:inline-block;padding:2px;margin:3px;}
+
+
+
+.subsection-container{margin:10px;width:100%;}
+.subsection-title{background-color:#d0d0d0;width:200px;padding:5px 5px 5px 10px;font-size: 100%;font-family: Sans-Serif;font-weight:bold;}
+.subsection{width:100%;background-color:#d0d0d0;display: -webkit-box;display: -moz-box;display: -ms-flexbox;display: -webkit-flex;display: flex;-webkit-flex-flow: row wrap;flex-flow: row wrap;}
+
+
+.jqte{margin:5px !important;}
+.jqte .jqte_editor{min-height:30px !important;}
+.notesText{position:relative;width:90%;margin:auto;min-height:100px;max-height:400px;overflow:auto;}
+.notesTextNew{position:relative;width:96%;margin:0px 10px 0px 10px;overflow:auto;}
+.noteContainer{position:relative;font-size: 100%;font-family: Sans-Serif;padding:5px;margin:3px;background-color:#fefefe;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);}
+.newNote{font-size:80%;color:#ff0000;font-weight:bold;}
+.openNote{position:absolute;right:10px;top:3px;font-size:90%;font-weight:bold;}
+.delNote{position:absolute;right:25px;top:3px;font-size:90%;}
+.noteAuthor{padding:7px;}
+.noteTimestamp{font-size: 80%;font-family: Sans-Serif;font-weight:bold;padding:5px;}
+.message{width:98%;margin:auto;padding:5px;background-color:#e2e2e2;}
+
+
+.recomandations{display:flex;flex-flow:row nowrap;padding:5px;background:#cdcdcd;border:1px outset #cdcdcd;-moz-border-radius: 4px;-webkit-border-radius: 4px;border-radius: 4px;-moz-box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);margin:15px;}
+.recomandations:hover{background:#4d4d4d;color:#ffffff;}
+.recomandations .title{flex:1 0;font-weight:bold;text-align:center;font-size:0.8rem;}
+
+.recomandations .thumbnail{flex:1 0;max-width:60px;text-align:center;}
+.thumbnail img{width:60px;height:70px;}
+
+.bmicontainer{position:relative;padding:5px;background:#ededed;}
+.bmititle{padding:5px;font-weight:bold;text-align:center;background:#4d4d4d;color:#ffffff;margin-bottom:5px;}
+.bmi{position:relative;width:207px;margin:auto;height:185px;	}
+.bmilabels{position:absolute;top:0px;height:100%;left:0px;}
+.bmilabel{font-weight:bold;pading:3px;position:absolute;left:0px;text-align:right;width:95px;}
+.bmitermo{position:absolute;height:145px;width:45px;top:20px;left:100px;border:1px solid #4d4d4d;background: #fc3d2f; /* Old browsers */
+	background: -moz-linear-gradient(top,  #fc3d2f 0%, #fc3d2f 0%, #f98927 34%, #29d83d 64%, #1e5799 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  #fc3d2f 0%,#fc3d2f 0%,#f98927 34%,#29d83d 64%,#1e5799 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  #fc3d2f 0%,#fc3d2f 0%,#f98927 34%,#29d83d 64%,#1e5799 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fc3d2f', endColorstr='#1e5799',GradientType=0 ); /* IE6-9 */
+}
+.bmiarrow{width:60px;position:absolute;top:0px;right:0px;}
+.bmivirf{display:inline-block;width: 0;height: 0;border-top: 25px solid transparent;border-bottom: 25px solid transparent;border-right:30px solid #4b3b3b;}
+.bmivalue{position:absolute;top:10px;right:0px;text-align:center;background:#4b3b3b;width:30px;height:30px;color:#ffffff;line-height:30px;font-size:85%}
+
+
+.modal-backdrop.show {background-color: rgba(0,0,0,0.5) !important;}
+
+.mb-label{font-weight:bold;}
+
+
+#hcp-edit input{width:100%;}
+
+
+@media screen  and  (max-width: 1370px) {
+	
+	
+	
+	#chart_line{display:none;}
+	#dob_line{display:none;}
+	#sex_line{display:none;}
+	#dtype_line{display:none;}
+	#ddate_line{display:none;}
+	#giu_line{display:none;}
+	
+	
+	
+	#patient-record{width:100%;color:#000000;font-family:Sans-Serif;font-size:80%;}
+	#patient-record .label-column{width:220px;font-weight:bold;}
+	#patient-record-buttons{text-align:right; padding:0px;}
+	#patient-record .patient-record-name{padding:7px;font-size: 150%;font-family: Tahoma;text-transform: uppercase;}
+	/*.abcgraph{display:inline-block;min-width:300px; height:200px;margin:auto;padding:5px;}*/
+	.section-line{min-width:360px;}	
+	
+	
+	.cdismenu #menu li{height:35px;line-height:35px;}
+	.cdismenu #menu li label{margin:0px 5px 0px 20px;font-size: 100%;}
+	.cdismenu .lab_icon_{position:absolute;background-color:#efefef;width:3px;height:30px;padding:3px;margin:2px 0px 2px 5px;}
+	.cdismenu .renal_icon_{position:absolute;background-color:#efefef;width:3px;height:30px;padding:3px;margin:2px 0px 2px 5px;}
+	.cdismenu .lipid_icon_{position:absolute;background-color:#efefef;width:3px;height:30px;padding:3px;margin:2px 0px 2px 5px;}
+	
+	
+	/*HEADER SEARCH*/
+	.cdisheader .search{position:relative;height:40px;margin:auto;display: -webkit-box;display: -moz-box;display: -ms-flexbox;display: -webkit-flex;display: flex;-webkit-flex-flow: row nowrap;flex-flow: row nowrap;justify-content: flex-start;align-items: flex-start;}
+	.ui-autocomplete{width:450px;height:300px;overflow: auto;font-size:80%;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;padding:3px;}
+	.searchname {display:inline-block;width:170px;overflow:hidden;vertical-align:top;padding:3px;}
+	.searchname span{padding:3px;}
+	.searchname strong{background-color:#db4437;color:#ffffff;}
+	
+	.searchcommunity {display:inline-block;width:70px;overflow:hidden;vertical-align:top;padding:3px;text-align: center;}
+	
+	.searchchart {display:inline-block;width:50px;overflow:hidden;padding:3px;text-align:center;}
+	.searchchart label{padding:3px;}
+	.searchchart span{padding:3px;}
+	.searchchart strong{font-weight:normal;background-color:#db4437;color:#ffffff;}
+	
+	.searchramq {display:inline-block;width:80px;overflow:hidden;padding:3px;text-align:center;}
+	.searchramq label{padding:3px;}
+	.searchramq span{padding:3px;}
+	.searchramq strong{background-color:#db4437;color:#ffffff;}
+	
+	.searchgiu {display:inline-block;width:50px;overflow:hidden;padding:3px;text-align:center;}
+	.searchgiu label{padding:3px;}
+	.searchgiu span{padding:3px;}
+	.searchgiu strong{background-color:#db4437;color:#ffffff;}
+
+	.section-line-graph{
+		height:220px;
+	}
+
+	.my-jqplot-normal-title{position:absolute;text-align:left;padding:1px;font-weight:bold;color:#b5b5b5;right:15px;font-size:70%;}
+	
+	
+}
+
+@media screen and (min-width: 1370px) and  (max-width: 1600px){
+	
+	
+	
+	#dtype_line{display:none;}
+	#ddate_line{display:none;}
+	.my-jqplot-normal-title{position:absolute;text-align:left;padding:1px;font-weight:bold;color:#b5b5b5;right:15px;font-size:70%;}
+	
+	
+	/*HEADER SEARCH*/
+	.cdisheader .search{position:relative;height:40px;margin:auto;display: -webkit-box;display: -moz-box;display: -ms-flexbox;display: -webkit-flex;display: flex;-webkit-flex-flow: row nowrap;flex-flow: row nowrap;justify-content: flex-start;align-items: flex-start;}
+	.ui-autocomplete{width:750px;height:350px;overflow: auto;font-size:120%;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;padding:3px;}
+	.searchname {display:inline-block;width:300px;overflow:hidden;vertical-align:top;padding:3px;}
+	.searchname span{padding:3px;}
+	.searchname strong{background-color:#db4437;color:#ffffff;}
+	
+	.searchcommunity {display:inline-block;width:130px;overflow:hidden;vertical-align:top;padding:3px;text-align: center;}
+	
+	.searchchart {display:inline-block;width:80px;overflow:hidden;padding:3px;text-align:center;}
+	.searchchart label{padding:3px;}
+	.searchchart span{padding:3px;}
+	.searchchart strong{font-weight:normal;background-color:#db4437;color:#ffffff;}
+	
+	.searchramq {display:inline-block;width:120px;overflow:hidden;padding:3px;text-align:center;}
+	.searchramq label{padding:3px;}
+	.searchramq span{padding:3px;}
+	.searchramq strong{background-color:#db4437;color:#ffffff;}
+	
+	.searchgiu {display:inline-block;width:80px;overflow:hidden;padding:3px;text-align:center;}
+	.searchgiu label{padding:3px;}
+	.searchgiu span{padding:3px;}
+	.searchgiu strong{background-color:#db4437;color:#ffffff;}
+}
+
+
+
+

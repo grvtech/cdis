@@ -1,0 +1,601 @@
+<div class="pagebody">
+<div class="cdisbody_editpatient">
+		<div class="section-header">
+			<span class="section-title">Edit Patient</span>
+		</div>
+	<div id="errortext-patient" class="errormessage"></div>
+	<form name="editpatient" id="editpatient-form" class="patient-info">
+		<table border="0" width="100%">
+			<tr>
+				<td valign="top">
+					<table border="0">
+						<tr>
+							<td class="label-editpatient">RAMQ Number :</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="ramq" id="ramq-value" />
+								</div>
+								
+							</td>
+						</tr>
+						<tr>
+							<td class="label-editpatient">IPM :</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="giu" id="ipm-value" />
+								</div>
+								
+							</td>
+						</tr>
+						<tr>
+							<td class="label-editpatient">Chart Number :</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="chart" id="chart-value" />
+								</div>
+								
+							</td>
+						</tr>
+						<tr style="display:none;">
+							<td class="label-editpatient">JBQBN :</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="jbnqa" id="jbnqa-value"/>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="label-editpatient">Band :</td>
+							<td>
+								<div class="textField">
+								<input type="text" name="band" id="band-value" />
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" style="padding:5px;">
+								<div id="radio-sex" class="btn-group" data-toggle="buttons">
+									<label for="male-value" class="btn btn-primary">
+										<input type="radio" name="sex" id="male-value" value="1" class="radioField"/>Male
+									</label>
+									
+									<label for="female-value" class="btn btn-primary">
+										<input type="radio" name="sex" id="female-value" value="2" class="radioField"/>Female
+									</label>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" style="padding:5px;">
+								<div id="radio-iscree" class="btn-group" data-toggle="buttons">
+									
+									<label for="cree-value" class="btn btn-primary">
+										<input type="radio" name="iscree" id="cree-value" value="1" class="radioField"/>Cree
+									</label>
+									
+									<label for="noncree-value" class="btn btn-primary">
+										<input type="radio" name="iscree" id="noncree-value" value="0" class="radioField"/>Non Cree
+									</label>
+								</div>
+							</td>
+						</tr>
+						<tr><td colspan="2" style="height:20px;"></td></tr>
+						
+					</table>
+					<table cellspacing="0" cellpadding="0" class="diabet-editpatient">
+						<tr>
+							<td class="label-editpatient ">Type of diabetes :</td>
+							<td ><select name="dtype" id="dtype-value" class="selectField"></select></td>
+						</tr>
+						<tr>
+							<td class="label-editpatient">Date of diagnosis:</td>
+							<td >
+								<div class="textField">
+									<input type="text" name="ddate" id="ddate-value"><i class="fa fa-calendar" aria-hidden="true"></i>
+								</div>
+								<input type="hidden" name="diabetcode" id="diabetcode-value"/>
+								<input type="hidden" name="diabetidvalue" id="diabetidvalue-value"/>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td valign="top">
+					<table border="0">
+						<tr><td class="label-editpatient">First Name :</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="fname" id="fname-value"/>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="label-editpatient">Last Name :</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="lname" id="lname-value"/>
+								</div>
+							</td>
+						</tr>
+						<tr style="display:none;"><td class="label-editpatient">Mother First Name :</td><td><input type="text" name="mfname" id="mfname-value" class="textField"/></td></tr>
+						<tr style="display:none;"><td class="label-editpatient">Mother Last Name :</td><td><input type="text" name="mlname" id="mlname-value" class="textField"/></td></tr>
+						<tr style="display:none;"><td class="label-editpatient">Father First Name :</td><td><input type="text" name="pfname" id="pfname-value" class="textField"/></td></tr>
+						<tr style="display:none;"><td class="label-editpatient">Father Last Name :</td><td><input type="text" name="plname" id="plname-value" class="textField"/></td></tr>
+						<tr>
+							<td class="label-editpatient">Date of birth :</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="dob" id="dob-value"/><i class="fa fa-calendar" aria-hidden="true"></i>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="label-editpatient">Phone :</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="phone" id="phone-value"/>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="label-editpatient">Community :</td>
+							<td>
+								<select name="idcommunity" id="idcommunity-value" class="selectField">
+								</select>
+							</td>
+						</tr>
+						<tr style="padding:5px;">
+							<td class="label-editpatient">Deceased :</td>
+							<td>
+							<div id="radio-deceased" class="btn-group" data-toggle="buttons">
+								
+								<label for="deceased-yes-value" class="btn btn-primary">
+									<input type="radio" name="deceased" id="deceased-yes-value" value="1" class="radioField"/>Yes
+								</label>
+								
+								<label for="deceased-no-value" class="btn btn-primary">
+									<input type="radio" name="deceased" id="deceased-no-value" value="0" class="radioField"/>No
+								</label>
+							</div>
+						</td>
+					</tr>
+						<tr><td colspan="2">
+							<div id="deceased-section">
+								<table>
+									<tr>
+										<td class="label-editpatient">Date of death :</td>
+										<td>
+											<div class="textField">
+												<input type="text" name="dod" id="dod-value"/><i class="fa fa-calendar" aria-hidden="true"></i>
+											</div>	
+										</td>
+									</tr>
+									<tr>
+										<td class="label-editpatient">Date cause :</td>
+										<td>
+											<div class="textField">
+												<input type="text" name="dcause" id="dcause-value"/>
+											</div>
+										</td>
+									</tr>	
+								</table>
+							</div>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan=2>
+					<table id="hcp-edit" width="100%" border=0>
+						<tr>
+							<td colspan=2 ><b>Patient`s Health Care Workers</b></td>
+							<td>CHR</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="chr" id="chr-value"/>
+								</div>
+								<input type="hidden" name="chrid" id="chrid"/>
+							</td>
+							<td>MD</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="md" id="md-value"/>
+								</div>
+								<input type="hidden" name="mdid" id="mdid"/>
+							</td>
+						</tr>
+						<tr>
+							<td>Nurse</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="nur" id="nur-value"/>
+								</div>
+								<input type="hidden" name="nurid" id="nurid"/>
+							</td>
+							<td>Nutritionist</td>
+							<td>
+								<div class="textField">
+									<input type="text" name="nut" id="nut-value"/>
+								</div>
+								<input type="hidden" name="nutid" id="nutid"/></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		
+		<div style="display:inline-block;width:48%;text-align:left;">
+			<div id="deletepatient-button-second" class="cisbutton">Delete Patient</div>
+		</div>
+		<div style="display:inline-block;width:48%;text-align:right;">
+			<div id='cancel-editpatient' class="cisbutton">Cancel</div> <div id="save-editpatient" class="cisbutton">Save</div>
+		</div>
+	</form>
+	
+</div>
+</div>
+
+<script>
+
+$(".cdismenu").hide();
+$(".side").hide();
+
+patientObj = prepareData(patientObj);
+//$("#radio-sex").buttonset();
+//$("#radio-iscree").buttonset();
+//$("#radio-deceased").buttonset();
+$("#dob-value").datepicker({
+    changeMonth: true,
+    yearRange: "1900:"+moment().year(),
+    dateFormat: "yy-mm-dd",
+    changeYear: true
+  });
+$("#dod-value").datepicker({
+    changeMonth: true,
+    yearRange: "1900:"+moment().year(),
+    dateFormat: "yy-mm-dd",
+    changeYear: true
+  });
+$("#ddate-value").datepicker({
+    changeMonth: true,
+    yearRange: "1900:"+moment().year(),
+    dateFormat: "yy-mm-dd",
+    changeYear: true
+  });
+  
+  
+$("#radio-deceased input[type=radio]").change(function() {
+	if($("input[name='deceased']:checked").val() == 1){
+		$("#deceased-section").show();	
+	}else{
+		$("#deceased-section").hide();
+	}
+});
+
+
+
+$(community).each(function(index, value) {
+    $("#idcommunity-value").append($("<option />").val(index).text(value));
+});
+$(dtype).each(function(index, value) {
+    $("#dtype-value").append($("<option />").val(index).text(value));
+});
+
+
+if(patientObj.deceased == 1){
+	$("#deceased-section").show();
+}else{
+	$("#deceased-section").hide();
+}
+
+
+$("#chr-value").autocomplete({
+	delay: 300,
+	minLength: 2,
+	autoFocus: true,
+	source: function( request, response ) {
+		$.ajax({
+			url: "/ncdis/service/data/getHcps",
+			dataType: "json",
+			data: {
+				criteria:"chr",
+				term: request.term,
+				language: "en",
+				sid: sid
+			},
+			success: function( data ) {
+				response($.map( data.objs[0], function( item ) {
+					return {
+						iduser : item.iduser,
+						name : item.name
+					};
+				}));
+			}
+		});
+	},
+	position: {  collision: "flip"  },
+	select: function( event, ui ) {
+		//optionSelected = true;
+		$("#chr-value").val(ui.item.name);
+		$("#chrid").val(ui.item.iduser);
+		return false;
+	},
+	open: function() {
+		//optionSelected = false;
+	},
+	close: function() {
+		
+	}
+}).data("ui-autocomplete")._renderItem = function(ul, item) {
+	var $liline = $("<li>");
+	$("<div>",{class:'searchname'}).appendTo($liline).append($("<span>").html(item.name));
+	$liline.appendTo(ul);
+	$(ul).height(180);
+	$(ul).width($("#chr-value").outerWidth());
+	return $liline;
+};
+
+
+$("#md-value").autocomplete({
+	delay: 300,
+	minLength: 2,
+	autoFocus: true,
+	source: function( request, response ) {
+		$.ajax({
+			url: "/ncdis/service/data/getHcps",
+			dataType: "json",
+			data: {
+				criteria:"md",
+				term: request.term,
+				language: "en",
+				sid: sid
+			},
+			success: function( data ) {
+				response($.map( data.objs[0], function( item ) {
+					return {
+						iduser : item.iduser,
+						name : item.name
+					};
+				}));
+			}
+		});
+	},
+	position: {  collision: "flip"  },
+	select: function( event, ui ) {
+		//optionSelected = true;
+		$("#md-value").val(ui.item.name);
+		$("#mdid").val(ui.item.iduser);
+		return false;
+	},
+	open: function() {
+		//optionSelected = false;
+	},
+	close: function() {
+		
+	}
+}).data("ui-autocomplete")._renderItem = function(ul, item) {
+	var $liline = $("<li>");
+	$("<div>",{class:'searchname'}).appendTo($liline).append($("<span>").html(item.name));
+	$liline.appendTo(ul);
+	$(ul).height(180);
+	$(ul).width($("#md-value").outerWidth());
+	return $liline;
+};
+
+$("#nur-value").autocomplete({
+	delay: 300,
+	minLength: 2,
+	autoFocus: true,
+	source: function( request, response ) {
+		$.ajax({
+			url: "/ncdis/service/data/getHcps",
+			dataType: "json",
+			data: {
+				criteria:"nur",
+				term: request.term,
+				language: "en",
+				sid: sid
+			},
+			success: function( data ) {
+				response($.map( data.objs[0], function( item ) {
+					return {
+						iduser : item.iduser,
+						name : item.name
+					};
+				}));
+			}
+		});
+	},
+	position: {  collision: "flip"  },
+	select: function( event, ui ) {
+		//optionSelected = true;
+		$("#nur-value").val(ui.item.name);
+		$("#nurid").val(ui.item.iduser);
+		return false;
+	},
+	open: function() {
+		//optionSelected = false;
+	},
+	close: function() {
+		
+	}
+}).data("ui-autocomplete")._renderItem = function(ul, item) {
+	var $liline = $("<li>");
+	$("<div>",{class:'searchname'}).appendTo($liline).append($("<span>").html(item.name));
+	$liline.appendTo(ul);
+	$(ul).height(180);
+	$(ul).width($("#md-value").outerWidth());
+	return $liline;
+};
+
+$("#nut-value").autocomplete({
+	delay: 300,
+	minLength: 2,
+	autoFocus: true,
+	source: function( request, response ) {
+		$.ajax({
+			url: "/ncdis/service/data/getHcps",
+			dataType: "json",
+			data: {
+				criteria:"nut",
+				term: request.term,
+				language: "en",
+				sid: sid
+			},
+			success: function( data ) {
+				response($.map( data.objs[0], function( item ) {
+					return {
+						iduser : item.iduser,
+						name : item.name
+					};
+				}));
+			}
+		});
+	},
+	position: {  collision: "flip"  },
+	select: function( event, ui ) {
+		//optionSelected = true;
+		$("#nut-value").val(ui.item.name);
+		$("#nutid").val(ui.item.iduser);
+		return false;
+	},
+	open: function() {
+		//optionSelected = false;
+	},
+	close: function() {
+		
+	}
+}).data("ui-autocomplete")._renderItem = function(ul, item) {
+	var $liline = $("<li>");
+	$("<div>",{class:'searchname'}).appendTo($liline).append($("<span>").html(item.name));
+	$liline.appendTo(ul);
+	$(ul).height(180);
+	$(ul).width($("#md-value").outerWidth());
+	return $liline;
+};
+
+
+
+var diabetObj = getObjectArray("diabet",patientObjArray);
+resetForm($("#editpatient-form"));
+populateForm($("#editpatient-form"), prepareData(patientObj));
+populateForm($("#editpatient-form"), prepareData(diabetObj));
+
+
+
+var hcpObject = getObjectArray("hcp",patientObjArray);
+$(usersArray).each(function(k,v){
+	console.log("user id : "+v.iduser + " chr id "+hcpObject.chr);
+	if(hcpObject.chr != null || hcpObject.chr != ""){
+		if(v.iduser == hcpObject.chr){
+			hcpObject["chr"] = (capitalizeFirstLetter((v.firstname).toLowerCase())+" "+capitalizeFirstLetter((v.lastname).toLowerCase()));
+			hcpObject["chrid"] = v.iduser;
+		}
+	}
+	if(hcpObject.md != null || hcpObject.md != ""){
+		if(v.iduser == hcpObject.md){
+			hcpObject["md"] = (capitalizeFirstLetter((v.firstname).toLowerCase())+" "+capitalizeFirstLetter((v.lastname).toLowerCase()));
+			hcpObject["mdid"] = v.iduser;
+		}
+	}
+	if(hcpObject.nur != null || hcpObject.nur != ""){
+		if(v.iduser == hcpObject.nur){
+			hcpObject["nur"] = (capitalizeFirstLetter((v.firstname).toLowerCase())+" "+capitalizeFirstLetter((v.lastname).toLowerCase()));
+			hcpObject["nurid"] = v.iduser;
+		}
+	}
+	if(hcpObject.nut != null || hcpObject.nut != ""){
+		if(v.iduser == hcpObject.nut){
+			hcpObject["nut"] = (capitalizeFirstLetter((v.firstname).toLowerCase())+" "+capitalizeFirstLetter((v.lastname).toLowerCase()));
+			hcpObject["nutid"] = v.iduser;
+		}
+	}
+});
+
+
+populateForm($("#editpatient-form"), hcpObject);
+
+$("#cancel-editpatient").click(function() {
+	gtc(sid,"en",patientObj.ramq,"patient");
+});
+
+$("#save-editpatient").click(function() {
+	$("#errortext-patient").html("");
+	var data = $('#editpatient-form').serialize();
+	console.log(data);
+	data+="&sid="+sid+"&language=en&casem=&idpatient="+patientObjArray[0].idpatient
+	var save = $.ajax({
+		  url: "/ncdis/service/data/savePatientRecord?sid="+sid+"&language=en&idpatient="+patientObjArray[0].idpatient,
+		  type: "POST",
+		  async : false,
+		  data: data,
+		  dataType: "json",
+		  beforeSend: function(xhr, opts){
+		  	var validRamq = validateRamq($("#ramq-value").val());
+		  	var validChart = validateChart($("#chart-value").val());
+		  	//var validFname = validateFname($("#fname-value").val());
+		  	//var validLname = validateLname($("#lname-value").val());
+		  	var validDeceased = validateDeceased($("#dod-value").val(), $("#dcause-value").val());
+		  	var validDtype = validateDtype($("#dtype-value").val());
+		  	var validDdate = validateDdate($("#ddate-value").val());
+		  	var validPhone = validatePhone($("#phone-value").val());
+		  	var validCommunity = validateCommunity($("#idcommunity-value").val());
+		  	if(validRamq && validChart && validCommunity && validDeceased && validDtype && validDdate && validPhone){
+		  		return true;
+		  		//return false;
+		  	}else{
+		  		return false;
+		  	}
+		  }
+		});
+		save.done(function( json ) {
+			gtc(sid,"en",patientObj.ramq,"patient");
+		});
+		save.fail(function( jqXHR, textStatus ) {
+			var t = $("#errortext-editpatient").html();
+			$("#errortext-editpatient").html(t+"<p>Error saving the patient!</p>");
+		});	
+});
+
+$("#deletepatient-button, #deletepatient-button-second").click(function() {
+	var $d = $("<div>",{id:"dialog-confirm",title:"Delete CDIS patient"}).appendTo($("body"));
+	var $p = $("<p>").text("This patient will be permanently deleted. Are you sure ?").appendTo($d); 
+	$d.dialog({
+	      resizable: false,
+	      height: "auto",
+	      width: 400,
+	      modal: true,
+	      buttons: {
+	        "Delete patient": function() {
+	        	var del = $.ajax({
+	  			  url: "/ncdis/service/data/deletePatientRecord?sid="+sid+"&language=en&idpatient="+patientObj.idpatient,
+	  			  type: "GET",
+	  			  async : false,
+	  			  cache : false,
+	  			  dataType: "json"
+	  			});
+	  		del.done(function( json ) {
+	  				msg = json.message;
+	  				if(msg == "error"){
+	  					alert("Error deleteing the patient.");
+	  				}else{
+	  					gts(sid,"en");
+	  					//window.location = "cdis.html?sid="+sid+"&language=en";
+	  				}
+	  			});
+	  		del.fail(function( jqXHR, textStatus ) {
+	  			  alert( "Request failed: " + textStatus );
+	  			  //console.log(this.url);
+	  			});	
+	        },
+	        Cancel: function() {
+	          $( this ).dialog( "close" );
+	          $(this.remove());
+	        }
+	      }
+	    });
+});
+
+
+
+</script>

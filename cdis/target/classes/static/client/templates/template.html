@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	</head>
+<body>
+	<div id="indexPage" class="pageClass">
+		<div class="logincontainer">
+			<div>CDIS</div>
+			<form id="loginform" class="login">
+				<div class="avatar"></div>
+				<div id="errortext" class="errormessage">wrong username or password</div>
+				<div class="username">
+					<input type="text" name="user" id="user" class="logintext" placeholder="Username" />
+				</div>
+				<div class="password">
+					<input type="password" id="pass" name="pass" class="logintext" placeholder="Password"/>
+				</div>
+				<span id="loginbutton" class="button">login</span>
+			</form>
+		</div>
+	</div>
+	
+	<div id="userPage" class="pageClass">
+		<div class="header">
+			<div class="logo"></div>
+			<div class="menu"><!-- the menu items are obtained dynamicaly from the server get user actions based on his role -->
+				<div class="menuitem"><p>Personal Info</p><div></div></div>
+				<div class="menuitem"><p>Users</p><div></div></div>
+				<div class="menuitem"><p>Options</p><div></div></div>
+				<div class="menuitem"><p>Front Page Message</p><div></div></div>
+				<div class="menuitem"><p>Messages</p><div></div></div>
+			</div>
+		</div>
+		<div class="menubody">
+		</div>
+		<div class="appbody"><!-- the app items are obtained dynamicaly from the server get user systems based on his role -->
+			<span>Applications</span><br/>
+			<div class="appitem">CDIS</div>
+			<div class="appitem">Nephro</div>
+		</div>
+	</div>
+	
+	
+	
+	<div id="cdisPage" class="pageClass">
+		<div class="header">
+			<div class="logo">CDIS</div>
+			<div class="search">
+ 				<div class="ssearch"><input type="text" name="search" id="search" class="searchtext" placeholder="Search"/></div> 
+				<div class="scriteria">
+					<input type="radio" name="criteria" value="name" >Name
+					<input type="radio" name="criteria" value="ramq" >RAMQ No.
+					<input type="radio" name="criteria" value="chart" checked>Chart No.
+				</div>
+			</div>
+			<div class="options"></div>
+		</div>
+		<div class="cdisuser">
+			<div class="cdisuser_graph1"></div>
+			<div class="cdisuser_graph2"></div>
+			<div class="cdisuser_table1"></div>
+			<div class="cdisuser_reports"></div>
+		</div>
+		
+		
+		<div class="cdisbody">
+			<div id="cdisPage_body_index">
+				<div id="cdisPage_body_index_left">
+				</div>
+				<div id="cdisPage_body_index_right"></div>
+			</div>
+			<div id="cdisPage_body_patient">
+			</div>
+		</div>
+	</div>
+	
+</body>
+</html>

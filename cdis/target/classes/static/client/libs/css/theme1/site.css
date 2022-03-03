@@ -1,0 +1,144 @@
+/*
+site classes
+*/
+
+
+@font-face{ 
+  font-family: "grvtech_font" ; 
+  src: 	url( "/client/templates/fonts/urw-gothic/urw-gothic-l-book.ttf"),
+  	 	url( "/client/templates/fonts/urw-gothic/urw-gothic-l-book.eot"); 
+}
+
+@font-face{ 
+  font-family: "roboto-light" ; 
+  src: 	url( "../../templates/fonts/roboto/Roboto-Light.ttf");
+}
+
+@font-face{ 
+  font-family: "roboto-thin" ; 
+  src: 	url( "../../templates/fonts/roboto/Roboto-Thin.ttf");
+}
+
+@font-face{ 
+  font-family: "roboto" ; 
+  src: 	url( "../../templates/fonts/roboto/Roboto-Regular.ttf");
+}
+
+@font-face{ 
+  font-family: "roboto-bold" ; 
+  src: 	url( "../../templates/fonts/roboto/Roboto-Bold.ttf");
+}
+
+
+body{margin: 0px;padding : 0px;height: 100%; background-color:#f7f7f7;}
+#wraper{position:absolute;left:0px;top:0px;height:100%;width:100%;	/*background-color:#cd00cd;*//*border:1px solid #000000;*/}
+
+
+.cisbutton{border:none;margin-right:10px;font-family: roboto;font-size: 100%;display:inline-block;text-align:center;vertical-align:middle;color:#ffffff;padding:3px 10px 3px 10px;background-color:#4d90fe;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);cursor: default;}
+.cisbutton:hover{font-family: roboto-bold;color:#4d4d4d;-moz-box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);}
+.cisbutton_selected{font-family: roboto-bold;color:#ffffff;background-color:#db4437;}
+
+.cisbutton-grey{border:none;margin-right:10px;font-family: roboto;font-size: 100%;display:inline-block;text-align:center;vertical-align:middle;color:#ffffff;padding:3px 10px 3px 10px;background-color:#cdcdcd;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);cursor: default;}
+.cisbutton-grey:hover{font-family: roboto-bold;color:#4d4d4d;-moz-box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);}
+
+
+.section-button{border:none;width:25px;height:25px;padding:0px;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius:2px;cursor: pointer;}
+
+
+
+/*
+ * Make each label stack on top of one another.
+ *
+ */
+.ui-buttonset-vertical label {
+    display: block;
+}
+
+/*
+ * Handle colliding borders. Here, we're making the bottom border
+ * of every label transparent, except for labels with the
+ * ui-state-active or ui-state-hover class, or if it's the last label.
+ *
+ */
+.ui-buttonset-vertical label:not(:last-of-type):not(.ui-state-hover):not(.ui-state-active) {
+    border-bottom: transparent;
+}
+
+/*
+ * For lables in the active state, we need to make the top border of the next
+ * label transparent.
+ *
+ */
+.ui-buttonset-vertical label.ui-state-active + input + label {
+    border-top: transparent;
+}
+
+/*
+ * Oddly enough, the above style approach doesn't work for the
+ * hover state. So we define this class that's used by our JavaScript
+ * hack.
+ *
+ */
+.ui-buttonset-vertical label.ui-transparent-border-top {
+    border-top: transparent;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
+.errormessage{	
+	color: #ff0000;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 36px;
+	font-family: Arial;
+}
+
+
+.modal{
+    display:    none;
+    position:   fixed;
+    z-index:    10000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba(242, 243, 243, 1) 
+                url('../images/hourglass.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+
+.modal-span{position:absolute;width:320px;height:65px;left:50%;margin-left:-160px;top:30%;font-family:roboto;font-size:230%;color:#4d4d4d;
+	padding-left:55px;line-height:65px;
+	background:no-repeat url(../images/cdis-logo50.png) left center;background-size: 51px 62px;
+}
+
+body.loading{
+    overflow: hidden;   
+}
+
+
+body.loading .modal{
+    display: block;
+}
+
+.jqplot-title{font-family:roboto;font-size:18px;;height:25px;line-height:25px;text-align: left;}
+.jqplot-cursor-tooltip{background-color:#cdcdcd;color:#4d4d4d;}
+.jqplot-highlighter-tooltip{background-color:#cdcdcd;color:#4d4d4d;z-index:100;}
+
+.pointLabels{color:#000000; font-family:Arial;font-size:15px;}
+.jqplot-point-label {
+  border: 1.5px solid #4d4d4d;
+  padding: 1px 3px;
+  background-color: #ececec;
+  color:#000000;
+}
+
+/*.pageClass{background-color:#5c6c9d;}*/
+/*.pageClass{background-color:#efefef;}*/

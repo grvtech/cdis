@@ -1,0 +1,17 @@
+<div id="loginPage" class="pageClass">
+	<div id="loginPage_band">
+		<div id="loginPage_login">
+			<form id="loginPage_loginform" >
+				<div id="loginPage_avatar"></div>
+				<div id="loginPage_error"></div>
+				<div id="loginPage_username">
+					<input type="text" name="user" id="user" class="logintext" placeholder="Username" />
+				</div>
+				<div id="indexPage_password">
+					<input type="password" name="pass" id="pass" class="logintext" placeholder="Password"/>
+				</div>
+				<span id="indexPage_loginbutton" class="button">login</span>
+			</form>
+		</div>
+	</div>
+</div> 

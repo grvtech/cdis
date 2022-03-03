@@ -1,0 +1,178 @@
+<style>
+	.cdisbody_personalinfo {background-color:#ffffff;}
+	.cdisbody_personalinfo h1{font-family:roboto-thin; font-size:170%; color:#4d4d4d; padding:20px;}
+	.cdisbody_personalinfo label{font-family:roboto-thin; font-size:140%; color:#4d4d4d;}
+	.cdisbody_personalinfo form{margin:10px 0px 30px 20px;}
+	.cdisbody_personalinfo table{width:90%;}
+	.cdisbody_personalinfo table .td-label{width:200px;}
+	.cdisbody_personalinfo .password-space{margin-top:10px; border:1px solid #cdcdcd;}
+	.cdisbody_personalinfo .text{font-family:roboto; font-size:140%; color:#4d4d4d; border:1px solid #ffffff; background-color:#ffffff;padding:5px;}
+	.cdisbody_personalinfo .text-label{font-family:roboto; font-size:100%; color:#4d4d4d;padding:2px;}
+	.cdisbody_personalinfo .text:focus{background-color:#cdcdcd;}
+	.cdisbody_personalinfo .text:disabled{background-color:#cdcdcd;}
+	.cdisbody_personalinfo .password-text{font-family:roboto; font-size:140%; color:#4d4d4d; border:1px solid #ffffff; background-color:#efefef;padding:5px;}
+	.cdisbody_personalinfo .password-text:focus{background-color:#cdcdcd;}
+</style>
+
+<div class="cdisbody_personalinfo uss">
+	<h1>User Personal Info</h1>
+	<div>
+		<form action="" name="personalinfoForm" id="personalinfo-form">
+			<input name="iduser" id="iduser-id" type="hidden"/>
+			<table border="0">
+				<tr>
+					<td class="td-label"><label for="fname">First Name</label></td>
+					<td><input name="firstname" id="firstname-id" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td><label for="lname">Last Name</label></td>
+					<td><input name="lastname" id="lastname-id" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td><label for="username">Username</label></td>
+					<td><input name="username" id="username-id" type="text" class="text" disabled=true/></td>
+				</tr>
+				<tr>
+					<td><label for="role">Role</label></td>
+					<td><input name="role" id="role-id" type="text" class="text" disabled=true/></td>
+				</tr>
+				<tr>
+					<td><label for="community">Community access</label></td>
+					<td>
+						<input name="community" id="community-id" type="text" class="text" disabled=true/>
+						<input name="idcommunity" id="idcommunity-id" type="hidden"/>
+					</td>
+				</tr>
+				<tr>
+					<td><label for="email">Email Address</label></td>
+					<td><input name="email" id="email-id" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td><label for="phone">Phone Number</label></td>
+					<td><input name="phone" id="phone-id" type="text" class="text"/></td>
+				</tr>
+				<tr>
+					<td colspan="2"><div class="cisbutton" id="change-password-button">Change Password</div></td>
+				</tr>
+				<tr><td colspan="2"></td></tr>
+				<tr>
+					<td colspan="2" align="right"><div class="cisbutton" id="save-personalinfo-button">Save Personal Info</div> <div class="cisbutton" id="cancel-personalinfo-button">Cancel</div></td>
+				</tr>
+			</table>
+			
+		</form>
+	</div>
+	<div>&nbsp;</div>
+</div>
+<script>
+	//var userObj = {"fname":"Radu Victor","lname":"Gabor","email":"radu@grvtech.ca","username":"radu","password":"radu","community":"All Communities","role":"ADMIN","phone":"514-555-1234"};
+	//console.log(userProfileObj);
+	var ob = userObj[0];
+	
+	ob["community"] = report_idcommunity[ob.idcommunity];
+	ob["role"] = userProfileObj.role.code;
+	console.log(ob);
+	populateForm($("#personalinfo-form"),ob);
+	
+	
+	$("#change-password-button").click(function (){
+		var par = $(this).parent();
+		$(this).hide();
+		var pass = $("<div>",{class:"password-space"});
+		par.append(pass);
+		var t = $("<table>",{border:"0"}).appendTo(pass);
+		var tt = $("<table>",{border:"0"});
+		t.append($("<tr>").append($("<td>").append(tt)).append($("<td>",{align:"bottom"}).append($("<div>",{class:"cisbutton",id:"save-change-password-button"}).text("Save")).append($("<div>",{class:"cisbutton",id:"cancel-change-password-button"}).text("Cancel"))));
+		tt.append($("<tr>").append($("<td>",{class:"text-label"}).text("Old Password")).append($("<td>",{class:"text-label"}).text("New Password")));
+		tt.append($("<tr>").append($("<td>").append($("<input>",{type:"password",id:"password-id",class:"password-text",name:"password",value:ob.password}))).append($("<td>").append($("<input>",{type:"password",id:"new-password-id",class:"password-text",name:"newpassword"}))));
+		$("#save-change-password-button").click(function(){
+			var data = $('#personalinfo-form').serialize();
+			data+="&sid="+sid+"&language=en";
+			var savepass = $.ajax({
+				  url: "/ncdis/service/data/setUserPassword?sid="+sid+"&language=en&iduser="+ob.iduser+"&",
+				  type: "POST",
+				  async : false,
+				  data : data,
+				  dataType: "json",
+				  beforeSend: function(xhr, opts){
+				  	//var validRamq = validateRamq($("#ramq-value").val());
+				  	//var validChart = validateChart($("#chart-value").val());
+				  	//var validFname = validateFname($("#fname-value").val());
+				  	//var validLname = validateLname($("#lname-value").val());
+				  	//var validDeceased = validateDeceased($("#dod-value").val(), $("#dcause-value").val());
+				  	//var validDtype = validateDtype($("#dtype-value").val());
+				  	//var validDdate = validateDdate($("#ddate-value").val());
+				  	/*
+				  	if(validRamq && validChart && validFname && validLname && validDeceased && validDtype && validDdate){
+				  		return true;
+				  	}else{
+				  		return false;
+				  	}
+				  	*/
+				  }
+				});
+				savepass.done(function( json ) {
+					$("#change-password-button").show();
+					$(".password-space").remove();
+				});
+				savepass.fail(function( jqXHR, textStatus ) {
+					$("#change-password-button").show();
+					$(".password-space").remove();
+				});	
+			
+			
+			
+		});
+		$("#cancel-change-password-button").click(function(){
+			$("#change-password-button").show();
+			$(".password-space").remove();
+		});
+
+	});
+	
+	
+	$("#cancel-personalinfo-button").click(function(){
+		window.location = "cdis.html?section=dashboard&sid="+sid+"&language=en";
+	});
+	$("#save-personalinfo-button").click(function(){
+		
+		
+		var data = $('#personalinfo-form').serialize();
+		data+="&sid="+sid+"&language=en";
+		
+		var save = $.ajax({
+			  url: "/ncdis/service/data/setUser?sid="+sid+"&language=en",
+			  type: "POST",
+			  async : false,
+			  data: data,
+			  dataType: "json",
+			  beforeSend: function(xhr, opts){
+			  	//var validRamq = validateRamq($("#ramq-value").val());
+			  	//var validChart = validateChart($("#chart-value").val());
+			  	//var validFname = validateFname($("#fname-value").val());
+			  	//var validLname = validateLname($("#lname-value").val());
+			  	//var validDeceased = validateDeceased($("#dod-value").val(), $("#dcause-value").val());
+			  	//var validDtype = validateDtype($("#dtype-value").val());
+			  	//var validDdate = validateDdate($("#ddate-value").val());
+			  	/*
+			  	if(validRamq && validChart && validFname && validLname && validDeceased && validDtype && validDdate){
+			  		return true;
+			  	}else{
+			  		return false;
+			  	}
+			  	*/
+			  }
+			});
+			save.done(function( json ) {
+				window.location = "cdis.html?section=dashboard&sid="+sid+"&language=en";
+			});
+			save.fail(function( jqXHR, textStatus ) {
+				var t = $("#errortext-addpatient").html();
+				$("#errortext-addpatient").html(t+"<p>Error saving the patient!</p>");
+			});	
+		
+		//window.location = "cdis.html?section=dashboard&sid="+sid+"&language=en";
+	});
+	
+</script>
+

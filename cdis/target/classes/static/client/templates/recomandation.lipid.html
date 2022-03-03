@@ -1,0 +1,334 @@
+<html>
+<head>
+	<style>
+		/*#F0C7B7*/
+		.recomandation{width:800px;font-family:Sans-Serif;font-size:100%;}
+		.recomandation section{border:1px solid #000000;border-radius:7px;overflow:hidden;margin:2px;}
+		.recomandation section header{background:rgb(217,234,246);color:#ffffff;font-weight:bold;padding:3px;text-align:center;}
+		.recomandation section main{padding:3px;}
+		.recomandation section main p{font-weight:bold;color:rgb(62,179,227);margin:2px;}
+		.recomandation section main .step{font-weight:bold;color:rgb(62,179,227);padding:5px;}
+		.recomandation section main li b{font-weight:bold;color:rgb(62,179,227);font-size:130%;}
+		.recomandation .detail {font-size:90%;}
+		.recomandation .detail li b{font-weight:bold;color:#000000;}
+		.recomandation .detail p{font-weight:normal;color:#000000;}
+		
+		.recomandation ul {list-style: none;padding: 0px;margin:3px;}
+		.recomandation ul li:before{content: '\25A2';margin: 0 1em; /* any design */}
+		.recomandation ul li{font-size:87%;}
+		
+		.recomandation ul.stepul {list-style: none;padding: 0px;margin:1px;font-size:85%;}
+		.recomandation ul.stepul li:before{content: '\25B8';margin: 0 1em; /* any design */}
+		.recomandation ul.stepul li{font-size:85%;padding:2px;}
+		
+		.recomandation .sides{
+			padding: 0;margin: 0;display: -webkit-box;display: -moz-box;display: -ms-flexbox;
+		  	display: -webkit-flex;display: flex;-webkit-flex-flow: row nowrap;justify-content: space-around;
+		}
+		.recomandation .leftside{width:70%;padding:10px;}
+		.recomandation .rightside{width:30%;}
+		.recomandation .litext{
+			position:relative;
+			height:80px;
+			width:100%;
+			margin:-80px 0px 0px 0px;
+		}
+		
+		.recomandation .lidesign{
+			position:relative;
+			height:80px;
+			width:100%;
+			display: -webkit-box;
+			display: -moz-box;
+			display: -ms-flexbox;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-flex-flow: row nowrap;
+			justify-content: space-around;
+			align-items:center;
+			/*border:1px solid #000000;*/
+		}
+		
+		.recomandation .lidesign .empty{height:100%;width:200px;}
+		.recomandation .lidesign .line{
+			height:20px;width:400px;
+			text-align:right;
+			background: red; /* For browsers that do not support gradients */
+			background: -webkit-linear-gradient(left, #ffffff , #F0C7B7); /* For Safari 5.1 to 6.0 */
+			background: -o-linear-gradient(right, #ffffff, #F0C7B7); /* For Opera 11.1 to 12.0 */
+			background: -moz-linear-gradient(right, #ffffff, #F0C7B7); /* For Firefox 3.6 to 15 */
+			background: linear-gradient(to right, #ffffff , #F0C7B7); /* Standard syntax */
+		}
+		.recomandation .lidesign .line .yess{height:20px;line-height:20px;font-weight:bold;color:#B31C18;margin-right:40px;font-size:80%;}
+		.recomandation .lidesign .triangle{
+			width: 0;
+			height: 0;
+			border-top: 20px solid transparent;
+			border-left: 40px solid #F0C7B7;
+			border-bottom: 20px solid transparent;
+		}
+		
+		.recomandation .litext-1{
+			position:relative;
+			height:30px;
+			width:100%;
+			margin:-30px 0px 0px 0px;
+			/*border:1px solid #000000;*/
+			
+		}
+		
+		.recomandation .lidesign-1{
+			position:relative;
+			height:30px;
+			width:100%;
+			display: -webkit-box;
+			display: -moz-box;
+			display: -ms-flexbox;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-flex-flow: row nowrap;
+			justify-content: space-around;
+			align-items:center;
+			/*border:1px solid #000000;*/
+		}
+		.recomandation .lidesign-1 .empty{height:100%;width:200px;}
+		.recomandation .lidesign-1 .line{
+			height:20px;width:400px;
+			text-align:right;
+			background: red; /* For browsers that do not support gradients */
+			background: -webkit-linear-gradient(left, #ffffff , #F0C7B7); /* For Safari 5.1 to 6.0 */
+			background: -o-linear-gradient(right, #ffffff, #F0C7B7); /* For Opera 11.1 to 12.0 */
+			background: -moz-linear-gradient(right, #ffffff, #F0C7B7); /* For Firefox 3.6 to 15 */
+			background: linear-gradient(to right, #ffffff , #F0C7B7); /* Standard syntax */
+		}
+		.recomandation .lidesign-1 .line .yess{height:20px;line-height:20px;font-weight:bold;color:#B31C18;margin-right:40px;font-size:80%;}
+		.recomandation .lidesign-1 .triangle{
+			width: 0;
+			height: 0;
+			border-top: 20px solid transparent;
+			border-left: 40px solid #F0C7B7;
+			border-bottom: 20px solid transparent;
+		}
+		
+		.recomandation main .leftside .or{position:relative;margin:3px;font-weight:bold;}
+		
+		.recomandation .no{
+			position:relative;
+			margin:10px;
+			width:40px;
+			height:30px;
+			/*border:1px solid #000000;*/
+			display: -webkit-box;
+			display: -moz-box;
+			display: -ms-flexbox;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-flex-flow: column nowrap;
+			justify-content: space-around;
+			align-items:center;
+		}
+		.recomandation .noline{
+			width:50%;
+			height:70%;
+			background-color:#B31C18;
+			color:#ffffff;
+			text-align:center;
+			padding:2px;
+			font-size:80%;
+			font-weight:bold;
+		}
+		.recomandation .novirf{
+			width: 0;
+			height: 0;
+			border-left: 20px solid transparent;
+			border-right: 20px solid transparent;
+			border-top: 15px solid #B31C18;
+		}
+					
+		.recomandation .rightside{
+			margin:0px;
+			padding:0px;
+			/*border:1px solid #000000;*/
+			display: -webkit-box;
+			display: -moz-box;
+			display: -ms-flexbox;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-flex-flow: column nowrap;
+			/*justify-content: space-around;*/
+			/*align-items:flex-start;*/
+		}
+				
+		.recomandation .rightblock{
+			background:#F0C7B7;
+			margin:3px 2px 0px 2px;
+			text-align:center;
+			vertical-align: middle;
+			display: table;
+			width:100%;
+		}
+		.recomandation .rightblock div{
+			color:#000000;
+			margin:auto;
+			font-weight:bold;
+			display: table-cell;
+    		vertical-align: middle;
+		}
+		.recomandation .rightblock div p.petit{font-weight:normal;color:#000000;margin:auto;font-size:70%;}
+		.recomandation .rightblock div p{font-weight:bold;color:#000000;margin:auto;font-size:100%;}
+		.recomandation .detail{border-top:1px solid #000000;}
+		.recomandation. detail p{font-weight:normal;font-size:90%;padding:3px;margin:2px;color:#000000;}
+		.recomandation .detail ul{fon t-weight:normal;font-size:90%;padding:3px;margin:2px;}
+			
+		.recomandation .minuscul{font-weight:normal;font-size:60%;padding:10px;margin:2px;}
+				
+		.recomandation #grad {
+		  background: red; /* For browsers that do not support gradients */
+		  background: -webkit-linear-gradient(left, red , yellow); /* For Safari 5.1 to 6.0 */
+		  background: -o-linear-gradient(right, red, yellow); /* For Opera 11.1 to 12.0 */
+		  background: -moz-linear-gradient(right, red, yellow); /* For Firefox 3.6 to 15 */
+		  background: linear-gradient(to right, red , yellow); /* Standard syntax */
+		}
+				
+		.recomandation #triangle-right {
+			width: 0;
+			height: 0;
+			border-top: 50px solid transparent;
+			border-left: 100px solid #F0C7B7;
+			border-bottom: 50px solid transparent;
+		}
+		
+		.recomandation #triangle-down {
+			width: 0;
+			height: 0;
+			border-left: 50px solid transparent;
+			border-right: 50px solid transparent;
+			border-top: 100px solid red;
+		}
+		
+		.lipid-image{background:url(/ncdis/client/libs/images/lipids.recomandation.png?tsid=20191012111001) no-repeat center center; height:800px;background-size:100% 100%;}
+		
+	</style>
+	
+</head>
+<body>
+
+	<div class="recomandation">
+		<section>
+			<header>
+				Recommendations for Vascular Protection
+			</header>
+			<main>
+				<p>For All Patients With Diabetes: The ABCDEs</p>
+				<ul>
+					<li><b>A</b> A1C - optimal glycemic control (usually &le; 7%)</li>
+					<li><b>B</b> BP - optimal blood pressure control (< 130/80 mmHg)</li>
+					<li><b>C</b> Cholesterol - LDL-C &le; 2.0 mmol/L if decision made to treat</li>
+					<li><b>D</b> Drugs to protect the heart (see algorithm) - <strong>A</strong> ACEi or ARB &sdot; <strong>S</strong> Statin &sdot; <strong>A</strong> ASA if indicated</li>
+					<li><b>E</b> Exercise - Regular physical activity, healthy diet, achievement and maintenance of healthy body weight</li>
+					<li><b>S</b> Smoking cessation</li>
+				</ul>
+			</main>
+		</section>
+	
+	
+		<section>
+			<div class="lipid-image"></div>
+		
+		
+		<!-- 
+			<header>
+				Does This Patient Require Vascular Protective Medications?
+			</header>
+			<main class="sides">
+				<div class="leftside">
+					<span class="step">STEP 1:</span> <span><strong>Does the patient have end organ damage?</strong></span>
+					<div class="lidesign"><div class="empty"></div><div class="line"><div class="yess">YES</div></div><div class="triangle"></div></div>		
+					<div class="litext">
+						<ul class="stepul">&#x25A2; Macrovascular disease
+							<li>Cardiac ischemia (silent or overt)</li>
+							<li>Peripheral arterial disease</li>
+							<li>Cerebrovascular/Carotid disease</li>
+						</ul>
+					</div>
+					<div class="or">OR</div>
+					<div class="lidesign"><div class="empty"></div><div class="line"><div class="yess">YES</div></div><div class="triangle"></div></div>		
+					<div class="litext">
+						<ul class="stepul">&#x25A2; Microvascular disease
+							<li>Retinopathy</li>
+							<li>Nephropathy (ACR &ge; 2.0)</li>
+							<li>Neuropathy</li>
+						</ul>
+					</div>
+					<div class="no"><div class="noline">NO</div><div class="novirf"></div></div>
+					<span class="step">STEP 2:</span> <span><strong>What is the patient's age?</strong></span>
+					<div class="lidesign-1"><div class="empty"></div><div class="line"><div class="yess">YES</div></div><div class="triangle"></div></div>		
+					<div class="litext-1"><ul class="stepul">&#x25A2; &ge; 55 years</ul></div>
+					<div class="or">OR</div>
+					<div class="lidesign-1"><div class="empty"></div><div class="line"><div class="yess">YES</div></div><div class="triangle"></div></div>		
+					<div class="litext-1"><ul class="stepul">&#x25A2; &ge; 40 - 54 years</ul></div>
+					<div class="no"><div class="noline">NO</div><div class="novirf"></div></div>
+					<span class="step">STEP 3:</span> <span><strong>Does the patient ...</strong></span>
+					<div class="lidesign"><div class="empty"></div><div class="line"><div class="yess">YES</div></div><div class="triangle"></div></div>		
+					<div class="litext">
+						<ul class="stepul">&#x25A2;  Have diabetes &gt; 15 years AND age &gt; 30 years</ul>
+						<ul class="stepul" style="width:70%;">&#x25A2;  Warrant statin therapy based on the 2012 Canadian Cardiovascular Society Lipid Guidelines</ul>
+					</div>
+				</div>
+				<div class="rightside">
+					<div class="rightblock" style="height:140px;">
+						<div>
+							<p>STATIN*</p>
+							<p>+</p>
+							<p>ACEi or ARB#</p>
+							<p>+</p>
+							<p>ASA</p>
+							<p class="petit">Clopidrogrel if ASA-intolerant</p>
+						</div>
+						
+					</div>
+					<div class="rightblock" style="height:190px;">
+						<div>
+							<p>STATIN*</p>
+							<p>+</p>
+							<p>ACEi or ARB#</p>
+						</div>
+					</div>
+					<div class="rightblock" style="height:190px;">
+						<div>
+							<p>STATIN*</p>
+						</div>
+					</div>
+				</div>
+			</main>
+			<main class="detail">
+				<p>
+				The above vascular protective medications have the potential to cause <b>embryopathy</b>: ACEi/ARBs in the 2<sup>nd</sup> trimester
+				and beyond (controversial effects in the 1<sup>st</sup> trimester), Statins throughout pregnancy. Therefore, these medications
+				should <b>only be used in the presence of proper preconception counseling</b> and <b>reliable contraception</b> in women of
+				childbearing age. A woman's pregnancy plans should be discussed at every visit.
+				</p>
+				<ul>
+					<li><b>Statins</b> should be stopped <b>prior to conception</b></li>
+					<li><b>ACEi or ARBs</b> should be stopped <b>either prior</b> to conception or immediately <b>upon detection</b> of pregnancy</li>
+				</ul>
+			</main>
+			-->
+			
+		</section>
+		<!-- 
+		<div class="minuscul">
+			<p><span>*</span> <span>Dose adjustments or additional lipid therapy warranted if lipid target (LDL-C ≤2.0 mmol/L) not being met.</span></p>
+			<p><span>#</span> ACE-inhibitor or ARB (angiotensin receptor blocker) should be given at doses that have demonstrated vascular protection (ie. perindopril 8 mg once daily
+			(EUROPA trial), ramipril 10 mg once daily (HOPE trial), telmisartan 80 mg once daily (ONTARGET trial))</p>
+			
+			<p>ASA should not be used for the primary prevention of cardiovascular disease in people with diabetes. ASA may be used for secondary prevention.</p>
+			<p>ACR = albumin-creatinine ratio ASA = acetylsalicylic acid ACEi = angiotensin converting enzyme inhibitor</p>
+			<p>ARB = angiotensin receptor blocker LDL = low density lipoprotein</p>
+		</div>
+		 -->
+	
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,676 @@
+<div class="reportsbody_list"></div>
+
+<script>
+var originalDataset = null;
+var currentDataset = null;
+var currentHeader = null;
+var currentInput = null;
+var currentDataName = null;
+var datasetReady = false;
+
+//console.log(userProfileObj);
+
+$.each(reportsObject.lists, function(i, v){
+	var raport = prepareDefinedReport(v.code);
+	var id = raport.id.replace(".","_").toLowerCase();
+	
+	var reportContainer = $("<div>",{id:"id_"+id,class:"container uss"})
+		.appendTo($(".reportsbody_list"))
+		.append($("<p>",{class:""}).text(raport.title))
+		.append($("<div>",{id:"gl_"+id,class:"cisbutton"}).text("Generate List"));
+	
+	$("#gl_"+id).click(function(){
+		fullscreenList(raport);
+		//var dataName = raport.id.substring(5).toLowerCase();
+		//renderBodyList(dataName, raport.data.datasets[0].set);
+	});
+});
+
+function fullscreenList(object){
+	var id = object.id.replace(".","_").toLowerCase();
+	var dataName = object.id.substring(5).toLowerCase();
+	var modal = $('<div>',{id:"fullscreen_"+id,class:"fullscreen-modal"}).appendTo($('#wraper'));
+	setTimeout(showProgress,1);
+	var header = $('<div>',{class:"fullscreen-modal-header"}).appendTo(modal);
+	$('<div>',{class:"fullscreen-modal-header-logo"}).appendTo(header);
+	$('<div>',{class:"fullscreen-modal-header-cdis"}).text("CDIS").appendTo(header);
+	$('<div>').appendTo(header);
+	$('<div>',{class:"fullscreen-modal-header-title"}).text("Reports").appendTo(header);
+	$('<div>',{class:"fullscreen-modal-header-close"}).html($('<i>',{class:"fa fa-times"})).click(function(){modal.remove();}).appendTo(header);
+	var body = $('<div>',{class:"fullscreen-modal-body"}).appendTo(modal);
+	var footer = $('<div>',{class:"fullscreen-modal-footer"}).appendTo(modal);
+	var toolbar = $('<div>',{class:"fullscreen-modal-toolbar"}).appendTo(body);
+	var list = $('<div>',{class:"fullscreen-modal-list"}).appendTo(body);
+	var listTitle = $('<div>',{class:"list-title"}).text(object.title).appendTo(list);
+	var listHeader = $('<div>',{id:"header_list_"+dataName,class:"list-header"}).appendTo(list);
+	var listBody = $('<div>',{id:"body_list_"+dataName,class:"list-body"}).appendTo(list);
+	var listBody = $('<div>',{id:"status_list_"+dataName,class:"list-status"}).appendTo(list);
+
+	originalDataset = object.data.datasets[0].set;
+	currentHeader = object.data.header;
+	currentInput = object.input;
+	currentDataName = dataName;
+	setTimeout(displayList, 1000);
+}
+
+function getSerie(valueName){
+	var columns = [];
+	var result = [];
+	var dataset = currentDataset;
+	if(valueName == 'dateperiod') valueName = currentDataName+"_collecteddate";
+	if(valueName.indexOf('_collecteddate') >= 0){
+		dataset = originalDataset;
+		console.log('dataset');
+		console.log(dataset);
+		console.log(currentHeader);
+	}
+	
+	$.each(dataset, function(index, row){
+		$.each(currentHeader, function(k,v){
+			if(v.name == valueName){
+				var oValue = '';
+				if(v.type == "array"){
+					//there is an array to convert values	
+					var iValue = row[v.name];
+					oValue = eval("report_"+v.name+"[iValue]");
+				}else if (v.type == "number"){
+					var nValue = row[v.name];
+					if(nValue != ""){
+						var cValue = Number(nValue);
+						if(!isNaN(cValue)) oValue = cValue.toFixed(v.format.substring(2).length);	
+					}else{
+						var oValue = "no value";
+					}
+				}else if(v.type == "date"){
+					var dValue = row[v.name];
+					if(dValue != ""){
+						var d = moment(dValue, 'YYYY-MM-DD HH:mm:ss.S');
+						var last6 = moment().subtract(6, 'months');
+						var last12 = moment().subtract(12, 'months');
+						var last18 = moment().subtract(18, 'months');
+						var last24 = moment().subtract(24, 'months');
+						if (d.isBetween(last12,last6)){
+							oValue = "[6 - 12]";
+						}else if(d.isBetween(last18,last12)){
+							oValue = "[12 - 18]";
+						}else if(d.isBetween(last24,last18)){
+							oValue = "[18 - 24]";
+						}else if(d.isBefore(last24)){
+							oValue = "[over 24]";
+						}else{
+
+						}
+					}else{
+						oValue = "[no value]";
+					}
+				}else if(v.type == "text"){
+					oValue = row[v.name];
+				}
+				if(oValue != "undefined" && oValue!=''){
+					var idx = $.inArray(oValue, columns);
+					if(idx < 0 ){
+						columns.push(oValue);
+						result.push([oValue,1]);
+					}else{
+						var ar = result[idx];
+						var label = ar[0];
+						var num = ar[1];
+						result[idx] = [label, num+1]; 
+					}	
+				}
+			}
+		});
+
+		
+	});
+	return result;
+}
+
+
+function drawStatsForm(dataset, header){
+	var toolbarStatsContainer = $('.fullscreen-modal-toolbar-stats-container');
+	toolbarStatsContainer.empty();
+	var toolbarFormContainerTitle = $('<div>',{class:"fullscreen-modal-toolbar-form-container-title"}).text("List quick stats").appendTo(toolbarStatsContainer);
+	
+	//3 graphs ajust with the height of the container
+	
+	var graphs = [{"title":"Gender distribution in the list","value":"sex","type":"pie","legend":"w"},{"title":"Type of diabetes distribution in the list","value":"dtype","type":"pie","legend":"e"},{"title":"Quintile distribution in the all patients","value":"dateperiod","type":"bar","legend":"s"}];
+	
+	var gHeight = Math.floor((toolbarStatsContainer.height()- 25) / 3); 
+	var nGraphs = 3;
+	if(gHeight < 150 ){
+		nGraphs = 2;
+	}
+	for(var i=0;i<graphs.length;i++){
+		var graph = graphs[i];
+		var chartContainer = $('<div>',{id:"chart-"+i,style:"height:"+gHeight+"px;"}).appendTo(toolbarStatsContainer);
+		var serie = getSerie(graph.value);
+		if(graph.type == "pie"){
+			var plot = jQuery.jqplot("chart-"+i,[serie], 
+				    {
+				      title: graph.title, 
+				      seriesDefaults: {
+				        shadow: false, 
+				        renderer: jQuery.jqplot.PieRenderer, 
+				        rendererOptions: { 
+				          startAngle: 90, 
+				          sliceMargin: 4, 
+				          showDataLabels: true } 
+				      }, 
+				      legend: { show:true, location: graph.legend }
+				    }
+				  );	
+		}else if(graph.type == "bar"){
+			//console.log(serie);
+			 $("#chart-"+i).jqplot([serie], {
+			        title:graph.title,
+			        // Provide a custom seriesColors array to override the default colors.
+			        seriesColors:['#85802b', '#00749F', '#73C774', '#C7754C', '#17BDB8'],
+			        seriesDefaults:{
+			            renderer:$.jqplot.BarRenderer,
+			            pointLabels: { show: true },
+			            rendererOptions: {
+			                // Set varyBarColor to tru to use the custom colors on the bars.
+			                varyBarColor: true
+			            }
+			        },
+			        axes:{
+			            xaxis:{
+			                renderer: $.jqplot.CategoryAxisRenderer
+			            }
+			        }
+			    });	
+		}
+	}
+}
+
+
+
+function drawCriteriaForm(object, filter){
+	var toolbar = $('.fullscreen-modal-toolbar');
+	toolbar.empty();
+	var toolbarForm = $('<div>',{class:"fullscreen-modal-toolbar-form"}).appendTo(toolbar);
+	var toolbarFormContainer = $('<div>',{class:"fullscreen-modal-toolbar-form-container uss"}).appendTo(toolbarForm);
+	var toolbarFormContainerTitle = $('<div>',{class:"fullscreen-modal-toolbar-form-container-title"}).text("Filter list").appendTo(toolbarFormContainer);
+	var toolbarFormContainerCriteria = $('<div>',{class:"fullscreen-modal-toolbar-form-container-criteria"}).appendTo(toolbarFormContainer);
+	var toolbarFormContainerButtons = $('<div>',{class:"fullscreen-modal-toolbar-form-container-buttons"}).appendTo(toolbarFormContainer);
+	var exportButton = $('<div>',{class:"cisbutton"}).text("Export to CSV").appendTo(toolbarFormContainerButtons);
+	
+	
+	var toolbarStats = $('<div>',{class:"fullscreen-modal-toolbar-stats"}).appendTo(toolbar);
+	var toolbarStatsContainer = $('<div>',{class:"fullscreen-modal-toolbar-stats-container uss"}).appendTo(toolbarStats);
+	
+	exportButton.click(function(){
+		var now = moment().format('YYYY-MM-DD_HH-mm-ss'); 
+		exportToCsv('missing-data-list-'+currentDataName+'-date_'+now+'.csv', currentDataset, currentHeader);
+	});
+	
+	
+	for(var i=0;i<object.length;i++){
+		var impt = object[i];
+		var f = eval("filter."+impt.name);
+		drawInputCriteria(impt, f);
+		$('#criteria_'+impt.name).change(function(){
+			if(!$('#filterdataset').length){
+				var b = $('<div>',{class:'cisbutton',id:'filterdataset'}).text('Filter list').appendTo($('.fullscreen-modal-toolbar-form-container-buttons'));
+				b.click(function(){
+					var filter = {};
+					if($('#criteria_dtype').val() == 1){
+						filter['dtype'] = "1_2";
+					}else if($('#criteria_dtype').val() == 2){
+						filter['dtype'] = "3";	
+					}else if($('#criteria_dtype').val() == 3){
+						filter['dtype'] = "4";	
+					}else{
+						filter['dtype'] = "0";	
+					}
+					filter['idcommunity'] = $('#criteria_idcommunity').val();
+					var dObj = $("#criteria_"+currentDataName+"_collecteddate");
+					var dObjVal = dObj.val();
+					var now = moment();
+					if(dObjVal == 0){
+						filter[currentDataName+"_collecteddate"] = "0";
+					}else if(dObjVal == 1){
+						var last6 = moment().subtract(6, 'months');
+						var last12 = moment().subtract(12, 'months');
+						filter[currentDataName+"_collecteddate"] = last12.format('YYYY-MM-DD')+"_"+last6.format('YYYY-MM-DD');
+					}else if(dObjVal == 2){
+						
+						var last6 = moment().subtract(12, 'months');
+						var last12 = moment().subtract(18, 'months');
+						filter[currentDataName+"_collecteddate"] = last12.format('YYYY-MM-DD')+"_"+last6.format('YYYY-MM-DD');
+					}else if(dObjVal == 3){
+						
+						var last6 = moment().subtract(18, 'months');
+						var last12 = moment().subtract(24, 'months');
+						filter[currentDataName+"_collecteddate"] = last12.format('YYYY-MM-DD')+"_"+last6.format('YYYY-MM-DD');
+					}else if(dObjVal == 4){
+						
+						var last6 = moment().subtract(24, 'months');
+						var last12 = moment().subtract(100, 'years');
+						filter[currentDataName+"_collecteddate"] = last12.format('YYYY-MM-DD')+"_"+last6.format('YYYY-MM-DD');
+					}
+					showProgress();
+					setTimeout(displayList,1000,filter);
+				});
+			}
+		})
+	}
+}
+
+
+
+function drawInputCriteria(object, value){
+	var container = $('.fullscreen-modal-toolbar-form-container-criteria');
+	var wrap = $('<div>',{class:'criteria-wraper'}).appendTo(container);
+	var label = $('<div>',{class:'criteria-wraper-label'}).text(object.text).appendTo(wrap);
+	var inputContainer = $('<div>',{class:'criteria-wraper-input'}).appendTo(wrap);
+	if(object.type == 'select'){
+		var input = $('<select>',{class:'criteria-input',id:'criteria_'+object.name}).appendTo(inputContainer);
+		var v = value;
+		if(object.name == "dtype" && v == "1_2"){ v = "1";}
+		if(object.name == "dtype" && v == "3"){ v = "2";}
+		if(object.name == "dtype" && v == "4"){ v = "3";}
+		if(object.name.indexOf("_collecteddate") >= 0 && v != "0"){
+			var dds = v.split("_");
+			var d = moment();
+			var d1 = moment(dds[0]);
+			var d2 = moment(dds[1]);
+			var dif = d.diff(d1,'months');
+			if(dif == 12) v="1";
+			if(dif == 18) v="2";
+			if(dif == 24) v="3";
+			if(dif == 100) v="4";
+		}
+		var isComDisabled = false;
+		if(userProfileObj.user.idcommunity != 0 ){
+			if(object.name == 'idcommunity'){
+				isComDisabled = true;
+				v = userProfileObj.user.idcommunity;
+			}	
+		}
+		
+		for(var i=0;i<object.values.length;i++){
+			if(i == v){
+				$('<option>',{text:object.values[i], value:i, selected:true}).appendTo(input);	
+			}else{
+				$('<option>',{text:object.values[i], value:i}).appendTo(input);
+			}
+		}
+		
+		if(isComDisabled){
+			input.prop('disabled','disabled');
+		}else{
+			input.prop('disabled',false);
+		}
+	}
+}
+
+
+
+function showProgress(){
+	var progress = $('<div>',{id:"progress",class:"fullscreen-progress"}).appendTo($('#wraper'));
+	var container = $('<div>',{class:"fullscreen-progress-container"}).appendTo(progress);
+	var logo = $('<div>',{class:"fullscreen-progress-container-logo"}).appendTo(container);
+	var text = $('<div>',{class:"fullscreen-progress-container-text"}).appendTo(container).text('Please wait');
+	blink();
+}
+
+function blink(){
+	var progressText = ['Generating list','Preparing repport', 'Rendering interface', 'Please wait', 'Geting ready', 'Measuring screen', 'Preparing data', 'Almost ready', 'Making a small pasue', 'Start working again'];
+	var r = randomIntFromInterval(0,9);
+	$('.fullscreen-progress-container-text').text(progressText[r]);
+	$('.fullscreen-progress-container-text').fadeIn(300, function(){
+		$('.fullscreen-progress-container-text').delay(500);
+		$('.fullscreen-progress-container-text').fadeOut(300, blink);
+	});
+}
+
+function randomIntFromInterval(min,max){
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
+
+function hideProgress(){
+	$('#progress').fadeOut(500, function(){
+		$('#progress').remove();
+	});
+}
+
+
+function displayList(filter){
+	if(!filter){
+		var filter = {};
+		filter['dtype'] = "0";
+		if(userProfileObj.user.idcommunity != 0){
+			filter['idcommunity'] = userProfileObj.user.idcommunity;
+		}else{
+			filter['idcommunity'] = "0";	
+		}
+		
+		filter[currentDataName+'_collecteddate'] = "0";
+	}
+	currentDataset = filterDataset(originalDataset, filter);
+	setTimeout(drawCriteriaForm,15, currentInput, filter);
+	setTimeout(drawStatsForm, 25, currentDataset, currentHeader);
+	setTimeout(renderHeaderList,10, currentDataName, currentHeader);
+	setTimeout(renderBodyList, 100, currentDataName, currentDataset, currentHeader);
+}
+
+function filterDataset(dataset, filter){
+	var result = [];
+	for(var i=0;i<dataset.length;i++){
+		var valueObject = dataset[i];
+		var flag = true;
+		$.each(valueObject, function(k,v){
+			if(filter.hasOwnProperty(k)) {
+				var f = eval("filter."+k);
+				if (f == "0" ){
+					if(k.indexOf('_collecteddate') >= 0){
+						if(v == "" ||  v == null){
+							flag = flag && true;
+						}else{
+							flag = flag && false;
+						}	
+					}else{
+						flag = flag && true;
+					}
+				}else{
+					if(k.indexOf('_collecteddate') >= 0){
+						var d = moment(v, 'YYYY-MM-DD HH:mm:ss.S');
+						var ddates = f.split("_");
+						if(ddates.length == 2){
+							var dd1 = moment(ddates[0],'YYYY-MM-DD');
+							var dd2 = moment(ddates[1],'YYYY-MM-DD');
+							flag = flag && d.isBetween(dd1,dd2);
+						}else{
+							flag = flag && false;
+						}
+						
+					}else{
+						if(f.indexOf('_') >= 0 ){
+							flag = flag && (f.indexOf(v) >= 0);
+						}else{
+							flag = flag && (f == v);
+						}	
+					}
+				}	
+			}
+		});
+		if(flag)result.push(valueObject);
+	}
+	return result;
+}
+
+
+function drawLoading(container){
+	var w = $('<div>',{class:"lds-facebook"}).appendTo(container);
+	for(var i=0;i<3;i++){$('<div>').appendTo(w);}
+	
+}
+
+
+function sortColumn(hobj, direction){
+	var flag = false;
+	if(direction){
+		flag = (direction == 'asc');
+	}
+	
+	if(hobj.type == 'date'){
+		var result =  function(a, b){
+			if(flag){
+				var x = moment(a[hobj.name], 'YYYY-MM-DD HH:mm:ss.S');
+				var y = moment(b[hobj.name], 'YYYY-MM-DD HH:mm:ss.S');	
+			}else{
+				var x = moment(b[hobj.name], 'YYYY-MM-DD HH:mm:ss.S');
+				var y = moment(a[hobj.name], 'YYYY-MM-DD HH:mm:ss.S');
+			}
+		  	if (x.isBefore(y)) {return -1;}
+		  	if (x.isAfter(y)) {return 1;}
+		  	return 0;
+		}
+	}else if(hobj.type == 'array'){
+		var result =  function(a, b){
+			if(flag){
+				var x = eval("report_"+hobj.name+"[a[hobj.name]]");
+				var y = eval("report_"+hobj.name+"[b[hobj.name]]");	
+			}else{
+				var x = eval("report_"+hobj.name+"[b[hobj.name]]")
+				var y = eval("report_"+hobj.name+"[a[hobj.name]]");
+			}
+		  	if (x < y) {return -1;}
+		  	if (x > y) {return 1;}
+		  	return 0;
+		}
+	}else if(hobj.type == 'number'){
+		var result =  function(a, b){
+			if(flag){
+				var x = Number(a[hobj.name]);
+				var y = Number(b[hobj.name]);	
+			}else{
+				var x = Number(b[hobj.name]);
+				var y = Number(a[hobj.name]);
+			}
+		  	if (x < y) {return -1;}
+		  	if (x > y) {return 1;}
+		  	return 0;
+		}
+	}else{
+		var result =  function(a, b){
+			if(flag){
+				var x = a[hobj.name].toLowerCase();
+				var y = b[hobj.name].toLowerCase();	
+			}else{
+				var x = b[hobj.name].toLowerCase();
+				var y = a[hobj.name].toLowerCase();
+			}
+		  	if (x < y) {return -1;}
+		  	if (x > y) {return 1;}
+		  	return 0;
+		}
+	}
+	
+	
+	return result;
+}
+
+function renderHeaderList(dataName, header){
+	$('#header_list_'+dataName).empty();
+	$.each(header,function(index, value){
+		var colHead = $('<div>',{id:"column"+index,class:"column"}).appendTo($('#header_list_'+dataName));
+		var lab = $('<span>',{class:""}).text(value.display).appendTo(colHead);
+		var sortContainer = $('<div>',{class:"column-sort"}).append($('<i>',{class:"fa fa-sort"})).appendTo(colHead);
+		sortContainer.click(function(){
+			if($(this).hasClass('sorted-column')){
+				if($(this).hasClass('asc')){
+					currentDataset.sort(sortColumn(value, 'desc'));
+					$(this).removeClass('asc');
+					$(this).addClass('desc');
+				}else{
+					currentDataset.sort(sortColumn(value, 'asc'));
+					$(this).removeClass('desc');
+					$(this).addClass('asc');
+				}
+			}else{
+				$('.column-sort').removeClass('sorted-column');
+				$('.column-sort').removeClass('asc');
+				$('.column-sort').removeClass('desc');
+				$(this).addClass('sorted-column');
+				$(this).addClass('asc');
+				currentDataset.sort(sortColumn(value, 'asc'));
+			}
+			renderBodyList(dataName, currentDataset, currentHeader);
+		});
+	});
+}
+
+
+function renderBodyList(dataName, dataset, header, page){
+	var c = $('#body_list_'+dataName);
+	c.empty();
+	var line = 23;
+	if(typeof(page) == "undefined"){
+		var page = 1;	
+	}
+	
+	if(dataset.length > 0){
+		var noLines = Math.floor(c.height()/line);
+		var maxLines = noLines*page;
+		var minLines = noLines*(page-1); 
+		var pages = Math.ceil(dataset.length / noLines);
+		
+		var status = $('#status_list_'+dataName);
+		status.empty();
+		var statusText = $('<div>',{id:"status_list",class:"status-text"}).appendTo(status).html("<span>Total : <b>"+dataset.length+"</b></span>");
+		var statusPages = $('<div>',{id:"status_pages",class:"status-pages"}).appendTo(status);
+		if(page == 1){
+			$('<b>').text("Page "+page).appendTo(statusPages);
+			if(pages > 1){
+				$('<span>').text("Next Page").click(function(){renderBodyList(dataName,dataset, header, page+1)}).appendTo(statusPages);	
+			}
+		}else if(page == pages){
+			if(pages > 1){
+				$('<span>').text("Previous Page").click(function(){renderBodyList(dataName,dataset, header, page-1)}).appendTo(statusPages);
+			}
+			$('<b>').text("Page "+page).appendTo(statusPages);
+		}else{
+			$('<span>').text("Previous Page").click(function(){renderBodyList(dataName,dataset, header, page-1)}).appendTo(statusPages);
+			$('<b>').text("Page "+page).appendTo(statusPages);
+			$('<span>').text("Next Page").click(function(){renderBodyList(dataName,dataset, header, page+1)}).appendTo(statusPages);
+		}
+		
+		if(minLines >= dataset.length) minLines = dataset.length - noLines;
+		if(maxLines >= dataset.length) maxLines = dataset.length ;
+		
+		
+		for(var i=minLines;i<maxLines;i++){
+			var valueObject = dataset[i];
+			var line = $('<div>',{id:"line_"+valueObject.ramq,class:"line"}).appendTo(c);
+			line.click(function(){
+				$('.line').removeClass('selected-record');
+				$(this).addClass('selected-record');
+				
+				if(!$('#selectrecord').length){
+					var b = $('<div>',{class:'cisbutton',id:'selectrecord'}).text('View record').appendTo($('.fullscreen-modal-toolbar-form-container-buttons'));
+					b.click(function(){
+						var r = $('.selected-record').attr('id').substring(5);
+						gtc(sid,"en",r,"patient");	
+					});
+				}
+				
+			});
+			$.each(header, function(k,v){
+				if(v.type == "array"){
+					//there is an array to convert values	
+					var iValue = eval("valueObject."+v.name)
+					var aValue = eval("report_"+v.name+"[iValue]");
+					$('<div>',{id:"line_"+i+"_column_dtype",class:"column"}).text(aValue).appendTo(line);
+				}else if (v.type == "number"){
+					var nValue = eval("valueObject."+v.name);
+					if(nValue != ""){
+						var cValue = Number(eval("valueObject."+v.name));
+						if(!isNaN(cValue)) cValue = cValue.toFixed(v.format.substring(2).length);	
+					}else{
+						var cValue = "no value";
+					}
+					$('<div>',{id:"line_"+i+"_column_"+k,class:"column"}).text(cValue).appendTo(line);
+				}else if(v.type == "date"){
+					var dValue = eval("valueObject."+v.name);
+					if(dValue != ""){
+						var d = moment(dValue, 'YYYY-MM-DD HH:mm:ss.S');
+						var val = d.format(v.format);	
+					}else{
+						var val = "no date";
+					}
+					$('<div>',{id:"line_"+i+"_column_"+k+"_collecteddate",class:"column"}).text(val).appendTo(line);
+				}else if(v.type == "text"){
+					var nValue = eval("valueObject."+v.name);
+					$('<div>',{id:"line_"+i+"_column_"+k,class:"column"}).text(nValue).appendTo(line);
+				}
+
+			});
+		}
+	
+	}else{
+		var line = $('<div>',{id:"line_0",class:"line"}).html("<center><b>no data</b></center>").appendTo(c);
+	}
+	hideProgress();
+	return c;
+}
+
+
+function exportToCsv(filename, rows, header) {
+	
+	var processHeader = function (header) {
+		var cnt = 0;
+		var finalVal = '';
+    	$.each(header, function(k,vob){
+   			finalVal += '"' + vob.display +'",';	
+    	});
+    	finalVal += '\r\n';
+    	return finalVal;
+	};
+	
+    var processRow = function (row, header) {
+        var finalVal = '';
+       	$.each(header, function(k,v){
+       		if(v.type == "array"){
+				//there is an array to convert values	
+				var iValue = row[v.name];
+				var aValue = eval("report_"+v.name+"[iValue]");
+				finalVal += '"'+aValue+'",';
+			}else if (v.type == "number"){
+				var nValue = row[v.name];
+				if(nValue != ""){
+					var cValue = Number(nValue);
+					if(!isNaN(cValue)) cValue = cValue.toFixed(v.format.substring(2).length);	
+				}else{
+					var cValue = "no value";
+				}
+				finalVal += '"'+cValue+'",';
+				
+			}else if(v.type == "date"){
+				var dValue = row[v.name];
+				if(dValue != ""){
+					var d = moment(dValue, 'YYYY-MM-DD HH:mm:ss.S');
+					var val = d.format(v.format);	
+				}else{
+					var val = "no date";
+				}
+				finalVal += '"'+val+'",';
+			}else if(v.type == "text"){
+				var nValue = row[v.name];
+				finalVal += '"'+nValue+'",';
+				
+			}
+       	});
+        finalVal += '\r\n';    	
+		return finalVal;            	
+    };
+    
+    
+    var csvFile = processHeader(header);
+    for (var i = 0; i < rows.length; i++) {
+        csvFile += processRow(rows[i], header);
+    }
+    var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+    if (navigator.msSaveBlob) { // IE 10+
+        navigator.msSaveBlob(blob, filename);
+    }else{
+        var link = document.createElement("a");
+        if (link.download !== undefined) { // feature detection
+            // Browsers that support HTML5 download attribute
+            var url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+}
+
+
+
+
+</script>

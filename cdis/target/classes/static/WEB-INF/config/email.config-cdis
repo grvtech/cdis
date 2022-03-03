@@ -1,0 +1,10 @@
+admin.1=ddannenbaum@gmail.com
+admin.2=poradah@yahoo.ca
+admin.3=elena.kuzmina@ssss.gouv.qc.ca
+smtp.host=smtp.reg18.rtss.qc.ca
+smtp.port=25
+smtp.tls=false
+smtp.user=gabrad01
+smtp.pass=canada01
+smtp.from=support@grvtech.ca
+admin.cc=support@grvtech.ca

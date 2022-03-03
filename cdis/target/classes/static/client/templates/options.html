@@ -1,0 +1,39 @@
+<div class="mainpage" id="optionsPage">
+	<div class="header"></div>
+	<div class="main">
+		<div class="side"></div>
+		<div class="page">
+			
+		</div>
+	</div>
+</div>	
+
+ 
+<div class="cdisheader uss">
+	<div class="logo">CDIS</div>
+	
+	<ul class="menu">
+		<li class="users ubs" title="Users Administration"></li>
+		<li class="frontpage ubs" title="Front page message"></li>
+		<li class="audit ubs" title="Users action log"></li>
+	</ul>
+</div>
+
+<div class="cdisfooter-left">
+	
+	<ul class="leftfootermenu">
+		<li class="flogout ubs" data-toggle="tooltip" data-placement="left" title="Logout from CDIS"><span></span></li>
+		<li class="fback ubs" data-toggle="tooltip" data-placement="left" title="Search for new patient"><span></span></li>
+		<li class="freports ubs" data-toggle="tooltip" data-placement="left" title="Load CDIS reports"><span></span></li>
+		<li class="fnew ubs"  data-toggle="tooltip" data-placement="left" title="Add new patient to CDIS"><span></span></li>
+	</ul>
+	<div class="leftmenu ubs"><i class="fa fa-bars" aria-hidden="true"></i></div>
+</div>
+<script>
+	initNavigation();
+	$(".cdisfooter-left").hover(function(){
+		$(".leftfootermenu").toggle("fade");
+	},function(){
+		$(".leftfootermenu").toggle("fade");
+	});
+</script>

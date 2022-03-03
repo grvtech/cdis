@@ -1,0 +1,219 @@
+/*
+site classes
+*/
+#searchTab{
+	position:relative;
+	width:100%;
+	min-width:600px;
+	margin:10px auto;
+	text-align:left;
+	/*border:1px outset #eeeddd;*/
+	background: #eeeddd;
+}
+#envTab{
+	position:relative;
+	width:300px;
+	height:40px;
+	margin:5px; 
+	/*border:1px solid #000000;*/
+}
+#critTab{
+	position:relative;
+	width:auto;
+	height:40px;
+	margin:10px 10px 10px 10px; 
+	/*border:1px solid #000000;*/
+}
+
+#scTab{
+	position:relative;
+	width:100%;
+	height:60px;
+}
+
+
+#searchTool{
+	position:relative;
+	width:400px;
+	height:30px;
+	/*margin:20px auto;*/
+	/*border:1px solid #000000;*/
+	margin:10px;
+	padding:2px;
+	float:left;
+}
+
+#submitTool{
+	position:relative;
+	width:150px;
+	height:35px;
+	margin:10px;
+	padding:2px;
+	/*border:1px solid #000000;*/
+	float:left;
+}
+.searchtext{
+	width:100%;
+	height:30px;
+	border: 1px solid #aaaaaa;
+	font-size:1em;
+}
+
+#userTab{
+	position:absolute;
+	width:400px;
+	height:120px;
+	left:100%;
+	top:10px;
+	margin-left:-410px;
+	border:1px solid #000000;
+}
+#avatarUser{
+	position:absolute;
+	width:100px;
+	height:100px;
+	left:100%;
+	top:10px;
+	margin-left:-110px;
+	border:1px solid #000000;
+	background-color:#eeeddd;
+}
+
+#nameUser{
+	position:absolute;
+	width:270px;
+	height:50px;
+	left:10px;
+	top:10px;
+	border:1px solid #000000;
+}
+#groupUser{
+	position:absolute;
+	width:270px;
+	height:30px;
+	left:10px;
+	top:70px;
+	border:1px solid #000000;
+}
+
+#widgetGraphs{
+	position:relative;
+	width:100%;
+	min-width:600px;
+	margin:10px 0px 10px 0px;
+	text-align:left;
+	/*border:1px outset #eeeddd;*/
+	background: #aaaddd;
+	height:370px;
+}
+
+
+#widgetGraph1{
+	position:relative;
+	width:500px;
+	min-width:400px;
+	height:350px;
+	margin:10px 0px 10px 10px;
+	text-align:left;
+	/*border:1px outset #eeeddd;*/
+	background: #aaa333;
+	float:left;
+}
+
+#widgetGraph2{
+	position:relative;
+	width:500px;
+	min-width:400px;
+	height:350px;
+	margin:10px 0px 10px 10px;
+	text-align:left;
+	/*border:1px outset #eeeddd;*/
+	background: #aaa333;
+	float:left;
+}
+
+
+#widgetTables{
+	position:relative;
+	width:100%;
+	min-width:600px;
+	margin:10px 0px 10px 0px;
+	text-align:left;
+	/*border:1px outset #eeeddd;*/
+	background: #000ddd;
+	height:370px;
+}
+
+#widgetModPat{
+	position:relative;
+	width:500px;
+	min-width:400px;
+	height:350px;
+	margin:10px 0px 10px 10px;
+	text-align:left;
+	/*border:1px outset #eeeddd;*/
+	background: #aaa333;
+	float:left;
+}
+
+#widgetNewPat{
+	position:relative;
+	width:500px;
+	min-width:400px;
+	height:350px;
+	margin:10px 0px 10px 10px;
+	text-align:left;
+	/*border:1px outset #eeeddd;*/
+	background: #aaa333;
+	float:left;
+}
+
+
+
+input{
+	width:100%;
+	height:100%;
+	/*border:0px;*/
+}
+
+
+
+#effect{
+	position:absolute;
+	left:0px;
+	top:0px;
+	height: auto;
+	width:100%;
+	height:100%;
+	min-height:100%;
+	background-color:#cdcdcd;
+	/*border:1px solid #000000;*/
+}
+
+.ui-progressbar {
+		position: relative;
+		width:70%;
+		margin:20% auto;
+	}
+	.progress-label {
+		position: absolute;
+		left: 50%;
+		top: 4px;
+		font-weight: bold;
+		text-shadow: 1px 1px 0 #fff;
+	}
+
+
+.ui-autocomplete {
+	max-height: 200px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+	height: 200px;
+}
+

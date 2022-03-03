@@ -1,0 +1,43 @@
+{
+	"id":"REP1",
+	"type":"graph",
+	"title":"Report 1",
+	"generated":"2015-10-09 14:34:23",
+	"owner":"System",
+	"graphtype":"bar",
+	"subcriteria":[
+		{	"subname":"idcommunity",
+			"subvalue":"1",
+			"suboperator":"equal",
+			"subdisplay":"Chisasibi",
+			"subsection":"1"
+		}		
+	],
+	"criteria":[
+		{	"name":"sex",
+			"value":"1",
+			"operator":"equal",
+			"display":"Male",
+			"section":"1",
+			"date":"no",
+			"datedisplay":"",
+			"datename":"",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		},
+		{	"name":"sex",
+			"value":"2",
+			"operator":"equal",
+			"display":"Female",
+			"section":"1",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		}	
+	]
+	
+}

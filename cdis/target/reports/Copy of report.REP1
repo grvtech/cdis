@@ -1,0 +1,21 @@
+{"id":"LIST.HBA1C","type":"flist","class":"half","title":"Missing HbA1C data",
+"input":[
+	{"name":"dateperiod","type":"select","display":"last","operator":"equal","section":"90","text":"Please select period to execute the report","values":["Never (no value)","6 to 12 months","12 to 18 months","18 to 24 months","over 24 months"]},
+	{"name":"idcommunity","type":"select","display":"Community","operator":"equal","section":"1","text":"Please select a community to execute the report","values":["All","Chisasibi","Eastmain","Mistissini","Nemaska","Oujebougoumou","Waskaganish","Waswanipi","Wemindji","Whapmagoostui"]},
+	{"name":"dtype","type":"select","display":"Type of diabetes","operator":"multi","section":"90","text":"Please choose the group of diabetes patients","values":["All","Type 1 and Type 2 Only"]}
+	],
+"generated":"2015-10-09 14:34:23","owner":"System","graphtype":"pie","subcriteriatype":"multi",
+"subcriteria":[
+	{"subname":"dateperiod","subvalue":"0","suboperator":"equal","subdisplay":"Period","subsection":"60"},
+	{"subname":"dtype","subvalue":"0","suboperator":"multi","su	{"subname":"idcommunity","subvalue":"0","suboperator":"equal","subdisplay":"All communities","subsection":"60"},
+bdisplay":"Diabetes Type 1  and Type 2 DM","subsection":"60"}
+	],
+"criteria":[
+	{"name":"ramq","value":"1","operator":"equal","display":"Ramq No","section":"60","date":"no","datedisplay":"","datename":"","dateoperator":"","datevalue":"","type":"all"},
+	{"name":"chart","value":"1","operator":"equal","display":"Chart","section":"60","date":"no","datedisplay":"","datename":"","dateoperator":"","datevalue":"","type":"all"},
+	{"name":"giu","value":"1","operator":"equal","display":"IPM","section":"60","date":"no","datedisplay":"","datename":"","dateoperator":"","datevalue":"","type":"all"},
+	{"name":"dtype","value":"1","operator":"equal","display":"Type of diabetes","section":"60","date":"no","datedisplay":"","datename":"","dateoperator":"","datevalue":"last","type":"all"},
+	{"name":"hba1c","value":"1","operator":"equal","display":"A1C Value","section":"60","date":"yes","datedisplay":"A1C Date","datename":"hba1c_collecteddate","dateoperator":"equal","datevalue":"last","type":"all"},
+	{"name":"idcommunity","value":"1","operator":"equal","display":"Community","section":"60","date":"no","datedisplay":"","datename":"","dateoperator":"","datevalue":"","type":"all"}
+	]
+}

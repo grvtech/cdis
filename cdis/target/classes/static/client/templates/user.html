@@ -1,0 +1,26 @@
+<div id="userPage" class="pageClass">
+	<div class="uheader uss">
+		<div class="logo">Cree Health Informational System</div>
+		<ul class="menu"><!-- the menu items are obtained dynamicaly from the server get user actions based on his role -->
+			<li class="personalinfo ubs" onclick="setTemplate('personalinfo')"></li><div class="label personalinfolabel uss">Personal Information</div>
+			<li class="messages ubs" onclick="setTemplate('messages')"></li><div class="label messageslabel uss">Messages</div>
+			<li class="users ubs" onclick="setTemplate('users')"></li><div class="label userslabel uss">Users</div>
+			<li class="frontpage ubs" onclick="setTemplate('frontpage')"></li><div class="label frontpagelabel uss">Front Page Message</div>
+			<li class="uoptions ubs" onclick="setTemplate('uoptions')"></li><div class="label uoptionslabel uss">Settings</div>
+			<!--  <li class="logout" onclick="logout()"></li><div class="label messageslabel">Messages</div>-->
+			<!-- <div class="menuitem logout" id="logoutButton" onclick='logout()'><p>Logout</p><div></div></div> -->
+		</ul>
+	</div>
+	<div id="ub_ubody" class="ubody"></div>
+	
+	 
+	<div class="ufooter">
+		<ul class="leftfootermenu">
+			<li class="flogout ubs"><span></span></li><div class="label flogoutlabel uss">Logout</div>
+		</ul>
+		<ul class="rightfootermenu">
+			<li class="freports ubs"><span></span></li><div class="label freportslabel uss">Reports</div>
+			<li class="fsendmessage ubs"><span></span></li><div class="label fsendmessagelabel uss">Send Message</div>
+		</ul>
+	</div>
+</div>

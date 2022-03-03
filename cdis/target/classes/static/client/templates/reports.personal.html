@@ -1,0 +1,290 @@
+<div class="reportsbody_personal">
+
+</div>
+<script>
+//console.log(reportsObject);
+$.each(reportsObject.personal, function(i, v){
+	var raport = prepareDefinedReport(v.code);
+	var columns = "";
+	$.each(raport.criteria,function(i,v){
+		if(v.value == "all"){
+			columns+= "<span>"+v.display+"</span>";
+		}else{
+			columns+= "<span>"+v.display+" "+v.operator+" "+v.value+"</span>";	
+		}
+		
+	});
+	
+	var reportContainer = $("<div>",{class:"container"})
+		.appendTo($(".reportsbody_personal"))
+		.append($("<label>",{class:""}).text(raport.title))
+		.append($("<div>",{class:"properties"})
+			.append($("<span>",{class:""}).text("Report properties"))
+			.append($("<span>",{class:""}).html("<b>Type </b>: "+raport.type))
+			.append($("<span>",{class:""}).html("<b>Generated </b>: "+raport.generated))
+		)
+		.append($("<div>",{class:"columns"}).html(columns));
+	
+	$(reportContainer).click(function(){
+		//executeReport(raport);
+		executeAsyncReport(raport);
+	});
+});
+
+</script>
+<!-- 
+
+<div class="reportsbody_dashboard">
+	<span class="reportsTitle">CDIS Predefined Reports</span>
+	<div id="report-toolbar">
+		<div id="custom-reports-button" class="cisbutton">Custom Reports</div>
+		<div id="normal-reports-button" class="cisbutton">Predefined Reports</div>
+	</div>
+	<div id="report-wraper">
+		
+		<div id="kreports">
+			<div id="predefined-report">
+				<div id="predefined-report-graph"></div>
+				<div id="predefined-report-data"></div>
+			</div>
+			<div id="report-lists">
+				<div id="report-list" class="list-list"></div>
+				<span class="strech"></span>
+			</div>
+		</div>
+		<div id="creports">
+			<div id="criteria-summary-label">Report Criterias</div>
+			<div id="criteria-container">
+				<div id="criteria-summary"></div>
+			</div>
+			<form name="customReportForm">
+				<div id="general-list">
+					<div class="custom-list-header">
+						<h2>General report criteria</h2>
+						<div id="reportType">
+							<span class="lab">Report Type</span>
+							<input type="radio" name="reporttype" value="list" id="reportTypeList"/><label for="reportTypeList">List</label>
+							<input type="radio" name="reporttype" value="graph" id="reportTypeGraph"/><label for="reportTypeGraph">Graph</label>
+						</div>
+						<div id="graphType">
+							<span class="lab">Graph Type</span>
+							<input type="radio" name="graphtype" value="line" id="graphTypeLine"/><label for="graphTypeLine">Line</label>
+							<input type="radio" name="graphtype" value="bar" id="graphTypeBar"/><label for="graphTypeBar">Bar</label>
+							<input type="radio" name="graphtype" value="pie" id="graphTypePie"/><label for="graphTypePie">Pie</label>
+						</div>
+						<div id="reportCriteria">
+							<span class="lab">Number of patients</span>
+							<input type="radio" name="reportcriteria" value="diabet" id="reportCriteriaDiabet"/><label for="reportCriteriaDiabet">per type of diabetes</label>
+							<input type="radio" name="reportcriteria" value="community" id="reportCriteriaCommunity"/><label for="reportCriteriaCommunity">per community</label>
+							<input type="radio" name="reportcriteria" value="gender" id="reportCriteriaGender"/><label for="reportCriteriaGender">per gender</label>
+						</div>
+						<div id="reportPeriod">
+							<span class="lab">Report Period</span>
+							<input type="radio" name="reportperiod" value="all" id="reportPeriodAll"/><label for="reportPeriodAll">All dates</label>
+							<input type="radio" name="reportperiod" value="last" id="reportPeriodLast"/><label for="reportPeriodLast">Last dates</label>
+							<input type="radio" name="reportperiod" value="between" id="reportPeriodBetween"/><label for="reportPeriodBetween">Between dates</label>
+						</div>
+						<div id="betweenPeriod">
+							<input type="text" name="betweenv1" id="betweenv1" value=""/>
+							<span class="lab">and</span>
+							<input type="text" name="betweenv2" id="betweenv2" value=""/>
+						</div>
+						<div id="custom-report-toolbar">
+							<div id="custom-report-execute-button" class="cisbutton">Generate Report</div>
+						</div>
+					</div>
+					<div class="custom-list-body"></div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<script>
+
+/*
+ * 
+ {"name":"timelabel","type":"category","label":"Please first chose the time period of report","status":"0","visible":"1","section":"0"},
+ {"name":"time","type":"date","label":"Report period","status":"0","visible":"1","section":"0"},
+ */
+	$("#reportType").buttonset();
+ 	$("#reportPeriod").buttonset();
+ 	$("#graphType").buttonset();
+ 	$("#reportCriteria").buttonset();
+ 	$("#reportCriteria").hide();
+ 	$("#betweenPeriod").hide();
+ 	$("#graphType").hide();
+ 	$("#betweenv1").datepicker({
+ 	    changeMonth: true,
+ 	    yearRange: "1900:2016",
+ 	    dateFormat: "yy-mm-dd",
+ 	    changeYear: true
+ 	  }).button();
+ 	
+ 	$("#betweenv1").change(function(){
+ 		$.each($("#criteria-summary div"), function(index, obj){
+			if($(obj).attr("date") == "yes"){
+				$(obj).attr("dateoperator","between");
+				$(obj).attr("datevalue", $("#betweenv1").val()+" and "+$("#betweenv2").val());
+			}
+		});
+ 	});
+ 	
+ 	$("#betweenv2").datepicker({
+ 	    changeMonth: true,
+ 	    yearRange: "1900:2016",
+ 	    dateFormat: "yy-mm-dd",
+ 	    changeYear: true
+ 	  }).button();
+ 	$("#betweenv2").change(function(){
+ 		$.each($("#criteria-summary div"), function(index, obj){
+			if($(obj).attr("date") == "yes"){
+				$(obj).attr("dateoperator", "between");
+				$(obj).attr("datevalue", $("#betweenv1").val()+" and "+$("#betweenv2").val());
+			}
+		});
+ 	});
+ 	
+ 	
+ 	
+ 	$("input[name='reporttype']").filter("[value='list']").prop('checked', true).button("refresh");
+ 	$("input[name='reportperiod']").filter("[value='last']").prop('checked', true).button("refresh");
+ 	$("input[name='reportcriteria']").filter("[value='diabet']").prop('checked', true).button("refresh");
+ 	$("input[name='graphtype']").filter("[value='bar']").prop('checked', true).button("refresh");
+ 	
+ 	$("#reportType input[type=radio]").change(function() {
+ 		$("#betweenPeriod").hide();
+ 		cleanAll();
+ 		if($(this).val() == 'graph'){
+ 			$("#graphType").show();
+ 			$("#reportCriteria").show();
+ 			$("input[name='reportperiod']").filter("[value='last']").prop('checked', true).button("refresh");
+ 			$("input[name='reportcriteria']").filter("[value='diabet']").prop('checked', true).button("refresh");
+ 			$("#reportPeriod").hide();
+ 			$.each($(".report-criteria-summary"),function(index, obj){
+ 				var id = $(obj).attr("id");
+ 				if((id == "chart-summary") || (id == "ramq-summary") ){
+ 					$(obj).remove();
+ 				}
+ 			});
+ 			
+ 			$.each($(".report-criteria"),function(index, obj){
+ 				var id = $(obj).attr("id");
+ 				if((id == "dtype") || (id == "idcommunity") || (id == "sex")){
+ 					$(obj).hide();
+ 				}
+ 			});
+ 			
+ 		}else{
+ 			$("#graphType").hide();
+ 			$("#reportCriteria").hide();
+ 			$("input[name='reportperiod']").filter("[value='last']").prop('checked', true).button("refresh");
+ 			$("#reportPeriod").show();
+ 			
+ 			var isChartRamq = false;
+ 			$.each($(".report-criteria-summary"),function(index, obj){
+ 				var id = $(this).attr("id");
+ 				if((id == "chart-summary") || (id == "ramq-summary") ){
+ 					isChartRamq = true;
+ 				}
+ 			});
+ 			
+ 			$.each($(".report-criteria"),function(index, obj){
+ 				var id = $(obj).attr("id");
+ 				if((id == "dtype") || (id == "idcommunity") || (id == "sex")){
+ 					$(obj).show();
+ 				}
+ 			});
+ 			
+ 			if(!isChartRamq){
+ 				addToSummary({"name":"ramq","type":"none","label":"Ramq number","status":"1","visible":"0","section":"1","report":"list","hasdate":"false","datedisplay":""});
+ 				addToSummary({"name":"chart","type":"none","label":"Chart number","status":"1","visible":"0","section":"1","report":"list","hasdate":"false","datedisplay":""});
+ 			}
+ 		}
+ 	});
+ 	
+ 	
+ 	$("#reportPeriod input[type=radio]").change(function() {
+ 		if($(this).val() == 'between'){
+ 			$("#betweenPeriod").show();
+ 			$.each($("#criteria-summary div"), function(index, obj){
+ 				if($(obj).attr("date") == "yes"){
+ 					$(obj).attr("dateoperator", "between");
+ 					$(obj).attr("datevalue", $("#betweenv1").val()+" and "+$("#betweenv2").val());
+ 				}
+ 			});
+ 		}else{
+ 			$("#betweenPeriod").hide();
+ 			$.each($("#criteria-summary div"), function(index, obj){
+ 				if($(obj).attr("date") == "yes"){
+ 					$(obj).attr("datevalue", $("#reportPeriod input[type=radio]:checked").val()) ;
+ 				}
+ 			});
+ 		}
+ 	});
+ 	
+	var generalCriteria = [{"name":"patient","type":"category","label":"Required columns in report","status":"0","visible":"0","section":"1","report":"list","hasdate":"false","datedisplay":""},
+	                       {"name":"ramq","type":"none","label":"Ramq number","status":"1","visible":"0","section":"1","report":"list","hasdate":"false","datedisplay":""},
+	                       {"name":"chart","type":"none","label":"Chart number","status":"1","visible":"0","section":"1","report":"list","hasdate":"false","datedisplay":""},
+	                       {"name":"giu","type":"none","label":"IPM Number","status":"0","visible":"0","section":"1","report":"list","hasdate":"false","datedisplay":""},
+	                       {"name":"jbnqa","type":"none","label":"Band number","status":"0","visible":"0","section":"1","report":"list","hasdate":"false","datedisplay":""},
+	                       {"name":"visits","type":"category","label":"General criterias","status":"0","visible":"1","section":"3","report":"list","hasdate":"false","datedisplay":""},
+	                       {"name":"dtype","type":"select","label":"Type of diabetes","status":"1","visible":"1","section":"2","report":"both","hasdate":"true","datedisplay":"Date of Diagnosis"},
+	                       {"name":"idcommunity","type":"select","label":"Community","status":"0","visible":"1","section":"1","report":"both","hasdate":"false","datedisplay":""},
+	                       {"name":"sex","type":"select","label":"Gender","status":"0","visible":"1","section":"1","report":"both","hasdate":"false","datedisplay":""},
+	                       {"name":"dob","type":"date","label":"Date of birth","status":"0","visible":"1","section":"1","report":"list","hasdate":"false","datedisplay":""},
+	                       {"name":"sbp","type":"value","label":"Systolic Blood Presure","status":"0","visible":"1","section":"3","report":"list","hasdate":"true","datedisplay":"SBP Collected Date"},
+	                       {"name":"dbp","type":"value","label":"Diastolic Blood Presure","status":"0","visible":"1","section":"3","report":"list","hasdate":"true","datedisplay":"DBP Collected Date"},
+	                       {"name":"weight","type":"value","label":"Weight","status":"0","visible":"1","section":"3","report":"list","hasdate":"true","datedisplay":"Weight Collected Date"},
+	                       {"name":"height","type":"value","label":"Height","status":"0","visible":"1","section":"3","report":"list","hasdate":"true","datedisplay":"Height Collected Date"},
+	                       {"name":"renal","type":"category","label":"Renal Data","status":"0","visible":"1","section":"5","report":"list","hasdate":"false","datedisplay":""},
+	                       {"name":"acratio","type":"value","label":"AC ratio","status":"0","visible":"1","section":"5","report":"list","hasdate":"true","datedisplay":"AC Ratio Collected Date"},
+	                       {"name":"crea","type":"value","label":"Serum Creatinine","status":"0","visible":"1","section":"5","report":"list","hasdate":"true","datedisplay":"Sertum Creatinine Collected Date"},
+	                       {"name":"crcl","type":"value","label":"Creatinine Clearence","status":"0","visible":"1","section":"5","report":"list","hasdate":"true","datedisplay":"Creatinine Clereance Collected Date"},
+	                       {"name":"prote","type":"value","label":"Urine proteins 24hr","status":"0","visible":"1","section":"5","report":"list","hasdate":"true","datedisplay":"Urine proteins 24hr Collected Date"},
+	                       {"name":"egfr","type":"value","label":"EGFR","status":"0","visible":"1","section":"5","report":"list","hasdate":"true","datedisplay":"EGFR Collected Date"},
+	                       {"name":"lab","type":"category","label":"Glucose control data","status":"0","visible":"1","section":"7","report":"list","hasdate":"false","datedisplay":""},
+	                       {"name":"hba1c","type":"value","label":"HBA1C","status":"0","visible":"1","section":"7","report":"list","hasdate":"true","datedisplay":"HBA1C Collected Date"},
+	                       {"name":"acglu","type":"value","label":"Plasma Glucose","status":"0","visible":"1","section":"7","report":"list","hasdate":"true","datedisplay":"Plasma Glucose Collected Date"},
+	                       {"name":"ogtt","type":"value","label":"OGTT","status":"0","visible":"1","section":"7","report":"list","hasdate":"true","datedisplay":"OGTT Collected Date"},
+	                       {"name":"lipids","type":"category","label":"Lipids data","status":"0","visible":"1","section":"1","report":"list","hasdate":"false","datedisplay":""},
+	                       {"name":"tchol","type":"value","label":"Total Cholesterol","status":"0","visible":"1","section":"6","report":"list","hasdate":"true","datedisplay":"Total Cholesterol Collected Date"},
+	                       {"name":"tglycer","type":"value","label":"Tryglicerides","status":"0","visible":"1","section":"6","report":"list","hasdate":"true","datedisplay":"Tryglicerides Collected Date"},
+	                       {"name":"hdl","type":"value","label":"HDL","status":"0","visible":"1","section":"6","report":"list","hasdate":"true","datedisplay":"HDL Collected Date"},
+	                       {"name":"ldl","type":"value","label":"LDL","status":"0","visible":"1","section":"6","report":"list","hasdate":"true","datedisplay":"LDL Collected Date"},
+	                       {"name":"tchdl","type":"value","label":"TCHDL","status":"0","visible":"1","section":"6","report":"list","hasdate":"true","datedisplay":"TCHDL Collected Date"}];
+	
+	buildCriteriaList(generalCriteria, $("#general-list > .custom-list-body"));
+
+	$("#custom-reports-button").click(function (){
+		$("#kreports").fadeOut(250);
+		$("#creports").fadeIn(350);
+		$("#normal-reports-button").fadeIn(350);
+		$("#custom-reports-button").fadeOut(250);
+		//$("#criteria-summary").fadeIn(350);
+		//$("#criteria-summary-label").fadeIn(350);
+		//$("#custom-report-execute-button").fadeIn(350);
+		$(".reportsTitle").text("CDIS Custom Reports");
+	});
+	
+	$("#normal-reports-button").click(function (){
+		$("#creports").fadeOut(250);
+		$("#kreports").fadeIn(350);
+		$("#custom-reports-button").fadeIn(350);
+		$("#normal-reports-button").fadeOut(250);
+		//$("#criteria-summary").fadeOut(350);
+		//$("#criteria-summary-label").fadeOut(350);
+		//$("#custom-report-execute-button").fadeOut(350);
+		$(".reportsTitle").text("CDIS Predefined Reports");
+	});
+	
+	$("#custom-report-execute-button").click(function(){
+		$("body").append($("<div>",{class:"modal"}).append($("<div>",{class:"modal-span"}).text("CDIS Loading..."))).addClass("loading");
+		var reportObject = getReportObjectFromCriterias();
+		console.log(reportObject);
+		executeReport(reportObject);
+		setTimeout(function(){$("body").removeClass("loading");$(".modal").remove();},1500);
+	});
+
+</script>
+
+ -->

@@ -1,0 +1,244 @@
+<div class="pagebody">
+	<div class="panel-section uss">
+		<div class="section-header">
+			<span class="section-title">Patient Health Care Professional Visit Scheduler</span>
+		</div>
+		
+		<div id="errortext-frontpage" class="errormessage"></div>
+		
+		<section >
+			<div style="width:100%;">
+			<div class="row">
+				<div class="col-sm-6">
+					<div id="visits-chr" class="visit uss">
+						<div class="visit-title"><span>CHR visit</span></div>
+						<div class="visit-body">
+							The patient does not have an associated CHR. <div class="cisbutton associate" id="chr-associate">Associate CHR</div>
+						</div>
+					</div>	
+				</div>
+				<div class="col-sm-6">
+					<div id="visits-md" class="visit uss">
+						<div class="visit-title"><span>MD visit</span></div>
+						<div class="visit-body">
+							The patient does not have an associated MD. <div class="cisbutton associate" id="md-associate">Associate MD</div>
+						</div>
+					</div>	
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div id="visits-nur" class="visit uss">
+						<div class="visit-title"><span>Nurse visit</span></div>
+						<div class="visit-body">
+							The patient does not have an associated Nurse. <div class="cisbutton associate" id="nur-associate">Associate Nurse</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div id="visits-nut" class="visit uss">
+						<div class="visit-title"><span>Nutritionist visit</span></div>
+						<div class="visit-body">
+							The patient does not have an associated Nutritionist. <div class="cisbutton associate" id="nut-associate">Associate Nutritionist</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+		
+		</section>
+				
+		
+	</div>
+</div>
+<div class="pageside">
+	<div class="panel-record uss">
+	</div>
+</div>
+
+
+
+<script>
+
+
+	function drawPatientSchedule(idpatient, hcpcode){
+		var professionIndex = eval("profession_dbindex."+hcpcode);
+		var hcpObjArr = getObjectArray("hcp", patientObjArray);
+		var hcpVal = eval("hcpObjArr."+hcpcode);
+		if(hcpVal != "" && hcpVal != " " && hcpVal != null && hcpVal!="NULL"){
+			if($.isNumeric(hcpVal)){
+				$("#visits-"+hcpcode+" .visit-body").empty();
+				var scheduleVisit = getScheduleVisit(idpatient, hcpVal);
+				$("<table>",{id:"table-"+hcpcode,class:"schedule-table"}).appendTo($("#visits-"+hcpcode+" .visit-body"));
+				$("<tr>").appendTo($("#table-"+hcpcode))
+					.append($("<td>",{class:"schedule-table-header"}).text(eval("profession_object."+hcpcode)))
+					.append($("<td>",{class:"schedule-table-header"}).text("Next visit date"))
+					.append($("<td>",{class:"schedule-table-header"}).text("Frequency"))
+					.append($("<td>",{class:"schedule-table-header",style:"width:50px;"}));
+				var hcpName = "";
+				$(usersArray).each(function(index,Object){
+					if(Object.idprofesion == professionIndex){
+						if(Object.iduser == hcpVal){
+							hcpName = capitalizeFirstLetter(Object.firstname)+" "+capitalizeFirstLetter(Object.lastname);
+						}	
+					}
+				});
+				var dv = "";
+				var df = "";
+				if(typeof(scheduleVisit.datevisit) != "undefined" ){
+					dv = moment(scheduleVisit.datevisit).format("YYYY MMMM");
+				}
+				if(typeof(scheduleVisit.frequency) != "undefined" ){
+					df = scheduleVisit.frequency;
+				}
+				$("<tr>").appendTo($("#table-"+hcpcode))
+					.append($("<td>",{class:"schedule-table-value"}).text(hcpName))
+					.append($("<td>",{class:"schedule-table-value"}).text(dv))
+					.append($("<td>",{class:"schedule-table-value"}).text(scheduleVisit.frequency))
+					.append($("<td>",{class:"schedule-table-value"}).html("<i class=\"fa fa-pencil\" id=\""+hcpcode+"-edit\" style=\"display:none;\" aria-hidden=\"true\"></i>"))
+					.hover(function(){
+								$("#"+hcpcode+"-edit").show();
+								$("#"+hcpcode+"-edit").bind("click",editPatientSchedule);
+								$(this).css("background","#efefef");
+							},
+						function(){
+								$("#"+hcpcode+"-edit").hide();
+								$("#"+hcpcode+"-edit").unbind("click",editPatientSchedule);
+								$(this).css("background","#ffffff");
+							});
+	
+			}else{
+				
+			}
+		}	
+	}
+
+	
+	var hcpObjArr = getObjectArray("hcp", patientObjArray);
+	$(profession_array).each(function(ind,vArr){
+		drawPatientSchedule(patientObjArray[0].idpatient,vArr[0]);
+	});
+	
+	//$(".fa-pencil").click(function(){editPatientSchedule($(this))});
+	
+	$(".associate").click(function(){
+		var parts = $(this).attr("id").split("-");
+		var zone = parts[0];
+		var action = parts[1];
+		if(action == "associate"){
+			$("#visits-"+zone+" .visit-body").empty();
+			$("<select>",{id:"select-"+zone,class:"schedule-select"}).append($("<option>",{value:"0"}).text("Select "+eval("profession_object."+zone))).appendTo($("#visits-"+zone+" .visit-body")).selectmenu();
+			var hcpid = 0;
+			if(zone == "chr"){hcpid = 4;}
+			if(zone == "md"){hcpid = 1;}
+			if(zone == "nur"){hcpid = 2;}
+			if(zone == "nut"){hcpid = 3;}
+			$(usersArray).each(function(index,Object){
+				if(Object.idprofesion == hcpid){
+					$("#select-"+zone).append($("<option>",{value:Object.iduser}).text(capitalizeFirstLetter(Object.firstname)+" "+capitalizeFirstLetter(Object.lastname)));
+				}
+			});
+			$("<input>",{id:"schedule-select-date-"+zone,type:"text",placeholder:"Schedule date",class:"ui-button ui-widget ui-state-default ui-corner-all ui-state-hover schedule-input"}).appendTo($("#visits-"+zone+" .visit-body")).MonthPicker(
+					{
+						MonthFormat: 'M, yy', 
+						Button: false, 
+						AltFormat: "yy-mm-dd",
+						AltField:"#schedule-date-"+zone
+					});
+			
+			$("<input>",{id:"schedule-frequency-"+zone,type:"text",placeholder:"Frequency",class:"ui-button ui-widget ui-state-default ui-corner-all ui-state-hover schedule-input"}).width(100).appendTo($("#visits-"+zone+" .visit-body"));
+			$("<span>",{style:"vertical-align:top;line-height:35px;font-size:110%;font-weight:bold;padding:7px;margin-top:3px;"}).text("(months)").appendTo($("#visits-"+zone+" .visit-body"));
+			$("<div>",{id:"save-schedule-"+zone,class:"cisbutton save-"+zone+"",style:"vertical-align:top;margin-top:10px;"}).text("Save").appendTo($("#visits-"+zone+" .visit-body"));
+			$("<input>",{id:"schedule-idprofesion-"+zone,type:"hidden",value:hcpid}).appendTo($("#visits-"+zone+" .visit-body"));
+			$("<input>",{id:"schedule-date-"+zone,type:"hidden"}).appendTo($("#visits-"+zone+" .visit-body"));
+			$("<input>",{id:"schedule-idpatient-"+zone,type:"hidden",value:patientObjArray[0].idpatient}).appendTo($("#visits-"+zone+" .visit-body"));
+			$(".save-"+zone).click(function(){
+				//var flagHcp =  Validate.now(Validate.Presence, $("#select-"+zone).val());
+				var flagHcp =  Validate.now(Validate.Exclusion, $("#select-"+zone).val(), { within: [ '0', 0 ], allowNull: false, partialMatch: false, caseSensitive: false });
+				var flagDate = Validate.now(Validate.Presence, $("#schedule-date-"+zone).val());
+				var flagFreq = Validate.now(Validate.Presence, $("#schedule-frequency-"+zone).val());
+				$("#select-"+zone+"-button").css("border","none");
+				$("#schedule-select-date-"+zone).css("border","none");
+				$("#schedule-frequency-"+zone).css("border","none");
+				if(flagHcp && flagDate && flagFreq){
+					setScheduleVisit("0", $("#select-"+zone).val(), $("#schedule-idpatient-"+zone).val(), $("#schedule-date-"+zone).val(), $("#schedule-idprofesion-"+zone).val(), $("#schedule-frequency-"+zone).val(),zone);
+					eval("patientObjArray[1]."+zone+"='"+$("#select-"+zone).val()+"'");
+					console.log(patientObjArray[1]);
+					drawPatientSchedule(patientObjArray[0].idpatient,zone);
+				}else{
+					if(!flagHcp){$("#select-"+zone+"-button").css("border","2px solid red");}
+					if(!flagDate){$("#schedule-select-date-"+zone).css("border","2px solid red");}
+					if(!flagFreq){$("#schedule-frequency-"+zone).css("border","2px solid red");}
+				}
+			});	
+		
+		}
+	});
+	
+	
+function editPatientSchedule(){
+	var hcpObjArr = getObjectArray("hcp", patientObjArray);
+	var parts = $(this).attr("id").split("-");
+	var zone = parts[0];
+	var action = parts[1];
+	var hcpVal = eval("hcpObjArr."+zone);
+	if(action == "edit"){
+		var scheduleVisit = getScheduleVisit(patientObjArray[0].idpatient, hcpVal);
+		var sdate = moment(scheduleVisit.datevisit);
+		$("#visits-"+zone+" .visit-body").empty();
+		$("<select>",{id:"select-"+zone,class:"schedule-select"}).append($("<option>",{value:"0"}).text("Select "+eval("profession_object."+zone))).appendTo($("#visits-"+zone+" .visit-body")).selectmenu();
+		var hcpid = 0;
+		if(zone == "chr"){hcpid = 4;}
+		if(zone == "md"){hcpid = 1;}
+		if(zone == "nur"){hcpid = 2;}
+		if(zone == "nut"){hcpid = 3;}
+		$(usersArray).each(function(index,Object){
+			if(Object.idprofesion == hcpid){
+				if(Object.iduser == hcpVal){
+					$("#select-"+zone).append($("<option>",{value:Object.iduser,selected:true}).text(capitalizeFirstLetter(Object.firstname)+" "+capitalizeFirstLetter(Object.lastname)));
+				}else{
+					$("#select-"+zone).append($("<option>",{value:Object.iduser}).text(capitalizeFirstLetter(Object.firstname)+" "+capitalizeFirstLetter(Object.lastname)));
+				}
+			}
+		});
+		$("#select-"+zone).selectmenu( "refresh" );
+		$("<input>",{id:"schedule-select-date-"+zone,type:"text",placeholder:"Schedule date",class:"ui-button ui-widget ui-state-default ui-corner-all ui-state-hover schedule-input"}).appendTo($("#visits-"+zone+" .visit-body")).MonthPicker(
+				{
+					SelectedMonth: sdate.format("MMM, YYYY"),
+					MonthFormat: 'M, yy', 
+					Button: false, 
+					AltFormat: "yy-mm-dd",
+					AltField:"#schedule-date-"+zone
+				});
+		
+		$("<input>",{id:"schedule-frequency-"+zone,type:"text",placeholder:"Frequency",class:"ui-button ui-widget ui-state-default ui-corner-all ui-state-hover schedule-input"}).val(scheduleVisit.frequency).width(100).appendTo($("#visits-"+zone+" .visit-body"));
+		//$("<span>",{style:"vertical-align:top;line-height:35px;font-size:110%;font-weight:bold;padding:7px;margin-top:3px;"}).text("(months)").appendTo($("#visits-"+zone+" .visit-body"));
+		$("<div>",{id:"save-schedule-"+zone,class:"cisbutton save-"+zone+"",style:"vertical-align:top;margin-top:10px;"}).text("Save").appendTo($("#visits-"+zone+" .visit-body"));
+		$("<input>",{id:"schedule-idprofesion-"+zone,type:"hidden",value:scheduleVisit.idprofesion}).appendTo($("#visits-"+zone+" .visit-body"));
+		$("<input>",{id:"schedule-date-"+zone,type:"hidden",value:sdate.format('YYYY-MM-DD')}).appendTo($("#visits-"+zone+" .visit-body"));
+		$("<input>",{id:"schedule-idpatient-"+zone,type:"hidden",value:patientObjArray[0].idpatient}).appendTo($("#visits-"+zone+" .visit-body"));
+		$(".save-"+zone).click(function(){
+			var flagHcp =  Validate.now(Validate.Exclusion, $("#select-"+zone).val(), { within: [ '0', 0 ], allowNull: false, partialMatch: false, caseSensitive: false });
+			var flagDate = Validate.now(Validate.Presence, $("#schedule-date-"+zone).val());
+			var flagFreq = Validate.now(Validate.Presence, $("#schedule-frequency-"+zone).val());
+			$("#select-"+zone+"-button").css("border","none");
+			$("#schedule-select-date-"+zone).css("border","none");
+			$("#schedule-frequency-"+zone).css("border","none");
+			if(flagHcp && flagDate && flagFreq){
+				setScheduleVisit("0", $("#select-"+zone).val(), $("#schedule-idpatient-"+zone).val(), $("#schedule-date-"+zone).val(), $("#schedule-idprofesion-"+zone).val(), $("#schedule-frequency-"+zone).val(),zone);
+				eval("patientObjArray[1]."+zone+"='"+$("#select-"+zone).val()+"'");
+				drawPatientSchedule(patientObjArray[0].idpatient,zone);
+			}else{
+				if(!flagHcp){$("#select-"+zone+"-button").css("border","2px solid red");}
+				if(!flagDate){$("#schedule-select-date-"+zone).css("border","2px solid red");}
+				if(!flagFreq){$("#schedule-frequency-"+zone).css("border","2px solid red");}
+			}
+		});	
+	
+	}
+
+}	
+	
+	
+	
+</script>

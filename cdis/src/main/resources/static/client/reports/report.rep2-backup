@@ -1,0 +1,292 @@
+
+{
+	"id":"REP1",
+	"type":"graph",
+	"title":"Report 1",
+	"generated":"2015-10-09 14:34:23",
+	"owner":"System",
+	"graphtype":"bar",
+	"subcriteria":[
+		{	"subname":"sex",
+			"subvalue":"1",
+			"suboperator":"equal",
+			"subdisplay":"Male",
+			"subsection":"1"
+		},
+		{	"subname":"sex",
+			"subvalue":"2",
+			"suboperator":"equal",
+			"subdisplay":"Female",
+			"subsection":"1"
+		}
+	],
+	"criteria":[
+		{	"name":"dtype",
+			"value":"1",
+			"operator":"equal",
+			"display":"Diabetes Type 1 DM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		},
+		{	"name":"dtype",
+			"value":"2",
+			"operator":"equal",
+			"display":"Diabetes Type 2 DM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		},
+		{	"name":"dtype",
+			"value":"9",
+			"operator":"equal",
+			"display":"Diabetes Type PRE DM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		},
+		{	"name":"dtype",
+			"value":"10",
+			"operator":"equal",
+			"display":"Diabetes Type GDM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		}
+		
+	]
+	
+}
+
+
+{
+	"id":"REP1",
+	"type":"graph",
+	"title":"Number of patients per type of diabetes in community [UI]",
+	"input":{
+		"name":"idcommunity",
+		"type":"select",
+		"display":"Community",
+		"operator":"equal",
+		"section":"1",
+		"text":"Please select a community to execute the report",
+		"values":["All","Chisasibi","Eastmain","Mistissini","Nemaska","Oujebougoumou","Waskaganish","Waswanipi","Wemindji","Whapmagoostui"]
+	},
+	"generated":"2015-10-09 14:34:23",
+	"owner":"System",
+	"graphtype":"pie",
+	"subcriteria":[
+		
+	],
+	"criteria":[
+		{	"name":"dtype",
+			"value":"1",
+			"operator":"equal",
+			"display":"Diabetes Type 1 DM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		},
+		{	"name":"dtype",
+			"value":"2",
+			"operator":"equal",
+			"display":"Diabetes Type 2 DM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		},
+		{	"name":"dtype",
+			"value":"10",
+			"operator":"equal",
+			"display":"Diabetes Type PRE DM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		},
+		{	"name":"dtype",
+			"value":"11",
+			"operator":"equal",
+			"display":"Diabetes Type GDM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		}
+	]
+	
+}
+
+{
+	"id":"REP2",
+	"type":"graph",
+	"class":"full",
+	"title":"Cree patients by type of diabetes and gender",
+	"generated":"2015-10-09 14:34:23",
+	"owner":"System",
+	"graphtype":"line",
+	"subcriteriatype":"single",
+	"subcriteria":[
+		{	"subname":"sex",
+			"subvalue":"1",
+			"suboperator":"equal",
+			"subdisplay":"Male",
+			"subsection":"1"
+		},
+		{	"subname":"sex",
+			"subvalue":"2",
+			"suboperator":"equal",
+			"subdisplay":"Female",
+			"subsection":"1"
+		}
+	],
+	"criteria":[
+		{	"name":"dtype",
+			"value":"1",
+			"operator":"equal",
+			"display":"Diabetes Type 1 DM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		},
+		{	"name":"dtype",
+			"value":"2",
+			"operator":"equal",
+			"display":"Diabetes Type 2 DM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		},
+		{	"name":"dtype",
+			"value":"9",
+			"operator":"equal",
+			"display":"Diabetes Type PRE DM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		},
+		{	"name":"dtype",
+			"value":"10",
+			"operator":"equal",
+			"display":"Diabetes Type GDM",
+			"section":"2",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		}
+		
+	]
+	
+}
+
+
+
+{
+	"id":"REP3",
+	"type":"graph",
+	"class":"half",
+	"title":"Cree patients by gender and type of diabetes",
+	"generated":"2015-10-09 14:34:23",
+	"owner":"System",
+	"graphtype":"bar",
+	"subcriteriatype":"single",
+	"subcriteria":[
+		{	"subname":"dtype",
+			"subvalue":"1",
+			"suboperator":"equal",
+			"subdisplay":"Diabetes Type 1 DM",
+			"subsection":"2"
+		},
+		{	"subname":"dtype",
+			"subvalue":"2",
+			"suboperator":"equal",
+			"subdisplay":"Diabetes Type 2 DM",
+			"subsection":"2"
+		},
+		{	"subname":"dtype",
+			"subvalue":"9",
+			"suboperator":"equal",
+			"subdisplay":"Diabetes Type PRE DM",
+			"subsection":"2"
+		},
+		{	"subname":"dtype",
+			"subvalue":"10",
+			"suboperator":"equal",
+			"subdisplay":"Diabetes Type GDM",
+			"subsection":"2"
+		}
+		
+	],
+	"criteria":[
+		{	"name":"sex",
+			"value":"1",
+			"operator":"equal",
+			"display":"Male",
+			"section":"1",
+			"date":"no",
+			"datedisplay":"",
+			"datename":"",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		},
+		{	"name":"sex",
+			"value":"2",
+			"operator":"equal",
+			"display":"Female",
+			"section":"1",
+			"date":"no",
+			"datedisplay":"Diabetes Date of Diagnosis",
+			"datename":"dtype_collected_date",
+			"dateoperator":"equal",
+			"datevalue":"all",
+			"type":"all"
+		}	
+	]
+	
+}

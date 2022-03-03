@@ -1,0 +1,16 @@
+{
+	"id":"REP1",
+	"type":"table",
+	"title":"Report 1",
+	"generated":"2015-10-09 14:34:23",
+	"owner":"System",
+	"graphtype":"line",
+	"graphdata":"[[['2008-08-12 4:00PM',4], ['2008-09-12 4:00PM',6.5], ['2008-10-12 4:00PM',5.7], ['2008-11-12 4:00PM',9], ['2008-12-12 4:00PM',8.2]]]",
+	"data":{
+		"header":"['ID Patient','First Name', 'Last Name', 'Community','Diabet Type']",
+		"set":"[[1,'p1 first','p1 last','Chisasibi','Type 2 DM'],[1,'p1 first','p1 last','Chisasibi','Type 2 DM'],[1,'p1 first','p1 last','Chisasibi','Type 2 DM']]"
+	},
+	"source":{
+		"sql":"select patient.idpatient, patient.fname, patient.lname, community.name_en as community, cdis_diabet.name_en as diabettype from ncdis.ncdis.patient left join ncdis.ncdis.community on patinet.idcommunity = community.idcommunity left join ncdis.ncdis.cdis.value on "
+	}
+}

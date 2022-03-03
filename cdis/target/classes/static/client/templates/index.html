@@ -1,0 +1,365 @@
+<link type="text/css" rel="stylesheet" href="client/libs/css/font-awesome/css/font-awesome.min.css">
+<div id="indexPage" class="pageClass">
+	<div id="frontpage"></div>	
+	<div class="logincontainer">
+		<div class="cdistext">Cree Diabetes Information System</div>
+		<form id="loginform" class="login">
+			<div class="avatar"></div>
+			<div id="errortext" class="errormessage"> </div>
+			<div class="username">
+				<input type="text" name="user" id="user" class="logintext" placeholder="Username" tabindex="1"/>
+			</div>
+			<div class="password">
+				<input type="password" id="pass" name="pass" class="logintext" placeholder="Password" tabindex="2"/>
+			</div>
+			<div id="loginbutton" class="cisbutton" tabindex="3">Login</div>
+			<div class="forgotButton">Forgot password?</div>
+			<div class="cisbutton subscribeButton">Add new CDIS user</div>
+		</form>
+	</div>
+</div>
+
+<div id="dialog-forgot" title="Forgot Password ? Enter info to recover password." >
+  <p class="validateTips">All form fields are required.</p>
+   <form>
+    <fieldset>
+      <label for="usernameUser">Username</label>
+      <input type="text" name="usernameUser" id="usernameUser" value="" class="text ui-widget-content ui-corner-all mf">
+      <label for="firstnameUser">First name</label>
+      <input type="text" name="firstnameUser" id="firstnameUser" value="" class="text ui-widget-content ui-corner-all mf">
+      <label for="nameUser">Last name</label>
+      <input type="text" name="lastnameUser" id="lastnameUser" value="" class="text ui-widget-content ui-corner-all mf">
+      <label for="emailUser">Email</label>
+      <input type="text" name="emailUser" id="emailUser" value="" class="text ui-widget-content ui-corner-all mf">
+ 	  <label for="profesionUser">Profession</label>
+      <select name="profesionUser" id="profesionUser" class="text ui-widget-content ui-corner-all mf">
+      	<option value="0">Please Choose ...</option>
+      	<option value="1">CHR</option>
+      	<option value="2">MD</option>
+      	<option value="3">Nurse</option>
+      	<option value="3">Nutritionist</option>
+      </select>
+      
+      <!-- Allow form submission with keyboard without duplicating the dialog button -->
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+  </form>
+</div>
+
+
+<div id="dialog-subscribe" title="Subscribe to CDIS" >
+  <p class="validateTips">All form fields are required.</p>
+  <div id="subform">
+   <form>
+    <fieldset>
+      <label for="firstnameSub">First name</label>
+      <input type="text" name="firstnameSub" id="firstnameSub" value="" class="text ui-widget-content ui-corner-all mf">
+      <label for="lastnameSub">Last name</label>
+      <input type="text" name="lastnameSub" id="lastnameSub" value="" class="text ui-widget-content ui-corner-all mf">
+      <label for="emailSub">Email</label>
+      <input type="text" name="emailSub" id="emailSub" value="" class="text ui-widget-content ui-corner-all mf">
+ 	  <label for="idcommunitySub">User works in community:</label>
+      <select name="idcommunitySub" id="idcommunitySub" class="text ui-widget-content ui-corner-all mf">
+      	<option value="0">Please Choose ...</option>
+      	<option value="1">Chisasibi</option>
+      	<option value="2">Estmain</option>
+      	<option value="3">Mistissini</option>
+      	<option value="4">Nemaska</option>
+		<option value="5">Oujebougoumou</option>
+		<option value="6">Waskaganish</option>
+		<option value="7">Waswanipi</option>
+		<option value="8">Wemindji</option>
+		<option value="9">Whapmagoostui</option>
+      </select>
+      <label for="idprofesionSub">User profession:</label>
+      <select name="idprofesionSub" id="idprofesionSub" class="text ui-widget-content ui-corner-all mf">
+      	<option value="0">Please Choose ...</option>
+      	<option value="1">CHR</option>
+      	<option value="2">MD</option>
+      	<option value="3">Nurse</option>
+      	<option value="4">Nutritionist</option>
+      </select>
+      <!-- Allow form submission with keyboard without duplicating the dialog button -->
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+  </form>
+  </div>
+</div>
+
+<script>
+
+var emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+name = $( "#nameUser" ),
+email = $( "#emailUser" ),
+message = $( "#messageUser" ),
+admin = $("#adminUser"),
+tips = $( ".validateTips" );
+var imsg = "All form fields are required.";
+
+$("#user").focus();
+$(".forgotButton").click(function (){
+	$("#dialog-forgot").dialog("open");
+});
+
+$(".subscribeButton").click(function (){
+	$("#dialog-subscribe").dialog("open");
+});
+
+
+$("#dialog-forgot").dialog({
+	  autoOpen: false,
+    	resizable: false,
+    	height: 650,
+   		width: 420,
+    	modal: true,
+    buttons: {
+      Cancel: function() {
+        $( this ).dialog( "close" );
+      },
+      "Recover Password": function() {
+    	  forgotPassword(formForgot[0]);
+        }
+    },
+    close: function() {
+        formForgot[ 0 ].reset();
+        $(".mf").removeClass( "ui-state-error" );
+        tips.text(imsg);
+      }
+  });
+
+
+$("#dialog-subscribe").dialog({
+	  autoOpen: false,
+  resizable: false,
+  height: 650,
+  width: 420,
+  modal: true,
+  buttons: {
+    Cancel: function() {
+      $( this ).dialog( "close" );
+      
+    },
+    "Subscribe to CDIS": function() {
+  	 	subscribe();
+      }
+  },
+  close: function() {
+      formSubscribe[ 0 ].reset();
+      $(".mf").removeClass( "ui-state-error" );
+    }
+});
+
+
+
+
+var formForgot = $("#dialog-forgot").find( "form" ).on( "submit", function( event ) {
+    event.preventDefault();
+    forgotPassword();
+  });
+  
+var formSubscribe = $("#dialog-subscribe").find( "form" ).on( "submit", function( event ) {
+    event.preventDefault();
+    subscribe();
+    //sendUserMessage();
+  });
+
+
+function forgotPassword() {
+    var valid = true;
+    $(".mf").removeClass( "ui-state-error" );
+    valid = valid && checkLength(  $( "#usernameUser" ), "Username" );
+    valid = valid && checkLength(  $( "#firstnameUser" ), "First name" );
+    valid = valid && checkLength(  $( "#lastnameUser" ), "Last name" );
+    valid = valid && checkLength(  $( "#emailUser" ), "Email" );
+    valid = valid && checkLength(  $( "#profesionUser" ), "Profession" );
+    valid = valid && checkRegexp(  $( "#emailUser" ), emailRegex, "eg. name@domain.com" );
+
+
+    if ( valid ) {
+    	var mes = $.ajax({
+    		  url: "/ncdis/service/action/forgotPassword?language=en&firstnameUser="+$("#firstnameUser").val()+"&lastnameUser="+$("#lastnameUser").val()+"&usernameUser="+$("#usernameUser").val()+"&emailUser="+$("#emailUser").val()+"&profesionUser="+$("#profesionUser").val(),
+    		  type: "GET",
+    		  async : false,
+    		  cache : false,
+    		  dataType: "json"
+    		});
+    		mes.done(function( json ) {
+    			console.log(json);
+    			if(json.status == "1"){
+    				tips.html(json.message);
+    				$("#subform").hide();
+    			}else{
+    				tips.html(json.message);
+    			}
+    			$( "#dialog-forgot" ).dialog( "option", "buttons", { "Return to CDIS": function() { $(this).dialog("close"); } } );
+    		});
+    		mes.fail(function( jqXHR, textStatus ) {
+    		  alert( "Error sending message : " + textStatus );
+    		  console.log(this.url);
+    		  formForgot[ 0 ].reset();
+  			  $("#dialog-forgot").dialog( "close" );
+    		});	
+
+    }
+    return valid;
+  }
+
+function subscribe() {
+    var valid = true;
+    $(".mf").removeClass( "ui-state-error" );
+    valid = valid && checkLength(  $( "#firstnameSub" ), "First name" );
+    valid = valid && checkLength(  $( "#lastnameSub" ), "Last name" );
+    valid = valid && checkLength(  $( "#emailSub" ), "Email" );
+    valid = valid && checkLength(  $( "#idcommunitySub" ), "User Community" );
+    valid = valid && checkLength(  $( "#idprofesionSub" ), "Profession" );
+    valid = valid && checkRegexp(  $( "#emailSub" ), emailRegex, "Email format should be : eg. name@domain.com" );
+
+
+    if ( valid ) {
+    	var mes = $.ajax({
+    		  url: "/ncdis/service/action/subscribe?language=en&firstnameSub="+$("#firstnameSub").val()+"&lastnameSub="+$("#lastnameSub").val()+"&idcommunitySub="+$("#idcommunitySub").val()+"&emailSub="+$("#emailSub").val()+"&idprofesionSub="+$("#idprofesionSub").val(),
+    		  type: "GET",
+    		  async : false,
+    		  cache : false,
+    		  dataType: "json"
+    		});
+    		mes.done(function( json ) {
+    			console.log(json);
+    			if(json.status == "1"){
+    				tips.html(json.message);
+    				$("#dialog-subscribe").find("fieldset").hide();
+    			}else{
+    				tips.html(json.message);
+    			}
+    		});
+    		mes.fail(function( jqXHR, textStatus ) {
+    		  alert( "Error sending message : " + textStatus );
+    		  formSubscribe[ 0 ].reset();
+  			  $("#dialog-subscribe").dialog( "close" );
+    		});	
+
+    }
+    return valid;
+  }
+
+
+function updateTips( t ) {
+    tips
+      .text( t )
+      .addClass( "ui-state-highlight" );
+    setTimeout(function() {
+      tips.removeClass( "ui-state-highlight", 1500 );
+    }, 500 );
+  }
+
+  function checkLength( o, n ) {
+    if ( o.val().length == 0 || o.val() == '0') {
+      o.addClass( "ui-state-error" );
+      updateTips( "Field " + n + " cannot be empty." );
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  function checkRegexp( o, regexp, n ) {
+    if ( !( regexp.test( o.val() ) ) ) {
+      o.addClass( "ui-state-error" );
+      updateTips( n );
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+
+var mes = $.ajax({
+	  url: "/ncdis/service/action/getFrontPageMessage?language=en",
+	  type: "GET",
+	  async : false,
+	  cache : false,
+	  dataType: "json"
+	});
+	mes.done(function( json ) {
+		message = json.objs[0].message;
+		if(message != ""){
+			$("#frontpage").html(message); 
+			var contents = $("#frontpage").wrapInner('<div>').children(); // wrap a div around the contents
+			var height = contents.outerHeight();
+			$("#frontpage").animate({ scrollTop: height }, 8000);
+			setTimeout(function() {$("#frontpage").animate({scrollTop:0}, 8000);},8000);
+			setInterval(function(){
+	     		$("#frontpage").animate({ scrollTop: height }, 8000);
+				setTimeout(function() {
+	   						$("#frontpage").animate({scrollTop:0}, 8000); 
+							},8000);
+			},16000);
+		}else{
+			$("#frontpage").hide();
+		}
+				
+	});
+	mes.fail(function( jqXHR, textStatus ) {
+	  alert( "Request failed: " + textStatus );
+	  console.log(this.url);
+	});	
+
+	
+	$('#loginbutton').bind('keypress', function(e) {
+		if(e.keyCode==13){
+			$(this).click();
+		}
+	});
+
+$("#loginbutton").click(function() {
+	var user = $("#user").val();
+	var pass = $("#pass").val();
+	var validUser = Validate.now(Validate.Presence, $("#user").val());
+	var validPass = Validate.now(Validate.Presence, $("#pass").val());
+	if(validUser && validPass){
+		var request = $.ajax({
+		  url: "/ncdis/service/action/loginSession?username="+user+"&password="+pass+"&language=en&reswidth="+$(window).width()+"&resheight="+$(window).height(),
+		  type: "GET",
+		  dataType: "json"
+		});
+		request.done(function( json ) {
+			console.log("json");
+			console.log(json);
+			
+		  if(json.status == "0"){
+			  $("#errortext").text(json.message);
+		  }else{
+			 userObj = json.objs[0];
+			 sid = getSession(userObj.iduser);
+			 console.log(sid);
+			 var ramq = $.cookie('ramq');
+			 console.log(ramq);
+			 if((ramq != null) && (ramq != "")){
+				 //window.location = "cdis.html?section=patient&ramq="+ramq+"&sid="+sid+"&language=en";
+				 //window.location = "search.html?sid="+sid+"&language=en";
+				 gts(sid,"en");
+				 //gtc(sid,"en",ramq,"patient");
+			 }else{
+				 //startUser();
+				 //window.location = "search.html?sid="+sid+"&language=en";
+				 gts(sid,"en");
+			 }
+		  }
+		});
+		request.fail(function( jqXHR, textStatus ) {
+			$("#errortext").text("Wrong Username or Password");
+		});
+		
+	}else{
+		$("#errortext").text("Wrong Username or Password");
+		
+	}
+});
+
+$("#pass").keyup(function(e){
+	if(e.keyCode == 13){
+		$("#loginbutton").click();
+	}
+});
+
+</script>

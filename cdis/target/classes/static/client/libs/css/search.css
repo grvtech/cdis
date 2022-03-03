@@ -1,0 +1,122 @@
+/**
+SEARCH PAGE CSS
+*/
+/*
+.search{position:relative;width:1000px;height:150px;margin:auto;}
+.search .searchlabel{width:auto; text-align:center;font-size:220%;color:#ffffff;margin-top:20px;}
+.search .ssearch{position:absolute;left:150px;width:850px;height:100%;}
+.search .scriteria{position:absolute;width:150px;left:0px;margin:-42px 0px 0px 0px;border:1px solid #4b3b3b;}
+.search #criteria{position:absolute;width:150px;left:0px;margin:0px 0px 0px 0px;height:42px;border-top:1px solid #4b3b3b;border-bottom:1px solid #4b3b3b;border-left:1px solid #4b3b3b;line-height:40px;font-family: Sans-Serif,Tahoma,Verdana,Arial,sans-serif;font-size: 100%;text-transform: uppercase;text-align: center;color:#ffffff;cursor:pointer;background-color:#4b3b3b;}
+.search .sbutton{position:absolute;right:0px;width:90px;height:100%;margin: 0;border: 1px solid #4b3b3b;background:no-repeat url(../images/ic_search_wht_24dp_r1.png) #4b3b3b center center;top:1px;}
+.search .ssearch .searchtext{width:100%;height:40px;color:#000000;margin:0px;padding-left:10px;border-left:none;border-bottom:1px solid #4b3b3b;border-top:1px solid #4b3b3b;border-right:1px solid #4b3b3b;font-family: Sans-Serif,Tahoma,Verdana,Arial,sans-serif;font-size: 100%;text-transform: uppercase;text-align: left;}
+*/
+
+
+.search{width:1000px;height:150px;margin:auto;padding:0px;display:flex;flex-direction:row;flex-wrap:nowrap;}
+.search .ssearch{flex:1 0;}
+.search .ssearch .label{width:auto; text-align:center;font-size:220%;color:#ffffff;margin:0px;}
+.search .ssearch .input{height:30px;}
+.search .scriteria{flex:1 0;max-width:150px;left:0px;top:0px;margin:0px;border:1px solid #4b3b3b;}
+.search .sbutton{position:absolute;right:0px;width:90px;height:100%;margin: 0;border: 1px solid #4b3b3b;background:no-repeat url(../images/ic_search_wht_24dp_r1.png) #4b3b3b center center;top:1px;}
+.search .ssearch .searchtext{width:100%;height:100%;color:#000000;margin:0px;padding-left:10px;border-left:none;border-bottom:1px solid #4b3b3b;border-top:1px solid #4b3b3b;border-right:1px solid #4b3b3b;font-family: Sans-Serif,Tahoma,Verdana,Arial,sans-serif;font-size: 100%;text-transform: uppercase;text-align: left;}
+
+.search #radios .ui-button.ui-state-active {color: #ffffff;background-color: #4b3b3b;}
+.search #radios .ui-state-default {border: none;background: #ececec url("../images/ui-bg_glass_75_f7f5f5_1x400.png") 50% 50% repeat-x;font-weight: normal;color: #000000;}
+.search #radios .ui-corner-right{border-bottom-right-radius: 0px;-moz-border-bottom-right-radius: 0px;-webkit-border-bottom-right-radius: 0px;border-top-right-radius: 0px;-moz-border-top-right-radius: 0px;-webkit-border-top-right-radius: 0px;}
+.search #radios .ui-corner-left{border-bottom-left-radius: 0px;-moz-border-bottom-left-radius: 0px;-webkit-border-bottom-left-radius: 0px;border-top-left-radius: 0px;-moz-border-top-left-radius: 0px;-webkit-border-top-left-radius: 0px;}
+.search #radios .ui-widget {font-family: Sans-Serif,Verdana,Arial,sans-serif;font-size: 100%;height:42px;top:0px;left:0px;}
+.search #radios .ui-widget:hover {background-color:#db4437;color:#ffffff;}
+/**/
+.dashboard-menu{position:relative;width:1000px;text-align:right;margin:auto;padding:5px;}
+.search-message{width:1000px;margin:auto;background-color:#ededed;margin-top:10px;margin-bottom:10px;}
+
+
+#radios{border-color:#4b3b3b;}
+#radios .btn-default{background-color:#ececec;margin-bottom:0px;}
+#radios .btn-default.active{background-color:#4b3b3b;color:#ffffff;font-weight:bold;}
+#radios .btn.focus {  outline: none;box-shadow:none;}
+
+
+.ui-autocomplete{width:612px;margin-left:-200px;height:400px;overflow: auto;-moz-border-radius: 0px;-webkit-border-radius: 0px;border-radius: 0px;}
+.search-line{display:grid;grid-template-columns:300px 130px 50px 200px 100px;}
+
+.ui-menu-item .ui-state-active {
+	background-color:#4b3b3b;
+	border:none;
+}
+.ui-menu-item  strong{background-color:#db4437;color:#fff;}
+
+
+/*
+.searchname {position:absolute;overflow:hidden;width:300px;height:30px;top:5px;left:5px;overflow:hidden;}
+.searchname span{font-size: 120%;line-height:30px;font-family:Tahoma;color:#000000;}
+.searchname strong{font-weight:normal;background-color:#db4437;color:#ffffff;}
+.searchcommunity {position:absolute;width:130px;top:5px;left:308px;font-size: 80%;line-height:30px;font-family:Sans-Serif;color:#000000;overflow:hidden;}
+.searchchart {position:absolute;width:50px;top:5px;left:440px;overflow:hidden;}
+.searchchart label{font-size: 100%;line-height:30px;font-family:Sans-Serif;color:#000000;}
+.searchchart span{font-size: 80%;line-height:30px;font-family:Sans-Serif;color:#000000;}
+.searchchart strong{font-weight:normal;background-color:#db4437;color:#ffffff;}
+.searchramq {position:absolute;width:200px;top:5px;left:493px;overflow:hidden;}
+.searchramq label{font-size: 90%;line-height:30px;font-family:Sans-Serif;color:#000000;}
+.searchramq span{font-size: 90%;line-height:30px;font-family:Sans-Serif;color:#000000;}
+.searchramq strong{background-color:#db4437;color:#ffffff;}
+.searchgiu {position:absolute;width:100px;top:5px;left:700px;overflow:hidden;}
+.searchgiu label{font-size: 90%;line-height:30px;font-family:Sans-Serif;color:#000000;}
+.searchgiu span{font-size: 90%;line-height:30px;font-family:Sans-Serif;color:#000000;}
+.searchgiu strong{background-color:#db4437;color:#ffffff;}
+*/
+
+
+.notes-alert{position:relative;height:100px;width:1000px;margin:auto;z-index:2;background-color:#efefef;display:none;overflow-x: hidden;padding:5px;}
+.notes-alert .message{position:relative;background-color:#fefefe;text-align:left;font-size:90%;line-height:25px;margin:3px;padding:3px;}
+.notes-alert .message-button{position:absolute;color:#cdcdcd;font-size:80%;cursor:pointer;right:15px;width:auto;top:2px;}
+.notes-alert .message-button:hover{color:#4d4d4d;font-weight:bold;}
+
+.personal-patients{position:relative;max-height:250px;width:1000px;margin:auto;z-index:2;background-color:#efefef;overflow-x: hidden;padding:5px;}
+.personal-patients .linkedHeader{position:relative;width:auto;padding:5px;background:#cdcdcd;border:1px solid #4d4d4d;}
+.personal-patients .linkedHeader #linkedPatients{position:absolute;right:2px;top:6px;}
+
+.personal-patients table{width:100%;display:none;border:1px solid #4d4d4d;}
+.personal-patients table thead{font-size:90%;font-weight:bold;background:#4d4d4d;color:#ffffff;text-transform: uppercase;}
+.personal-patients table tbody{font-size:80%;background:#ffffff;}
+.personal-patients table thead td{padding:5px;text-align:center;}
+.personal-patients table tbody td{padding:5px;text-align:center;}
+.personal-patients table tbody tr{background:#ffffff;cursor:pointer;}
+.personal-patients table tbody tr:hover{background:#cdcdcd;}
+
+.personal-patients table tbody tr.notvisits{background:#ffc4c4;}
+.personal-patients table tbody tr.notvisits:hover{background:#cdcdcd;}
+.futurevisits{}
+.personal-patients table tbody tr.currentvisits{background:#c4ffc8;}
+.personal-patients table tbody tr.currentvisits:hover{background:#cdcdcd;}
+.personal-patients p{margin:2px;padding:2px;}
+.personal-patients #userfullname{font-weight:bold;}
+
+
+@media screen  and  (max-width: 1370px) {
+	.search{width:800px;height:150px;margin:auto;padding:0px;display:flex;flex-direction:row;flex-wrap:nowrap;}
+	.search .ssearch{flex:1 0;}
+	.search .ssearch .label{width:auto; text-align:center;font-size:220%;color:#ffffff;margin:0px;}
+	.search .ssearch .input{height:30px;}
+	.search .scriteria{flex:1 0;max-width:150px;left:0px;top:0px;margin:0px;border:1px solid #4b3b3b;}
+	.search .sbutton{position:absolute;right:0px;width:90px;height:100%;margin: 0;border: 1px solid #4b3b3b;background:no-repeat url(../images/ic_search_wht_24dp_r1.png) #4b3b3b center center;top:1px;}
+	.search .ssearch .searchtext{width:100%;height:100%;color:#000000;margin:0px;padding-left:10px;border-left:none;border-bottom:1px solid #4b3b3b;border-top:1px solid #4b3b3b;border-right:1px solid #4b3b3b;font-family: Sans-Serif,Tahoma,Verdana,Arial,sans-serif;font-size: 100%;text-transform: uppercase;text-align: left;}
+	.search-message{width:800px;margin:auto;background-color:#ededed;margin-top:10px;margin-bottom:10px;}
+	.personal-patients{position:relative;max-height:250px;width:800px;margin:auto;z-index:2;background-color:#efefef;overflow-x: hidden;padding:5px;}
+	.dashboard-menu{position:relative;width:800px;text-align:right;margin:auto;padding:5px;}
+	.ui-autocomplete{width:650px;height:300px;overflow: auto;-moz-border-radius: 0px;-webkit-border-radius: 0px;border-radius: 0px;}
+}
+@media screen  and  (min-width: 1370px) and (max-width: 1601px) {
+	.search{width:1000px;height:150px;margin:auto;padding:0px;display:flex;flex-direction:row;flex-wrap:nowrap;}
+	.search .ssearch{flex:1 0;}
+	.search .ssearch .label{width:auto; text-align:center;font-size:220%;color:#ffffff;margin:0px;}
+	.search .ssearch .input{height:30px;}
+	.search .scriteria{flex:1 0;max-width:150px;left:0px;top:0px;margin:0px;border:1px solid #4b3b3b;}
+	.search .sbutton{position:absolute;right:0px;width:90px;height:100%;margin: 0;border: 1px solid #4b3b3b;background:no-repeat url(../images/ic_search_wht_24dp_r1.png) #4b3b3b center center;top:1px;}
+	.search .ssearch .searchtext{width:100%;height:100%;color:#000000;margin:0px;padding-left:10px;border-left:none;border-bottom:1px solid #4b3b3b;border-top:1px solid #4b3b3b;border-right:1px solid #4b3b3b;font-family: Sans-Serif,Tahoma,Verdana,Arial,sans-serif;font-size: 100%;text-transform: uppercase;text-align: left;}
+	.search-message{width:1000px;margin:auto;background-color:#ededed;margin-top:10px;margin-bottom:10px;}
+	.personal-patients{position:relative;max-height:250px;width:1000px;margin:auto;z-index:2;background-color:#efefef;overflow-x: hidden;padding:5px;}
+	.dashboard-menu{position:relative;width:1000px;text-align:right;margin:auto;padding:5px;}
+	.ui-autocomplete{width:850px;height:300px;overflow: auto;-moz-border-radius: 0px;-webkit-border-radius: 0px;border-radius: 0px;}
+}
+

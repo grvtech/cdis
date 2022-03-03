@@ -1,0 +1,49 @@
+{
+	"id":"REP1",
+	"type":"graph",
+	"title":"CDIS Patients test",
+	"generated":"2015-10-09 14:34:23",
+	"owner":"System",
+	"export":"true",
+	"graphtype":"none",
+	"subcriteria":[
+		{	"subname":"idcommunity",
+			"subvalue":"1",
+			"suboperator":"equal",
+			"subdisplay":"Chisasibi",
+			"subsection":"1"
+		},
+		{	"subname":"idcommunity",
+			"subvalue":"2",
+			"suboperator":"equal",
+			"subdisplay":"Mistisini",
+			"subsection":"1"
+		}
+	],
+	"criteria":[
+		{	"name":"sbp",
+			"value":"all",
+			"operator":"equal",
+			"display":"BP",
+			"section":"56",
+			"date":"yes",
+			"datedisplay":"BP Date",
+			"datename":"sbp_collected_date",
+			"dateoperator":"more than",
+			"datevalue":"DATEADD(MONTH, -12, GETDATE())",
+			"type":"all"
+		}
+	]
+	
+}
+
+
+
+
+
+
+
+
+
+
+

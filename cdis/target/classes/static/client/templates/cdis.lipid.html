@@ -1,0 +1,51 @@
+<div class="pagebody">
+	<div class="panel-section" id="lsection_lipid">
+		<div class="section-header">
+			<span class="section-title">Lipids</span>
+			
+			<div style="display:inline-block;vertical-align:bottom;">
+			<span class="section-misc">
+				(Place cursor over selected points of the graph to highlight value and date)
+			</span>
+			<br><span class="section-note">
+				Data in this section is updated automatically from Omnilab. 
+			</span>
+			</div>
+			
+			 <div class="cisbutton" onclick="printSectionGraphs('Lipids')" style="position:absolute;right:10px;top:3px;" title="Print all graphs in section">
+			 	Print All Graphs
+			 </div>
+		</div>
+		 <section>
+		 	<!-- 
+		 	<div id="lsection_lipid_hdl" class="section-line"></div>
+		 	<div id="lsection_lipid_ldl" class="section-line"></div>
+		 	<div id="lsection_lipid_tchol" class="section-line"></div>
+		 	<div id="lsection_lipid_tglycer" class="section-line"></div>
+		 	 -->
+		 	<div style="width:100%;">
+				<div class="row" >
+					<div class="col-sm-6">
+						<div class="widget-container" id="hdl"></div>
+					</div>
+					<div class="col-sm-6">
+						<div class="widget-container" id="ldl"></div>
+					</div>
+				</div>
+				<div class="row" >
+					<div class="col-sm-6">
+						<div class="widget-container" id="tchol"></div>
+					</div>
+					<div class="col-sm-6">
+						<div class="widget-container" id="tglycer"></div>
+					</div>
+				</div>
+			</div>
+		 </section>
+	</div>
+</div>
+<div class="pageside">
+	<div class="panel-record uss">
+	</div>
+</div>
+<script src="client/libs/js/pages/widget.js?tsid=20171201" type="text/javascript"></script>

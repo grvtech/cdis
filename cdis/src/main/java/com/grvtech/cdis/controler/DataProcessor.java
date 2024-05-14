@@ -1,12 +1,16 @@
 package com.grvtech.cdis.controler;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.net.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -73,6 +77,25 @@ public String getUser(final HttpServletRequest request){
 	return result;
 }
 	
+@RequestMapping(value = {"/service/data/getUserDashboard"}, method = RequestMethod.POST)
+public String getUserDashboard(final HttpServletRequest request){
+	Gson json = new Gson();
+	String result = "";
+	
+	String iduser = request.getParameter("iduser").toString();
+	String language = request.getParameter("language").toString();
+	User user = chbdb.getUser(Integer.parseInt(iduser));
+	if(!user.getIduser().equals("0")){
+		Hashtable<String,ArrayList<ArrayList<String>>>  dashboard = chbdb.getUserDashboard(iduser); 
+		ArrayList<Object> obs = new ArrayList<>();
+		obs.add(dashboard);
+		result = json.toJson(new MessageResponse(true,language,obs));
+	}else{
+		result = json.toJson(new MessageResponse(false,language,null));
+	}
+	return result;
+}
+
 @RequestMapping(value = {"/service/data/getUsers"}, method = RequestMethod.GET)
 public String getUsers(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -115,8 +138,8 @@ public String getPatientNotes(final HttpServletRequest request){
 	return result;
 }
 	
-	@RequestMapping(value = {"/service/data/setPatientNotes"}, method = RequestMethod.GET)
-	public String setPatientNotes(final HttpServletRequest request){
+@RequestMapping(value = {"/service/data/setPatientNotes"}, method = RequestMethod.GET)
+public String setPatientNotes(final HttpServletRequest request){
 		Gson json = new Gson();
 		
 		
@@ -160,8 +183,8 @@ public String getPatientNotes(final HttpServletRequest request){
 		return result;
 	}
 	
-	@RequestMapping(value = {"/service/data/deleteUser"}, method = RequestMethod.GET)
-	public String deleteUser(final HttpServletRequest request){
+@RequestMapping(value = {"/service/data/deleteUser"}, method = RequestMethod.GET)
+public String deleteUser(final HttpServletRequest request){
 		Gson json = new Gson();
 		
 		String result = "";
@@ -174,29 +197,8 @@ public String getPatientNotes(final HttpServletRequest request){
 		ArrayList<Object> obs = chbdb.getUsers();
 		result = json.toJson(new MessageResponse(true,language,obs));
 		return result;
-	}
-	
-	@RequestMapping(value = {"/service/data/activateUser"}, method = RequestMethod.GET)
-	public String activateUser(final HttpServletRequest request){
-		Gson json = new Gson();
-		ChbDBridge db = new ChbDBridge();
-		String result = "";
-		String language = request.getParameter("language").toString();
-		String iduser = request.getParameter("iduser").toString().trim();
-		
-		User u = chbdb.getUser(iduser);
-		u.setActive("1");
-		u.setPhone("");
-		db.setUser(u);
-		
-		String messagEmail = "<b><p>Hello "+u.getFirstname()+" "+u.getLastname()+"</p></b><p>Your CDIS account was activated.<br>You can login to CDIS by clicking <a href='http://cdis.reg18.rtss.qc.ca/ncdis/'>HERE</a><br> Your login information:<br><b>Username:</b>"+u.getUsername()+"<br><b>Password:</b>"+u.getPassword()+"<br><b>For any problems you can contact <a href='mailto:support@grvtech.ca'>CDIS Support</a></p>";
-		MailTool.sendMailInHtml("CDIS User Activation", messagEmail, u.getEmail());
-		
-		ArrayList<Object> obs = chbdb.getUsers();
-		result = json.toJson(new MessageResponse(true,language,obs));
-		return result;
-	}
-	
+}
+
 @RequestMapping(value = {"/service/data/saveUser"}, method = RequestMethod.GET)
 public String saveUser(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -238,7 +240,6 @@ public String saveUser(final HttpServletRequest request){
 	result = json.toJson(new MessageResponse(true,language,obs));
 	return result;
 }
-	
 
 @RequestMapping(value = {"/service/data/setUserPassword"}, method = RequestMethod.GET)
 public String setUserPassword(final HttpServletRequest request){
@@ -261,6 +262,52 @@ public String setUserPassword(final HttpServletRequest request){
 	return result;
 }
 
+@RequestMapping(value = {"/service/data/sendResetUserPassword"}, method = RequestMethod.GET)
+public String sendResetUserPassword(final HttpServletRequest request){
+	Gson json = new Gson();
+	String result = "";
+	
+	String language = request.getParameter("language").toString();
+	String iduser = request.getParameter("iduser").toString().trim();
+	String server = request.getParameter("server").toString();
+	
+	User user =chbdb.getUser(Integer.parseInt(iduser));
+	
+	if(!user.getIduser().equals("0")){
+		chbdb.setResetPassword(user.getIduser(),"1");
+		String params = "rst=1&iduser="+user.getIduser(); 
+		String url = "https://"+server+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
+		String messagEmail = "<b><p>CDIS Password reset</p></b><p>Hello "+user.getFirstname()+"<br> Click on the button below to reset your password<br><br><a href='"+url+"'>Reset Password</a></p>";
+		MailTool.sendMailInHtml("CDIS Password Reset", messagEmail, user.getEmail());
+		
+		ArrayList<Object> obs = new ArrayList<>();
+		result = json.toJson(new MessageResponse(true,language,obs));
+	}else{
+		result = json.toJson(new MessageResponse(false,language,null));
+	}
+	return result;
+}
+
+@RequestMapping(value = {"/service/data/activateUser"}, method = RequestMethod.GET)
+public String activateUser(final HttpServletRequest request){
+		Gson json = new Gson();
+		ChbDBridge db = new ChbDBridge();
+		String result = "";
+		String language = request.getParameter("language").toString();
+		String iduser = request.getParameter("iduser").toString().trim();
+		
+		User u = chbdb.getUser(iduser);
+		u.setActive("1");
+		u.setPhone("");
+		db.setUser(u);
+		
+		String messagEmail = "<b><p>Hello "+u.getFirstname()+" "+u.getLastname()+"</p></b><p>Your CDIS account was activated.<br>You can login to CDIS by clicking <a href='http://cdis.reg18.rtss.qc.ca/ncdis/'>HERE</a><br> Your login information:<br><b>Username:</b>"+u.getUsername()+"<br><b>Password:</b>"+u.getPassword()+"<br><b>For any problems you can contact <a href='mailto:support@grvtech.ca'>CDIS Support</a></p>";
+		MailTool.sendMailInHtml("CDIS User Activation", messagEmail, u.getEmail());
+		
+		ArrayList<Object> obs = chbdb.getUsers();
+		result = json.toJson(new MessageResponse(true,language,obs));
+		return result;
+}
 
 @RequestMapping(value = {"/service/data/getUserProfile"}, method = RequestMethod.GET)
 public String getUserProfile(final HttpServletRequest request){
@@ -297,7 +344,6 @@ public String getUserBySession(final HttpServletRequest request){
 	return result;
 }
 
-
 @RequestMapping(value = {"/service/data/getUserMessages"}, method = RequestMethod.GET)
 public String getUserMessages(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -310,10 +356,6 @@ public String getUserMessages(final HttpServletRequest request){
 	return result;
 }
 
-	
-	/*
-	 * /service/data/getSession?iduser=XX
-	 * */
 @RequestMapping(value = {"/service/data/getUserSession"}, method = RequestMethod.GET)
 public String getUserSession(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -417,8 +459,6 @@ public String diabetByCommunity(final HttpServletRequest request){
 	return result;
 }
 
-
-
 @RequestMapping(value = {"/service/data/diabetByType"}, method = RequestMethod.GET)
 public String diabetByType(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -443,16 +483,8 @@ public String diabetByYear(final HttpServletRequest request){
 	return result;
 }
 	
-	/*
-	 * 
-	 * patien reposnse
-	 * 
-	 * {true,en, obs:[patient, hcp, Latest_diabet, latest_mdvisits, latest_renal, latest_lipid, latest_lab, latest_complications, latest_miscellaneous] }
-	 * 
-	 * 
-	 * */
-	@RequestMapping(value = {"/service/data/getPatientRecord"}, method = RequestMethod.GET)
-	public String getPatientRecord(final HttpServletRequest request){
+@RequestMapping(value = {"/service/data/getPatientRecord"}, method = RequestMethod.GET)
+public String getPatientRecord(final HttpServletRequest request){
 		Gson json = new GsonBuilder().serializeNulls().create();
 		String result = "";
 		String sid = request.getParameter("sid").toString();
@@ -520,7 +552,6 @@ public String getPatientInfo(final HttpServletRequest request){
 	return result;
 }
 	
-	
 @RequestMapping(value = {"/service/data/getValueLimits"}, method = RequestMethod.GET)
 public String getValueLimits(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -536,8 +567,8 @@ public String getValueLimits(final HttpServletRequest request){
 	return result;
 }
 	
-	@RequestMapping(value = {"/service/data/saveValue"}, method = RequestMethod.GET)
-	public String saveValue(final HttpServletRequest request){
+@RequestMapping(value = {"/service/data/saveValue"}, method = RequestMethod.GET)
+public String saveValue(final HttpServletRequest request){
 		Gson json = new GsonBuilder().serializeNulls().create();
 		String result = "";
 		String sid = request.getParameter("sid").toString();
@@ -600,8 +631,8 @@ public String getValueLimits(final HttpServletRequest request){
 		return result;
 	}
 
-	@RequestMapping(value = {"/service/data/deleteValue"}, method = RequestMethod.GET)
-	public String deleteValue(final HttpServletRequest request){
+@RequestMapping(value = {"/service/data/deleteValue"}, method = RequestMethod.GET)
+public String deleteValue(final HttpServletRequest request){
 		Gson json = new GsonBuilder().serializeNulls().create();
 		String result = "";
 		String sid = request.getParameter("sid").toString();
@@ -660,8 +691,8 @@ public String getValueLimits(final HttpServletRequest request){
 		return result;
 	}
 	
-	@RequestMapping(value = {"/service/data/savePatientRecord"}, method = RequestMethod.POST)
-	public String savePatientRecord(final HttpServletRequest request){
+@RequestMapping(value = {"/service/data/savePatientRecord"}, method = RequestMethod.POST)
+public String savePatientRecord(final HttpServletRequest request){
 		Gson json = new GsonBuilder().serializeNulls().create();
 		
 		String result = "";
@@ -744,9 +775,21 @@ public String getValueLimits(final HttpServletRequest request){
 		chbdb.setEvent(u.getIduser(), act.getIdaction(), "1", sid, pat.getRamq());
 		return result;
 	}
-	
-	@RequestMapping(value = {"/service/data/addPatientRecord"}, method = RequestMethod.GET)
-	public String addPatientRecord(final HttpServletRequest request){
+
+@RequestMapping(value = {"/service/data/validateHcp"}, method = RequestMethod.GET)
+public String validateHcp(String hcpid, String hcpName){
+	String result = "";
+	if(hcpid!=null && !hcpid.equals("")){
+		User u = chbdb.getUser(Integer.parseInt(hcpid));
+		String name = (u.getFirstname().toLowerCase()+ u.getLastname().toLowerCase()).replace(" ", "");
+		String hname = hcpName.toLowerCase().replace(" ", "");
+		if(name.equals(hname)){result = hcpid;}else{result="";}
+	}
+	return result;
+}
+
+@RequestMapping(value = {"/service/data/addPatientRecord"}, method = RequestMethod.GET)
+public String addPatientRecord(final HttpServletRequest request){
 		Gson json = new GsonBuilder().serializeNulls().create();
 		
 		String result = "";
@@ -797,7 +840,6 @@ public String getValueLimits(final HttpServletRequest request){
 		return result;
 	}
 	
-	
 @RequestMapping(value = {"/service/data/deletePatientRecord"}, method = RequestMethod.GET)
 public String deletePatientRecord(final HttpServletRequest request){
 	Gson json = new GsonBuilder().serializeNulls().create();
@@ -846,12 +888,8 @@ public String getUserPatients(final HttpServletRequest request){
 	return result;
 }
 	
-	
-	/*
-	 *  /service/data/getStatsData
-	 * */
-	@RequestMapping(value = {"/service/data/getStatsData"}, method = RequestMethod.GET)
-	public String getStatsData(final HttpServletRequest request){
+@RequestMapping(value = {"/service/data/getStatsData"}, method = RequestMethod.GET)
+public String getStatsData(final HttpServletRequest request){
 		Gson json = new Gson();
 		String result = "";
 		
@@ -884,5 +922,143 @@ public String getUserPatients(final HttpServletRequest request){
 		return result;
 	}
 	
+@RequestMapping(value = {"/service/data/getNumberOfPatients"}, method = RequestMethod.GET)
+public String getNumberOfPatients(final HttpServletRequest request){
+	Gson json = new Gson();
+	String result = "";
 	
+	String idcommunity = request.getParameter("idcommunity").toString();
+	String sex = request.getParameter("sex").toString();
+	String dtype = request.getParameter("dtype").toString();
+	String age = request.getParameter("age").toString();
+	String period = request.getParameter("period").toString();
+
+	int periodNumber = Integer.parseInt(period);
+	ArrayList<Object> obs = new ArrayList<>();
+	boolean isMoreCommunities = false;
+	String[] parts = null;
+	if(idcommunity.indexOf("_") >= 0){
+		parts = idcommunity.split("_");
+		isMoreCommunities = true;
+	}
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	Date now = new Date();
+	
+	
+	Hashtable<String, ArrayList<Hashtable<String, String>>> serie = new Hashtable<>();
+	if(isMoreCommunities){
+		for(int i=0;i<parts.length;i++){
+			ArrayList<Hashtable<String, String>> comm = new ArrayList<>();
+			for( int j=0 ; j<periodNumber ; j++){
+				Hashtable<String, String> elements = new Hashtable<>();
+				Calendar calStart = Calendar.getInstance();
+				calStart.setTime(now);
+				calStart.add(Calendar.MONTH, -1 ); 
+				calStart.add(Calendar.MONTH, j*-1 ); // we go back period number and 1 month more because we exclude current month
+				calStart.set(Calendar.DAY_OF_MONTH, calStart.getActualMaximum(Calendar.DAY_OF_MONTH));
+				String since = sdf.format(calStart.getTime());
+				int n = cdisdb.getNumberOfPatients(parts[i], since, sex, dtype, age);
+				elements.put("total", Integer.toString(n));
+				elements.put("sex", sex);
+				elements.put("age", age);
+				elements.put("dtype", dtype);
+				elements.put("since", since);
+				comm.add(elements);
+			}
+			serie.put("idcommunity_"+parts[i], comm);
+			obs.add(serie);
+		}
+	}else{
+		ArrayList<Hashtable<String, String>> comm = new ArrayList<>();
+		for( int j=0 ; j<periodNumber ; j++){
+			Hashtable<String, String> elements = new Hashtable<>();
+			Calendar calStart = Calendar.getInstance();
+			calStart.setTime(now);
+			calStart.add(Calendar.MONTH, -1 ); 
+			calStart.add(Calendar.MONTH, j*-1 ); // we go back period number and 1 month more because we exclude current month
+			calStart.set(Calendar.DAY_OF_MONTH, calStart.getActualMaximum(Calendar.DAY_OF_MONTH));
+			String since = sdf.format(calStart.getTime());
+			int n = cdisdb.getNumberOfPatients(idcommunity, since, sex, dtype, age);
+			elements.put("total", Integer.toString(n));
+			elements.put("sex", sex);
+			elements.put("age", age);
+			elements.put("dtype", dtype);
+			elements.put("since", since);
+			comm.add(elements);
+		}
+		serie.put("idcommunity_"+idcommunity, comm);
+		obs.add(serie);
+	}
+	result = json.toJson(new MessageResponse(true,"en",obs));
+	return result;
+}
+
+@RequestMapping(value = {"/service/data/getPvalidationData"}, method = RequestMethod.GET)
+public String getPvalidationData(final HttpServletRequest request){
+	Gson json = new Gson();
+	String result = "";
+	String idlist = request.getParameter("idlist").toString();
+	ArrayList<Object> obs = new ArrayList<>();
+	Hashtable<String, ArrayList<Object>> serie = cdisdb.getPValidationData(idlist);
+	obs.add(serie);
+	result = json.toJson(new MessageResponse(true,"en",obs));
+	return result;
+}
+
+@RequestMapping(value = {"/service/data/getPandiNow"}, method = RequestMethod.GET)
+public String getPandiNow(final HttpServletRequest request){
+	Gson json = new Gson();
+	String result = "";
+	
+	
+	String idcommunity = request.getParameter("idcommunity").toString();
+	String sex = request.getParameter("sex").toString();
+	String dtype = request.getParameter("dtype").toString();
+	String age = request.getParameter("age").toString();
+	
+	ArrayList<Object> obs = new ArrayList<>();
+	
+	Hashtable<String, ArrayList<Object>> serie1 = cdisdb.getPrevalenceNow(idcommunity,sex,dtype, age);
+	obs.add(serie1);
+	Hashtable<String, ArrayList<Object>> serie2 = cdisdb.getIncidenceNow(idcommunity,sex,dtype, age);
+	obs.add(serie2);
+	
+	Hashtable<String, ArrayList<Object>> serie3 = cdisdb.getPrevalenceNowLastYear(idcommunity,sex,dtype, age);
+	obs.add(serie3);
+	Hashtable<String, ArrayList<Object>> serie4 = cdisdb.getIncidenceNowLastYear(idcommunity,sex,dtype, age);
+	obs.add(serie4);
+	result = json.toJson(new MessageResponse(true,"en",obs));
+	
+	return result;
+}
+
+@RequestMapping(value = {"/service/data/getPandiHistory"}, method = RequestMethod.GET)
+public String getPandiHistory(final HttpServletRequest request){
+	Gson json = new Gson();
+	String result = "";
+	
+	
+	String idcommunity = request.getParameter("idcommunity").toString();
+	String sex = request.getParameter("sex").toString();
+	String dtype = request.getParameter("dtype").toString();
+	String age = request.getParameter("age").toString();
+	String since = request.getParameter("since").toString();
+	
+	ArrayList<Object> obs = new ArrayList<>();
+	
+	Hashtable<String, ArrayList<Object>> serie1 = cdisdb.getPrevalenceHistory(idcommunity,sex,dtype, age, since);
+	obs.add(serie1);
+	Hashtable<String, ArrayList<Object>> serie2 = cdisdb.getIncidenceHistory(idcommunity,sex,dtype, age,since);
+	obs.add(serie2);
+	Hashtable<String, ArrayList<Object>> serie3 = cdisdb.getPrevalenceHistory(idcommunity,"0",dtype,"0", since);
+	obs.add(serie3);
+	Hashtable<String, ArrayList<Object>> serie4 = cdisdb.getIncidenceHistory(idcommunity,"0",dtype,"0",since);
+	obs.add(serie4);
+	result = json.toJson(new MessageResponse(true,"en",obs));
+	
+	return result;
+}
+
+
 }

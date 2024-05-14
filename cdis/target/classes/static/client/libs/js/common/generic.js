@@ -21,6 +21,7 @@ function loadTemplate(pageName,callBack){
 		    close: function() { }
 		  });
 	}else{
+		
 		$body.append($("<div>",{class:"cdismodal"}).append($("<div>",{class:"modal-span"}).text("CDIS Loading..."))).addClass("loading");
 		if(callBack == null){
 			$( "#wraper").load( "client/templates/"+pageName+".html"+"?ts="+moment());
@@ -152,6 +153,25 @@ function randomIntFromInterval(min,max){
     return Math.floor(Math.random()*(max-min+1)+min);
 }
 
+function makelid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+function makenid(length) {
+    var result           = '';
+    var characters       = '0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 
 function showGRVPopup(title,text,buttons,config){
 	var id = moment();
@@ -186,6 +206,19 @@ function showGRVPopup(title,text,buttons,config){
 		$("body").css("overflow-y","auto");
 	}
 }
+
+function isDecimal(input){
+    let regex = /^[-+]?[0-9]+\.[0-9]+$/;
+    return (regex.test(input));
+}
+
+
+
+function loadJS(FILE_URL){
+	$.getScript("client/libs/js/common/define.js", function(data, textStatus, jqxhr) {
+	});
+}
+
 
 
 

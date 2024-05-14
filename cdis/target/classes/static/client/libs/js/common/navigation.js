@@ -40,7 +40,7 @@ function initNavigation() {
 		$(".fnew").click(function() {gtc(sid,applanguage,null,"addpatient");});
 		
 		$(".cdisfull").click(function(){
-			gtc(sid,applanguage,getParameterByName("ramq"),"mdvisits");
+			gtc(sid,applanguage,getParameterByName("ramq"),"mdvisits",fllstr);
 		});
 }
 
@@ -76,8 +76,16 @@ function initNavigation() {
 		var p = window.btoa("sid="+sid+"&language="+l+"&ts="+moment());
 		window.location = "search.html?"+p;
 	}/*go to search*/
+	function gts(s,l,plus){
+		var p = window.btoa("sid="+sid+"&language="+l+"&ts="+moment()+plus);
+		window.location = "search.html?"+p;
+	}/*go to search*/
 	function gtc(s,l,r,sec){
 		var p = window.btoa("sid="+sid+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+moment());
+		window.location = "cdis.html?"+p;
+	}/*go to cdis*/
+	function gtc(s,l,r,sec,plus){
+		var p = window.btoa("sid="+sid+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+moment()+plus);
 		window.location = "cdis.html?"+p;
 	}/*go to cdis*/
 	function gtr(s,l,rid){
@@ -98,16 +106,6 @@ function initNavigation() {
 	}/*go to admin*/
 	
 
-	/*cache validation*/
-	//get The application cache object
-/*
-	var appCache = window.applicationCache;
-	appCache.addEventListener('updateready', function(e) {
-		this.swapCache();
-		location.reload();
-	});
-*/
-	
 	
 window.addEventListener("beforeunload", function (e) {
 	logout(sid);

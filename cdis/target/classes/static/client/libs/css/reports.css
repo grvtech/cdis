@@ -108,7 +108,7 @@ REPORTS PAGE CSS
 .dashboard-item-half{
 	width:48%;
 	min-width:430px;
-	height:300px;
+	height:330px;
 	border:1px solid #cdcdcd;
 	margin:5px;
 }
@@ -151,12 +151,15 @@ REPORTS PAGE CSS
 	display:block;
 	width:100%;
 	height:30px;
-	background: #fafafa;
+	background: #cdcdcd;
+	line-height:30px;
+	font-weight:bold;
+	font-size:15px;
 }
 .dashboard-item-half .form{
 	width:100%;
 	min-width:150px;
-	height:40px;
+	/*height:40px;*/
 	display:block;
 	/*background: blue;*/
 	text-align:left;
@@ -165,9 +168,8 @@ REPORTS PAGE CSS
 .dashboard-item-half .graph{
 	width:100%;
 	min-width:150px;
-	height:230px;
+	height:250px;
 	display:block;
-	
 }
 
 .dashboard-item-half .form-item{
@@ -236,6 +238,7 @@ REPORTS PAGE CSS
 
 .legend-row-highlighted{
 	background:#4d4d4d;
+	color:#ffffff;
 }
 .legend-text-highlighted{
 	color:#ffffff;
@@ -243,6 +246,10 @@ REPORTS PAGE CSS
 .jqplot-table-legend{
 	text-align:left;
 }
+.jqplot-data-label{
+	font-size:12px;
+}
+
 
 
 
@@ -598,7 +605,7 @@ REPORTS PAGE CSS
 
 
 
-
+/*
 .fullscreen-modal{
 	position:absolute;
 	background-color:#efefef;
@@ -612,38 +619,82 @@ REPORTS PAGE CSS
 	flex-wrap: nowrap;
 	font-size: 13px;
 }
+*/
+.fullscreen-modal{
+	position:absolute;
+	background-color:#efefef;
+	width:100%;
+	height:100%;
+	top:0px;
+	left:0px;
+	z-index:100000;
+	display:grid;
+	grid-template-rows:35px auto 35px;
+	font-size: 13px;
+}
 
+
+/*
 .fullscreen-modal-header{height:25px;background:#4b3b3b;display: flex;flex-direction:row;flex-wrap: nowrap;}
 .fullscreen-modal-header > div{flex:1 0;}
 .fullscreen-modal-header-logo{max-width:20px;height:25px;background:no-repeat url(../images/cdis-logo50.png) #4b3b3b center center;background-size: 15px 20px;}
 .fullscreen-modal-header-cdis{max-width:50px;height:25px;line-height:25px;color:#fff;font-size:1.1rem;font-weight:bold;}
 .fullscreen-modal-header-title{max-width:100px;height:25px;color:#fff;line-height:25px;text-align:right; padding-right:3px;font-size:1.1rem;}
 .fullscreen-modal-header-close{max-width:25px;height:25px;color:#fff;background:#db4437;line-height:25px;text-align:center;font-size:1.2rem;}
+*/
 
-.fullscreen-modal-body{flex:1 0;display: flex;flex-direction: row;flex-wrap: nowrap;background:#5c6c9d;}
-.fullscreen-modal-toolbar{flex:1 20%;display: flex;flex-direction: column;flex-wrap: nowrap;min-width:350px;max-width:350px;}
+.fullscreen-modal-header{height:35px;background:#4b3b3b;display:grid;grid-template-columns:35px 70px auto 35px;}
+.fullscreen-modal-header-logo{height:35px;background:no-repeat url(../images/cdis-logo50.png) #4b3b3b center center;background-size: 25px 35px;}
+.fullscreen-modal-header-cdis{height:35px;line-height:35px;color:#fff;font-size:1.1vw;font-weight:bold;}
+.fullscreen-modal-header-title{height:35px;color:#fff;line-height:35px;text-align:left;padding-left:5px;font-size:1.1vw;}
+.fullscreen-modal-header-close{height:35px;color:#fff;background:#db4437;line-height:35px;text-align:center;font-size:1.3vm;}
 
-.fullscreen-modal-toolbar-stats{flex:1 0;padding:10px;}
-.fullscreen-modal-toolbar-stats-container{background:#ededed;height:100%;width:100%;font-size:0.85em;}
 
+.fullscreen-modal-body{display:grid;grid-template-columns:150px auto;background:#5c6c9d;}
 
+.fullscreen-modal-toolbar{display:grid;}
 .fullscreen-modal-toolbar-form{flex:1 0;max-height:150px;min-height:150px;padding:10px;}
 .fullscreen-modal-toolbar-form-container{background:#ededed;height:100%;width:100%;display:flex;flex-direction:column;flex-wrap:nowrap;}
 .fullscreen-modal-toolbar-form-container-title{padding:3px;background:#db4437;color:#ffffff;font-weight:bold;}
 .fullscreen-modal-toolbar-form-container-criteria{flex:1 0;padding:5px;}
+.fullscreen-modal-toolbar-form-container-buttons{flex:1 0;min-height:35px;max-height:35px;padding:5px;}
+.fullscreen-modal-toolbar-form-container-buttons > div{dispaly:inline-block;}
+
+
+.fullscreen-modal-footer{height:35px;background:#4b3b3b;display:grid;}
+
+.fmb-table{
+	display:grid;
+	grid-template-columns: grid-auto-columns: minmax(0, 1fr);
+   	grid-auto-flow: column;
+ }
+
+.fmb-table-header{
+	font-weight:bold;
+}
+
+.fmb-table-body-header-container{
+	display:grid;
+	grid-template-rows: 25px 25px;
+	
+}
+.fmb-table-body-header-container-columns{
+	display:grid;
+	grid-template-columns: 50px 50px 50px;
+}
+.fmb-table-body-cell-container{
+	display:grid;
+	grid-template-columns: 50px 50px 50px;
+}
+
+
+
 .criteria-wraper{display:flex;flex-direction:row;flex-wrap:wrap;}
 .criteria-wraper > div{flex:1 0;padding:3px;}
 .criteria-wraper-label{font-size:0.8rem;font-weight:bold;}
 .criteria-wraper-input{padding:3px;}
 
-.fullscreen-modal-toolbar-form-container-buttons{flex:1 0;min-height:35px;max-height:35px;padding:5px;}
-.fullscreen-modal-toolbar-form-container-buttons > div{dispaly:inline-block;}
 
-
-.fullscreen-modal-footer{height:10px;background-color:#4b3b3b;}
-
-
-.fullscreen-modal-list{flex:1 0;display: flex;flex-direction: column;flex-wrap: nowrap;background:#fefefe;}
 .list-title{height:30px;color:#4d4d4d;font-weight:500;text-align:center;line-height:30px;font-size:1.05rem;}
 .list-header{height:30px;display:flex;flex-direction: row;flex-wrap: nowrap;font-size:0.9rem;}
 .list-header .column{flex:1 0;font-weight:700;text-align:center;text-align:center;vertical-align:middle;line-height:30px;overflow: hidden;border:1px solid $cdcdcd;}
@@ -665,10 +716,6 @@ REPORTS PAGE CSS
 .list-status .status-pages span{line-height:30px;padding:0px 10px 0px 10px;font-weight:bold; font-size:0.7rem;cursor: pointer;}
 .list-status .status-pages span:hover{color:#db4437;}
 
-.fullscreen-progress{position:absolute;top:0;left:0;width:100%;height:100%;background:#cdcdcd;z-index:1000000;}
-.fullscreen-progress-container{position:absolute;top:50%;left:50%;width:200px;height:100px;margin:-50px 0px 0px -100px; }
-.fullscreen-progress-container-logo{width:200px;height:70px;background:no-repeat url(../images/cdis-logo50.png) center center;background-size: 45px 60px;}
-.fullscreen-progress-container-text{width:200px;height:30px;color:#4d4d4d;line-height:30px;text-align:center;font-weight:bold;}
 
 
 

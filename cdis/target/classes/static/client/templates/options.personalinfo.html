@@ -51,7 +51,7 @@
 						<td><input name="phone" id="phone-id" type="text" class="text"/></td>
 					</tr>
 					<tr>
-						<td colspan="2"><div class="cisbutton" id="change-password-button">Change Password</div></td>
+						<td colspan="2"><div class="cisbutton" id="reset-password-button">Reset Password</div></td>
 					</tr>
 					<tr><td colspan="2"></td></tr>
 					<tr>
@@ -63,105 +63,6 @@
 		</div>
 		<div>&nbsp;</div>
 	</div>
-
 </div>
-<script>
-	var ob = userObj[0];
-	
-	console.log(userProfileObj);
-	
-	$(report_profession).each(function(index, value) {
-	    $("#profesion-id").append($("<option />").val(index).text(value));
-	});
-	 $("#profesion-id").change(function(){
-		 
-		 $("#id-profession").val($("#profesion-id").val()); 
-	 });
-	ob["community"] = report_idcommunity[ob.idcommunity];
-	ob["role"] = userProfileObj.role.idrole;
-	ob["role-hidden"] = userProfileObj.role.code;
-	
-	if(ob.idprofesion == "1"){
-		ob["idprofesion"] = "2";
-		ob["profession"] = "2";
-    }else if(ob.idprofesion == "2"){
-    	ob["idprofesion"] = "3";
-    	ob["proffesion"] = "3";
-    }else if(ob.idprofesion == "3"){
-    	ob["idprofesion"] = "4";
-    	ob["profesion"] = "4";
-    }else if(ob.idprofesion == "4"){
-    	ob["idprofesion"] = "1";
-    	ob["profesion"] = "1";
-    }
-	
-	populateForm($("#personalinfo-form"),ob);
-	
-	$("#change-password-button").click(function (){
-		var par = $(this).parent();
-		$(this).hide();
-		var pass = $("<div>",{class:"password-space"});
-		par.append(pass);
-		var t = $("<table>",{border:"0"}).appendTo(pass);
-		var tt = $("<table>",{border:"0"});
-		t.append($("<tr>").append($("<td>").append(tt)).append($("<td>",{align:"bottom"}).append($("<div>",{class:"cisbutton",id:"save-change-password-button"}).text("Save")).append($("<div>",{class:"cisbutton",id:"cancel-change-password-button"}).text("Cancel"))));
-		tt.append($("<tr>").append($("<td>",{class:"text-label"}).text("Old Password")).append($("<td>",{class:"text-label"}).text("New Password")));
-		tt.append($("<tr>").append($("<td>").append($("<input>",{type:"password",id:"password-id",class:"password-text",name:"password",value:ob.password}))).append($("<td>").append($("<input>",{type:"password",id:"new-password-id",class:"password-text",name:"newpassword"}))));
-		$("#save-change-password-button").click(function(){
-			var data = $('#personalinfo-form').serialize();
-			data+="&sid="+sid+"&language=en";
-			var savepass = $.ajax({
-				  url: "/ncdis/service/data/setUserPassword?sid="+sid+"&language=en&iduser="+ob.iduser+"&",
-				  type: "POST",
-				  data : data,
-				  dataType: "json",
-				  beforeSend: function(xhr, opts){
-				  }
-				});
-				savepass.done(function( json ) {
-					$("#change-password-button").show();
-					$(".password-space").remove();
-				});
-				savepass.fail(function( jqXHR, textStatus ) {
-					$("#change-password-button").show();
-					$(".password-space").remove();
-				});	
-			
-			
-			
-		});
-		$("#cancel-change-password-button").click(function(){
-			$("#change-password-button").show();
-			$(".password-space").remove();
-		});
 
-	});
-	
-	
-	$("#cancel-personalinfo-button").click(function(){
-		gts(sid,"en");
-	});
-	$("#save-personalinfo-button").click(function(){
-		var data = $('#personalinfo-form').serialize();
-		data+="&sid="+sid+"&language=en";
-		var save = $.ajax({
-			  url: "/ncdis/service/data/saveUser?sid="+sid+"&language=en",
-			  type: "POST",
-			  async : false,
-			  data: data,
-			  dataType: "json",
-			  beforeSend: function(xhr, opts){
-			  	
-			  }
-			});
-			save.done(function( json ) {
-				gts(sid,"en");
-			});
-			save.fail(function( jqXHR, textStatus ) {
-				var t = $("#errortext-addpatient").html();
-				$("#errortext-addpatient").html(t+"<p>Error saving the patient!</p>");
-			});	
-	});
-	
-</script>
 

@@ -43,6 +43,9 @@ public class User {
 	private String idcommunity;
 	private String active;
 	private String idprofesion;
+	private transient boolean isValid;
+	private String reset;
+	private String confirmmail;
 	
 	public User() {
 		super();
@@ -51,26 +54,33 @@ public class User {
 		firstname="";
 		lastname="";
 		email="";
+		isValid = false;
 		iduser="0";
 		phone="";
 		idcommunity = "";
 		active="1";
 		idprofesion="";
+		reset="0";
+		confirmmail="0";
+	
 	}
 	
 	
 	
-	public User(String username, String password, String firstname,String lastname, String email,String iduser, String phone, String idcommunity, String active, String idprofesion) {
+	public User(String username, String password, String firstname,String lastname, String email,String iduser, boolean isValid, String phone, String idcommunity, String active, String idprofesion, String reset, String confirmmail) {
 		this.username = username;
 		this.password = password;
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.email = email;
+		this.isValid = isValid;
 		this.iduser = iduser;
 		this.phone = phone;
 		this.idcommunity = idcommunity;
 		this.active = active;
 		this.idprofesion = idprofesion;
+		this.reset = reset;
+		this.confirmmail = confirmmail;
 	}
 
 
@@ -86,14 +96,51 @@ public class User {
 			this.phone = mp.get("phone");
 			this.idcommunity = mp.get("idcommunity");
 			this.active = mp.get("active");
+			this.isValid = true;
 			this.idprofesion = mp.get("idprofesion");
+			this.reset = mp.get("reset");
+			this.confirmmail = mp.get("confirmmail");
+		
 		}
 	}
 	
+	private String getLastLogin(){
+		ChbDBridge db = new ChbDBridge();
+		return db.getLastLogin(this.getIduser());
+	}
+	
+	private HashMap<String, String> getLastPatient(){
+		ChbDBridge db = new ChbDBridge();
+		return db.getLastPatient(this.getIduser());
+	}
+	
+	private HashMap<String, String> getLastReport(){
+		ChbDBridge db = new ChbDBridge();
+		return db.getLastReport(this.getIduser());
+	}
+	
+	
+	
+	
+	public String getConfirmmail() {
+		return confirmmail;
+	}
+	public void setConfirmmail(String confirmmail) {
+		this.confirmmail = confirmmail;
+	}
+	
+	public String getReset() {
+		return reset;
+	}
+	public void setReset(String reset) {
+		this.reset = reset;
+	}
+
 	//username
 	public String getUsername(){
 		return this.username;
 	}
+
 	public void setUsername(String username){
 		this.username=username;
 	}
@@ -151,6 +198,8 @@ public class User {
 	public void setEmail(String email){
 		this.email=email;
 	}
+
+
 
 	public String getIduser() {
 		return iduser;

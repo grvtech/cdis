@@ -11,17 +11,26 @@ import java.util.Properties;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import com.grvtech.cdis.CdisApplication;
 import com.grvtech.cdis.util.FileTool;
 
+@Service
 public class Renderer {
-	private static String[] operatorsStr = new String[] {"equal", "more than", "less than", "between", "starting", "until", "multi"};
-	private static String[] operatorsOp = new String[] {"=",">=","<=","between",">=","<=", "in"};
+	private  String[] operatorsStr = new String[] {"equal", "more than", "less than", "between", "starting", "until", "multi"};
+	private  String[] operatorsOp = new String[] {"=",">=","<=","between",">=","<=", "in"};
 	
-	private static String[] valueStr = new String[] {"90.0", "90.1"};
-	private static String[] valueValue = new String[] {"('1','2','3','4','10','11')", "('1','2')"};
+	private  String[] valueStr = new String[] {"90.0", "90.1"};
+	private  String[] valueValue = new String[] {"('1','2','3','4','10','11')", "('1','2')"};
+	
+	@Value("${rootfolder}")
+	private String rootfolder;
 	
 	
-	public static String renderOperator(String opStr){
+	public  String renderOperator(String opStr){
 		
 		//System.out.println("OPERATOR : "+opStr);
 		String result = "=";
@@ -32,7 +41,7 @@ public class Renderer {
 		return result;
 	}
 	
-	public static String renderValue(String valStr){
+	public  String renderValue(String valStr){
 		String result = "( )";
 		int index = Arrays.asList(valueStr).indexOf(valStr);
 		if(index >= 0){
@@ -42,13 +51,13 @@ public class Renderer {
 	}
 	
 	
-	public static String renderName(String name){
+	public  String renderName(String name){
 		String result = "";
 		InitialContext ic;
 		try {
 			ic = new InitialContext();
-			String rf = (String) ic.lookup("root-folder");
-			File fieldsFile = new File(rf+System.getProperty("file.separator")+"content"+System.getProperty("file.separator")+"fields.properties");
+			
+			File fieldsFile = new File(rootfolder+System.getProperty("file.separator")+"content"+System.getProperty("file.separator")+"fields.properties");
 			
 			FileInputStream fileInput = new FileInputStream(fieldsFile);
 			Properties properties = new Properties();

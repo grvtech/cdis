@@ -6,7 +6,36 @@
 	</div>
 	<div id="ub_reportsbody" class="reportsbody">
 		<div id="ub_reportsbody_header"></div>
-		<div id="ub_reportsbody_page"></div>
+		<div id="ub_reportsbody_page">
+			<div class="reportsbody_dashboard" >
+				<div id="tabs">
+				  <ul>
+				    <!-- <li id="dashtab"><a href="#dashboard">Clinical Data</a></li> -->
+				    <!--  <li id="listtab"><a href="/ncdis/client/templates/reports.lists.html">Clinical Lists</a></li> -->
+				    <!-- <li id="perstab"><a href="/ncdis/client/templates/reports.personal.html">Personal Reports</a></li> -->
+				    <!--<li id="admintab"><a href="/ncdis/client/templates/reports.admin.html">Admin Reports</a></li> -->
+				    <!--  <li id="surtab"><a href="/ncdis/client/templates/reports.sur.html">Surveillance Data</a></li> -->
+				    <!-- <li id="surtab"><a href="#surveillance">Indicators and Outcomes</a></li> -->
+				    
+				    
+				    <li id="dashtab"><a href="/ncdis/client/templates/reports.dashboard.html">Clinical Data</a></li>
+				    <li id="customtab"><a href="/ncdis/client/templates/reports.custom.html">Custom Reports</a></li>
+				    <li id="surtab"><a href="/ncdis/client/templates/reports.surveillence.html">Indicators and Outcomes</a></li>
+				    <li id="pattab"><a href="/ncdis/client/templates/reports.pvalidation.html">Patient Validation Tool</a></li>
+				    <li id="panditab"><a href="/ncdis/client/templates/reports.pandi.html">Prevalence and Incidence</a></li>
+				    <li id="importomnilabtab"><a href="/ncdis/client/templates/reports.importomnilab.html">Import from Omnilab Reports</a></li>
+				  </ul>
+				  <div id="fullscreen-button" class="cisbutton ">Full screen dashboard</div>
+				  <!-- 
+				  <div id="dashboard" class="contentTab"></div>
+				  <div id="surveillance" class="contentTab"></div>
+				  <div id="pvalidation" class="contentTab"></div>
+				  <div id="pandi" class="contentTab"></div>
+				  <div id="importomnilab" class="contentTab"></div>
+				   -->
+				</div>
+			</div>
+		</div>
 	</div>
 	<div class="reportsfooter">
 		<ul class="leftfootermenu">
@@ -15,7 +44,4 @@
 		</ul>
 	</div>	
 </div>
-<script>
-	initNavigation();
-	
-</script>
+<script src="client/libs/js/pages/reports.lib.js?_20230827" type="text/javascript"></script>

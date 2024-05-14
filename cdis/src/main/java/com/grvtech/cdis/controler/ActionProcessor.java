@@ -1,26 +1,33 @@
 package com.grvtech.cdis.controler;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.net.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,6 +60,7 @@ import com.grvtech.cdis.util.FileTool;
 import com.grvtech.cdis.util.ImportNames;
 import com.grvtech.cdis.util.MailTool;
 import com.grvtech.cdis.util.Misc;
+import com.grvtech.cdis.util.SecurityTool;
 
 @RestController
 public class ActionProcessor {
@@ -69,9 +77,7 @@ public class ActionProcessor {
 	@Value("${reports}")
 	private String reportsFolder;
 	
-	/*
-	 * /ncdis/service/action/login?username=XXXXX&password=&language=en|fr
-	 * */
+	
 @RequestMapping(value = {"/service/action/loginSession"}, method = RequestMethod.GET)
 public String loginSession(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -81,10 +87,21 @@ public String loginSession(final HttpServletRequest request){
 	String language = request.getParameter("language").toString();
 	String reswidth = request.getParameter("reswidth").toString();
 	String resheight = request.getParameter("resheight").toString();
-	User user = chbdb.getUser(username, password);
+	
+	String encPassword = "";
+	String clearPassword = "";
+	try {
+		clearPassword = new String(Base64.decodeBase64(password), "UTF-8");
+		encPassword = SecurityTool.encryptPassword(clearPassword);
+		
+	} catch (UnsupportedEncodingException e) {
+		e.printStackTrace();
+	}
+	
+	User user = chbdb.getUser(username, encPassword);
 	Action act = chbdb.getAction("LOGIN");
 	Session userSession = null;
-	
+
 	if(!user.getIduser().equals("0")){
 		String ip =  Misc.getIpAddr(request);
 		String combination = ip+user.getUsername()+ (new Date()).toString();
@@ -101,10 +118,6 @@ public String loginSession(final HttpServletRequest request){
 	return result;
 }
 	
-	
-	/*
-	 * /ncdis/service/action/search?text=XXXXX&criteria=chart|name|ramq&language=en|fr
-	 * */
 @RequestMapping(value = {"/service/action/search"}, method = RequestMethod.GET)
 public String search(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -122,13 +135,9 @@ public String search(final HttpServletRequest request){
 	}
 	return result;
 }
-	
-	
-	/*
-	 * /ncdis/service/action/getReports?sid=XXXXX&language=en|fr
-	 * */
-	@RequestMapping(value = {"/service/action/getReports"}, method = RequestMethod.GET)
-	public String getReports(final HttpServletRequest request){
+
+@RequestMapping(value = {"/service/action/getReports"}, method = RequestMethod.GET)
+public String getReports(final HttpServletRequest request){
 		Gson json = new Gson();
 		String result = "";
 		String sid = request.getParameter("sid").toString();
@@ -138,323 +147,384 @@ public String search(final HttpServletRequest request){
 		ArrayList<Object> obs = new ArrayList<Object>();
 		Role r = chbdb.getUserRole(userData);
 		
-		System.out.println("USER ROLE : "+r.getCode());
-		
 		HashMap<String, ArrayList<Report>> reports = cdisdb.getUserReports(r.getCode(), userData.getIdcommunity(), userData.getIduser());
 		obs.add(reports);
 		result = json.toJson(new MessageResponse(true,language,obs));
 		return result;
 	}
 
+@RequestMapping(value = {"/service/action/executeReport3CustomValue"}, method = RequestMethod.GET)
+public String executeReport3CustomValue(final HttpServletRequest request){
+	Gson json = new Gson();
+	CdisDBridge db = new CdisDBridge();
+	String result = "";
+	JsonParser jp = new JsonParser();
+	
+	String language = request.getParameter("language").toString();
+	String cvalue = "0";
+	if(request.getParameter("cvalue") != null){cvalue = request.getParameter("cvalue").toString();}
+	
+	String idcommunity = "0";
+	if(request.getParameter("idcommunity") != null){idcommunity = request.getParameter("idcommunity").toString();}
+	String dtype = "0";
+	if(request.getParameter("dtype") != null){dtype = request.getParameter("dtype").toString();}
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    Hashtable<String, Object> reportObject = db.a1cReportCustomValue(cvalue,idcommunity,dtype);
+	ArrayList<Object> obs = new ArrayList<Object>();
+	obs.add(reportObject);
+	result = json.toJson(new MessageResponse(true,language,obs));
+	return result;
+}
+
+@RequestMapping(value = {"/service/action/executeReport4CustomValue"}, method = RequestMethod.GET)
+public String executeReport4CustomValue(final HttpServletRequest request){
+	Gson json = new Gson();
+	CdisDBridge db = new CdisDBridge();
+	String result = "";
+	JsonParser jp = new JsonParser();
+	
+	String language = request.getParameter("language").toString();
+	
+	String pvalue = "0";
+	if(request.getParameter("pvalue") != null){pvalue = request.getParameter("pvalue").toString();}
+	
+	String sens = "0";
+	if(request.getParameter("sens") != null){sens = request.getParameter("sens").toString();}
+	
+	String idcommunity = "0";
+	if(request.getParameter("idcommunity") != null){idcommunity = request.getParameter("idcommunity").toString();}
+	
+	String dtype = "0";
+	if(request.getParameter("dtype") != null){dtype = request.getParameter("dtype").toString();}
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    Hashtable<String, Object> reportObject = db.ldlReportCustomValue(sens,pvalue,idcommunity,dtype);
+	ArrayList<Object> obs = new ArrayList<Object>();
+	obs.add(reportObject);
+	result = json.toJson(new MessageResponse(true,language,obs));
+	return result;
+}
+
 @RequestMapping(value = {"/service/action/executeReport"}, method = RequestMethod.POST)
 public String executeReport(final HttpServletRequest request){
-		Gson json = new Gson();
-		String result = "";
-		JsonParser jp = new JsonParser();
-		String raw = request.getParameter("rawPost").toString();
-		String language = request.getParameter("language").toString();
-		String repid = "0";
-		if(request.getParameter("idreport") != null){
-			repid = request.getParameter("language").toString();
-		}
-		String owner = "";
-		if(request.getParameter("owner") != null){
-			owner = request.getParameter("owner").toString();
-		}
-		String type = "list";
-		if(request.getParameter("type") != null){
-			type = request.getParameter("type").toString();
-		}
-		
-		String graphtype = "none";
-		if(request.getParameter("graphtype") != null){
-			graphtype = request.getParameter("graphtype").toString();
-		}
-		
-		String title = "Custom Report";
-		if(request.getParameter("title") != null){
-			title = request.getParameter("title").toString();
-		}
-		
-		String subcriteriatype = "multi"; //multi or single multi - set combined with all sub criterias; single set split by subcriteria
-		if(request.getParameter("subcriteriatype") != null){
-			subcriteriatype = request.getParameter("subcriteriatype").toString();
-		}
-		
-		/*
-		 * cache conditions:
-		 * 
-		 * is last add data > timestame cache then execute report + store cache
-		 * after each import data execute reports with flag store cache directly
-		 * 
-		 * */
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-		
-		Gson gson = new Gson();
-	    JsonParser parser = new JsonParser();
-	    JsonObject jObject = parser.parse(raw).getAsJsonObject();
-	    
-	    //System.out.println(raw);
-	    
-	    
-	    JsonArray jArrayC = jObject.get("criteria").getAsJsonArray();
-	    JsonArray jArraySC = jObject.get("subcriteria").getAsJsonArray();
+	Gson json = new Gson();
+	String result = "";
+	JsonParser jp = new JsonParser();
+	
+	//String raw = request.getParameter("rawPost").toString();
+	
+	
+	String raw ="";
+	try {
+		raw = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	
+	String language = request.getParameter("language").toString();
+	String repid = "0";
+	if(request.getParameter("idreport") != null){
+		repid = request.getParameter("idreport").toString();
+	}
+	String owner = "";
+	if(request.getParameter("owner") != null){
+		owner = request.getParameter("owner").toString();
+	}
+	String type = "list";
+	if(request.getParameter("type") != null){type = request.getParameter("type").toString();}
+	
+	String graphtype = "none";
+	if(request.getParameter("graphtype") != null){
+		graphtype = request.getParameter("graphtype").toString();
+	}
+	
+	String title = "Custom Report";
+	if(request.getParameter("title") != null){
+		title = request.getParameter("title").toString();
+	}
+	
+	String subcriteriatype = "multi"; //multi or single multi - set combined with all sub criterias; single set split by subcriteria
+	if(request.getParameter("subcriteriatype") != null){
+		subcriteriatype = request.getParameter("subcriteriatype").toString();
+	}
+	
+	/*
+	 * cache conditions:
+	 * 
+	 * is last add data > timestame cache then execute report + store cache
+	 * after each import data execute reports with flag store cache directly
+	 * 
+	 * */
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	
+	Gson gson = new Gson();
+    JsonParser parser = new JsonParser();
+    JsonObject jObject = parser.parse(raw).getAsJsonObject();
+    
+    JsonArray jArrayC = jObject.get("criteria").getAsJsonArray();
+    JsonArray jArraySC = jObject.get("subcriteria").getAsJsonArray();
 
-	    ArrayList<ReportCriteria> lcs = new ArrayList<ReportCriteria>();
-	    ArrayList<ReportSubcriteria> slcs = new ArrayList<ReportSubcriteria>();
+    ArrayList<ReportCriteria> lcs = new ArrayList<ReportCriteria>();
+    ArrayList<ReportSubcriteria> slcs = new ArrayList<ReportSubcriteria>();
 
-	    
-	    String filter = "all";
-	    String hcp = "";
-	    String hcpid = "";
-	   
-	    
-	    if(jObject.has("filter")){
-	    	filter = jObject.get("filter").getAsString();
-			hcp = jObject.get("hcp").getAsString();
-			hcpid = jObject.get("hcpid").getAsString();
-	    }
-	    
-		
-	   
-	    
-	    for(JsonElement obj : jArrayC ){
-	        ReportCriteria cse = gson.fromJson( obj , ReportCriteria.class);
-	        cse.loadIddata();
-	        lcs.add(cse);
-	    }
-	    for(JsonElement obj : jArraySC ){
-	        ReportSubcriteria scse = gson.fromJson( obj , ReportSubcriteria.class);
-	        scse.loadIddata();
-	        //System.out.println("SUBCRITERIA : "+scse.getSuboperator()+"   VALUE : "+ scse.getSubvalue());
-        	slcs.add(scse);
-	    }
-	    ArrayList<String> header = new ArrayList<>();
-	    ArrayList<ArrayList<String>> set = new ArrayList<>();
-	    //ArrayList<Object> graphdata = new ArrayList<>();
-	    
-	    if(type.equals("list")){
-	    	ArrayList<String> allIdpatients = new ArrayList<>();
+    
+    String filter = "all";
+    String hcp = "";
+    String hcpid = "";
+   
+    
+    if(jObject.has("filter")){
+    	filter = jObject.get("filter").getAsString();
+		hcp = jObject.get("hcp").getAsString();
+		hcpid = jObject.get("hcpid").getAsString();
+    }
+    
+	
+   
+    
+    for(JsonElement obj : jArrayC ){
+        ReportCriteria cse = gson.fromJson( obj , ReportCriteria.class);
+        cse.setIddata(cdisdb.getIddata(cse.getName()));
+        //cse.loadIddata();
+        lcs.add(cse);
+    }
+    for(JsonElement obj : jArraySC ){
+        ReportSubcriteria scse = gson.fromJson( obj , ReportSubcriteria.class);
+        scse.setSubiddata(cdisdb.getIddata(scse.getSubname()));
+        //scse.loadIddata();
+    	slcs.add(scse);
+    }
+    ArrayList<String> header = new ArrayList<>();
+    ArrayList<ArrayList<String>> set = new ArrayList<>();
+    //ArrayList<Object> graphdata = new ArrayList<>();
+    
+    if(type.equals("list")){
+    	ArrayList<String> allIdpatients = new ArrayList<>();
+    	
+    	if(filter.equals("all")){
+    		allIdpatients = cdisdb.getIdPatients();
+    	}else{
+    		allIdpatients = cdisdb.getIdFilterPatients(hcp,hcpid);
+    	}
+    	
+    	ArrayList<String> idpatients = allIdpatients;
+    	
+    	
+    	Hashtable<String, ArrayList<ArrayList<String>>> report = new Hashtable<>();
+	    for(int i=0;i<lcs.size();i++){
+	    	ReportCriteria rc = lcs.get(i);
 	    	
-	    	//System.out.println("Filter : "+filter+"    hcp:"+hcp+"    hcpid:"+hcpid);
-	    	
-	    	if(filter.equals("all")){
-	    		allIdpatients = cdisdb.getIdPatients();
-	    	}else{
-	    		allIdpatients = cdisdb.getIdFilterPatients(hcp,hcpid);
+	    	header.add(rc.getDisplay());
+	    	if(rc.getDate().equals("yes")){
+	    		header.add(rc.getDatedisplay());
 	    	}
 	    	
-	    	ArrayList<String> idpatients = allIdpatients;
+	    		//list : count | idpatient | key | value | date 
+		    	//graph : count | key | value 
+	    	
+	    	System.out.println(rc.getName());
 	    	
 	    	
-	    	Hashtable<String, ArrayList<ArrayList<String>>> report = new Hashtable<>();
-		    for(int i=0;i<lcs.size();i++){
-		    	ReportCriteria rc = lcs.get(i);
-		    	
-		    	header.add(rc.getDisplay());
-		    	if(rc.getDate().equals("yes")){
-		    		header.add(rc.getDatedisplay());
-		    	}
-		    	
-		    		//list : count | idpatient | key | value | date 
-			    	//graph : count | key | value 
-		    		
-			    	ArrayList<ArrayList<String>> criteriaSet = cdisdb.executeReport(rc, "list", slcs);
-			    	
-			    	report.put(rc.getName(), criteriaSet);
-			    	ArrayList<String> criteriaPatients = new ArrayList<>();
-			    	for(int ii=0;ii<criteriaSet.size();ii++){
-			    		ArrayList<String> line = criteriaSet.get(ii);
-			    		String idp = line.get(1);
-			    		if(!criteriaPatients.contains(idp)){
-			    			criteriaPatients.add(idp);
-			    		}
-			    	}
-			    	
-			    	if(rc.getType().equals("set")){
-			    		
-			    		int rem = 0;
-			    		int iter = 0;
-			    		int iterfound = 0;
-			    		ArrayList<String> toRemove = new ArrayList<>();
-			    		
-			    		
-			    		for(int k=0;k<idpatients.size();k++){
-			    			String idpatientP = idpatients.get(k);
-			    			if(!criteriaPatients.contains(idpatientP)){
-		    					if(!toRemove.contains(idpatientP)){
-		    						toRemove.add(idpatientP);
-		    					}
-			    			}
-			    		}
-			    		idpatients.removeAll(toRemove);
-			    	}else{
-			    		
-			    		ArrayList<String> toRemove = new ArrayList<>();
-			    		if(criteriaPatients.size() > idpatients.size()){
-			    			for(String idpatient : criteriaPatients){
-			    				if(!idpatients.contains(idpatient)){
-			    					if(!toRemove.contains(idpatient)){
-			    						toRemove.add(idpatient);
-			    					}
-			    				}
-			    			}
-			    		}
-			    		idpatients.removeAll(toRemove);
-			    	}
-		    }	
+	    	
+		    ArrayList<ArrayList<String>> criteriaSet = cdisdb.executeReport(rc, "list", slcs);
+		    for(int x=0; x<criteriaSet.size();x++) {
+		    	//System.out.println(criteriaSet.get(x));
+		    }
 		    
-		    for(int x=0;x<idpatients.size();x++){
-		    	String idpat = idpatients.get(x);
-		    	Hashtable<ReportCriteria, ArrayList<ArrayList<String>>> patientMap = new Hashtable<>();
+		    
+		    report.put(rc.getName(), criteriaSet);
+	    	ArrayList<String> criteriaPatients = new ArrayList<>();
+	    	for(int ii=0;ii<criteriaSet.size();ii++){
+	    		ArrayList<String> line = criteriaSet.get(ii);
+	    		String idp = line.get(1);
+	    		if(!criteriaPatients.contains(idp)){
+	    			criteriaPatients.add(idp);
+	    		}
+	    	}
 		    	
-		    	for(int y=0;y<lcs.size();y++){
-		    		ReportCriteria rcc = lcs.get(y);
-		    		String rccName = rcc.getName();
-		    		boolean hasCD = false;
-		    		if(rcc.getDate().equals("yes")){
-		    			hasCD = true;
-		    		}
-		    		ArrayList< ArrayList<String>>  rcset =  report.get(rccName);
-		    		ArrayList< ArrayList<String>>  rcsetPatient =  new ArrayList<>();
-		    		for(int z=0;z<rcset.size();z++){
-		    			ArrayList<String> rcLine = rcset.get(z);
-		    			String rcIdPat = rcLine.get(1);
-		    			if(rcIdPat.equals(idpat)){
-		    				rcsetPatient.add(rcLine);
+		    if(rc.getType().equals("set")){
+		    		
+		    		int rem = 0;
+		    		int iter = 0;
+		    		int iterfound = 0;
+		    		ArrayList<String> toRemove = new ArrayList<>();
+		    		
+		    		
+		    		for(int k=0;k<idpatients.size();k++){
+		    			String idpatientP = idpatients.get(k);
+		    			if(!criteriaPatients.contains(idpatientP)){
+	    					if(!toRemove.contains(idpatientP)){
+	    						toRemove.add(idpatientP);
+	    					}
 		    			}
 		    		}
-		    		patientMap.put(rcc, rcsetPatient);
-		    	}
-		    			    	
-		    	
-		    	//now obtain bigest set
-		    	
-		    	int bigSet = 0;
-		    	Object[] psetColl = patientMap.values().toArray();
-		    	for(int xx=0;xx<psetColl.length;xx++){
-		    		ArrayList<ArrayList<String>> pset = (ArrayList<ArrayList<String>>)psetColl[xx];
-		    		if(pset.size() > bigSet){
-		    			bigSet = pset.size();
-		    		}
-		    	}
-		    	
-		    	
-		    	//now create line
-		    	
-		    	for(int q=0;q<bigSet;q++){
-		    		ArrayList<String> setLine = new ArrayList<>();
-		    		for(int qq=0;qq<lcs.size();qq++){
-		    			ReportCriteria r = lcs.get(qq);
-		    			
-		    			ArrayList<ArrayList<String>> rpset = patientMap.get(r);
-		    			
-		    			if(r.getName().equals("dtype")){
-		    				
-		    				if(q >= rpset.size()){
-		    					if(rpset.size() == 0){
-		    						setLine.add("");
-			    					if(r.getDate().equals("yes")){
-			    						setLine.add("");
-			    					}
-		    					}else{
-		    						
-			    					ArrayList<String> rpsetLine = rpset.get(rpset.size()-1);
-			    					setLine.add(rpsetLine.get(3));
-			    					if(r.getDate().equals("yes")){
-			    						setLine.add(rpsetLine.get(4));
-			    					}
+		    		idpatients.removeAll(toRemove);
+		    	}else{
+		    		
+		    		ArrayList<String> toRemove = new ArrayList<>();
+		    		if(criteriaPatients.size() > idpatients.size()){
+		    			for(String idpatient : criteriaPatients){
+		    				if(!idpatients.contains(idpatient)){
+		    					if(!toRemove.contains(idpatient)){
+		    						toRemove.add(idpatient);
 		    					}
-		    				}else{
-		    					ArrayList<String> rpsetLine = rpset.get(q);
+		    				}
+		    			}
+		    		}
+		    		idpatients.removeAll(toRemove);
+		    		 System.out.println("id patients size : "+idpatients.size());
+		    	}
+	    }	
+	    
+	    System.out.println("id patients size : "+idpatients.size());
+	    
+	    for(int x=0;x<idpatients.size();x++){
+	    	String idpat = idpatients.get(x);
+	    	Hashtable<ReportCriteria, ArrayList<ArrayList<String>>> patientMap = new Hashtable<>();
+	    	
+	    	
+	    	for(int y=0;y<lcs.size();y++){
+	    		ReportCriteria rcc = lcs.get(y);
+	    		String rccName = rcc.getName();
+	    		boolean hasCD = false;
+	    		if(rcc.getDate().equals("yes")){
+	    			hasCD = true;
+	    		}
+	    		ArrayList< ArrayList<String>>  rcset =  report.get(rccName);
+	    		ArrayList< ArrayList<String>>  rcsetPatient =  new ArrayList<>();
+	    		for(int z=0;z<rcset.size();z++){
+	    			ArrayList<String> rcLine = rcset.get(z);
+	    			String rcIdPat = rcLine.get(1);
+	    			if(rcIdPat.equals(idpat)){
+	    				rcsetPatient.add(rcLine);
+	    			}
+	    		}
+	    		patientMap.put(rcc, rcsetPatient);
+	    	}
+	    			    	
+	    	
+	    	//now obtain bigest set
+	    	
+	    	int bigSet = 0;
+	    	Object[] psetColl = patientMap.values().toArray();
+	    	for(int xx=0;xx<psetColl.length;xx++){
+	    		ArrayList<ArrayList<String>> pset = (ArrayList<ArrayList<String>>)psetColl[xx];
+	    		if(pset.size() > bigSet){
+	    			bigSet = pset.size();
+	    		}
+	    	}
+	    	
+	    	
+	    	//now create line
+	    	System.out.println("============++++++++++++++++++++++++");
+	    	System.out.println(bigSet);
+	    	for(int q=0;q<bigSet;q++){
+	    		ArrayList<String> setLine = new ArrayList<>();
+	    		for(int qq=0;qq<lcs.size();qq++){
+	    			ReportCriteria r = lcs.get(qq);
+	    			
+	    			ArrayList<ArrayList<String>> rpset = patientMap.get(r);
+	    			
+	    			if(r.getName().equals("dtype")){
+	    				
+	    				
+	    				if(q >= rpset.size()){
+	    					if(rpset.size() == 0){
+	    						setLine.add("");
+		    					if(r.getDate().equals("yes")){
+		    						setLine.add("");
+		    					}
+	    					}else{
+	    						
+		    					ArrayList<String> rpsetLine = rpset.get(rpset.size()-1);
 		    					setLine.add(rpsetLine.get(3));
 		    					if(r.getDate().equals("yes")){
 		    						setLine.add(rpsetLine.get(4));
 		    					}
-		    				}
-		    				/**/
-		    			}else{
-		    				//ArrayList<ArrayList<String>> rpset = patientMap.get(r);
-		    				
-		    				
-		    				if(rpset.size() > 0){
-				    			if(r.getSection().equals("1")){
-				    				//the set size is 1
-				    				ArrayList<String> rpsetLine = rpset.get(0);
-				    				setLine.add(rpsetLine.get(3));
-				    			}else{
-				    				
-				    				if(q >= rpset.size()){
-				    					setLine.add(" ");
-				    					if(r.getDate().equals("yes")){
-				    						setLine.add(" ");
-				    					}
-				    				}else{
-				    					ArrayList<String> rpsetLine = rpset.get(q);
-				    					setLine.add(rpsetLine.get(3));
-				    					if(r.getDate().equals("yes")){
-				    						setLine.add(rpsetLine.get(4));
-				    					}
-				    				}
-				    			}
-		    				}else{
-		    					setLine.add(" ");
-		    					if(r.getDate().equals("yes")){
-		    						setLine.add(" ");
-		    					}
-		    				}
-		    			}
-		    		}
-		    		set.add(setLine);
-		    	}
-		    	/**/
-		    	
-		    }
-		   
-		    
-	    }else{
-	    	//graphdata = getGraphdata
-	    	
-	    	Hashtable<ReportCriteria, ArrayList<ArrayList<String>>> map = new Hashtable<>();
-	    	for(int i=0;i<lcs.size();i++){
-	    		ReportCriteria rc = lcs.get(i);
-	    		header.add(rc.getDisplay());
-	    		ArrayList<ArrayList<String>> criteriaSet = cdisdb.executeReport(rc, "graph", slcs);
-	    		map.put(rc, criteriaSet);
-	    	}
-	    	
-	    	if(slcs.size() > 0){
-	    		
-	    		if(subcriteriatype.equals("single")){
-		    		for(int j=0;j<slcs.size();j++){
-			    		//ReportSubcriteria rsc = slcs.get(j);
-		    			ArrayList<String> setLine = new ArrayList<>();
-			    		for(int jj=0;jj<lcs.size();jj++){
-			    			ArrayList<ArrayList<String>> criteriaSet = map.get(lcs.get(jj));
-			    			
-			    			if(criteriaSet.size() > 0){
-			    				setLine.add(criteriaSet.get(j).get(2));
+	    					}
+	    				}else{
+	    					ArrayList<String> rpsetLine = rpset.get(q);
+	    					setLine.add(rpsetLine.get(3));
+	    					if(r.getDate().equals("yes")){
+	    						setLine.add(rpsetLine.get(4));
+	    					}
+	    				}
+	    				/**/
+	    			}else{
+	    				//ArrayList<ArrayList<String>> rpset = patientMap.get(r);
+	    				
+	    				
+	    				if(rpset.size() > 0){
+			    			if(r.getSection().equals("1")){
+			    				//the set size is 1
+			    				ArrayList<String> rpsetLine = rpset.get(0);
+			    				setLine.add(rpsetLine.get(3));
 			    			}else{
-			    				setLine.add("0");
+			    				
+			    				if(q >= rpset.size()){
+			    					setLine.add(" ");
+			    					if(r.getDate().equals("yes")){
+			    						setLine.add(" ");
+			    					}
+			    				}else{
+			    					ArrayList<String> rpsetLine = rpset.get(q);
+			    					setLine.add(rpsetLine.get(3));
+			    					if(r.getDate().equals("yes")){
+			    						setLine.add(rpsetLine.get(4));
+			    					}
+			    				}
 			    			}
-			    		}
-			    		set.add(setLine);
-			    	}
-	    		}else{
+	    				}else{
+	    					setLine.add(" ");
+	    					if(r.getDate().equals("yes")){
+	    						setLine.add(" ");
+	    					}
+	    				}
+	    			}
+	    		}
+	    		set.add(setLine);
+	    	}
+	    	/**/
+	    	
+	    }
+	   
+	    System.out.println("========================================");
+	    for(int x=0;x<set.size();x++) {
+	    	System.out.println(set.get(x));
+	    }
+	    
+    }else{
+    	//graphdata = getGraphdata
+    	
+    	Hashtable<ReportCriteria, ArrayList<ArrayList<String>>> map = new Hashtable<>();
+    	for(int i=0;i<lcs.size();i++){
+    		ReportCriteria rc = lcs.get(i);
+    		header.add(rc.getDisplay());
+    		ArrayList<ArrayList<String>> criteriaSet = cdisdb.executeReport(rc, "graph", slcs);
+    		map.put(rc, criteriaSet);
+    	}
+    	
+    	if(slcs.size() > 0){
+    		
+    		if(subcriteriatype.equals("single")){
+	    		for(int j=0;j<slcs.size();j++){
+		    		//ReportSubcriteria rsc = slcs.get(j);
 	    			ArrayList<String> setLine = new ArrayList<>();
 		    		for(int jj=0;jj<lcs.size();jj++){
 		    			ArrayList<ArrayList<String>> criteriaSet = map.get(lcs.get(jj));
+		    			
 		    			if(criteriaSet.size() > 0){
-		    				setLine.add(criteriaSet.get(0).get(2));
+		    				setLine.add(criteriaSet.get(j).get(2));
 		    			}else{
 		    				setLine.add("0");
 		    			}
 		    		}
 		    		set.add(setLine);
-	    		}
-	    	}else{
-	    		ArrayList<String> setLine = new ArrayList<>();
+		    	}
+    		}else{
+    			ArrayList<String> setLine = new ArrayList<>();
 	    		for(int jj=0;jj<lcs.size();jj++){
 	    			ArrayList<ArrayList<String>> criteriaSet = map.get(lcs.get(jj));
 	    			if(criteriaSet.size() > 0){
@@ -464,22 +534,33 @@ public String executeReport(final HttpServletRequest request){
 	    			}
 	    		}
 	    		set.add(setLine);
-	    	}
-	    	
-	    	
-	    }
-	    	    
-	    Hashtable<String, Object> reportObject = new Hashtable<>();
-	    
-	    reportObject.put("dataset", set);
-	    reportObject.put("header", header);
-		ArrayList<Object> obs = new ArrayList<Object>();
-		obs.add(reportObject);
-		result = json.toJson(new MessageResponse(true,language,obs));
-		return result;
-	}
-	
-	
+    		}
+    	}else{
+    		ArrayList<String> setLine = new ArrayList<>();
+    		for(int jj=0;jj<lcs.size();jj++){
+    			ArrayList<ArrayList<String>> criteriaSet = map.get(lcs.get(jj));
+    			if(criteriaSet.size() > 0){
+    				setLine.add(criteriaSet.get(0).get(2));
+    			}else{
+    				setLine.add("0");
+    			}
+    		}
+    		set.add(setLine);
+    	}
+    	
+    	
+    }
+    	    
+    Hashtable<String, Object> reportObject = new Hashtable<>();
+    
+    reportObject.put("dataset", set);
+    reportObject.put("header", header);
+	ArrayList<Object> obs = new ArrayList<Object>();
+	obs.add(reportObject);
+	result = json.toJson(new MessageResponse(true,language,obs));
+	return result;
+}
+
 @RequestMapping(value = {"/service/action/setFrontPageMessage"}, method = RequestMethod.GET)
 public String setFrontPageMessage(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -525,25 +606,30 @@ public String sendUserMessage(final HttpServletRequest request){
 	return result;
 }
 
-
 @RequestMapping(value = {"/service/action/forgotPassword"}, method = RequestMethod.GET)
 public String forgotPassword(final HttpServletRequest request){
 	Gson json = new Gson();
 	String result = "";
-	String firstnameUser = request.getParameter("firstnameUser").toString();
-	String lastnameUser = request.getParameter("lastnameUser").toString();
+	
 	String usernameUser = request.getParameter("usernameUser").toString();
-	String profesionUser = request.getParameter("profesionUser").toString();
 	String emailUser = request.getParameter("emailUser").toString();
 	String language = request.getParameter("language").toString();
+	String server = request.getParameter("server").toString();
+	
 
 	User u = chbdb.isValidUser(emailUser, usernameUser);
 	if(!u.getIduser().equals("0")){
-		String messagEmail = "<h2>Recovery Password</h2> <p>Hello "+u.getFirstname()+" "+u.getLastname()+"<br><br>Your password has been recovered.<br><br><b>Your username is :</b>"+u.getUsername()+"<br><b>Your password is :</b>"+u.getPassword()+"<br><br>You can now login to CDIS by clicking here : <a href='http://cdis.reg18.rtss.qc.ca/ncdis/'>go to CDIS</a></p>";
-		MailTool.sendMailInHtml("CDIS Recover Password", messagEmail, emailUser);
+		chbdb.setResetPassword(u.getIduser(),"1");
+		String params = "rst=1&iduser="+u.getIduser(); 
+		String url = "https://"+server+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
+		String messagEmail = "<b><p>CDIS Password reset</p></b><p>Hello "+u.getFirstname()+" "+u.getLastname()+"<br> Click on the button below to reset your password<br><br><a href='"+url+"'>Reset Password</a></p>";
+		MailTool.sendMailInHtml("CDIS Password Reset", messagEmail, u.getEmail());
 		
 		ArrayList<Object> obs = new ArrayList<Object>();
-		result = json.toJson(new MessageResponse("FORGOT-TRUE",false,language,obs));
+		String msg = "You initiated password reset. Click on Reset Password button in the email you received to reset your password.";
+		MessageResponse mr = new MessageResponse(true,language,obs);
+		mr.setMessage(msg);
+		result = json.toJson(mr);
 	}else{
 		ArrayList<Object> obs = new ArrayList<Object>();
 		result = json.toJson(new MessageResponse("FORGOT-FALSE",false,language,obs));
@@ -561,35 +647,62 @@ public String subscribe(final HttpServletRequest request){
 		String idprofesionUser = request.getParameter("idprofesionSub").toString();
 		String emailUser = request.getParameter("emailSub").toString();
 		String language = request.getParameter("language").toString();
+		String server = request.getParameter("server").toString();
+		
 		String usernameUser = lastnameUser.toLowerCase().trim()+firstnameUser.toLowerCase().substring(0,1);
+		String pass = request.getParameter("passwordSub").toString();
+		
+		String encPassword = "";
+		try {
+			String clearPassword = new String(Base64.decodeBase64(pass), "UTF-8");
+			encPassword = SecurityTool.encryptPassword(clearPassword);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		
 		User u = chbdb.isValidUser(emailUser, usernameUser);
 		if(!u.getIduser().equals("0")){
-			String message = "Subscribe to CDIS \nYour information is already in CDIS database.\nIf you forgot your password you should click on forgot password link to recover your password.";
-			//MailTool.sendMailText("CDIS Recover Password", message, emailUser);
+			
+			String message = "Subscribe to CDIS \nYour information is already in CDIS database.\n";
+			if(u.getReset().equals("1")){
+				message+="A reset password was initiated and you should click on Reset Password button in the email that you received.\n If you did not received an email to reset your password click on Forgot Password link to reset your password again.";
+			}else if(u.getConfirmmail().equals("1")){
+				message+="You must confirm your password in order to log in.\nYou should click on Confirm Email button in the email that you received.\n If you did not received an email to confirm your subscription contact CDIS Admisitrator or send en email to support@grvtech.ca.";
+			}else{
+				message = "\nIf you forgot your password you should click on forgot password link to reset your password.";
+			}
 			ArrayList<Object> obs = new ArrayList<Object>();
 			MessageResponse mr = new MessageResponse(false,language,obs);
 			mr.setMessage(message);
 			result = json.toJson(mr);
 		}else{
-			u.setActive("0");
+			u.setActive("1");
 			u.setEmail(emailUser);
 			u.setFirstname(firstnameUser);
 			u.setLastname(lastnameUser);
 			u.setUsername(usernameUser);
-			u.setPassword("cdis2017");
+			u.setPassword(encPassword);
 			u.setIdcommunity(idcommunityUser);
 			u.setIdprofesion(idprofesionUser);
-			u.setPhone("GRV");
+			u.setPhone(u.getPhone());
+			u.setReset("0");
+			u.setConfirmmail("1");
 			int idPendingUser = chbdb.addUser(u);
 			
 			
 			if(chbdb.saveUserProfile(idPendingUser, 1, 2)){
 				//MailTool.sendMailText("CDIS New User Subscribe", , "support@grvtech.ca");
 				
-				String messagEmail = "<b><p>Hello Administrator</p></b><p>New user is subscribed to CDIS.<br>Login to CDIS and go to Users section.<br>Click on the button pending users to see the users that subscribed to CDIS but are not active yet.Click on the user to select it and click on the button Activate to allow the user to log in to CDIS.<br><br><b>An email will be sent to the user to annouce the activation.</b></p>";
-				MailTool.sendMailInHtml("CDIS New User Subscribe", messagEmail, "support@grvtech.ca");
+				String messagEmail = "<b><p>Hello CDIS Administrator</p></b><p>New user is subscribed to CDIS.<br>The user should confirm the email in order to finish subscription.<br>Login to CDIS and go to Users section to view users pending. <br>The administrator can confirm users email in order to activate subscription.<br><b>User Info:</b><br><b>Name :</b> "+u.getFirstname()+" "+u.getLastname()+"<br><b>Username :</b> "+u.getUsername()+"<br><b>User Email :</b> "+u.getEmail()+"<br><br><b>An email will be sent to the user to confirm email and activate subscription.</b></p>";
+				MailTool.sendMailInHtml("CDIS New User Subscribe", messagEmail, "admins@grvtech.ca");
 				
-				String message = "Subscribe to CDIS \nYour account is sent to CDIS Administrators to be activated.\nYou will receive an email with the authentification information when your account will be activated";
+				String params = "confirm=1&iduser="+idPendingUser; 
+				String url = "https://"+server+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
+				String messagEmailUser = "<b><p>Welcome to CDIS</p></b><p>In order to activate your CDIS subscription you should confirm the email.<br><br><b>Click on the button below to confirm your email and activate the subscription</b><br><br><a href='"+url+"'>Confirm Email</a></p>";
+				MailTool.sendMailInHtml("CDIS Subscribe", messagEmailUser, u.getEmail());
+				
+				String message = "Subscribe to CDIS.\nYou will receive an email with a button to confirm email and activate the subscription. ";
 				ArrayList<Object> obs = new ArrayList<Object>();
 				MessageResponse mr = new MessageResponse(true,language,obs);
 				mr.setMessage(message);
@@ -604,7 +717,78 @@ public String subscribe(final HttpServletRequest request){
 		
 	return result;
 }
+
+@RequestMapping(value = {"/service/action/confirmUserEmail"}, method = RequestMethod.GET)
+public String confirmUserEmail(final HttpServletRequest request){
+	Gson json = new Gson();
+	ChbDBridge chbdb = new ChbDBridge();
+	String result = "";
+	String language = request.getParameter("language").toString();
+	String iduser = request.getParameter("iduser").toString();
+	String server = request.getParameter("server").toString();
 	
+	User u = chbdb.getUser(Integer.parseInt(iduser));	
+	
+	if(!u.getIduser().equals("0")){
+		chbdb.setEmailConfirm(iduser, "0");
+		
+		String messagEmail = "<b><p>Hello "+u.getFirstname()+" "+u.getLastname()+"</p></b><p>You email was confirmed with success!<br><br>Use you new credentials to login into CDIS<br><br><a href='https://"+server+"/ncdis'>Login to CDIS</a></p>";
+		MailTool.sendMailInHtml("CDIS Email Confirmed Successfully", messagEmail, u.getEmail());
+		
+		ArrayList<Object> obs = new ArrayList<Object>();
+		MessageResponse mr = new MessageResponse(true,language,obs);
+		result = json.toJson(mr);
+	}else{
+		ArrayList<Object> obs = new ArrayList<Object>();
+		MessageResponse mr = new MessageResponse(false,language,obs);
+		result = json.toJson(mr);
+	}
+	return result;
+}
+
+@RequestMapping(value = {"/service/action/resetUserPassword"}, method = RequestMethod.GET)
+public String resetUserPassword(final HttpServletRequest request){
+	Gson json = new Gson();
+	ChbDBridge chbdb = new ChbDBridge();
+	String result = "";
+	
+	String language = request.getParameter("language").toString();
+	String usernameUser = request.getParameter("username").toString();
+	String pass = request.getParameter("passwordr").toString();
+	String iduser = request.getParameter("iduser").toString();
+	String server = request.getParameter("server").toString();
+	
+	String encPassword = "";
+	String clearPassword = "";
+	try {
+		clearPassword = new String(Base64.decodeBase64(pass), "UTF-8");
+		encPassword = SecurityTool.encryptPassword(clearPassword);
+	} catch (UnsupportedEncodingException e) {
+		e.printStackTrace();
+	}
+
+	User u = chbdb.getUser(Integer.parseInt(iduser));
+	if(!u.getIduser().equals("0")){
+		u.setPassword(encPassword);
+		chbdb.resetUserPassword(u);
+		
+		String messagEmail = "<b><p>Hello "+u.getFirstname()+" "+u.getLastname()+"</p></b><p>You reset you password with success!<br><br>Use you new credentials to login into CDIS<br><br><a href='https://"+server+"/ncdis'>Login to CDIS</a></p>";
+		MailTool.sendMailInHtml("CDIS Password Reset Successfully", messagEmail, u.getEmail());
+		
+		String message = "You successfully reset your password\n.";
+		ArrayList<Object> obs = new ArrayList<Object>();
+		MessageResponse mr = new MessageResponse(true,language,obs);
+		mr.setMessage(message);
+		result = json.toJson(mr);
+	}else{
+		ArrayList<Object> obs = new ArrayList<Object>();
+		MessageResponse mr = new MessageResponse(false,language,obs);
+		mr.setMessage("User is invalid");
+		result = json.toJson(mr);
+	}		
+	return result;
+}
+
 @RequestMapping(value = {"/service/action/getFrontPageMessage"}, method = RequestMethod.GET)
 public String getFrontPageMessage(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -676,7 +860,27 @@ public String readPatientNote(final HttpServletRequest request){
 	result = json.toJson(new MessageResponse(true,language,obs));
 	return result;
 }
+
+@RequestMapping(value = {"/service/action/setEvent"}, method = RequestMethod.GET)
+public String setEvent(final HttpServletRequest request){
+	Gson json = new Gson();
 	
+	String result = "";
+	String language = request.getParameter("language").toString();
+	String sid = request.getParameter("sid").toString();
+	String eventCode = request.getParameter("eventcode").toString();
+	User user = chbdb.getUser(sid);
+	Action a = chbdb.getAction(eventCode);
+	Session session = chbdb.isValidSession(sid);
+	if(session != null){
+		chbdb.setUserSession(session);
+	}
+	chbdb.setEvent(user.getIduser(), a.getIdaction(), "1", sid);
+	ArrayList<Object> obs = new ArrayList<Object>();
+	result = json.toJson(new MessageResponse(true,language,obs));
+	return result;
+}
+
 @RequestMapping(value = {"/service/action/deletePatientNote"}, method = RequestMethod.GET)
 public String deletePatientNote(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -759,7 +963,6 @@ public String saveReport(final HttpServletRequest request){
 	return result;
 }
 	
-	
 @RequestMapping(value = {"/service/action/getScheduleVisit"}, method = RequestMethod.GET)
 public String getScheduleVisit(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -795,8 +998,6 @@ public String setScheduleVisit(final HttpServletRequest request){
 	return result;
 }
 
-
-
 @RequestMapping(value = {"/service/action/writeReportFile"}, method = RequestMethod.GET)
 public void writeReportFile(String reportCode, String content){
 	try {
@@ -808,7 +1009,20 @@ public void writeReportFile(String reportCode, String content){
 		e.printStackTrace();
 	}
 }
-	
+
+@RequestMapping(value = {"/service/action/writeOutcomeFile"}, method = RequestMethod.GET)
+public void writeOutcomeFile(String outcomeFile, String content){
+	InitialContext ic;
+	try {
+		File reportFile = new File(reportsFolder+System.getProperty("file.separator")+"outcomes"+System.getProperty("file.separator")+outcomeFile);
+		Writer writer = new FileWriter(reportFile);
+		writer.write(content);
+		writer.close();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+}
+
 @RequestMapping(value = {"/service/action/generateDataReport"}, method = RequestMethod.GET)
 public String generateDataReport(final HttpServletRequest request){
 		Gson json = new Gson();
@@ -838,13 +1052,15 @@ public String generateDataReport(final HttpServletRequest request){
 			    ArrayList<ReportSubcriteria> slcs = new ArrayList<ReportSubcriteria>();
 			    for(JsonElement obj : jArrayC ){
 			        ReportCriteria cse = gson.fromJson( obj , ReportCriteria.class);
-			        cse.loadIddata();
+			        cse.setIddata(cdisdb.getIddata(cse.getName()));
+			        //cse.loadIddata();
 			        lcs.add(cse);
 			    }
 			    
 			    for(JsonElement obj : jArraySC ){
 			        ReportSubcriteria scse = gson.fromJson( obj , ReportSubcriteria.class);
-			        scse.loadIddata();
+			        scse.setSubiddata(cdisdb.getIddata(scse.getSubname()));
+			        //scse.loadIddata();
 		        	slcs.add(scse);
 			    }
 			    
@@ -982,7 +1198,6 @@ public String generateDataReport(final HttpServletRequest request){
 		}
 	return "REPORT "+ reportCode+" GENERATED";
 }
-
 	
 @RequestMapping(value = {"/service/action/generateDataGraph"}, method = RequestMethod.GET)
 public String generateDataGraph(final HttpServletRequest request){
@@ -1015,7 +1230,6 @@ public String generateDataGraph(final HttpServletRequest request){
 	}
 	return "DATA GRAPH GENERATED";
 }
-
 	
 @RequestMapping(value = {"/service/action/executeReportFlist"}, method = RequestMethod.GET)
 public ArrayList<Object> executeReportFlist(String dataName, JsonArray criterias, JsonArray subcriterias){
@@ -1033,11 +1247,223 @@ public ArrayList<Object> executeReportFlist(String dataName, JsonArray criterias
 	return result;
 }
 
-
 @RequestMapping(value = {"/service/action/executeReportLocalList"}, method = RequestMethod.GET)
 public ArrayList<Object> executeReportLocalList(){
 	ArrayList<Object> result = new ArrayList<>();
 	result = cdisdb.executeReportLocalList();
+	return result;
+}
+
+@RequestMapping(value = {"/service/action/executeReportNoHBA1c"}, method = RequestMethod.GET)
+public ArrayList<Object> executeReportNoHBA1c(){
+	ArrayList<Object> result = new ArrayList<>();
+	result = cdisdb.executeReportNoHBA1c();
+	return result;
+}
+
+@RequestMapping(value = {"/service/action/generateDataOutcomes"}, method = RequestMethod.GET)
+public String generateDataOutcomes(final HttpServletRequest request){
+	
+	String result = "";
+	JsonParser jp = new JsonParser();
+	
+	InitialContext ic;
+	try {
+		ic = new InitialContext();
+		Gson gson = new Gson();
+
+	    Hashtable<String,ArrayList<Hashtable<String,String>>> t12 = cdisdb.getHbA1cTrend("1_2");
+	    Iterator<String> t12keys = t12.keySet().iterator();
+	    Hashtable<String, String> t12totals = new Hashtable<>();
+	    while(t12keys.hasNext()){
+	    	String key = t12keys.next();
+	    	ArrayList<Hashtable<String,String>> month = t12.get(key);
+	    	int tt = 0;
+	    	for(int i=0;i<month.size();i++){
+	    		Hashtable<String, String> line = month.get(i);
+	    		tt+=Integer.parseInt(line.get("n"));
+	    	}
+	    	t12totals.put(key, Integer.toString(tt));
+	    	String outcomeFile = "t."+key.replace("m", "")+".1_2";
+	    	String content = gson.toJson(month);
+	    	writeOutcomeFile(outcomeFile, content);
+	    }
+	    String t12tout  = "tt.1_2";
+	    String t12tcontent = gson.toJson(t12totals);
+	    writeOutcomeFile(t12tout, t12tcontent);
+	    
+	    Hashtable<String,ArrayList<Hashtable<String,String>>> tpdm = cdisdb.getHbA1cTrend("3");
+	    Iterator<String> tpdmkeys = tpdm.keySet().iterator();
+	    Hashtable<String, String> tpdmtotals = new Hashtable<>();
+	    while(tpdmkeys.hasNext()){
+	    	String key = tpdmkeys.next();
+	    	ArrayList<Hashtable<String,String>> month = tpdm.get(key);
+	    	int tt = 0;
+	    	for(int i=0;i<month.size();i++){
+	    		Hashtable<String, String> line = month.get(i);
+	    		tt+=Integer.parseInt(line.get("n"));
+	    	}
+	    	tpdmtotals.put(key, Integer.toString(tt));
+	    	String outcomeFile = "t."+key.replace("m", "")+".3";
+	    	String content = gson.toJson(month);
+	    	writeOutcomeFile(outcomeFile, content);
+	    }
+	    String tpdmtout  = "tt.3";
+	    String tpdmtcontent = gson.toJson(tpdmtotals);
+	    writeOutcomeFile(tpdmtout, tpdmtcontent);
+	    
+	    
+	    Hashtable<String,ArrayList<Hashtable<String,String>>> p12 = cdisdb.getHbA1cPeriod("1_2");
+	    Iterator<String> p12keys = p12.keySet().iterator();
+	    Hashtable<String, String> p12totals = new Hashtable<>();
+	    while(p12keys.hasNext()){
+	    	String key = p12keys.next();
+	    	ArrayList<Hashtable<String,String>> month = p12.get(key);
+	    	int tt = 0;
+	    	for(int i=0;i<month.size();i++){
+	    		Hashtable<String, String> line = month.get(i);
+	    		tt+=Integer.parseInt(line.get("n"));
+	    	}
+	    	p12totals.put(key, Integer.toString(tt));
+	    	String outcomeFile = "p."+key.replace("m", "")+".1_2";
+	    	String content = gson.toJson(month);
+	    	writeOutcomeFile(outcomeFile, content);
+	    }
+	    String p12tout  = "tp.1_2";
+	    String p12tcontent = gson.toJson(p12totals);
+	    writeOutcomeFile(p12tout, p12tcontent);
+	    
+
+	    Hashtable<String,ArrayList<Hashtable<String,String>>> ppdm = cdisdb.getHbA1cPeriod("3");
+	    Iterator<String> ppdmkeys = ppdm.keySet().iterator();
+	    Hashtable<String, String> ppdmtotals = new Hashtable<>();
+	    while(ppdmkeys.hasNext()){
+	    	String key = ppdmkeys.next();
+	    	ArrayList<Hashtable<String,String>> month = ppdm.get(key);
+	    	int tt = 0;
+	    	for(int i=0;i<month.size();i++){
+	    		Hashtable<String, String> line = month.get(i);
+	    		tt+=Integer.parseInt(line.get("n"));
+	    	}
+	    	ppdmtotals.put(key, Integer.toString(tt));
+	    	String outcomeFile = "p."+key.replace("m", "")+".3";
+	    	String content = gson.toJson(month);
+	    	writeOutcomeFile(outcomeFile, content);
+	    }
+	    String ppdmtout  = "tp.3";
+	    String ppdmtcontent = gson.toJson(ppdmtotals);
+	    writeOutcomeFile(ppdmtout, ppdmtcontent);
+	    
+	    Hashtable<String,ArrayList<Hashtable<String,String>>> v12 = cdisdb.getHbA1cValue("1_2");
+	    Iterator<String> v12keys = v12.keySet().iterator();
+	    Hashtable<String, String> v12totals = new Hashtable<>();
+	    while(v12keys.hasNext()){
+	    	String key = v12keys.next();
+	    	ArrayList<Hashtable<String,String>> month = v12.get(key);
+	    	int tt = 0;
+	    	for(int i=0;i<month.size();i++){
+	    		Hashtable<String, String> line = month.get(i);
+	    		tt+=Integer.parseInt(line.get("n"));
+	    	}
+	    	v12totals.put(key, Integer.toString(tt));
+	    	String outcomeFile = "v."+key.replace("m", "")+".1_2";
+	    	String content = gson.toJson(month);
+	    	writeOutcomeFile(outcomeFile, content);
+	    }
+	    String v12tout  = "tv.1_2";
+	    String v12tcontent = gson.toJson(v12totals);
+	    writeOutcomeFile(v12tout, v12tcontent);
+	    
+
+	    Hashtable<String,ArrayList<Hashtable<String,String>>> vpdm = cdisdb.getHbA1cValue("3");
+	    Iterator<String> vpdmkeys = vpdm.keySet().iterator();
+	    Hashtable<String, String> vpdmtotals = new Hashtable<>();
+	    while(vpdmkeys.hasNext()){
+	    	String key = vpdmkeys.next();
+	    	ArrayList<Hashtable<String,String>> month = vpdm.get(key);
+	    	int tt = 0;
+	    	for(int i=0;i<month.size();i++){
+	    		Hashtable<String, String> line = month.get(i);
+	    		tt+=Integer.parseInt(line.get("n"));
+	    	}
+	    	vpdmtotals.put(key, Integer.toString(tt));
+	    	String outcomeFile = "v."+key.replace("m", "")+".3";
+	    	String content = gson.toJson(month);
+	    	writeOutcomeFile(outcomeFile, content);
+	    }
+	    String vpdmtout  = "tv.3";
+	    String vpdmtcontent = gson.toJson(vpdmtotals);
+	    writeOutcomeFile(vpdmtout, vpdmtcontent);
+	    
+	} catch (NamingException e) {
+		e.printStackTrace();
+	}
+	return "Outcome files GENERATED";
+}
+
+@RequestMapping(value = {"/service/action/getImportOmnilabFiles"}, method = RequestMethod.GET)
+public String getImportOmnilabFiles(final HttpServletRequest request){
+	Gson json = new Gson();
+	
+	String result = "";
+	String sid = request.getParameter("sid").toString();
+	String language = request.getParameter("language").toString();
+	String period = request.getParameter("period").toString();
+	
+	int p = Integer.parseInt(period)*-1;
+	ArrayList<Object> obs = new ArrayList<Object>();
+	InitialContext ic;
+	try {
+		ic = new InitialContext();
+		//String rf = (String) ic.lookup("reports-folder");
+		File importFolder = new File(reportsFolder+System.getProperty("file.separator")+"import");
+		FileFilter fileFilter = new FileFilter(){
+	         public boolean accept(File dir) {          
+	            if (dir.isFile()) {
+	            	String dName = dir.getName();
+	            	String extension = dName.substring(dName.lastIndexOf(".")+1);
+	            	if(extension.equals("json")){
+	            		return true;
+	            	}else{
+	            		return false;
+	            	}
+	            } else {
+	               return false;
+	            }
+	         }
+	      };
+	     System.out.println(importFolder.getAbsolutePath());
+	     
+	     File[] list = importFolder.listFiles(fileFilter);
+	     ArrayList<String> files = new ArrayList<>();
+	     for(int i=0;i<list.length;i++){
+	    	 String fn = list[i].getName();
+	    	 Date curentDate = new Date();
+	    	 
+	    	 DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+	    	 Date fileDate = dateFormat.parse(fn.substring(fn.lastIndexOf("_")+1 ,fn.lastIndexOf(".")));
+	         String todate = dateFormat.format(curentDate);
+
+	         Calendar cal = Calendar.getInstance();
+	         cal.add(Calendar.DATE, p);
+	         Date todate1 = cal.getTime();    
+	         String fromdate = dateFormat.format(todate1);
+	         
+	         if(fileDate.after(todate1)){
+	        	 files.add(fn);
+	         }
+	         /*
+	    	 if(fn.indexOf(fromdate) >=0 ){
+	    		 files.add(fn);
+	    	 }
+	    	 */
+	     }
+	     result = json.toJson(files);
+	} catch (NamingException e) {
+		e.printStackTrace();
+	} catch (ParseException e) {
+		e.printStackTrace();
+	}
 	return result;
 }
 

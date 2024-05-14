@@ -159,8 +159,11 @@ body.loading .modal{
 .cdisheader .menu li:hover {background-color:#db4437;}*/
 
 
-.cdisfooter-left{position:fixed;right:10px;bottom:10px;width:60px;margin-top:-65px;z-index: 20;}
+.cdisfooter-fll{position:fixed;right:80px;bottom:10px;width:170px;margin-top:-65px;z-index:20;display:none;}
+.cdisfooter-fll .b{padding:5px;cursor:pointer;height:50px;text-align:center;background-color:#db4437;font-size:0.7vw;line-height:40px;color:#ffffff;-moz-border-radius: 7px;-webkit-border-radius: 7px;border-radius: 7px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);}
+.cdisfooter-fll .b:hover{background-color:#4b3b3b;}
 
+.cdisfooter-left{position:fixed;right:10px;bottom:10px;width:60px;margin-top:-65px;z-index: 20;}
 .cdisfooter-left .leftmenu{margin:0px 0px 0px 15px;padding:0px;bottom:5px;width:50px;height:50px;text-align:center;background-color:#db4437;}
 .cdisfooter-left .leftmenu:hover {background-color:#4b3b3b;}
 .cdisfooter-left .leftmenu i{margin:auto;line-height:50px;font-size:160%;color:#ffffff;}
@@ -313,5 +316,22 @@ body.loading .modal{
 .grvpopup-window-body{display:grid;grid-template-rows:auto 50px;color:#4d4d4d;padding:5px;}
 .grvpopup-window-body-body-data{overflow-y:auto;height:290px;}
 .grvpopup-window-body-footer{display:grid;grid-template-columns:auto 80px;justify-items:center;align-items: center;font-size:20px;}
+
+
+.txtErrorRed{color:red !important;}
+.inputErrorRed{border-color:red;}
+
+
+/*css progress*/
+.fullscreen-progress{position:absolute;top:0;left:0;width:100%;height:100%;background:#4d4d4d;z-index:1000000;opacity: 0.95;}
+.fullscreen-progress-container{position:absolute;top:50%;left:50%;width:200px;height:100px;margin:-50px 0px 0px -100px; }
+.fullscreen-progress-container-logo{width:200px;height:70px;background:no-repeat url(../images/cdis-logo50.png) center center;background-size: 45px 60px;}
+.fullscreen-progress-container-text{width:200px;height:60px;text-align:center;background:no-repeat url(../images/giphy1.gif) center center;background-size: 60px 60px;}
+
+
+
+
+
+
 
 

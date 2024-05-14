@@ -82,10 +82,14 @@ function createGraphWidget(values,arrays,container){
 		}
 	});
 	$("#add-"+labelID).click(function(){
-		if(!gctb.is(":visible")){
-			toggleTable(gctb);	
+		if(isDemo){
+			alert("This function si not available in demo mode");
+		}else{
+			if(!gctb.is(":visible")){
+				toggleTable(gctb);	
+			}
+			openTableForm("","",'0',gctb,arrays[0][0].vtype);
 		}
-		openTableForm("","",'0',gctb,arrays[0][0].vtype);
 	});
 	
 	$("#history-"+labelID).click(function(){plotGraphHistory(values,arrays,limitss);});
@@ -141,14 +145,19 @@ function createTableWidget(values,arrays,container){
 	buildTable(arrays,gctb,limitss);
 	
 	ma.click(function(){
-		if(!gctb.is(":visible")){
-			toggleTable(gctb);	
-		}
-		if(values.length == 2){
-			openTableForm("","",'0-0',gctb,arrays[0][0].vtype);
+		if(isDemo){
+			alert("This function si not available in demo mode");
 		}else{
-			openTableForm("","",'0',gctb,arrays[0][0].vtype);
+			if(!gctb.is(":visible")){
+				toggleTable(gctb);	
+			}
+			if(values.length == 2){
+				openTableForm("","",'0-0',gctb,arrays[0][0].vtype);
+			}else{
+				openTableForm("","",'0',gctb,arrays[0][0].vtype);
+			}
 		}
+		
 		
 	});
 	
@@ -221,7 +230,11 @@ function createSingleWidget(values,arrays,container){
 	buildTable(valueArray,gctb,limitss);
 	
 	ma.click(function(){
-		openTableForm("","",'0',gctb,valueArray[0][0].vtype);
+		if(isDemo){
+			alert("This function si not available in demo mode");
+		}else{
+			openTableForm("","",'0',gctb,valueArray[0][0].vtype);
+		}
 	});
 	
 }
@@ -253,15 +266,19 @@ function buildTable(arrays,container,limitss){
 					var line = $("<div>",{class:"widget-table-line row line-"+(index%2),id:value.idvalue}).appendTo(cb);	
 				}
 				line.click(function(){
-					var target = $(event.target);
-					if(!target.is("i")){
-						var id = $(this).attr("id");
-						if(typeof(id) != "undefined"){
-							var val = $(this).find(".col-sm-5 span").text();
-							var dat = $(this).find(".col-sm-7").text();
-							openTableForm(val,dat,id, container,value.vtype);
-						}else{
-							alert("undefined");
+					if(isDemo){
+						alert("This function si not available in demo mode");
+					}else{
+						var target = $(event.target);
+						if(!target.is("i")){
+							var id = $(this).attr("id");
+							if(typeof(id) != "undefined"){
+								var val = $(this).find(".col-sm-5 span").text();
+								var dat = $(this).find(".col-sm-7").text();
+								openTableForm(val,dat,id, container,value.vtype);
+							}else{
+								alert("undefined");
+							}
 						}
 					}
 				});
@@ -292,6 +309,7 @@ function buildTable(arrays,container,limitss){
 					var vvObj = eval(value.code+"_values");
 					vv = vvObj[value.value];
 				}
+				if(isDecimal(Number(vv))){vv = Number(vv).toFixed(3);}
 				if(value.vtype == "date"){
 					line.append($("<div>",{class:"col-sm-5"}).append($("<span>",{class:valClass}).text("")));
 				}else{
@@ -301,28 +319,32 @@ function buildTable(arrays,container,limitss){
 				line.append($("<div>",{class:"delete-inline",id:"delete-"+value.code+"-"+value.idvalue}).html("<i class='fa fa-trash' aria-hidden='true'></i>"));
 				
 				$("#delete-"+value.code+"-"+value.idvalue).click(function(){
-					var target = $(event.target);
-					if(target.is("i")){
-						var $d = $("<div>",{id:"dialog-confirm",title:"Delete value"}).appendTo($("body"));
-						var $p = $("<p>").text("This value will be permanently deleted. Are you sure ?").appendTo($d); 
-						$d.dialog({
-						      resizable: false,
-						      height: "auto",
-						      width: 400,
-						      modal: true,
-						      buttons: {
-						        "Delete value": function() {
-						        	deleteValue(value.idvalue,patientObjArray);
-									$("#"+value.idvalue).remove();
-									$( this ).dialog( "close" );
-							        $(this.remove());
-						        },
-						        Cancel: function() {
-						          $( this ).dialog( "close" );
-						          $(this.remove());
-						        }
-						      }
-						    });
+					if(isDemo){
+						alert("This function si not available in demo mode");
+					}else{
+						var target = $(event.target);
+						if(target.is("i")){
+							var $d = $("<div>",{id:"dialog-confirm",title:"Delete value"}).appendTo($("body"));
+							var $p = $("<p>").text("This value will be permanently deleted. Are you sure ?").appendTo($d); 
+							$d.dialog({
+							      resizable: false,
+							      height: "auto",
+							      width: 400,
+							      modal: true,
+							      buttons: {
+							        "Delete value": function() {
+							        	deleteValue(value.idvalue,patientObjArray);
+										$("#"+value.idvalue).remove();
+										$( this ).dialog( "close" );
+								        $(this.remove());
+							        },
+							        Cancel: function() {
+							          $( this ).dialog( "close" );
+							          $(this.remove());
+							        }
+							      }
+							    });
+						}
 					}
 				});
 			}else{
@@ -336,7 +358,6 @@ function buildTable(arrays,container,limitss){
 		var limitsPrime = limitss[0];
 		var limitsSecond = limitss[1];
 		//prime should be systolic bp 
-		//console.log(limitsPrime);
 		$.each(prime,function(index,value){
 			
 			if(value != null && value.value != null ){
@@ -357,13 +378,17 @@ function buildTable(arrays,container,limitss){
 				}
 				
 				line.click(function(){
-					var id = $(this).attr("id");
-					if(typeof(id) != "undefined"){
-						var val = $(this).find(".col-sm-5 span").text();
-						var dat = $(this).find(".col-sm-7").text();
-						openTableForm(val,dat,id, container,value.vtype);
+					if(isDemo){
+						alert("This function si not available in demo mode");
 					}else{
-						alert("undefined");
+						var id = $(this).attr("id");
+						if(typeof(id) != "undefined"){
+							var val = $(this).find(".col-sm-5 span").text();
+							var dat = $(this).find(".col-sm-7").text();
+							openTableForm(val,dat,id, container,value.vtype);
+						}else{
+							alert("undefined");
+						}
 					}
 				});
 				
@@ -770,7 +795,6 @@ function createFormWidget(valueName,dataType,containerForm,actualValuesObj){
 								var sectionObj = getObjectSection(patientObjArray);
 								
 								var secObjValue = eval("sectionObj."+valueName);
-								console.log(secObjValue);
 								buildWidget(valueName, [secObjValue.values], $("#"+valueName));
 								closeTableForm(containerForm.parent());
 								

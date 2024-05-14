@@ -22,8 +22,21 @@ CDIS PAGE CSS
 #radios .btn-default{background-color:#ececec;margin-bottom:0px;}
 #radios .btn-default.active{background-color:#4b3b3b;color:#ffffff;font-weight:bold;}
 #radios .btn.focus {  outline: none;box-shadow:none;}
+.btn.btn-primary{cursor:pointer;}
+#radio-sex .btn-primary{background-color:#cdcdcd;border-color:#4b3b3b;}
+#radio-sex .btn-primary.active{background-color:#4b3b3b;}
+#radio-sex .btn-primary.focus{box-shadow:none;}
+#radio-iscree .btn-primary{background-color:#cdcdcd;border-color:#4b3b3b;}
+#radio-iscree .btn-primary.active{background-color:#4b3b3b;}
+#radio-iscree .btn-primary.focus{box-shadow:none;}
+#radio-deceased .btn-primary{background-color:#cdcdcd;border-color:#4b3b3b;}
+#radio-deceased .btn-primary.active{background-color:#4b3b3b;}
+#radio-deceased .btn-primary.focus{box-shadow:none;}
+#myModal .btn-primary, #myModalEdit .btn-primary {background-color:#4b3b3b;border-color:#4b3b3b;}
+
 .ui-autocomplete{height:400px;overflow: auto;font-size:105%;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;padding:3px;}
-.search-line{display:grid;grid-template-columns:300px 130px 50px 200px 100px;}
+.search-line{font-size:13px !important;display:grid;grid-template-columns:40% 15% 10% 20% 15%;}
+.criteria{font-weight:bold;}
 .ui-menu-item .ui-state-active {
 	background-color:#4b3b3b;
 	border:none;

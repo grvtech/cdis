@@ -163,13 +163,6 @@
 .surveillance-filters .fs-filters .gr-2col2 .cisbutton:hover{background:#db4437;color:#ffffff;}
 */
 
-/*css progress*/
-.fullscreen-progress{position:absolute;top:0;left:0;width:100%;height:100%;background:#efefef;z-index:1000000;}
-.fullscreen-progress-container{position:absolute;top:50%;left:50%;width:200px;height:100px;margin:-50px 0px 0px -100px; }
-.fullscreen-progress-container-logo{width:200px;height:70px;background:no-repeat url(../images/cdis-logo50.png) center center;background-size: 45px 60px;}
-.fullscreen-progress-container-text{width:200px;height:60px;text-align:center;background:no-repeat url(../images/giphy1.gif) center center;background-size: 60px 60px;}
-/*.fullscreen-progress-container-text{width:200px;height:30px;color:#4d4d4d;line-height:30px;text-align:center;font-weight:bold;}*/
-
 
 .jqplot-highlight{
 	font-size:11px;

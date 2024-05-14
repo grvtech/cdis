@@ -1,21 +1,15 @@
-/*
- * link event to button to open the list
- * */
-$('#locallist-button').click(function(){
-	setTimeout(setEvent,100,"LLIST");
-	openList();
-});
+
 
 /*
  * global variable for list
  * */
 
-var toolbarConfig = {"container":"locallist-toolbar","lists":[{"id":"list101","title":"HbA1c trend","selected":"false"},{"id":"list102","title":"Patients with no HbA1C in the ","selected":"false"},{"id":"list103","title":"Patients by HbA1c","selected":"false"}],"options":[]};
+var toolbarConfig = {"container":"locallist-toolbar","lists":[{"id":"list103","title":"Patients by HbA1c","selected":"false"},{"id":"list102","title":"Patients with no HbA1C in the ","selected":"false"},{"id":"list101","title":"HbA1c trend","selected":"false"}],"options":[]};
 //var toolbarConfig = {"container":"locallist-toolbar","lists":[{"id":"list101","title":"Trend of HBA1c value","selected":"false"},{"id":"list102","title":"Patients with old HBA1c value collected","selected":"false"},{"id":"list103","title":"Patients with high HBA1c value","selected":"false"},{"id":"list104","title":"Patients with no HBA1c value","selected":"false"}],"options":[]};
 var dataperiodValues = [6,12,24,60];
 const listConfig = {
 		"container":"locallist-list",
-		"initFilter":{"list":"list101","idcommunity":"0","dp":"12","dtype":"1_2","age":"0","hba1c":"0","sex":"0","users":"0"},
+		"initFilter":{"list":"list103","idcommunity":"0","dp":"12","dtype":"1_2","age":"0","hba1c":"0","sex":"0","users":"0"},
 		"list101":{"header":["fullname","ramq","chart","age","dduration","trend","last_hba1c","last_hba1c_collecteddate","secondlast_hba1c","secondlast_hba1c_collecteddate"]},
 		"list102":{"header":["fullname","ramq","chart","age","dduration","last_hba1c","last_hba1c_collecteddate"]},
 		"list103":{"header":["fullname","ramq","chart","age","dduration","last_hba1c","last_hba1c_collecteddate"]},
@@ -33,17 +27,19 @@ var periodStatsData = {};
 var valueStatsData = {};
 
 
-function openList(){
+function openList(pfilter){
 	//create the modal window
 	var id = "locallist";
-	appFilter = initFilter(listConfig.initFilter);
+	if(pfilter!=null){
+		appFilter = pfilter;
+	}else{
+		appFilter = initFilter(listConfig.initFilter);
+	}
+	
 	var modal = $('<div>',{id:"fullscreen_"+id,class:"fullscreen-modal"}).appendTo($("#wraper"));
 	buildFrameList(modal);
 	setTimeout(loadReport, 10, "locallist");
 	//setTimeout(loadNoHbA1cPatients,100);
-	//console.log("filter in open list");
-	//console.log(appFilter);
-	//console.log(listConfig.initFilter);
 }
 
 /*
@@ -71,7 +67,7 @@ function buildFrameList(container){
 	$('<div>',{class:"fullscreen-modal-header-logo"}).appendTo(header);
 	$('<div>',{class:"fullscreen-modal-header-cdis"}).text("CDIS").appendTo(header);
 	$('<div>',{class:"fullscreen-modal-header-title"}).text("Local Patient List").appendTo(header);
-	$('<div>',{class:"fullscreen-modal-header-close"}).html($('<i>',{class:"fa fa-times"})).click(function(){container.remove();}).appendTo(header);
+	$('<div>',{class:"fullscreen-modal-header-close"}).html($('<i>',{class:"fa fa-times"})).click(function(){gts(sid,"en");}).appendTo(header);
 	var body = $('<div>',{class:"fullscreen-modal-body"}).appendTo(container);
 	
 	$('<div>',{class:"gap"}).appendTo(body);
@@ -82,39 +78,16 @@ function buildFrameList(container){
 	$('<div>',{class:"gap"}).appendTo(body);
 	var c = $('<div>',{"id":"locallist-list",class:"fullscreen-modal-list"}).appendTo(body);
 	$('<div>',{class:"gap"}).appendTo(body);
-	showProgress(c);
+	
+	setTimeout(showProgress , 10, c);
+	
 	//$('<div>',{"id":"locallist-stats",class:"fullscreen-modal-stats"}).appendTo(body);
 	$('<div>',{class:"fullscreen-modal-footer"}).appendTo(container);
 }
 
 
-
-/*
- * function to show the progress in words
- * use parameter to place progress
- * */
-var progressOn=false;
-function showProgress(container){
-	if(!progressOn){
-		var p = $('<div>',{id:"progress",class:"fullscreen-progress"}).appendTo(container);
-		var c = $('<div>',{class:"fullscreen-progress-container"}).appendTo(p);
-		var l = $('<div>',{class:"fullscreen-progress-container-logo"}).appendTo(c);
-		var t = $('<div>',{class:"fullscreen-progress-container-text"}).appendTo(c);
-		progressOn=true;
-	}
-}
-function hideProgress(container){
-	$(container).find($("#progress")).fadeOut(500, function(){
-		$(container).find($("#progress")).remove();
-		progressOn=false;
-	}).delay(500, function(){
-		$(container).find($("#progress")).remove();
-		progressOn=false;
-	});
-}
-
 function getAllPatients(report, community){
-	var result =0 ;
+	var result=0 ;
 	$.each(report.data.datasets,function(i,v){
 		if( community == "0"){
 			result++;
@@ -167,7 +140,7 @@ function loadNoHbA1cPatients(){
 		globalNoHBA1cReport = data;
 		nowNoHBA1cReport = data;
 	}).fail(function(){
-        console.log("An error has occurred.");
+       alert("An error has occurred.");
     });
 }
 
@@ -354,12 +327,7 @@ function drawToolbarButtons(container){
 	var genBtn = $("<button>",{class:"cisbutton"}).text("Generate List").appendTo($(".gr-2col2"));
 	//genBtn.prop("disabled","true");
 	genBtn.click(function(){
-		//console.log("global");
-		//console.log(globalReport);
-		//console.log("filter");
-		//console.log(appFilter);
-		showProgress($("#locallist-list"));
-		
+		setTimeout(showProgress,10,$("#locallist-list"));
 		if($("#age-filter-2").hasClass("selected")){
 			var min = isNaN($("#age-custom-min").val())?"0":($("#age-custom-min").val() === '')?"0":$("#age-custom-min").val();
 			var max = isNaN($("#age-custom-max").val())?"0":($("#age-custom-max").val() === '')?"0":$("#age-custom-max").val();
@@ -380,7 +348,10 @@ function drawToolbarButtons(container){
 		//refreshStats();
 	});
 	
-	$("<button>",{class:"cisbutton"}).text("Back to Search").appendTo($(".gr-2col2")).click(function(){$("#fullscreen_locallist").remove();});
+	$("<button>",{class:"cisbutton"}).text("Back to Search").appendTo($(".gr-2col2")).click(function(){
+		//$("#fullscreen_locallist").remove();
+		gts(sid,"en");
+		});
 	
 	
 	$("<div>",{class:"gr-gap other-buttons"}).appendTo(container);
@@ -430,13 +401,10 @@ function drawToolbarLists(container){
 		}
 		$("<div>",{"id":"list-"+list.id,class:"list-tab"}).appendTo($(".list-tabs")).text(tt).click(function(){
 			$(".list-container").css("visibility","hiden");
-			//console.log(appFilter);
 			$(".list-tab").removeClass("selected");
 			$(this).addClass("selected");
 			appFilter["list"] = $(this).attr("id").replace("list-",""); 
-			//console.log(appFilter);
-			showProgress($("#locallist-list"));
-			//$(".list-container").trigger("myCustomEvent",[ list.id, listConfig, globalReport ] );
+			setTimeout(showProgress,10,$("#locallist-list"));
 			setTimeout(drawList,1000,appFilter.list, listConfig, globalReport);
 		});
 	});
@@ -505,12 +473,9 @@ function drawStats(statsConfig, report){
 }
 
 function drawList(listid,listConfig,report){
-	//console.log("start draw list : "+ moment().format('MMMM Do YYYY, h:mm:ss.SSS a'));
-	
 	if($(".list-container").length){
 		$(".list-container").remove();
 	}
-	//$("#"+listConfig.container).empty();
 	var listContainer = $("<div>",{class:"list-container lista"+listid}).appendTo($("#"+listConfig.container));
 	
 	if($(".list-container .list-header-container").length){
@@ -523,29 +488,16 @@ function drawList(listid,listConfig,report){
 	var dataContainer = $("<div>",{class:"list-data-container"}).appendTo(listContainer);
 	var headerContainer = $("<div>",{class:"list-header-container"}).appendTo(listContainer);
 	var bodyContainer = $("<div>",{"id":"list-body",class:"list-body-container"}).appendTo(listContainer);
-	
-	
 	drawListHeader(dataContainer, listid);
-	
-	//console.log("before filter "+moment().format('MMMM Do YYYY, h:mm:ss.SSS a'));
-	//console.log(appFilter);
 	var r = applyFilter(report,appFilter);
 	nowReport = getReport(r);
-	//console.log("after filter "+moment().format('MMMM Do YYYY, h:mm:ss.SSS a'));
-	//console.log("before header "+moment().format('MMMM Do YYYY, h:mm:ss.SSS a'));
-	
 	drawListTableHeader(headerContainer,r,listid);
-	
-	//console.log("after header "+moment().format('MMMM Do YYYY, h:mm:ss.SSS a'));
-	//console.log("before body "+moment().format('MMMM Do YYYY, h:mm:ss.SSS a'));
-	
 	var stats = drawListTableBody(bodyContainer,r,listid);
 	refreshHeaderStats(stats);
-	
 	listContainer.css("visibility","visible");
-	//refreshStats();
 	hideProgress($("#locallist-list"));
 }
+
 function drawListHeader(container, listid){
 	$("<div>",{class:"search-button search-"+listid}).appendTo(container).html('<i class="fa fa-search"></i>');
 	if(listid == "list101"){
@@ -553,28 +505,20 @@ function drawListHeader(container, listid){
 		$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Decreased")).append($("<div>",{class:"pvalue","id":"pImproved"})).append($("<div>",{class:"prvalue","id":"prImproved"}));
 		$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Increased")).append($("<div>",{class:"pvalue","id":"pSetback"})).append($("<div>",{class:"prvalue","id":"prSetback"}));
 		$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("No Change")).append($("<div>",{class:"pvalue","id":"pConstant"})).append($("<div>",{class:"prvalue","id":"prConstant"}));
-		//$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Male")).append($("<div>",{class:"pvalue","id":"pMale"})).append($("<div>",{class:"prvalue","id":"prMale"}));
-		//$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Female")).append($("<div>",{class:"pvalue","id":"pFemale"})).append($("<div>",{class:"prvalue","id":"prFemale"}));
 	}else if(listid == "list102"){
 		$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Total")).append($("<div>",{class:"pvalue","id":"pTotal"})).append($("<div>",{class:"prvalue","id":"prTotal"}));
-		//$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("More than 5 years")).append($("<div>",{class:"pvalue","id":"pMorethan5"})).append($("<div>",{class:"prvalue","id":"prMorethan5"}));
-		//$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("More that 10 years")).append($("<div>",{class:"pvalue","id":"pMorethan10"})).append($("<div>",{class:"prvalue","id":"prMorethan10"}));
-		//$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Female")).append($("<div>",{class:"pvalue","id":"pFemale"})).append($("<div>",{class:"prvalue","id":"prFemale"}));
 	}else if(listid == "list103"){
 		$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Total")).append($("<div>",{class:"pvalue","id":"pTotal"})).append($("<div>",{class:"prvalue","id":"prTotal"}));
 		if(appFilter.dtype == "3"){
 			$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Less than 0.06")).append($("<div>",{class:"pvalue","id":"pUnder6"})).append($("<div>",{class:"prvalue","id":"prUnder6"}));
 		}else{
-			$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Less than 0.07")).append($("<div>",{class:"pvalue","id":"pUnder7"})).append($("<div>",{class:"prvalue","id":"prUnder7"}));
+			$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Less than or equal to 0.07")).append($("<div>",{class:"pvalue","id":"pUnder7"})).append($("<div>",{class:"prvalue","id":"prUnder7"}));
 			$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Less than 0.08")).append($("<div>",{class:"pvalue","id":"pUnder8"})).append($("<div>",{class:"prvalue","id":"prUnder8"}));
+			$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Greater than or equal to 0.09")).append($("<div>",{class:"pvalue","id":"pOver9"})).append($("<div>",{class:"prvalue","id":"prOver9"}));
+			$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Average HbA1c")).append($("<div>",{class:"prvalue","id":"prAvg"}));
 		}
-		//$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("> 0.07")).append($("<div>",{class:"pvalue","id":"pOver"})).append($("<div>",{class:"prvalue","id":"prOver"}));
-		//$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Male")).append($("<div>",{class:"pvalue","id":"pMale"})).append($("<div>",{class:"prvalue","id":"prMale"}));
-		//$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Female")).append($("<div>",{class:"pvalue","id":"pFemale"})).append($("<div>",{class:"prvalue","id":"prFemale"}));
 	}else if(listid == "list104"){
 		$("<div>",{class:"list-data-container-panel panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Total")).append($("<div>",{class:"pvalue","id":"pTotal"}));
-		//$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Male")).append($("<div>",{class:"pvalue","id":"pMale"})).append($("<div>",{class:"prvalue","id":"prMale"}));
-		//$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Female")).append($("<div>",{class:"pvalue","id":"pFemale"})).append($("<div>",{class:"prvalue","id":"prFemale"}));
 	}
 	
 	var f = $("<div>",{class:"search-form form-"+listid}).appendTo(container);
@@ -630,8 +574,6 @@ function drawListHeader(container, listid){
 }
 function searchListTerm(report){
 	var result = {};
-	//console.log("report before search");
-	//console.log(report);
 	var fullnameSearch = $("#text-input-name").val();
 	var chartSearch = $("#text-input-chart").val();
 	var hasName = false;
@@ -671,8 +613,6 @@ function searchListTerm(report){
 		}
 		
 	});
-	//console.log("after search");
-	//console.log(result);
 	return result;
 }
 function applyFilter(report,filter){
@@ -683,8 +623,6 @@ function applyFilter(report,filter){
 	var dsresultNoDataFilter = [];
 	result["data"] = {};
 	result["data"]["header"] = report.data.header; 
-	//console.log("report before filter");
-	//console.log(report);
 	
 	
 	$.each(ds, function(i,obj){
@@ -772,78 +710,32 @@ function applyFilter(report,filter){
 				if(obj.last_hba1c != ""){dsresult.push(obj);}
 			}
 		}else{
-			//console.log(obj);
+
 		}
 	});
 	
 	//the values for data dates should always be calculated excluding data date filter
-	//console.log("result before sort ");
-	//console.log(dsresult);
 	
 	if(filter.list == "list101"){dsresult.sort(compareDeltaDesc);}
 	if(filter.list == "list102"){dsresult.sort(compareLastDateDesc);}
 	if(filter.list == "list103"){dsresult.sort(compareHBA1cDesc);}
-	//console.log("result after sort ");
-	//console.log(dsresult);
-	
 	result["data"]["datasets"] = dsresult;
-	//console.log("report after filter");
-	//console.log(result);
-	
-	
 	return result;
-	/**/
-}
-function compareDDurationAsc(a,b) {
-	  if (Number(a.dduration) < Number(b.dduration)){
-		  return -1;
-	  }
-	  if (Number(a.dduration) > Number(b.dduration)){
-		  return 1;
-	  }
-	  return 0;
-}
-function compareDDurationDesc(a,b) {
-	  if (Number(a.dduration) > Number(b.dduration)){
-		  return -1;
-	  }
-	  if (Number(a.dduration) < Number(b.dduration)){
-		  return 1;
-	  }
-	  return 0;
 }
 
-function compareDeltaAsc(a,b) {
-  if (Number(a.delta) < Number(b.delta))return -1;
-  if (Number(a.delta) > Number(b.delta))return 1;
-  return 0;
-}
+function compareDDurationAsc(a,b) {if (Number(a.dduration) < Number(b.dduration)){return -1;}if (Number(a.dduration) > Number(b.dduration)){return 1;}return 0;}
+function compareDDurationDesc(a,b) {if (Number(a.dduration) > Number(b.dduration)){return -1;}if (Number(a.dduration) < Number(b.dduration)){return 1;}return 0;}
+function compareAgeAsc(a,b) {if (Number(a.age) < Number(b.age))return -1;if (Number(a.age) > Number(b.age))return 1;return 0;}
+function compareAgeDesc(a,b) {if (Number(a.age) < Number(b.age))return 1;if (Number(a.age) > Number(b.age))return -1;return 0;}
+function compareDeltaAsc(a,b) {if (Number(a.delta) < Number(b.delta))return -1;if (Number(a.delta) > Number(b.delta))return 1;return 0;}
+function compareDeltaDesc(a,b) {if (Number(a.delta) < Number(b.delta))return 1;if (Number(a.delta) > Number(b.delta))return -1;return 0;}
+function compareLastDateAsc(a,b) {if (moment(a.last_hba1c_collecteddate).isAfter(moment(b.last_hba1c_collecteddate)))return 1;if (moment(a.last_hba1c_collecteddate).isBefore(moment(b.last_hba1c_collecteddate)))return -1;return 0;}
+function compareLastDateDesc(a,b) {if (moment(a.last_hba1c_collecteddate).isBefore(moment(b.last_hba1c_collecteddate)))return 1;if (moment(a.last_hba1c_collecteddate).isAfter(moment(b.last_hba1c_collecteddate)))return -1;return 0;}
+function compareHBA1cDesc(a,b) {if (a.last_hba1c < b.last_hba1c)return 1;if (a.last_hba1c > b.last_hba1c)return -1;return 0;}
+function compareHBA1cAsc(a,b) {if (a.last_hba1c > b.last_hba1c)return 1;if (a.last_hba1c < b.last_hba1c)return -1;return 0;}
 
-function compareDeltaDesc(a,b) {
-	if (Number(a.delta) < Number(b.delta))return 1;
-	if (Number(a.delta) > Number(b.delta))return -1;
-	 return 0;
-}
-function compareLastDateDesc(a,b) {
-	if (moment(a.last_hba1c_collecteddate).isAfter(moment(b.last_hba1c_collecteddate)))return 1;
-	if (moment(a.last_hba1c_collecteddate).isBefore(moment(b.last_hba1c_collecteddate)))return -1;
-	 return 0;
-}
-function compareLastDateAsc(a,b) {
-	if (moment(a.last_hba1c_collecteddate).isBefore(moment(b.last_hba1c_collecteddate)))return 1;
-	if (moment(a.last_hba1c_collecteddate).isAfter(moment(b.last_hba1c_collecteddate)))return -1;	 
-	return 0;
-}
-function compareHBA1cDesc(a,b) {
-	if (a.last_hba1c < b.last_hba1c)return 1;
-	if (a.last_hba1c > b.last_hba1c)return -1;
-	 return 0;
-}
-function compareHBA1cAsc(a,b) {
-	if (a.last_hba1c > b.last_hba1c)return 1;
-	if (a.last_hba1c < b.last_hba1c)return -1;
-	 return 0;
-}
+
+
 function drawListTableHeader(container, report, listid){
 	container.empty();
 	var reportHeader = report.data.header;
@@ -857,10 +749,14 @@ function drawListTableHeader(container, report, listid){
 			if(column == "fullname") cls = "fullname";
 			if(column == "dduration"){
 				var s = $("<div>",{class:"head "+cls,"title":"Click to sort list by duration of diabetes"}).html(hconf.display+"<span data='0'>&nbsp;</span>").appendTo(container);
+				
 				s.click(function(){
 					var d = $(this).find("span").attr("data");
+					$(container).find(".sortable").removeClass("sortable");
+					$(container).find("span").html("&nbsp;");
+					$(container).find("span").attr("data",0);
+					$(this).addClass("sortable");
 					if(d == "0"){
-						$(this).addClass("sortable");
 						var rep = {"data":{"header":{},"datasets":[]}};
 						rep["data"]["header"] = report.data.header;
 						rep["data"]["datasets"] = report["data"]["datasets"];
@@ -875,6 +771,105 @@ function drawListTableHeader(container, report, listid){
 						rep["data"]["datasets"] = report["data"]["datasets"];
 						var dset = rep["data"]["datasets"];
 						rep["data"]["datasets"] = dset.sort(compareDDurationDesc);
+						$(this).find("span").html("&darr;");
+						$(this).find("span").attr("data",2);
+						drawListTableBody($("#list-body"), rep, listid);
+					}else if(d == "2"){
+						$(this).removeClass("sortable");
+						drawListTableBody($("#list-body"), nowReport, listid);
+						$(this).find("span").html("&nbsp;");
+						$(this).find("span").attr("data",0);
+					}
+				});
+			}else if(column == "last_hba1c"){
+				var s = $("<div>",{class:"head "+cls,"title":"Click to sort list by value of HbA1c"}).html(hconf.display+"<span data='0'>&nbsp;</span>").appendTo(container);
+				s.click(function(){
+					var d = $(this).find("span").attr("data");
+					$(container).find(".sortable").removeClass("sortable");
+					$(container).find("span").html("&nbsp;");
+					$(container).find("span").attr("data",0);
+					$(this).addClass("sortable");
+					if(d == "0"){
+						var rep = {"data":{"header":{},"datasets":[]}};
+						rep["data"]["header"] = report.data.header;
+						rep["data"]["datasets"] = report["data"]["datasets"];
+						var dset = rep["data"]["datasets"];
+						rep["data"]["datasets"] = dset.sort(compareHBA1cAsc);
+						$(this).find("span").html("&uarr;");
+						$(this).find("span").attr("data",1);
+						drawListTableBody($("#list-body"), rep, listid);
+					}else if(d == "1"){
+						var rep = {"data":{"header":{},"datasets":{}}};
+						rep["data"]["header"] = report.data.header;
+						rep["data"]["datasets"] = report["data"]["datasets"];
+						var dset = rep["data"]["datasets"];
+						rep["data"]["datasets"] = dset.sort(compareHBA1cDesc);
+						$(this).find("span").html("&darr;");
+						$(this).find("span").attr("data",2);
+						drawListTableBody($("#list-body"), rep, listid);
+					}else if(d == "2"){
+						$(this).removeClass("sortable");
+						drawListTableBody($("#list-body"), nowReport, listid);
+						$(this).find("span").html("&nbsp;");
+						$(this).find("span").attr("data",0);
+					}
+				});
+			}else if(column == "last_hba1c_collecteddate"){
+				var s = $("<div>",{class:"head "+cls,"title":"Click to sort list by Last Collected Date of HbA1c"}).html(hconf.display+"<span data='0'>&nbsp;</span>").appendTo(container);
+				s.click(function(){
+					var d = $(this).find("span").attr("data");
+					$(container).find(".sortable").removeClass("sortable");
+					$(container).find("span").html("&nbsp;");
+					$(container).find("span").attr("data",0);
+					$(this).addClass("sortable");
+					if(d == "0"){
+						var rep = {"data":{"header":{},"datasets":[]}};
+						rep["data"]["header"] = report.data.header;
+						rep["data"]["datasets"] = report["data"]["datasets"];
+						var dset = rep["data"]["datasets"];
+						rep["data"]["datasets"] = dset.sort(compareLastDateAsc);
+						$(this).find("span").html("&uarr;");
+						$(this).find("span").attr("data",1);
+						drawListTableBody($("#list-body"), rep, listid);
+					}else if(d == "1"){
+						var rep = {"data":{"header":{},"datasets":{}}};
+						rep["data"]["header"] = report.data.header;
+						rep["data"]["datasets"] = report["data"]["datasets"];
+						var dset = rep["data"]["datasets"];
+						rep["data"]["datasets"] = dset.sort(compareLastDateDesc);
+						$(this).find("span").html("&darr;");
+						$(this).find("span").attr("data",2);
+						drawListTableBody($("#list-body"), rep, listid);
+					}else if(d == "2"){
+						$(this).removeClass("sortable");
+						drawListTableBody($("#list-body"), nowReport, listid);
+						$(this).find("span").html("&nbsp;");
+						$(this).find("span").attr("data",0);
+					}
+				});
+			}else if(column == "age"){
+				var s = $("<div>",{class:"head "+cls,"title":"Click to sort list by Age"}).html(hconf.display+"<span data='0'>&nbsp;</span>").appendTo(container);
+				s.click(function(){
+					var d = $(this).find("span").attr("data");
+					$(container).find(".sortable").removeClass("sortable");
+					$(container).find("span").html("&nbsp;");
+					$(container).find("span").attr("data",0);
+					$(this).addClass("sortable");
+					if(d == "0"){
+						var rep = {"data":{"header":{},"datasets":[]}};
+						rep["data"]["header"] = report.data.header;
+						rep["data"]["datasets"] = report["data"]["datasets"];
+						var dset = rep["data"]["datasets"];
+						rep["data"]["datasets"] = dset.sort(compareAgeAsc);
+						$(this).find("span").html("&uarr;");
+						$(this).find("span").attr("data",1);
+						drawListTableBody($("#list-body"), rep, listid);
+					}else if(d == "1"){
+						var rep = {"data":{"header":{},"datasets":{}}};
+						rep["data"]["header"] = report.data.header;
+						rep["data"]["datasets"] = report["data"]["datasets"];
+						var dset = rep["data"]["datasets"];
+						rep["data"]["datasets"] = dset.sort(compareAgeDesc);
 						$(this).find("span").html("&darr;");
 						$(this).find("span").attr("data",2);
 						drawListTableBody($("#list-body"), rep, listid);
@@ -909,14 +904,12 @@ function drawListTableBody(container,report,listid){
 		var hconf = getReportHeaderConfig(column,reportHeader);
 		hconfObj[column] = hconf;
 	});
-
 	var reportBody = report.data.datasets;
 	var dataHeaderStats = {};
 	
 	var bc = document.getElementById("list-body");
 	var c = document.createDocumentFragment();
-	console.log("list body");
-	console.log(bc);
+	
 	var totalTotal = getAllPatients(globalReport, appFilter.idcommunity);
 	
 	var pTotal = 0;
@@ -945,10 +938,16 @@ function drawListTableBody(container,report,listid){
 	var prUnder6=0;
 	var pUnder8=0;
 	var prUnder8=0;
+	var pAvg=0;
+	var prAvg=0;
+	var pOver9=0;
+	var prOver9=0;
 	var pMorethan5=0;
 	var prMorethan5=0;
 	var pMorethan10=0;
 	var prMorethan10=0;
+	
+	var vTotal=0;
 	
 	$.each(reportBody,function(i,row){
 		var e = document.createElement("div");
@@ -985,6 +984,7 @@ function drawListTableBody(container,report,listid){
 		});
 		
 		pTotal++;
+		vTotal = vTotal + (row.last_hba1c*1000)/1000;
 		
 		if(row.sex == "1"){pMale++;}else{pFemale++;}
 		if(row.delta < 0 ){pImproved++;}
@@ -994,11 +994,11 @@ function drawListTableBody(container,report,listid){
 		if(moment(row.last_hba1c_collecteddate).isAfter(moment().subtract(1,'month'))){pLastmonth++;}
 		if(row.last_hba1c <= 0.07){pUnder7++;}
 		if(row.last_hba1c <= 0.06){pUnder6++;}
-		if(row.last_hba1c <= 0.08){pUnder8++;}
+		if(row.last_hba1c < 0.08){pUnder8++;}
+		if(row.last_hba1c >= 0.09){pOver9++;}
 		if(moment(row.last_hba1c_collecteddate).isBefore(moment().subtract(5,'year'))){pMorethan5++;}
 		if(moment(row.last_hba1c_collecteddate).isBefore(moment().subtract(10,'year'))){pMorethan10++;}
 	});
-	//console.log("after body "+moment().format('MMMM Do YYYY, h:mm:ss.SSS a'));
 	
 	dataHeaderStats["pImproved"]=pImproved;
 	dataHeaderStats["prImproved"]=Math.round((pImproved/pTotal)*100)+"%";
@@ -1026,10 +1026,15 @@ function drawListTableBody(container,report,listid){
 	dataHeaderStats["prUnder6"]=Math.round(100*pUnder6/pTotal)+"%";
 	dataHeaderStats["pUnder8"]=pUnder8;
 	dataHeaderStats["prUnder8"]=Math.round(100*pUnder8/pTotal)+"%";
+	dataHeaderStats["pOver9"]=pOver9;
+	dataHeaderStats["prOver9"]=Math.round(100*pOver9/pTotal)+"%";
+	dataHeaderStats["pAvg"]=Number.parseFloat(vTotal/pTotal).toFixed(3);
+	dataHeaderStats["prAvg"]=Number.parseFloat(vTotal/pTotal).toFixed(3);
 	dataHeaderStats["pMorethan5"]=pMorethan5;
 	dataHeaderStats["prMorethan5"]=Math.round(100*pMorethan5/pTotal)+"%";
 	dataHeaderStats["pMorethan10"]=pMorethan10;
 	dataHeaderStats["prMorethan10"]=Math.round(100*pMorethan10/pTotal)+"%";
+	
 	
 	$(".list-body-container-line").on("click",function(){
 		var lid = $(this).attr("id");
@@ -1136,9 +1141,13 @@ function dg(){
 	$(".view-patient-detail").click(function(){
 		var lid = $(this).attr("id").replace("detail_","");
 		var parts = lid.split("_");
-		gtc(sid,"en",parts[0],"patient");	
+		var fllparams = "&fll=1";
+		$.each(appFilter, function(k,v){
+			fllparams+="&"+"fll_"+k+"="+v
+		});
+		fllparams+="&"+"fll_ramq="+parts[0];
+		gtc(sid,"en",parts[0],"patient",fllparams);	
 	});
-	
 	$(".view-patient-progress").remove();
 }
 function getColor(indexDelta, totalDelta, delta){
@@ -1162,6 +1171,18 @@ function getColor(indexDelta, totalDelta, delta){
 	return result;
 }
 function renderValue(value,valueConfig){
+	if(isDemo){
+		if(valueConfig.name == "ramq"){
+			//value = makelid(4)+makenid(8);
+			value = "XXXX12345678";
+		}else if(valueConfig.name == "chart"){
+			//value = makenid(4);
+			value = "0000";
+		}else if(valueConfig.name == "fullname"){
+			value = "Patient Full name "+ makelid(4);
+		}
+	}
+	
 	if(valueConfig.type == "text"){ 
 		return value;
 	}else if(valueConfig.type == "number" ){
@@ -1222,15 +1243,12 @@ function getTrendSeries(){
 		  data : data,
 		  dataType: "json"
 		}).done(function( json ) {
-			//console.log("object stats");
-			//console.log(json.objs[0]);
 			trendStatsData = json.objs[0];
-			//drawStatsTrendSeries($("#s1"), trendStatsData);
 			$("#trend-graph").css("background","#cdcdcd");
 			drawAreaGraph($("#trend-graph"), trendStatsData);
 		}).fail(function( jqXHR, textStatus ) {
+			
 		  alert( "Request failed: " + textStatus );
-		  //console.log(this.url);
 		});	
 }
 function getPeriodSeries(){
@@ -1251,15 +1269,12 @@ function getPeriodSeries(){
 		  data : data,
 		  dataType: "json"
 		}).done(function( json ) {
-			//console.log("object stats period");
-			//console.log(json.objs[0]);
 			periodStatsData = json.objs[0];
-			//drawStatsPeriodSeries($("#s2"), periodStatsData);
 			$("#period-graph").css("background","#cdcdcd");
-			drawLineGraph($("#period-graph"), periodStatsData);
+			drawLineGraphReport($("#period-graph"), periodStatsData);
 		}).fail(function( jqXHR, textStatus ) {
+			
 		  alert( "Request failed: " + textStatus );
-		  //console.log(this.url);
 		});	
 }
 function getValueSeries(){
@@ -1284,23 +1299,20 @@ function getValueSeries(){
 	$("#s3")
 	.append($("<div>",{class:"title"}).text(tit))
 	.append($("<div>",{class:"tp-graph","id":"value-graph"}));
-	showProgress($("#value-graph"));
+	
+	setTimeout(showProgress,10,$("#value-graph"));
 	var trendStats = $.ajax({
 		  url: "/ncdis/service/data/getStatsData?sid="+sid+"&language=en",
 		  data : data,
 		  dataType: "json"
 		}).done(function( json ) {
-			//console.log("object stats value");
-			//console.log(json.objs[0]);
 			valueStatsData = json.objs[0];
-			
-			//drawStatsValueSeries($("#s3"), valueStatsData);
 			$("#value-graph").css("background","#cdcdcd");
 			drawBarLineGraph($("#value-graph"), valueStatsData);
 			hideProgress($("#value-graph"));
 		}).fail(function( jqXHR, textStatus ) {
+			
 		  alert( "Request failed: " + textStatus );
-		  //console.log(this.url);
 		});	
 }
 function exportToCsv(filename, rows, header) {

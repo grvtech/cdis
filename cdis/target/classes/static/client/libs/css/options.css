@@ -4,7 +4,7 @@
 .options_personalinfo form{margin:10px 0px 30px 20px;}
 .options_personalinfo table{width:90%;}
 .options_personalinfo table .td-label{width:200px;}
-.options_personalinfo .password-space{margin-top:10px; border:1px solid #cdcdcd;background:#fefefe;}
+.options_personalinfo .password-space{margin-top:10px; border:1px solid #cdcdcd;background:#fefefe;padding:10px;font-size:1.3em;}
 .options_personalinfo .text{font-size:140%; border:1px solid #ffffff; background-color:#ffffff;padding:5px;}
 .options_personalinfo .text-label{padding:2px;}
 .options_personalinfo .text:focus{background-color:#cdcdcd;}

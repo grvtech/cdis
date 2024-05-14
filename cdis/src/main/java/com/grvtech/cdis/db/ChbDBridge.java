@@ -265,7 +265,6 @@ public User getUser(String idsession){
 public boolean setEvent(String iduser, String idaction, String idsystem, String idsession){
 	boolean result = false;
 	String sql = "INSERT INTO ncdis.events (idaction,idsystem,iduser,idsession,created )  VALUES ("+idaction+", "+idsystem+", "+iduser+", '"+idsession+"',GETDATE()) ";
-	System.out.println(sql);
 	jdbcTemplate.update(sql);
 	result = true;
 	return result;
@@ -632,14 +631,14 @@ public HashMap<String, String> getRole(int idrole){
 	
 public ArrayList<ArrayList<String>> getUserActions(){
 	ArrayList<ArrayList<String>> result = new ArrayList<>();
-	String sql = "select top 1000  uu.lname, uu.fname, aa.action_name, ee.data, ee.created 	from ncdis.ncdis.events ee 	left join ncdis.ncdis.users uu on ee.iduser = uu.iduser left join ncdis.ncdis.action aa on ee.idaction = aa.idaction order by ee.created desc";
+	String sql = "select top 1000 uu.lname, uu.fname, aa.action_name, ee.data, ee.created 	from ncdis.ncdis.events ee 	left join ncdis.ncdis.users uu on ee.iduser = uu.iduser left join ncdis.ncdis.action aa on ee.idaction = aa.idaction where uu.lname is not null order by ee.created desc";
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 	for(Map row : rows) {
     	ArrayList<String> line = new ArrayList<>();
     	line.add(row.get("lname").toString());
     	line.add(row.get("fname").toString());
     	line.add(row.get("action_name").toString());
-    	line.add(row.get("data").toString());
+    	line.add((row.get("data")!=null)?row.get("data").toString():"");
     	line.add(row.get("created").toString());
     	result.add(line);
 	}
@@ -718,7 +717,9 @@ public ScheduleVisit getScheduleVisit(String idpatient, String iduser){
 	String sql = "select top 1 case when datediff(month, DATEADD(month, DATEDIFF(month, 0, datevisit), 0), getdate()) > 0 then dateadd(month,frequency * ceiling( datediff(month, DATEADD(month, DATEDIFF(month, 0, datevisit), 0), getdate() ) / cast(frequency as float)) ,datevisit) else	datevisit end as nextdate , idpatient,iduser, idprofesion, frequency from ncdis.ncdis.schedulevisits  where idpatient="+idpatient+" and iduser="+iduser+" order by datevisit desc";
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 	for(Map row : rows) {
-    	result = new ScheduleVisit(row.get("idpatient").toString(), row.get("iduser").toString(), row.get("nextdate").toString(), row.get("frequency").toString(), row.get("idprofession").toString());	
+		if(row != null) {
+			result = new ScheduleVisit(row.get("idpatient").toString(), row.get("iduser").toString(), row.get("nextdate").toString(), row.get("frequency").toString(), row.get("idprofesion").toString());
+		}
     }
 	return result;
 }
@@ -744,7 +745,7 @@ public ArrayList<Object> getUserPatients(String iduser, String hcpcat){
 		    + " left join ncdis.ncdis.community cc on pp.idcommunity = cc.idcommunity"
 		    + " left join ncdis.ncdis.patient_hcp ph on pp.idpatient = ph.idpatient "
 		    + " where pp.active=1 and (pp.dod is null or pp.dod='1900-01-01') and ph."+hcpcat+" = '"+iduser+"'";
-
+    System.out.println(sql);
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 	for(Map row : rows) {
     	HashMap<String, String> obj = new HashMap<>();
@@ -761,6 +762,95 @@ public ArrayList<Object> getUserPatients(String iduser, String hcpcat){
 	return result;
 }
 
+public boolean setResetPassword(String iduser, String rbit){
+	boolean result = false;
+    String sql = "update ncdis.ncdis.users set reset = "+rbit+" where iduser = "+iduser+"";
+    jdbcTemplate.update(sql);
+    result = true;
+	return result;
+}
+
+public boolean setEmailConfirm(String iduser, String confirm){
+	boolean result = false;
+	String sql = "update ncdis.ncdis.users set confirmmail = "+confirm+" where iduser = "+iduser+"";
+	jdbcTemplate.update(sql);
+	result = true;
+	return result;
+}	
 	
-	
+
+public void resetUserPassword(User user){
+	String sql = "update ncdis.ncdis.users set password='"+user.getPassword()+"', "
+				+ "reset='0' "
+				+ "where iduser = "+Integer.parseInt(user.getIduser())+" ";
+	jdbcTemplate.update(sql);
+}
+
+public Hashtable<String,ArrayList<ArrayList<String>>> getUserDashboard(String iduser){
+	Hashtable<String,ArrayList<ArrayList<String>>> result = new Hashtable();
+
+		String sql1 = "select top 5 count(*) actions, x.action_name from ("
+				+ "select  ee.iduser, ee.idaction, u.fname,u.lname, aa.action_code,aa.action_name "
+				+ "from ncdis.ncdis.events ee "
+				+ "left join ncdis.ncdis.users u on ee.iduser=u.iduser "
+				+ "	left join ncdis.ncdis.action aa on ee.idaction = aa.idaction "
+				+ "where ee.iduser="+iduser+" "
+				+ "and  ee.created between DATEDIFF(day,30,getdate())  and getdate() ) x "
+				+ "group by x.iduser,x.fname,x.lname,x.action_code,x.action_name "
+				+ "order by actions desc";
+
+		List<Map<String,Object>> rs =  jdbcTemplate.queryForList(sql1);
+		
+	    ArrayList<ArrayList<String>> actions = new ArrayList();
+	    for(int i=0;i<rs.size();i++) {
+	    	Map<String,Object> line = rs.get(i);
+	    	ArrayList<String> l = new ArrayList();
+	    	l.add(line.get("actions").toString());
+	    	l.add(line.get("action_name").toString());
+	    	actions.add(l);
+	    }
+	    result.put("actions",actions);
+	    
+	    
+	    String sql2 = "select top 10 data, cast(max(created) as date) as date from ncdis.ncdis.events "
+	    		+ "where iduser="+iduser+" and data is not null and created between DATEDIFF(day,30,getdate())  and getdate() "
+	    		+ "group by data order by date desc";
+	    
+	    List<Map<String,Object>> rs2 =  jdbcTemplate.queryForList(sql2);
+	    ArrayList<ArrayList<String>> history = new ArrayList();
+	    for(int i=0;i<rs2.size();i++) {
+	    	Map<String,Object> line = rs2.get(i);
+	    	ArrayList<String> l = new ArrayList();
+	    	l.add(line.get("date").toString());
+	    	l.add(line.get("data").toString());
+	    	history.add(l);
+	    }
+	    result.put("history",history);
+	    
+	    
+	    String sql3 = "select count(*) actions, cast(created as date) date from ncdis.ncdis.events "
+	    		+ "where iduser="+iduser+" and created between DATEDIFF(day,30,getdate())  and getdate() "
+	    		+ "group by cast(created as date) order by date desc";
+	    
+	    List<Map<String,Object>> rs3 =  jdbcTemplate.queryForList(sql3);
+	    ArrayList<ArrayList<String>> activity = new ArrayList();
+	    for(int i=0;i<rs3.size();i++) {
+	    	Map<String,Object> line = rs3.get(i);
+	    	ArrayList<String> l = new ArrayList();
+	    	l.add(line.get("date").toString());
+	    	l.add(line.get("actions").toString());
+	    	activity.add(l);
+	    }
+	    result.put("activity",activity);
+	    
+	    
+	return result;
+}
+
+
+
+
+
+
+
 }

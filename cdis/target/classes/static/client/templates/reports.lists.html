@@ -8,7 +8,7 @@ var currentInput = null;
 var currentDataName = null;
 var datasetReady = false;
 
-//console.log(userProfileObj);
+
 
 $.each(reportsObject.lists, function(i, v){
 	var raport = prepareDefinedReport(v.code);
@@ -60,9 +60,6 @@ function getSerie(valueName){
 	if(valueName == 'dateperiod') valueName = currentDataName+"_collecteddate";
 	if(valueName.indexOf('_collecteddate') >= 0){
 		dataset = originalDataset;
-		console.log('dataset');
-		console.log(dataset);
-		console.log(currentHeader);
 	}
 	
 	$.each(dataset, function(index, row){
@@ -161,7 +158,6 @@ function drawStatsForm(dataset, header){
 				    }
 				  );	
 		}else if(graph.type == "bar"){
-			//console.log(serie);
 			 $("#chart-"+i).jqplot([serie], {
 			        title:graph.title,
 			        // Provide a custom seriesColors array to override the default colors.
@@ -307,33 +303,8 @@ function drawInputCriteria(object, value){
 }
 
 
-
-function showProgress(){
-	var progress = $('<div>',{id:"progress",class:"fullscreen-progress"}).appendTo($('#wraper'));
-	var container = $('<div>',{class:"fullscreen-progress-container"}).appendTo(progress);
-	var logo = $('<div>',{class:"fullscreen-progress-container-logo"}).appendTo(container);
-	var text = $('<div>',{class:"fullscreen-progress-container-text"}).appendTo(container).text('Please wait');
-	blink();
-}
-
-function blink(){
-	var progressText = ['Generating list','Preparing repport', 'Rendering interface', 'Please wait', 'Geting ready', 'Measuring screen', 'Preparing data', 'Almost ready', 'Making a small pasue', 'Start working again'];
-	var r = randomIntFromInterval(0,9);
-	$('.fullscreen-progress-container-text').text(progressText[r]);
-	$('.fullscreen-progress-container-text').fadeIn(300, function(){
-		$('.fullscreen-progress-container-text').delay(500);
-		$('.fullscreen-progress-container-text').fadeOut(300, blink);
-	});
-}
-
 function randomIntFromInterval(min,max){
     return Math.floor(Math.random()*(max-min+1)+min);
-}
-
-function hideProgress(){
-	$('#progress').fadeOut(500, function(){
-		$('#progress').remove();
-	});
 }
 
 

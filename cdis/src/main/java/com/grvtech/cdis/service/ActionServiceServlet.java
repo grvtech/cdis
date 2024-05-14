@@ -29,6 +29,8 @@ public class ActionServiceServlet extends HttpServlet {
 	
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		
 		PrintWriter out = response.getWriter();
 	    String  actionString= request.getRequestURI();
 	    int endIndex = -1;
@@ -58,12 +60,17 @@ public class ActionServiceServlet extends HttpServlet {
 		try {
 			String[] rStr = {rawStr};
 			postData.put("rawPost", rStr);
+			
+			System.out.println("=========================================");
+			System.out.println(rawStr);
+			System.out.println("=========================================");
 			String ipStr = getIpAddr(request);
 			String[] ipStrArr = {ipStr};
-			if(methodString.indexOf("Session") > 0){
-				postData.put("ipuser", ipStrArr);
-			}
+			postData.put("ipuser", ipStrArr);
 			
+			String[] serverNameArr = {getServerName(request)};
+			postData.put("server", serverNameArr);
+
 			Method mtd = cls.getMethod(methodString,postData.getClass());
 			Object clsObj = cls.newInstance();
 			jsonString = (String) mtd.invoke(clsObj, postData);
@@ -108,7 +115,8 @@ public class ActionServiceServlet extends HttpServlet {
 			if(methodString.indexOf("Session") > 0){
 				postData.put("ipuser", ipStrArr);
 			}
-			
+			String[] serverNameArr = {getServerName(request)};
+			postData.put("server", serverNameArr);
 			Method mtd = cls.getMethod(methodString,postData.getClass());
 			Object clsObj = cls.newInstance();
 			jsonString = (String) mtd.invoke(clsObj, postData);
@@ -158,5 +166,9 @@ public class ActionServiceServlet extends HttpServlet {
 		  
 		} 
 	
+	public String getServerName(HttpServletRequest request) {
+	    String serverName = request.getServerName();     
+	    return serverName;
+	}
 	
 }

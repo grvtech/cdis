@@ -6,10 +6,12 @@ function logoutUser(sid){
 		  dataType: "json"
 		});
 		request.done(function( json ) {
+			/*
 			var r = getParameterByName("ramq");
 			if ((r != null) && (r != "")){
 				$.cookie('ramq',r);
 			}
+			*/
 		});
 		request.fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );
@@ -17,6 +19,7 @@ function logoutUser(sid){
 	//window.location = "index.html";
 		gti();
 }
+
 
 
 function getSession(iduser){
@@ -94,7 +97,6 @@ function getPatientInfo(idpatient){
 		});
 		request.done(function( json ) {
 			pObj = json.objs[0];
-			//console.log(pObj);
 		});
 
 		request.fail(function( jqXHR, textStatus ) {
@@ -175,6 +177,7 @@ function isUserLoged(sessionId){
 			if(sObj != null){
 				if((sObj.idsession != null) && (sObj.idsession != "") ){
 					userObj = getUserBySession(sObj.idsession);
+					if(userObj[0].username=="demo")isDemo=true;
 					userProfileObj = getUserProfile(sObj.iduser, 1);
 					result = true;
 				}else{
@@ -201,7 +204,6 @@ function getUsers(){
 		});
 		request.done(function( json ) {
 			result = json.objs;
-						
 		});
 
 		request.fail(function( jqXHR, textStatus ) {
@@ -245,8 +247,6 @@ function getUserNotes(sessionid){
 		request.fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );
 		});
-	//console.log("usernotes");
-	//console.log(result);
 	return result;
 }
 
@@ -275,7 +275,7 @@ function refreshUserNotes(sessionid){
 			}else{
 				$(".menu .messages").hide();
 			}
-			setTimeout(refreshUserNotes,5000,sessionid);
+			setTimeout(refreshUserNotes,30000,sessionid);
 		});
 		request.fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );
@@ -295,7 +295,6 @@ function prepareMessageWidget(notes){
 				var mdc = $("<div>",{class:"messages-details-container"}).appendTo($("#wraper"));
 				mdc.empty();
 				mdc.append($("<div>",{class:"arrow-up"})).append($("<div>",{class:"messages-details"}));
-				//console.log(userNotes.length);
 				$.each(userNotes,function(i,not){
 					var uzer = getUser(not.iduser);
 					var patient = getPatientInfo(not.idpatient);
@@ -371,9 +370,6 @@ function resetForm($form){
 }
 
 function populateForm($form, data){
-    //resetForm($form);
-	//console.log(data);
-	
     $.each(data, function(key, value) {
     	if(typeof value == "object" && value != null){
     		populateForm($form, value.values[0]);
@@ -392,6 +388,7 @@ function populateForm($form, data){
                 switch($ctrl.attr("type")) {
                     case "text":
                     case "hidden":
+                    	//alert(key+"   "+value)
                     	$ctrl.val(value);
                     	$ctrlHidden.val(value);
                         break;
@@ -654,6 +651,7 @@ function initPage(){
 		$(".frontpage").hide();
 		$("#admin-report-list").hide();
 		$("#deletepatient-button").hide();
+		$(".manage-data").hide();
 	}
 	
 	if(userProfileObj.role.idrole > 2){
@@ -666,12 +664,11 @@ function initPage(){
 		$("#personal-report-list").hide();
 		$(".value-graph-button").remove();
 		$(".section-button-line").remove();
+		$(".manage-data").hide();
 	}
 	$("#search").focus();
 	initNavigation();
-	$(document).ready(function(){
-		$('[data-toggle="tooltip"]').tooltip(); 
-	});
+	$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});
 
 }
 
@@ -689,7 +686,6 @@ function readNote(noteid){
 			
 	});
 	mes.fail(function( jqXHR, textStatus ) {
-	  console.log(this.url);
 	});	
 }
 
@@ -705,7 +701,6 @@ function deleteNote(noteid){
 			
 	});
 	mes.fail(function( jqXHR, textStatus ) {
-	  console.log(this.url);
 	});	
 }
 
@@ -723,13 +718,9 @@ function getPatientNotes(section){
 	mes.done(function( json ) {
 		notes = json.objs[0];
 		var loggedUser = userObj[0];
-		//console.log(userProfileObj);
-		
 		
 		if(section != "notes" && section != "patient"){
-			//var notesPanelSide = $(".panel-notes");
 			$(".panel-notes").empty();
-			//console.log(notes);
 			$.each(notes,function(index,objNote){
 				var iduser = objNote.iduser;
 				var user = getUser(iduser);
@@ -800,7 +791,6 @@ function getPatientNotes(section){
 		
 	});
 	mes.fail(function( jqXHR, textStatus ) {
-	  console.log(this.url);
 	});	
 }
 
@@ -834,7 +824,7 @@ function populatePageside(){
 	if(typeof(window["recomandation_"+cdisSection]) != "undefined"){
 		loadRecomandation(window["recomandation_"+cdisSection]);
 	}
-	if(cdisSection != "patient" && cdisSection != "schedulevisits" && cdisSection != "editpatient" && cdisSection != "addpatient"){
+	if(cdisSection != "patient" &&  cdisSection != "editpatient" && cdisSection != "addpatient"){
 		getPatientNextVisits(patientObjArray);
 	}
 	/*BMI out*/
@@ -922,16 +912,18 @@ function loadRecomandation(recObj){
 		}
 		if($(window).height() < h){
 			$("<div>",{class:"title"}).text(rObj.title).appendTo(rcontainer);
-			var tub = $("<div>",{class:"thumbnail",style:"text-align:right;"}).append($("<img>",{src:"/ncdis/client/libs/images/"+rObj.thumbnail,height:"55px",width:"30px;"})).appendTo(rcontainer);
+			var tub = $("<div>",{class:"thumbnail",style:"text-align:right;"}).append($("<img>",{src:"/ncdis/client/libs/images/"+rObj.thumbnail+"?_"+moment().format('X'),height:"55px",width:"30px;"})).appendTo(rcontainer);
 		}else{
 			$("<div>",{class:"title"}).text(rObj.title).appendTo(rcontainer);
-			var tub = $("<div>",{class:"thumbnail"}).append($("<img>",{src:"/ncdis/client/libs/images/"+rObj.thumbnail,height:"60px"})).appendTo(rcontainer);
+			var tub = $("<div>",{class:"thumbnail"}).append($("<img>",{src:"/ncdis/client/libs/images/"+rObj.thumbnail+"?_"+moment().format('X'),height:"60px"})).appendTo(rcontainer);
 		}
 		
 		rcontainer.click(function(){
-			var modalWidth = 850;
-			if(rObj.thumbnail == 'recomandation_ckd_thumbnail.png'){
+			var modalWidth = 980;
+			if(rObj.source == 'recomandation_ckd.html'){
 				modalWidth = 950; 
+			}else if(rObj.source == 'recomandation.renalfunction.html'){
+				modalWidth = 1000; 
 			}
 			$("#recomandation-modal").remove();
 			$("<div>",{id:"recomandation-modal",title:rObj.title}).appendTo($("body"));
@@ -1011,9 +1003,66 @@ function setScheduleVisit(scheduleid,iduser,idpatient,scheduledate,idprofesion,f
 			
 	});
 	mes.fail(function( jqXHR, textStatus ) {
-	  console.log(this.url);
 	});	
 }
+
+
+function randomDate(start, end) {
+	  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+//const d = randomDate(new Date(2012, 0, 1), new Date());
+
+function demoData(dataObject, context){
+	if(context == "search"){
+		var obArr = dataObject.objs;
+		var term = $("#search").text();
+		$.each(obArr, function(i,ob){
+			ob.lastname = "Patient "+i;
+			ob.firstname = "Full name";
+			ob["realramq"] = ob.ramq;
+			//ob.ramq = makelid(4)+makenid(8);
+			ob.ramq = "XXXX12345678";
+			//ob.chart = makenid(4);
+			ob.chart = "0000";
+			//ob.giu = makenid(5);
+			ob.giu = "1111";
+		});
+		dataObject["objs"] = obArr;
+	}else if(context == "userdashboard"){
+		$.each(dataObject.history, function(i,ob){
+			ob[2] = ob[1];
+			ob[1] = "XXXX12345678";
+		});
+	} else if(context == "userpatients"){
+		$.each(dataObject, function(i,ob){
+			ob.fullname = "Full name" + " Patient "+i ;
+			ob["realramq"] = ob.ramq;
+			//ob.ramq = makelid(4)+makenid(8);
+			ob.ramq = "XXXX12345678";
+			//ob.chart = makenid(4);
+			ob.chart = "0000";
+		});
+	}else if(context == "patient"){
+		dataObject[0].fname = "First name";
+		dataObject[0].lname = "Last name";
+		//dataObject[0].chart = makenid(4);
+		dataObject[0].chart = "0000";
+		//dataObject[0].ramq = makelid(4)+makenid(8);
+		dataObject[0].ramq = "XXXX12345678";
+		//dataObject[0].dob = moment(new Date(+(new Date()) - Math.floor(Math.random()*10000000000))).format('MM/DD/YYYY');
+		dataObject[0].dob = "01-01-2022";
+		//dataObject[0].jbnqa = makenid(5);
+		dataObject[0].jbnqa = "99999";
+		//dataObject[0].giu = makenid(5);
+		dataObject[0].giu = "1111";
+	}
+	
+	return dataObject;
+}
+
+
+
 
 function getUserPatients(userId,hcpcat){
 	
@@ -1026,12 +1075,15 @@ function getUserPatients(userId,hcpcat){
 		});
 		request.done(function( json ) {
 			var obArr = json.objs;
-			//console.log(obArr);
 			if(obArr.length === 0){
 				$("<tr>",{class:"notvisits"}).appendTo($(".personal-patients table tbody"))
 				.append($("<td>",{colspan:5,align:"center",style:"font-weight:bold;"}).text("No patient linked to this user!"));
 				
 			}else{
+				
+				if(isDemo)obArr = demoData(obArr,"userpatients");
+				
+				
 				$.each(obArr,function(index,obj){
 					var dd = "";
 					var now = moment();
@@ -1045,6 +1097,7 @@ function getUserPatients(userId,hcpcat){
 								.append($("<td>").text(obj.community))
 								.append($("<td>").text(dd.format("MMM YYYY")))
 								.click(function(){
+									if(isDemo)obj.ramq = obj.realramq;
 									gtc(sid,"en", obj.ramq,"patient");
 								});
 						}
@@ -1062,6 +1115,7 @@ function getUserPatients(userId,hcpcat){
 								.append($("<td>").text(obj.ramq))
 								.append($("<td>").text(obj.community))
 								.append($("<td>").text(dd.format("MMM YYYY"))).click(function(){
+									if(isDemo)obj.ramq = obj.realramq;
 									gtc(sid,"en", obj.ramq,"patient");
 								});
 
@@ -1071,7 +1125,6 @@ function getUserPatients(userId,hcpcat){
 				$.each(obArr,function(index,obj){
 					var dd = "";
 					var now = moment();
-					//console.log(obj);
 					if(typeof(obj.datevisit)  == "undefined" ){
 							$("<tr>",{class:"notvisits"}).appendTo($(".personal-patients table tbody"))
 								.append($("<td>").text(obj.fullname))
@@ -1079,6 +1132,7 @@ function getUserPatients(userId,hcpcat){
 								.append($("<td>").text(obj.ramq))
 								.append($("<td>").text(obj.community))
 								.append($("<td>").text("Not scheduled")).click(function(){
+									if(isDemo)obj.ramq = obj.realramq;
 									gtc(sid,"en", obj.ramq,"patient");
 								});
 
@@ -1094,5 +1148,224 @@ function getUserPatients(userId,hcpcat){
 }
 
 
+function resetPassword(){
+	var username = $("#usernameRes").val();
+	var password = $("#passwordrRes").val();
+	var passwordc = $("#cpasswordrRes").val();
+	var iduser = $("#iduserRes").val();
+	var validUser = Validate.now(Validate.Presence, username);
+	var validPass = Validate.now(Validate.Presence, password);
+	var validPassC = Validate.now(Validate.Presence, passwordc);
+	if(validUser && validPass && validPassC){
+		var data = "username="+username+"&passwordr="+btoa(password)+"&iduser="+iduser+"&language=en";
+		var request = $.ajax({
+		  url: "/ncdis/service/action/resetUserPassword",
+		  type: "POST",
+		  data: data,
+		  async : false,
+		  dataType: "json"
+		});
+		request.done(function( json ) {
+			
+		  if(json.status == "0"){
+			  $(".validateTipsReset").html(json.message);
+		  }else{
+			  $(".validateTipsReset").html(json.message);
+			  $("#dialog-reset").find("fieldset").hide();
+			  //$("#resetButtonDialog").text("Go to login page");
+			
+			  $("#dialog-reset").dialog( "option", "buttons", 
+			    [
+			      {
+			        text: "Go to login page",
+			        click: function() {
+			          gti();
+			        }
+			      }
+			    ]
+			  );
+		  }
+		});
+		request.fail(function( jqXHR, textStatus ) {
+			$("#errortext").text("Wrong Username or Password");
+		});
+		
+	}else{
+		$("#errortext").text("Wrong Username or Password");
+		
+	}	
+}
 
 
+function loadPatientObject(key,value){
+	var patient = $.ajax({
+		  url: "/ncdis/service/data/getPatientRecord?sid="+sid+"&language=en&"+key+"="+value,
+		  type: "GET",
+		  async : false,
+		  cache : false,
+		  dataType: "json"
+		});
+		patient.done(function( json ) {
+			patientObjArray = json.objs;
+			if(isDemo){patientObjArray = demoData(patientObjArray,"patient");}
+			patientObj = patientObjArray[0];
+		});
+		patient.fail(function( jqXHR, textStatus ) {
+		  alert( "Request failed: " + textStatus );
+		});	
+}
+
+function getValueSectionArray(section, value, arr){
+	//cdisSection = section;
+	//var objSection = getObjectSection(arr);
+	var objSection = getObjectArray(section,arr);
+	var objValue = eval("objSection."+value);
+	if(typeof(objValue) != 'undefined'){
+		return objValue.values;
+	}else{
+		return [];
+	}
+}
+
+function getValueObject(section, value, arr){
+	//cdisSection = section;
+	var objSection = getObjectArray(section,arr);
+	var objValue = eval("objSection."+value);
+	if(typeof(objValue) != 'undefined'){
+		objValue['name'] = value;
+		return objValue;
+	}else{
+		return {};
+	}
+}
+
+
+function getObjectArray(objectName, objectArray){
+	if(objectName == "mdvisits"){
+		return objectArray[3];
+	}else if(objectName == "lab"){
+		return objectArray[6];
+	}else if(objectName == "lipid"){
+		return objectArray[5];
+	}else if(objectName == "renal"){
+		return objectArray[4];
+	}else if(objectName == "complications"){
+		return objectArray[7];
+	}else if(objectName == "meds"){
+		return objectArray[9];
+	}else if(objectName == "miscellaneous"){
+		return objectArray[8];
+	}else if(objectName == "depression"){
+		return objectArray[10];
+	}else if(objectName == "diabet"){
+		var oa = objectArray[2];
+		 $.each(oa, function(key, value) {
+			var oarr = value.values;
+			$.each(oarr, function(k, v) {
+				var newvalues = {dtype:v.value, ddate:v.date , diabetcode:v.code, diabetidvalue:v.idvalue};
+				$.extend(true,v,newvalues);
+			});
+		 });
+		return oa;
+	}else if(objectName == "hcp"){
+		var oa = objectArray[1];
+		return oa;
+	}
+}
+
+
+function getObjectSection(arr){
+	
+	if(cdisSection == "mdvisits"){
+		return arr[3];
+	}else if(cdisSection == "lab"){
+		return arr[6];
+	}else if(cdisSection == "lipid"){
+		return arr[5];
+	}else if(cdisSection == "renal"){
+		return arr[4];
+	}else if(cdisSection == "complications"){
+		return arr[7];
+	}else if(cdisSection == "meds"){
+		return arr[9];
+	}else if(cdisSection == "miscellaneous"){
+		return arr[8];
+	}else if(cdisSection == "depression"){
+		return arr[10];
+	}
+}
+
+function getValueLimits(valueName){
+	var result = null;
+	
+	if(typeof(window['limits_'+valueName]) != 'undefined'){
+		result = window['limits_'+valueName];
+	}else{
+		var limits = $.ajax({
+			  url: "/ncdis/service/data/getValueLimits?sid="+sid+"&language=en&name="+valueName,
+			  type: "GET",
+			  async : false,
+			  cache : false,
+			  dataType: "json"
+			});
+			limits.done(function( json ) {
+				result = json.objs[0];
+			});
+			limits.fail(function( jqXHR, textStatus ) {
+			  alert( "Request failed: " + textStatus );
+			});
+	} 
+	return result;
+}
+
+
+
+
+function showProgress(container){
+	if(!progressOn){
+		$(container).css("position","relative");
+		var p = $('<div>',{id:"progress",class:"fullscreen-progress"}).appendTo(container);
+		var c = $('<div>',{class:"fullscreen-progress-container"}).appendTo(p);
+		var l = $('<div>',{class:"fullscreen-progress-container-logo"}).appendTo(c);
+		var t = $('<div>',{class:"fullscreen-progress-container-text"}).appendTo(c);
+		progressOn=true;
+	}
+}
+
+function hideProgress(container){
+	$(container).find($("#progress")).fadeOut(500, function(){
+		$(container).find($("#progress")).remove();
+		progressOn=false;
+	}).delay(500, function(){
+		$(container).find($("#progress")).remove();
+		progressOn=false;
+	});
+}
+
+
+
+function showPopupMessage(title,text){
+	var id = moment();
+	$("body").css("overflow-y","hidden");
+	var modal = $('<div>',{id:"fullscreen_"+id,class:"popupmessage-fullscreen-modal"}).appendTo($("#wraper"));
+	var sett = $('<div>',{class:"popupmessage-window"}).appendTo(modal);
+	var settH = $('<div>',{class:"popupmessage-window-header"}).appendTo(sett);
+	var settB = $('<div>',{class:"popupmessage-window-body"}).appendTo(sett);
+	var settBB = $('<div>',{class:"popupmessage-window-body-body"}).appendTo(settB);
+	var settBF = $('<div>',{class:"popupmessage-window-body-footer"}).appendTo(settB);
+	
+	$('<div>',{class:"gap"}).appendTo(settBF);
+	var cb = $('<button>',{class:"cisbutton"}).text("Close").appendTo(settBF);
+	cb.click(function(){
+		$(".popupmessage-fullscreen-modal").remove();
+		$("body").css("overflow-y","auto");
+	});
+	settBB.html(text);
+	$('<div>',{class:"popupmessage-window-header-title"}).text(title).appendTo(settH);
+	var settHC = $('<div>',{class:"popupmessage-window-header-close"}).html("<i class='fa fa-times'></i>").appendTo(settH);
+	settHC.click(function(){
+		$(".popupmessage-fullscreen-modal").remove();
+		$("body").css("overflow-y","auto");
+	});
+	
+}

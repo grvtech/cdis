@@ -49,7 +49,8 @@ public class DataServiceServlet extends HttpServlet {
 		if(methodString.indexOf("Session") > 0){
 			postData.put("ipuser", ipStrArr);
 		}
-	    
+		String[] serverNameArr = {getServerName(request)};
+		postData.put("server", serverNameArr);
 		try {
 			Method mtd = cls.getMethod(methodString,postData.getClass());
 			Object clsObj = cls.newInstance();
@@ -97,7 +98,8 @@ public class DataServiceServlet extends HttpServlet {
 		if(methodString.indexOf("Session") > 0){
 			postData.put("ipuser", ipStrArr);
 		}
-	    
+		String[] serverNameArr = {getServerName(request)};
+		postData.put("server", serverNameArr);
 		try {
 			Method mtd = cls.getMethod(methodString,postData.getClass());
 			Object clsObj = cls.newInstance();
@@ -148,5 +150,8 @@ public class DataServiceServlet extends HttpServlet {
 		  
 		} 
 	
-	
+	public String getServerName(HttpServletRequest request) {
+	    String serverName = request.getServerName();     
+	    return serverName;
+	}
 }

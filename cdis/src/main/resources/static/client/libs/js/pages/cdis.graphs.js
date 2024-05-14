@@ -313,7 +313,6 @@ function getPatientNumber(arrayData, community, sex, graphtype){
 				}
 			}
 		}else{
-			//console.log(ticks);
 			if(ticks[i] == community){
 				if(sex == "male"){
 					if(graphtype == "pyramid" ){
@@ -359,7 +358,6 @@ function loadGraph3(){
 	 
 	 var men = series[0].sum();
 	 var women = series[1].sum();
-	 //console.log(men +"  "+women);
 	  // passing in the url string as the jqPlot data argument is a handy
 	  // shortcut for our renderer.  You could also have used the
 	  // "dataRendererOptions" option to pass in the url.
@@ -402,7 +400,6 @@ function loadGraph4(){
 		    return ret;
 		  };
 		 var data = ajaxDataRenderer();
-		 //console.log(data);
 		 var series = data[0];
 		 var dataset = data[1];
 	
@@ -677,7 +674,6 @@ function loadGraph(divStr, values, labels, title, limits, valueName){
 
 function loadBMI(mdvisitObj){
 	//BMI = ( Weight in Kilograms / ( Height in Meters x Height in Meters ) ) 
-	console.log(mdvisitObj);
 	var weightLast =mdvisitObj.weight.values[0].value;
 	var heightLast = mdvisitObj.height.values[0].value;
 	if(weightLast != null && heightLast != null){
@@ -950,29 +946,6 @@ function drawValue(section, valueName, valueObj, valueLimitsObj, subsection){
 }
 
 
-function getValueLimits(valueName){
-	var result = null;
-	
-	if(typeof(window['limits_'+valueName]) != 'undefined'){
-		result = window['limits_'+valueName];
-	}else{
-		var limits = $.ajax({
-			  url: "/ncdis/service/data/getValueLimits?sid="+sid+"&language=en&name="+valueName,
-			  type: "GET",
-			  async : false,
-			  cache : false,
-			  dataType: "json"
-			});
-			limits.done(function( json ) {
-				result = json.objs[0];
-				console.log(result);
-			});
-			limits.fail(function( jqXHR, textStatus ) {
-			  alert( "Request failed: " + textStatus );
-			});
-	} 
-	return result;
-}
 
 
 function createHistory(section, valueName, valueLimitsObj){

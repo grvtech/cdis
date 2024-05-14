@@ -10,6 +10,7 @@ function GRVMSelect(list,options){
 	var selectedItems = 0;
 	var selectedObjects = [];
 	var maxSelect = options.maxSelect;
+	//var id = moment().milliseconds();
 	
 	var scontainer = $("<div>",{class:"grvmselect-container"}).appendTo(container);
 	var sbar = $("<div>",{class:"grvmselect-bar"}).appendTo(scontainer);
@@ -18,6 +19,7 @@ function GRVMSelect(list,options){
 	
 	if(typeof(options.defaultSelected) != "undefined"){
 		addToBar(makeItemBar(list[options.defaultSelected]));
+		container.attr("value",list[options.defaultSelected].value);
 	}
 	
 	populateList();
@@ -33,6 +35,7 @@ function GRVMSelect(list,options){
 	    e.stopPropagation();
 	});
 	
+	
 	function populateList(){
 		$.each(list,function(i,v){
 			$("<div>",{class:"grvmselect-list-item"}).append(makeItemList(v)).appendTo(slist);
@@ -41,13 +44,16 @@ function GRVMSelect(list,options){
 	
 	
 	function addToBar(obj){
+		
 		var v = obj.find(".grvmselect-item-label").attr("grv-item-value");
 		var selected = sbar.find(".grvmselect-item-container");
 		if(selected.length < maxSelect){
 			var isSelected = false;
 			$.each(selected,function(j,k){
 				var l = $(k).find(".grvmselect-item-label");
-				if(l.attr("grv-item-value") == v)isSelected = true;
+				if(l.attr("grv-item-value") == v){
+					isSelected = true;
+				}
 			});
 			if(!isSelected){
 				sbar.find("span").remove();
@@ -104,6 +110,7 @@ function GRVMSelect(list,options){
 	return {
 		selectedObjects : selectedObjects,
 		object : object,
+		element : container,
 		getValue : function(){
 			var result = "";
 			$.each(selectedObjects,function(i,v){

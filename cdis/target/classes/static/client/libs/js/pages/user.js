@@ -31,7 +31,6 @@ function loadUserTemplate(){
 			$("#ub_"+userTemplate).show();
 			populateTemplate(userTemplate);
 		});
-		//console.log("2 "+userTemplate);
 	}else{
 		logoutUser(sid);
 	}

@@ -188,7 +188,7 @@
 					<table id="hcp-edit" width="100%" border=0>
 						<tr>
 							<td colspan=2 ><b>Patient`s Health Care Workers</b></td>
-							<td>CHR</td>
+							<td>PCCR</td>
 							<td>
 								<div class="textField">
 									<input type="text" name="hcp-chr" id="chr"/>
@@ -274,7 +274,7 @@
        			<div class="col-md-6 mb-label" >Date of diagnosis</div><div class="col-md-6 mb-value mbvalue-ddate"></div>
        		</div>
        		<div class="row">
-       			<div class="col-md-6 mb-label" >CHR</div><div class="col-md-6 mb-value mbvalue-chr"></div>
+       			<div class="col-md-6 mb-label" >PCCR</div><div class="col-md-6 mb-value mbvalue-chr"></div>
        		</div>
        		<div class="row">
        			<div class="col-md-6 mb-label" >MD</div><div class="col-md-6 mb-value mbvalue-md"></div>
@@ -293,154 +293,3 @@
     </div>
   </div>
 </div>
-
-
-<script>
-
-$("#dob-value").datepicker({
-    changeMonth: true,
-    yearRange: "1900:"+moment().year(),
-    dateFormat: "yy-mm-dd",
-    changeYear: true
-  });
-$("#dod-value").datepicker({
-    changeMonth: true,
-    yearRange: "1900:"+moment().year(),
-    dateFormat: "yy-mm-dd",
-    changeYear: true
-  });
-$("#ddate-value").datepicker({
-    changeMonth: true,
-    yearRange: "1900:"+moment().year(),
-    dateFormat: "yy-mm-dd",
-    changeYear: true
-  });
-
-
-$("#radio-deceased input[type=radio]").change(function() {
-	if($("input[name='deceased']:checked").val() == 1){
-		$("#deceased-section").show();	
-	}else{
-		$("#deceased-section").hide();
-	}
-});
-
-
-$(community).each(function(index, value) {
-    $("#idcommunity-value").append($("<option />").val(index).text(value));
-});
-$(dtype).each(function(index, value) {
-    $("#dtype-value").append($("<option />").val(index).text(value));
-});
-
-/*
- INIT VALUES 
- */
-$("input[name='iscree']").filter("[value='0']").prop('checked', true);
-$("input[name='iscree']").val(0);
-//$("input[name='sex']").filter("[value='1']").prop('checked', true);
-//$("input[name='sex']").val(1);
-$("input[name='deceased']").filter("[value='0']").prop('checked', true);
-$("input[name='deceased']").val(0);
-$("#deceased-section").hide();
-$("#dtype-value").val(0);
-$("#idcommunity-value").val(0);
-
-
-$("#radio-sex label").change(function() {
-	//alert($(this).find("input[type='radio']").val());
-	$("input[name='sex']").val($(this).find("input[type='radio']").val());
-});
-
-
-
-initAutocompleteHcp($("#chr"));
-initAutocompleteHcp($("#md"));
-initAutocompleteHcp($("#nur"));
-initAutocompleteHcp($("#nut"));
-
-
-
-resetForm($("#addpatient-form"));
-
-$("#cancel-addpatient").click(function() {
-	gts(sid,"en");
-});
-
-
-
-$("#add-patient").click(function(){
-	var data = $('#addpatient-form').serialize();
-	data+="&sid="+sid+"&language=en";
-	var save = $.ajax({
-		  url: "/ncdis/service/data/addPatientRecord?sid="+sid+"&language=en",
-		  type: "POST",
-		  async : false,
-		  data: data,
-		  dataType: "json"
-		});
-		save.done(function( json ) {
-			$('#myModal').modal('hide');
-			gtc(sid,"en",$("#ramq-value").val(),"patient");
-		});
-		save.fail(function( jqXHR, textStatus ) {
-			var t = $("#errortext-addpatient").html();
-			$("#errortext-addpatient").html(t+"<p>Error saving the patient!</p>");
-		});
-	
-});
-
-
-$('#myModal').on('show.bs.modal', function (event) {
-	//var button = $(event.relatedTarget) // Button that triggered the modal
-	//var recipient = button.data('whatever') // Extract info from data-* attributes
-	// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-	// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-	var modal = $(this);
-	$.each(modal.find(".mb-value"), function (k,v){
-		var classList = $(v).attr('class').split(/\s+/);
-		$.each(classList, function(index, item) {
-		      if (item.indexOf('mbvalue-') >= 0) {
-		          var idv = item.substring('mbvalue-'.length);
-		          if($.inArray(idv,profession_code_array) >= 0){
-		        	  $(v).text($("#"+idv).val());
-		          }else if(idv == 'sex'){
-		        	  //alert($("input[name='sex']").val());
-		        	  $(v).text(report_sex[$("input[name='sex']").val()]);
-		          }else if(idv == 'dtype'){
-		        	  $(v).text(report_dtype[$("#"+idv+"-value").val()]);
-		          }else if(idv == 'idcommunity'){
-		        	  $(v).text(report_idcommunity[$("#"+idv+"-value").val()]);
-		          }else{
-		        	  $(v).text($("#"+idv+"-value").val());
-		          }
-		      }
-		  });
-	});
-});
-	
-
-$("#save-addpatient").click(function() {
-	$("#errortext-patient").html("");
-	//var data = $('#addpatient-form').serialize();
-	//data+="&sid="+sid+"&language=en";
-	
-	var validRamq = validateRamq($("#ramq-value").val());
-  	var validChart = validateChart($("#chart-value").val());
-  	//var validFname = validateFname($("#fname-value").val());
-  	//var validLname = validateLname($("#lname-value").val());
-  	var validDeceased = validateDeceased($("#dod-value").val(), $("#dcause-value").val());
-  	var validDtype = validateDtype($("#dtype-value").val());
-  	var validDdate = validateDdate($("#ddate-value").val());
-  	var validPhone = validatePhone($("#phone-value").val());
-  	var validCommunity = validateCommunity($("#idcommunity-value").val());
-
-  		
-  	if(validRamq && validChart && validCommunity && validDtype && validDdate && validPhone){
-  	  	$('#myModal').modal({
-  		  keyboard: false
-  		});
-  	}
-});
-
-</script>

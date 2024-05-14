@@ -62,9 +62,6 @@ public class ReportSubcriteria {
 		this.subiddata = subiddata;
 	}
 	
-	public void loadIddata(){
-		CdisDBridge db = new CdisDBridge();
-		this.subiddata = db.getIddata(this.subname);
-	}
+	
 	
 }

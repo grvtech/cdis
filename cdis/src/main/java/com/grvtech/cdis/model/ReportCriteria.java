@@ -106,8 +106,5 @@ public class ReportCriteria {
 	}
 	
 	
-	public void loadIddata(){
-		CdisDBridge db = new CdisDBridge();
-		this.iddata = db.getIddata(this.name);
-	}
+	
 }

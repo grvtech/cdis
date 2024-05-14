@@ -19,27 +19,14 @@
 	</div>
 </div>
 
-<div id="dialog-forgot" title="Forgot Password ? Enter info to recover password." >
+<div id="dialog-forgot" title="Forgot Password ? Enter info to reset password." >
   <p class="validateTips">All form fields are required.</p>
    <form>
     <fieldset>
       <label for="usernameUser">Username</label>
       <input type="text" name="usernameUser" id="usernameUser" value="" class="text ui-widget-content ui-corner-all mf">
-      <label for="firstnameUser">First name</label>
-      <input type="text" name="firstnameUser" id="firstnameUser" value="" class="text ui-widget-content ui-corner-all mf">
-      <label for="nameUser">Last name</label>
-      <input type="text" name="lastnameUser" id="lastnameUser" value="" class="text ui-widget-content ui-corner-all mf">
       <label for="emailUser">Email</label>
       <input type="text" name="emailUser" id="emailUser" value="" class="text ui-widget-content ui-corner-all mf">
- 	  <label for="profesionUser">Profession</label>
-      <select name="profesionUser" id="profesionUser" class="text ui-widget-content ui-corner-all mf">
-      	<option value="0">Please Choose ...</option>
-      	<option value="1">CHR</option>
-      	<option value="2">MD</option>
-      	<option value="3">Nurse</option>
-      	<option value="3">Nutritionist</option>
-      </select>
-      
       <!-- Allow form submission with keyboard without duplicating the dialog button -->
       <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
     </fieldset>
@@ -74,11 +61,27 @@
       <label for="idprofesionSub">User profession:</label>
       <select name="idprofesionSub" id="idprofesionSub" class="text ui-widget-content ui-corner-all mf">
       	<option value="0">Please Choose ...</option>
-      	<option value="1">CHR</option>
+      	<option value="1">PCCR</option>
       	<option value="2">MD</option>
       	<option value="3">Nurse</option>
       	<option value="4">Nutritionist</option>
       </select>
+      <label for="passwordSub">Password:</label>
+      <input type="password" name="passwordSub" id="passwordSub" value="" class="text ui-widget-content ui-corner-all mf" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+      
+      <label for="cpasswordSub">Confirm Password:</label>
+      <input type="password" name="cpasswordSub" id="cpasswordSub" value="" class="text ui-widget-content ui-corner-all mf" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+      
+      <div id="passwordmessage">
+  		<b>Password must contain the following:</b>
+  		<p id="passletter" class="invalid">A <b>lowercase</b> letter</p>
+  		<p id="passcapital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+  		<p id="passnumber" class="invalid">A <b>number</b></p>
+  		<p id="passlength" class="invalid">Minimum <b>8 characters</b></p>
+	</div>
+	<div id="cpasswordmessage">
+  		<p id="passconfirm" class="invalid">Password <b>is confirmed</b></p>
+	</div>
       <!-- Allow form submission with keyboard without duplicating the dialog button -->
       <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
     </fieldset>
@@ -86,280 +89,34 @@
   </div>
 </div>
 
-<script>
-
-var emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-name = $( "#nameUser" ),
-email = $( "#emailUser" ),
-message = $( "#messageUser" ),
-admin = $("#adminUser"),
-tips = $( ".validateTips" );
-var imsg = "All form fields are required.";
-
-$("#user").focus();
-$(".forgotButton").click(function (){
-	$("#dialog-forgot").dialog("open");
-});
-
-$(".subscribeButton").click(function (){
-	$("#dialog-subscribe").dialog("open");
-});
-
-
-$("#dialog-forgot").dialog({
-	  autoOpen: false,
-    	resizable: false,
-    	height: 650,
-   		width: 420,
-    	modal: true,
-    buttons: {
-      Cancel: function() {
-        $( this ).dialog( "close" );
-      },
-      "Recover Password": function() {
-    	  forgotPassword(formForgot[0]);
-        }
-    },
-    close: function() {
-        formForgot[ 0 ].reset();
-        $(".mf").removeClass( "ui-state-error" );
-        tips.text(imsg);
-      }
-  });
-
-
-$("#dialog-subscribe").dialog({
-	  autoOpen: false,
-  resizable: false,
-  height: 650,
-  width: 420,
-  modal: true,
-  buttons: {
-    Cancel: function() {
-      $( this ).dialog( "close" );
+<div id="dialog-reset" title="Reset password to CDIS" >
+  <p class="validateTipsReset">All form fields are required.</p>
+  <div id="resetform">
+   <form>
+    <fieldset>
+      <label for="usernameRes">Username</label>
+      <input type="text" name="usernameRes" id="usernameRes" value="" class="text ui-widget-content ui-corner-all mf" disabled>
+      <input type="hidden" name="iduserRes" id="iduserRes" value="">
+      <label for="passwordrRes">New Password:</label>
+      <input type="password" name="passwordrRes" id="passwordrRes" value="" class="text ui-widget-content ui-corner-all mf" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
       
-    },
-    "Subscribe to CDIS": function() {
-  	 	subscribe();
-      }
-  },
-  close: function() {
-      formSubscribe[ 0 ].reset();
-      $(".mf").removeClass( "ui-state-error" );
-    }
-});
-
-
-
-
-var formForgot = $("#dialog-forgot").find( "form" ).on( "submit", function( event ) {
-    event.preventDefault();
-    forgotPassword();
-  });
-  
-var formSubscribe = $("#dialog-subscribe").find( "form" ).on( "submit", function( event ) {
-    event.preventDefault();
-    subscribe();
-    //sendUserMessage();
-  });
-
-
-function forgotPassword() {
-    var valid = true;
-    $(".mf").removeClass( "ui-state-error" );
-    valid = valid && checkLength(  $( "#usernameUser" ), "Username" );
-    valid = valid && checkLength(  $( "#firstnameUser" ), "First name" );
-    valid = valid && checkLength(  $( "#lastnameUser" ), "Last name" );
-    valid = valid && checkLength(  $( "#emailUser" ), "Email" );
-    valid = valid && checkLength(  $( "#profesionUser" ), "Profession" );
-    valid = valid && checkRegexp(  $( "#emailUser" ), emailRegex, "eg. name@domain.com" );
-
-
-    if ( valid ) {
-    	var mes = $.ajax({
-    		  url: "/ncdis/service/action/forgotPassword?language=en&firstnameUser="+$("#firstnameUser").val()+"&lastnameUser="+$("#lastnameUser").val()+"&usernameUser="+$("#usernameUser").val()+"&emailUser="+$("#emailUser").val()+"&profesionUser="+$("#profesionUser").val(),
-    		  type: "GET",
-    		  async : false,
-    		  cache : false,
-    		  dataType: "json"
-    		});
-    		mes.done(function( json ) {
-    			console.log(json);
-    			if(json.status == "1"){
-    				tips.html(json.message);
-    				$("#subform").hide();
-    			}else{
-    				tips.html(json.message);
-    			}
-    			$( "#dialog-forgot" ).dialog( "option", "buttons", { "Return to CDIS": function() { $(this).dialog("close"); } } );
-    		});
-    		mes.fail(function( jqXHR, textStatus ) {
-    		  alert( "Error sending message : " + textStatus );
-    		  console.log(this.url);
-    		  formForgot[ 0 ].reset();
-  			  $("#dialog-forgot").dialog( "close" );
-    		});	
-
-    }
-    return valid;
-  }
-
-function subscribe() {
-    var valid = true;
-    $(".mf").removeClass( "ui-state-error" );
-    valid = valid && checkLength(  $( "#firstnameSub" ), "First name" );
-    valid = valid && checkLength(  $( "#lastnameSub" ), "Last name" );
-    valid = valid && checkLength(  $( "#emailSub" ), "Email" );
-    valid = valid && checkLength(  $( "#idcommunitySub" ), "User Community" );
-    valid = valid && checkLength(  $( "#idprofesionSub" ), "Profession" );
-    valid = valid && checkRegexp(  $( "#emailSub" ), emailRegex, "Email format should be : eg. name@domain.com" );
-
-
-    if ( valid ) {
-    	var mes = $.ajax({
-    		  url: "/ncdis/service/action/subscribe?language=en&firstnameSub="+$("#firstnameSub").val()+"&lastnameSub="+$("#lastnameSub").val()+"&idcommunitySub="+$("#idcommunitySub").val()+"&emailSub="+$("#emailSub").val()+"&idprofesionSub="+$("#idprofesionSub").val(),
-    		  type: "GET",
-    		  async : false,
-    		  cache : false,
-    		  dataType: "json"
-    		});
-    		mes.done(function( json ) {
-    			console.log(json);
-    			if(json.status == "1"){
-    				tips.html(json.message);
-    				$("#dialog-subscribe").find("fieldset").hide();
-    			}else{
-    				tips.html(json.message);
-    			}
-    		});
-    		mes.fail(function( jqXHR, textStatus ) {
-    		  alert( "Error sending message : " + textStatus );
-    		  formSubscribe[ 0 ].reset();
-  			  $("#dialog-subscribe").dialog( "close" );
-    		});	
-
-    }
-    return valid;
-  }
-
-
-function updateTips( t ) {
-    tips
-      .text( t )
-      .addClass( "ui-state-highlight" );
-    setTimeout(function() {
-      tips.removeClass( "ui-state-highlight", 1500 );
-    }, 500 );
-  }
-
-  function checkLength( o, n ) {
-    if ( o.val().length == 0 || o.val() == '0') {
-      o.addClass( "ui-state-error" );
-      updateTips( "Field " + n + " cannot be empty." );
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  function checkRegexp( o, regexp, n ) {
-    if ( !( regexp.test( o.val() ) ) ) {
-      o.addClass( "ui-state-error" );
-      updateTips( n );
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-
-var mes = $.ajax({
-	  url: "/ncdis/service/action/getFrontPageMessage?language=en",
-	  type: "GET",
-	  async : false,
-	  cache : false,
-	  dataType: "json"
-	});
-	mes.done(function( json ) {
-		message = json.objs[0].message;
-		if(message != ""){
-			$("#frontpage").html(message); 
-			var contents = $("#frontpage").wrapInner('<div>').children(); // wrap a div around the contents
-			var height = contents.outerHeight();
-			$("#frontpage").animate({ scrollTop: height }, 8000);
-			setTimeout(function() {$("#frontpage").animate({scrollTop:0}, 8000);},8000);
-			setInterval(function(){
-	     		$("#frontpage").animate({ scrollTop: height }, 8000);
-				setTimeout(function() {
-	   						$("#frontpage").animate({scrollTop:0}, 8000); 
-							},8000);
-			},16000);
-		}else{
-			$("#frontpage").hide();
-		}
-				
-	});
-	mes.fail(function( jqXHR, textStatus ) {
-	  alert( "Request failed: " + textStatus );
-	  console.log(this.url);
-	});	
-
-	
-	$('#loginbutton').bind('keypress', function(e) {
-		if(e.keyCode==13){
-			$(this).click();
-		}
-	});
-
-$("#loginbutton").click(function() {
-	var user = $("#user").val();
-	var pass = $("#pass").val();
-	var validUser = Validate.now(Validate.Presence, $("#user").val());
-	var validPass = Validate.now(Validate.Presence, $("#pass").val());
-	if(validUser && validPass){
-		var request = $.ajax({
-		  url: "/ncdis/service/action/loginSession?username="+user+"&password="+pass+"&language=en&reswidth="+$(window).width()+"&resheight="+$(window).height(),
-		  type: "GET",
-		  dataType: "json"
-		});
-		request.done(function( json ) {
-			console.log("json");
-			console.log(json);
-			
-		  if(json.status == "0"){
-			  $("#errortext").text(json.message);
-		  }else{
-			 userObj = json.objs[0];
-			 sid = getSession(userObj.iduser);
-			 console.log(sid);
-			 var ramq = $.cookie('ramq');
-			 console.log(ramq);
-			 if((ramq != null) && (ramq != "")){
-				 //window.location = "cdis.html?section=patient&ramq="+ramq+"&sid="+sid+"&language=en";
-				 //window.location = "search.html?sid="+sid+"&language=en";
-				 gts(sid,"en");
-				 //gtc(sid,"en",ramq,"patient");
-			 }else{
-				 //startUser();
-				 //window.location = "search.html?sid="+sid+"&language=en";
-				 gts(sid,"en");
-			 }
-		  }
-		});
-		request.fail(function( jqXHR, textStatus ) {
-			$("#errortext").text("Wrong Username or Password");
-		});
-		
-	}else{
-		$("#errortext").text("Wrong Username or Password");
-		
-	}
-});
-
-$("#pass").keyup(function(e){
-	if(e.keyCode == 13){
-		$("#loginbutton").click();
-	}
-});
-
-</script>
+      <label for="cpasswordrRes">Confirm Password:</label>
+      <input type="password" name="cpasswordrRes" id="cpasswordrRes" value="" class="text ui-widget-content ui-corner-all mf" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+      
+      <div id="passwordrmessage">
+  		<b>Password must contain the following:</b>
+  		<p id="passrletter" class="invalid">A <b>lowercase</b> letter</p>
+  		<p id="passrcapital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+  		<p id="passrnumber" class="invalid">A <b>number</b></p>
+  		<p id="passrlength" class="invalid">Minimum <b>8 characters</b></p>
+	</div>
+	<div id="cpasswordrmessage">
+  		<p id="passrconfirm" class="invalid">Password <b>is confirmed</b></p>
+	</div>
+      <!-- Allow form submission with keyboard without duplicating the dialog button -->
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+  </form>
+  </div>
+</div>
+<script src="client/libs/js/pages/index.lib.js?_20230827" type="text/javascript"></script>

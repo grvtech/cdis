@@ -1,40 +1,7 @@
-var reportsSection = "dashboard";
-var default_color = "#4d90fe";
-var dashboard_color = "#fcfcfc";
-var patient_color = "#fcfcfc";
-var reportsObject = null;
-var reportObjectToExecute = null;
-var criteriaArray = [];
-var graphtype_line = {title:'Data Graph', axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer} },series:[{lineWidth:4, markerOptions:{style:'square'}}]};
-var graphtype_bar =  {title:'Data Graph',seriesDefaults:{renderer:$.jqplot.BarRenderer},axes:{xaxis:{renderer: $.jqplot.CategoryAxisRenderer}}};
-var graphtype_pie =  {title:'Data Graph',gridPadding: {top:0, bottom:38, left:0, right:0},seriesDefaults:{renderer:$.jqplot.PieRenderer,trendline:{ show:false },rendererOptions: { padding: 8, showDataLabels: true }},legend:{show:true,placement: 'outside',rendererOptions: {numberRows: 1},location:'s',marginTop: '15px'}};
-var exportImage = null;
-var isSurveillance = false;
-var isPvalidation = false;
-var showPopupFlag = true;
-var pvalidationPopupTitle = "Patient Validation";
-var pvalidationText = "<p>Patient Validation is a tool that allows CDIS users to screen for patients whose information may require updating (e.g. change of diagnosis, patient deceased, permanently moved from region).</p>"
-						+"<ul><li>No data in last 5 years (unless GDM)</li>"
-						+"<li>Age > 95</li>"
-						+"<li>Duplicate name</li>"
-						+"<li>Predm and value > 0.065 X 2 : if reclassifying as diabetic first verify that patient is aware of diagnosis</li></ul>"
-						+"<span>Corrections can be done by CDIS users. For deletions, an email explaining the problem must be sent to support@grvtech.ca</span>";
-
-
-//var dashboard_graph_data = [['2008-08-12 4:00PM',4], ['2008-09-12 4:00PM',6.5], ['2008-10-12 4:00PM',5.7], ['2008-11-12 4:00PM',9], ['2008-12-12 4:00PM',8.2]];
-//var dahsboard_graph_options = {title:'Data Graph', axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer} },series:[{lineWidth:4, markerOptions:{style:'square'}}]};
 
 if (!isUserLoged(sid)){
 	logoutUser(sid);
 }else{
-	if(getParameterByName("reportid") == "surveillance"){
-		isSurveillance = true;
-	}else if(getParameterByName("reportid") == "pvalidation"){
-		isPvalidation = true;
-	}else{
-		isSurveillance = false;
-		isPvalidation = false;
-	}
 	loadTemplate(page,loadReportsTemplate);
 }	
 
@@ -43,341 +10,16 @@ function loadReportsTemplate(){
 	if(isUserLoged(sid)){
 		
 		//$("body").append($("<div>",{class:"modal"}).append($("<div>",{class:"modal-span"}).text("Loading CDIS Report page"))).addClass("loading");
-		$("#ub_reportsbody_page").load("/ncdis/client/templates/reports.dashboard.html", function(){
-			reportsSection = "dashboard";
-			reportsObject = getReports(sid);
-			var list = $("#dashboard");
-			var predefinedReports = reportsObject.predefined;
-			if(predefinedReports.length > 0){
-				
-				$.each(predefinedReports, function(k, vObj){
-					var raport = prepareDefinedReport(vObj.code);
-					//console.log(vObj.code);
-					//console.log(raport);
-					reportObjectToExecute = loadReport(raport);
-					list.append(
-							$("<div>",{class:"dashboard-item-"+reportObjectToExecute.class+" uss",id:reportObjectToExecute.id})
-								.append($("<div>",{class:"title"}))
-								.append($("<div>",{class:"form"}))
-								.append($("<div>",{class:"graph",id:"graph-"+reportObjectToExecute.id}).append($("<div>",{class:"loading-span"}).text("Loading ...")))
-					);
-					renderReport(reportObjectToExecute);
-				});
-			}
-			
-			//load surveillance tabs as well
-			$("#surveillance").load("/ncdis/client/templates/reports.sur.html",function(){
-				setTimeout(setEvent,100,"SUR");
-				initSurveillance(1);
-			});
-			
-			//load patient validation tool
-			$("#pvalidation").load("/ncdis/client/templates/reports.patv.html",function(){
-				//setTimeout(setEvent,100,"PATV");
-				initPvalidation();
-			});
-			
-			//load patient validation tool
-			$("#pandi").load("/ncdis/client/templates/reports.pandi.html",function(){
-				//setTimeout(setEvent,100,"PANDI");
-				reportsSection = "pandi";
-				initPandi();
-			});
-			
-			
-			if(isSurveillance){
-				reportsSection = "surveillance";
-				isSurveilance = false;
-				$("#tabs").tabs({"active":2});
-			}
-			
-			if(isPvalidation){
-				reportsSection = "pvalidation";
-				isPvalidation = false;
-				$("#tabs").tabs({"active":3});
-				
-			}
-			
-			initPage();
-		});
+		//$("#ub_reportsbody_page").load("/ncdis/client/templates/reports.dashboard.html", );
+		initLocalPage();
 	}else{
 		logoutUser(sid);
 	}
 }
 
-function renderReport(reportObj){
-	$("#"+reportObj.id+" > .title").append($("<div>",{style:"display:inline-block;width:90%;"}).text(reportObj.title));
-	
-	$("#"+reportObj.id+" > .title").append($("<div>",{class:"cisbutton",'data-toggle':"tooltip",title:"Print Graph",id:"print-"+reportObj.id}).html("<i class='fa fa-print' aria-hidden='true'></i>"));
-	$("#print-"+reportObj.id).click(function(){
-		$("#"+reportObj.id).printJQPlot(reportObj.title);
-	});
-	//console.log(reportObj);
-	
-	if($.type(reportObj.input) === "array"){
-		$.each(reportObj.input,function(i,v){
-			var cinputForm = $("<div>",{class:"form-item"});
-			cinputForm.append($("<div>",{class:"form-label"}).text(v.display));
-			var ri = $("<select>",{id:"form-field-"+v.name});
-			ri.change(function(){
-				var subObj = reportObj["subcriteria"][i];
-				var vv = ri.val();
-				if(subObj.subsection == "1"){
-					if(vv == "0"){
-						subObj["suboperator"] = "more than";
-					}else{
-						subObj["suboperator"] = "equal";
-					}
-				}
-				subObj["subvalue"] = ri.val();
-				reportObj["subcriteria"][i] = subObj;
-				renderGraphReport(reportObj, $("#"+reportObj.id+" > .graph"));
-			});
-			var ric = $("<div>",{class:"field-container"}).append(ri);
-			cinputForm.append(ric);
-			$.each(v.values, function (i, item) {
-			    ri.append($('<option>', { 
-			       value: i,
-			        text : item 
-			    }));
-			});
-			$("#"+reportObj.id+" > .form").append(cinputForm);
-		});
-	}else{
-		$("#"+reportObj.id+" > .form").hide();
-		if(reportObj.class == "half"){
-			$("#"+reportObj.id+" > .graph").height($("#"+reportObj.id+" > .graph").height() + 40);
-		}else if(reportObj.class == "full"){
-			$("#"+reportObj.id+" > .graph").css("width","100%");
-		}
-	}
-	
-	renderGraphReport(reportObj, $("#"+reportObj.id+" > .graph"));
-}
-
-function renderGraphReport(reportObj, divObj){
-	if($.type(reportObj.data) === "object"){
-		var obset = [];
-		for(var i=0;i<reportObj.subcriteria.length;i++){
-			if(obset.length == 0 ) {obset = reportObj;}
-			var iname = reportObj.subcriteria[i].subname;
-			var ival = reportObj.subcriteria[i].subvalue;
-			obset = getObjects(obset,iname,ival);
-		} 
-		var set = obset[0];
-		var obj ={};
-		obj["objs"] = [{"dataset":[set.set],"header":reportObj.data.header}];
-		drawGraphReport(obj,reportObj,divObj);
-	}else{
-		$.ajax({
-		    url: "/ncdis/service/action/executeReport?language=en&idreport="+reportObj.id+"&owner="+reportObj.owner+"&type="+reportObj.type+"&graphtype="+reportObj.graphtype+"&subcriteriatype="+reportObj.subcriteriatype,
-		    type: 'POST',
-		    data:JSON.stringify(reportObj),
-		    contentType: 'application/json; charset=utf-8',
-		    dataType: 'json',
-		    async: true,
-		    success: function(data){
-		    	var rob = reportObj;
-		    	var dob = divObj;
-		    	drawGraphReport(data,rob,dob);
-		    }
-		});
-	}
-}
 
 
 
-function drawGraphReport(msg,reportObj, divObj) {
-    dataset = msg.objs[0];
-
-    if($.type(dataset) === "object"){
-		var ds = dataset.dataset;
-		var dh = dataset.header;
-		if(ds.length > 0){
-			$(divObj).empty();
-			var series = [];
-			var total = 0;
-			for(var j=0;j<dh.length;j++){
-				total += Number(ds[0][j]);
-			}
-			var graphOptions=null;
-			var axes = null;
-			if(reportObj.graphtype == "bar"){
-				if(reportObj.subcriteria.length > 0 ){
-					if(reportObj.subcriteriatype == "single"){
-						for(var k=0;k<reportObj.subcriteria.length;k++){
-							var s = [];
-							for(var kk=0;kk<dh.length;kk++){
-								var serie = [dh[kk], Number(ds[k][kk]) ];
-								s.push(serie);
-							}
-							series.push(s);
-						}
-					}else{
-						for(var i=0;i<dh.length;i++){
-							var serie = [dh[i], Number(ds[0][i]) ];
-							series.push(serie);
-						}
-						series = [series];
-					}
-				}else{
-					for(var i=0;i<dh.length;i++){
-						var serie = [dh[i], Number(ds[0][i]) ];
-						series.push(serie);
-					}
-					series = [series];
-				}
-				graphOptions = {
-						grid:{
-							 background:'transparent',
-							 drawBorder:false,
-							 shadow:false,
-							 borderWidth: 1 
-						},
-				        seriesDefaults:{
-				            renderer:$.jqplot.BarRenderer,
-				            pointLabels: { show: true },
-				            rendererOptions: {
-				                // Set the varyBarColor option to true to use different colors for each bar.
-				                // The default series colors are used.
-				                varyBarColor: true
-				            }
-				        },
-				        axes:{
-				            xaxis:{
-				                renderer: $.jqplot.CategoryAxisRenderer
-				            }
-				        }
-				    };
-			}else if(reportObj.graphtype == "pie"){
-				graphOptions = {
-										 grid:{
-											 background:'transparent',
-											 drawBorder:false,
-											 shadow:false,
-											 borderWidth: 1 
-										},
-										gridPadding: {top:0, bottom:0, left:0, right:0},
-								        seriesDefaults:{
-								            renderer:$.jqplot.PieRenderer, 
-								            trendline:{ show:true },
-								            rendererOptions: { padding: 4, sliceMargin: 2, showDataLabels: true }
-								        },
-								        legend:{
-								            show:true, 
-								            placement: 'inside', 
-								            location:'e'
-								            
-								        }       				
-				    };
-				for(var i=0;i<dh.length;i++){
-					var serie = [dh[i]+" "+Number(((Number(ds[0][i])*100)/total).toFixed(2))+"% ["+ds[0][i]+"]",  Number(((Number(ds[0][i])*100)/total).toFixed(2))  ];
-					series.push(serie);
-				}
-			series = [series];
-			}else if(reportObj.graphtype == "line"){
-				if(reportObj.subcriteria.length > 0 ){
-					if(reportObj.subcriteriatype == "single"){
-						for(var k=0;k<reportObj.subcriteria.length;k++){
-							var s = [];
-							for(var kk=0;kk<dh.length;kk++){
-								var serie = [dh[kk], Number(ds[k][kk]) ];
-								s.push(serie);
-							}
-							series.push(s);
-						}
-					}else{
-						for(var i=0;i<dh.length;i++){
-							var serie = [dh[i], Number(ds[0][i]) ];
-							series.push(serie);
-						}
-						series = [series];
-					}
-				}else{
-					for(var i=0;i<dh.length;i++){
-						var serie = [dh[i], Number(ds[0][i]) ];
-						series.push(serie);
-					}
-					series = [series];
-				}
-				graphOptions = {
-						 grid:{
-							 background:'transparent',
-							 drawBorder:false,
-							 shadow:false,
-							 borderWidth: 1 
-						},
-					      axesDefaults: {
-					    	  renderer: $.jqplot.CategoryAxisRenderer,
-				             labelRenderer: $.jqplot.CanvasAxisLabelRenderer
-					      },
-					      seriesDefaults: {
-					          rendererOptions: {
-					              smooth: true
-					          }
-					      }
-					    };
-			}
-			
-			var plot = jQuery.jqplot($(divObj).attr("id"),series, graphOptions);
-			$(divObj).bind('jqplotDataHighlight', function(ev, seriesIndex, pointIndex, series) {
-		        var idx = pointIndex;
-		        $(divObj).find('tr.jqplot-table-legend').removeClass('legend-row-highlighted');  
-		        $(divObj).find('tr.jqplot-table-legend').children('.jqplot-table-legend-label').removeClass('legend-text-highlighted');
-		        $(divObj).find('tr.jqplot-table-legend').eq(idx).addClass('legend-row-highlighted');
-		        $(divObj).find('tr.jqplot-table-legend').eq(idx).children('.jqplot-table-legend-label').addClass('legend-text-highlighted');
-		    });
-		 
-			$(divObj).bind('jqplotDataUnhighlight', function(ev, seriesIndex, pointIndex, series) {
-				$(divObj).find('tr.jqplot-table-legend').removeClass('legend-row-highlighted');  
-				$(divObj).find('tr.jqplot-table-legend').children('.jqplot-table-legend-label').removeClass('legend-text-highlighted');
-		    });
-		}else{
-			$("#"+reportObj.id).hide();
-		}
-	}
-    $("#"+reportObj.id+" > .graph").find(".loading-span").remove();
-}
-
-
-
-function getReports(sid){
-	var result = null;
-	
-	var reps = $.ajax({
-		  url: "/ncdis/service/action/getReports?sid="+sid+"&language=en",
-		  type: "GET",
-		  async : false,
-		  cache : false,
-		  dataType: "json"
-		});
-		reps.done(function( json ) {
-			result = json.objs[0];
-		});
-		reps.fail(function( jqXHR, textStatus ) {
-		  alert( "Request failed: " + textStatus );
-		  //console.log(this.url);
-		});
-		/**/
-	//result = {"admin":[{"id":"1","code":"ADMIN-1","name":"Admin report number 1","owner":"admin"},{"id":"1","code":"ADMIN-3","name":"Admin report number 2","owner":"admin"}],"personal":[{"id":"1","code":"REP1","name":"Personal report number only data 1","owner":"radu"}],"predefined":[{"id":"1","code":"ADMIN-1","name":"Predefined report number 1","owner":"radu"},{"id":"2","code":"ADMIN-2","name":"Predefined report number 2","owner":"radu"}]};
-	return result;
-}
-
-function prepareDefinedReport(reportID){
-	var url = "/ncdis/client/reports/report."+reportID;
-	var result = null;
-	var req1 = $.ajax({
-		  dataType: "json",
-		  url: url,
-		  async:false,
-		  cache : false
-		});	
-	req1.success(function(obj){
-		result = obj;
-	});
-	req1.fail(function( jqXHR, textStatus, errorThrown){console.log("AJAX failed!", jqXHR, textStatus, errorThrown)});
-	return result;
-}
 
 function buildReport(repObject, dataset){
 	
@@ -457,6 +99,9 @@ function getReportObjectFromCriterias(){
 					var criteria = {};
 					criteria["name"] = "dtype";
 					criteria["section"] = "2";
+					
+					criteria["value"] = index;
+					/*
 					if(index == "3"){
 						criteria["value"] = "10";
 					}else if(index == "4"){
@@ -464,7 +109,7 @@ function getReportObjectFromCriterias(){
 					}else{
 						criteria["value"] = index;
 					}
-					
+					*/
 					criteria["operator"] = "equal";
 					criteria["display"] = value;
 					criteria["date"] = "no";
@@ -571,32 +216,6 @@ function executeReport(report){
 }
 
 
-function loadReport(rObj){
-	var report = rObj;
-	if(report.input!= null &&  $.type(report.input) === "array" ){
-		$.each(report.input, function(ix, objInput){
-			var obj = {};
-			var val = "0";
-			obj["subname"] = objInput.name;
-			if(objInput.section != "90"){
-				if((objInput.name == "idcommunity" || objInput.name == "dtype") && (val == "0")){
-					obj["suboperator"] = "more than";
-				}else{
-					obj["suboperator"] = objInput.operator;
-				}
-			}else{
-				obj["suboperator"] = objInput.operator;
-			}
-			obj["subvalue"] = val;
-			obj["subdisplay"] = objInput.display;
-			obj["subsection"] = objInput.section;
-			report.subcriteria[ix] = obj;
-			var t = report.title;
-			reportObjectToExecute = report;
-		});
-	}
-	return report;
-}
 
 
 
@@ -694,7 +313,6 @@ function buildReportToolbar(divToolbarObj, reportObject){
 	*/
 	
 	$exportTo.click(function(){
-		//console.log(reportObject);
 		if(reportObject.type != "list"){
 			html2canvas($(".raportBody"), {
 				onrendered: function(canvas) {										
@@ -1305,7 +923,6 @@ function createCD(objItem){
 
 function getCriterias(cObject){
 	var result = [];
-	//console.log($.type(cObject));
 	if($.type(cObject) === "array"){
 		//there is no id for object it mus be a div object
 		result = cObject;
@@ -1322,9 +939,9 @@ function getCriterias(cObject){
 			if($(item).attr("type") == "select"){
 				if(idname == "dtype"){
 					if(v == "PRE DM"){
-						v ="10";
+						v ="3";
 					}else if(v == "GDM"){
-						v = "11";
+						v = "4";
 					}else if(v == "All"){
 						v = "-1";
 					}else{
@@ -1394,7 +1011,6 @@ function prepareCustomReport(reportObject){
 
 function executeAsyncReport(reportObject){
 	buildAsyncReport(reportObject);
-	//console.log(reportObject);
 	$.ajax({
 	    url: "/ncdis/service/action/executeReport?language=en&idreport="+reportObject.id+"&owner="+reportObject.owner+"&type="+reportObject.type+"&graphtype="+reportObject.graphtype+"&subcriteriatype="+reportObject.subcriteriatype,
 	    type: 'POST',
@@ -1405,19 +1021,15 @@ function executeAsyncReport(reportObject){
 	    success: function(msg) {
 	    	var dataset = msg.objs[0];
 	    	$("#loadingLineTr").remove();
-	    	//console.log(dataset);
 	    	if($.type(dataset) === "object"){
 	    		var ds = dataset.dataset;
 	    		if(reportObject.type == "graph"){
 	    			drawReportGraph(reportObject,dataset);
 	    		}
 	    		if(ds.length > 0){
-	    			//console.log(dataset.header);
-	    			//buildReport(report, dataset);
 	    			$.each(dataset.header,function(qq, value){
 	    				$("<th>").text(value).appendTo($("#headLineTr"));
 	    			});
-	    			//console.log(dataset.dataset);
 	    			$.each(dataset.dataset,function(index, arrLine){
 	    				var rline = $("<tr>").appendTo($("#reportBodyTable"));
 	    				$.each(arrLine,function(ii, arrValue){
@@ -1457,63 +1069,5 @@ function buildAsyncReport(ro){
 }
 
 
-var progressOn=false;
-function showProgress(container){
-	if(!progressOn){
-		//console.log(container);
-		var p = $('<div>',{id:"progress",class:"fullscreen-progress"}).appendTo(container);
-		var c = $('<div>',{class:"fullscreen-progress-container"}).appendTo(p);
-		var l = $('<div>',{class:"fullscreen-progress-container-logo"}).appendTo(c);
-		var t = $('<div>',{class:"fullscreen-progress-container-text"}).appendTo(c);
-		progressOn=true;
-	}
-}
 
-function hideProgress(container){
-	$(container).find($("#progress")).fadeOut(500, function(){
-		$(container).find($("#progress")).remove();
-		progressOn=false;
-	}).delay(500, function(){
-		$(container).find($("#progress")).remove();
-		progressOn=false;
-	});
-}
-
-
-function showPopupMessage(title,text){
-	var id = moment();
-	$("body").css("overflow-y","hidden");
-	var modal = $('<div>',{id:"fullscreen_"+id,class:"popupmessage-fullscreen-modal"}).appendTo($("#wraper"));
-	var sett = $('<div>',{class:"popupmessage-window"}).appendTo(modal);
-	var settH = $('<div>',{class:"popupmessage-window-header"}).appendTo(sett);
-	var settB = $('<div>',{class:"popupmessage-window-body"}).appendTo(sett);
-	var settBB = $('<div>',{class:"popupmessage-window-body-body"}).appendTo(settB);
-	var settBF = $('<div>',{class:"popupmessage-window-body-footer"}).appendTo(settB);
-	
-	$('<div>',{class:"gap"}).appendTo(settBF);
-	var cb = $('<button>',{class:"cisbutton"}).text("Close").appendTo(settBF);
-	cb.click(function(){
-		$(".popupmessage-fullscreen-modal").remove();
-		$("body").css("overflow-y","auto");
-	});
-	/*
-	var text = "<p>Patient Validation is a tool that will allow CDIS users to identify patients with discordance in data based on predefined filters and variables. CDIS users can filter the lists by community.</p>";
-	text+= "<ul><li><b>No data in last 5 years (unless GDM)</b> :  this is an informative list the will allow the user to see what are the patients that does not have data in the last 5 years unless GDM so the user can follow up or inquire on the patient. </li>";
-	text+= "<li><b>Age > 95</b>   :  an informative list to show patients with age higher than 95 years.</li>";
-	text+= "<li><b>Duplicate name</b> : an informative list to show patients with the same name (first name and last name ).</li>";
-	text+= "<li><b>Predm and value > 0.065 X 2</b> : an informative list to show patients with  last diagnostic as PREDM and that have the last 2 values of HbA1c higher than 0.065</li>";
-	text+="</ul>";
-	text+="<span><b>If  any correction needs to be applied to the patient's data</b>  - it can be done the the CDIS user.<br>"
-	text+="<b>If a delete needs to be done</b> - CDIS users should send an email to <a href='mailto:support@grvtech.ca'>support@grvtech.ca</a> to explain the problem.</span>";
-	*/
-	
-	settBB.html(text);
-	$('<div>',{class:"popupmessage-window-header-title"}).text(title).appendTo(settH);
-	var settHC = $('<div>',{class:"popupmessage-window-header-close"}).html("<i class='fa fa-times'></i>").appendTo(settH);
-	settHC.click(function(){
-		$(".popupmessage-fullscreen-modal").remove();
-		$("body").css("overflow-y","auto");
-	});
-	
-}
 

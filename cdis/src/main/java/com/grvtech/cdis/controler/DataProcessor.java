@@ -56,6 +56,8 @@ public class DataProcessor {
 	@Autowired
 	CdisDBridge cdisdb;
 	
+	@Autowired
+	MailTool mt;
 	
 /*
  * /service/data/getUser?iduser=XX
@@ -138,7 +140,7 @@ public String getPatientNotes(final HttpServletRequest request){
 	return result;
 }
 	
-@RequestMapping(value = {"/service/data/setPatientNotes"}, method = RequestMethod.GET)
+@RequestMapping(value = {"/service/data/setPatientNotes"}, method = RequestMethod.POST)
 public String setPatientNotes(final HttpServletRequest request){
 		Gson json = new Gson();
 		
@@ -158,17 +160,17 @@ public String setPatientNotes(final HttpServletRequest request){
 		Patient pat = cdisdb.getPatientByRamq(ramq);
 		User u = chbdb.getUser(sid);
 		Note note = new Note("0", notestr, "", u.getIduser(), Integer.toString(pat.getIdpatient()), "1", iduserto, "0");
-		
-		User userto = chbdb.getUser(iduserto);;
+		int idu = Integer.parseInt(iduserto);
+		User userto = chbdb.getUser(idu);
 		String usertoEmail = userto.getEmail();
 		if((usertoEmail != null) && (!usertoEmail.equals(""))){
 			if(usertoEmail.indexOf("/") >= 0 ){
-				MailTool.sendMailInHtml("CDIS Patient Message", "<h2>Hello Admin</h2> <p>The user "+userto.getFirstname()+" "+userto.getLastname()+" with the username  <b>"+userto.getUsername()+"</b> does not have a valid email defined. Please contact user and set the email.</p>", "support@grvtech.ca");
+				mt.sendMailInHtml("CDIS Patient Message", "<h2>Hello Admin</h2> <p>The user "+userto.getFirstname()+" "+userto.getLastname()+" with the username  <b>"+userto.getUsername()+"</b> does not have a valid email defined. Please contact user and set the email.</p>", "support@grvtech.ca");
 			}else{
-				MailTool.sendMailInHtml("CDIS Patient Message", "<h2>Hello "+userto.getFirstname()+" "+userto.getLastname()+"</h2> <p>There is a new patient message addressed to you in CDIS.<br><br>Please login to CDIS to see the message!.<br><br><b>Thank you.</b></p>", usertoEmail);
+				mt.sendMailInHtml("CDIS Patient Message", "<h2>Hello "+userto.getFirstname()+" "+userto.getLastname()+"</h2> <p>There is a new patient message addressed to you in CDIS.<br><br>Please login to CDIS to see the message!.<br><br><b>Thank you.</b></p>", usertoEmail);
 			}
 		}else{
-			MailTool.sendMailInHtml("CDIS Patient Message", "<h2>Hello Admin</h2> <p>The user "+userto.getFirstname()+" "+userto.getLastname()+" with the username  <b>"+userto.getUsername()+"</b> does not have a valid email defined. Please contact user and set the email.</p>", "support@grvtech.ca");
+			mt.sendMailInHtml("CDIS Patient Message", "<h2>Hello Admin</h2> <p>The user "+userto.getFirstname()+" "+userto.getLastname()+" with the username  <b>"+userto.getUsername()+"</b> does not have a valid email defined. Please contact user and set the email.</p>", "support@grvtech.ca");
 		}
 		
 		ArrayList<Object> obs = new ArrayList<Object>();
@@ -190,8 +192,8 @@ public String deleteUser(final HttpServletRequest request){
 		String result = "";
 		String language = request.getParameter("language").toString();
 		String iduser = request.getParameter("iduser").toString();
-		
-		User u = chbdb.getUser(iduser);
+		int ius = Integer.parseInt(iduser);
+		User u = chbdb.getUser(ius);
 		u.setActive("0");
 		chbdb.setUser(u);
 		ArrayList<Object> obs = chbdb.getUsers();
@@ -199,22 +201,28 @@ public String deleteUser(final HttpServletRequest request){
 		return result;
 }
 
-@RequestMapping(value = {"/service/data/saveUser"}, method = RequestMethod.GET)
+@RequestMapping(value = {"/service/data/saveUser"}, method = RequestMethod.POST)
 public String saveUser(final HttpServletRequest request){
 	Gson json = new Gson();
-	ChbDBridge db = new ChbDBridge();
+	
 	String result = "";
 	String language = request.getParameter("language").toString();
 	String iduser = request.getParameter("iduser").toString();
+	int ius = Integer.parseInt(iduser);
 	User u = new User();
 	if(!iduser.equals("0") ){
-		u = chbdb.getUser(iduser);
+		u = chbdb.getUser(ius);
+	}else {
+		u.setUsername(request.getParameter("username").toString());
+		u.setActive("1");
+		u.setReset("1");
+		//u.setPassword(request.getParameter("password").toString());
 	}
 	u.setFirstname(request.getParameter("firstname").toString());
 	u.setLastname(request.getParameter("lastname").toString());
 	u.setEmail(request.getParameter("email").toString());
-	u.setUsername(request.getParameter("username").toString());
-	u.setPassword(request.getParameter("password").toString());
+	//u.setUsername(request.getParameter("username").toString());
+	//u.setPassword(request.getParameter("password").toString());
 	u.setPhone(request.getParameter("phone").toString());
 	u.setIdcommunity(request.getParameter("idcommunity").toString());
 	String profesion = request.getParameter("profession").toString();
@@ -229,11 +237,18 @@ public String saveUser(final HttpServletRequest request){
 	}
 	
 	if(!iduser.equals("0") ){
-		db.setUser(u);
-		db.setUserProfile(Integer.parseInt(u.getIduser()), 1, Integer.parseInt(request.getParameter("role").toString()));
+		chbdb.setUser(u);
+		chbdb.setUserProfile(Integer.parseInt(u.getIduser()), 1, Integer.parseInt(request.getParameter("role").toString()));
 	}else{
-		int iu = db.addUser(u);
-		db.saveUserProfile(iu, 1, Integer.parseInt(request.getParameter("role").toString()));
+		int iu = chbdb.addUser(u);
+		chbdb.saveUserProfile(iu, 1, Integer.parseInt(request.getParameter("role").toString()));
+		String params = "rst=1&iduser="+iu;
+		String server = request.getServerName();
+		int port = request.getServerPort();
+		String url = "https://"+server+":"+port+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
+		String messagEmail = "<b><p>CDIS Password reset</p></b><p>Hello <b>"+u.getFirstname()+" "+u.getLastname()+"</b></p><p> Click on the button below to reset your password<br><br><a href='"+url+"'>Reset Password</a></p>";
+		mt.sendMailInHtml("CDIS Password Reset", messagEmail, u.getEmail());
+		
 	}
 	
 	ArrayList<Object> obs = chbdb.getUsers();
@@ -244,7 +259,6 @@ public String saveUser(final HttpServletRequest request){
 @RequestMapping(value = {"/service/data/setUserPassword"}, method = RequestMethod.GET)
 public String setUserPassword(final HttpServletRequest request){
 	Gson json = new Gson();
-	ChbDBridge db = new ChbDBridge();
 	String result = "";
 	int iduser = Integer.parseInt(request.getParameter("iduser").toString());
 	String language = request.getParameter("language").toString();
@@ -252,7 +266,7 @@ public String setUserPassword(final HttpServletRequest request){
 	user.setPassword(request.getParameter("newpassword").toString());
 	
 	if(!user.getIduser().equals("0")){
-		db.setUser(user);
+		chbdb.setUser(user);
 		ArrayList<Object> obs = new ArrayList<>();
 		obs.add(user);
 		result = json.toJson(new MessageResponse(true,language,obs));
@@ -262,23 +276,23 @@ public String setUserPassword(final HttpServletRequest request){
 	return result;
 }
 
-@RequestMapping(value = {"/service/data/sendResetUserPassword"}, method = RequestMethod.GET)
+@RequestMapping(value = {"/service/data/sendResetUserPassword"}, method = RequestMethod.POST)
 public String sendResetUserPassword(final HttpServletRequest request){
 	Gson json = new Gson();
 	String result = "";
-	
 	String language = request.getParameter("language").toString();
 	String iduser = request.getParameter("iduser").toString().trim();
-	String server = request.getParameter("server").toString();
+	String server = request.getServerName();
+	int port = request.getServerPort();
 	
 	User user =chbdb.getUser(Integer.parseInt(iduser));
 	
 	if(!user.getIduser().equals("0")){
 		chbdb.setResetPassword(user.getIduser(),"1");
 		String params = "rst=1&iduser="+user.getIduser(); 
-		String url = "https://"+server+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
-		String messagEmail = "<b><p>CDIS Password reset</p></b><p>Hello "+user.getFirstname()+"<br> Click on the button below to reset your password<br><br><a href='"+url+"'>Reset Password</a></p>";
-		MailTool.sendMailInHtml("CDIS Password Reset", messagEmail, user.getEmail());
+		String url = "https://"+server+":"+port+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
+		String messagEmail = "<b><p>CDIS Password reset</p></b><p>Hello <b>"+user.getFirstname()+" "+user.getLastname()+"</b></p><p> Click on the button below to reset your password<br><br><a href='"+url+"'>Reset Password</a></p>";
+		mt.sendMailInHtml("CDIS Password Reset", messagEmail, user.getEmail());
 		
 		ArrayList<Object> obs = new ArrayList<>();
 		result = json.toJson(new MessageResponse(true,language,obs));
@@ -291,7 +305,8 @@ public String sendResetUserPassword(final HttpServletRequest request){
 @RequestMapping(value = {"/service/data/activateUser"}, method = RequestMethod.GET)
 public String activateUser(final HttpServletRequest request){
 		Gson json = new Gson();
-		ChbDBridge db = new ChbDBridge();
+		
+		MailTool mt = new MailTool();
 		String result = "";
 		String language = request.getParameter("language").toString();
 		String iduser = request.getParameter("iduser").toString().trim();
@@ -299,10 +314,10 @@ public String activateUser(final HttpServletRequest request){
 		User u = chbdb.getUser(iduser);
 		u.setActive("1");
 		u.setPhone("");
-		db.setUser(u);
+		chbdb.setUser(u);
 		
 		String messagEmail = "<b><p>Hello "+u.getFirstname()+" "+u.getLastname()+"</p></b><p>Your CDIS account was activated.<br>You can login to CDIS by clicking <a href='http://cdis.reg18.rtss.qc.ca/ncdis/'>HERE</a><br> Your login information:<br><b>Username:</b>"+u.getUsername()+"<br><b>Password:</b>"+u.getPassword()+"<br><b>For any problems you can contact <a href='mailto:support@grvtech.ca'>CDIS Support</a></p>";
-		MailTool.sendMailInHtml("CDIS User Activation", messagEmail, u.getEmail());
+		mt.sendMailInHtml("CDIS User Activation", messagEmail, u.getEmail());
 		
 		ArrayList<Object> obs = chbdb.getUsers();
 		result = json.toJson(new MessageResponse(true,language,obs));
@@ -350,8 +365,8 @@ public String getUserMessages(final HttpServletRequest request){
 	String result = "";
 	String iduser = request.getParameter("iduser").toString();
 	String language = request.getParameter("language").toString();
-	ChbDBridge db = new ChbDBridge();
-	ArrayList<Object> obs = db.getUserMessages(iduser); 
+	
+	ArrayList<Object> obs = chbdb.getUserMessages(iduser); 
 	result = json.toJson(new MessageResponse(true,language,obs));
 	return result;
 }
@@ -559,7 +574,7 @@ public String getValueLimits(final HttpServletRequest request){
 	String sid = request.getParameter("sid").toString();
 	String value = request.getParameter("name").toString();
 	String language = request.getParameter("language").toString();
-	CdisDBridge chb = new CdisDBridge();
+	
 	ValueLimit vl = cdisdb.getValueLimits(value);
 	ArrayList<Object> obs = new ArrayList<Object>();
 	obs.add(vl);
@@ -640,7 +655,7 @@ public String deleteValue(final HttpServletRequest request){
 		String idpatient = request.getParameter("idpatient").toString();
 		String language = request.getParameter("language").toString();
 		Patient pat = null;
-		CdisDBridge chb = new CdisDBridge();
+		
 		
 		
 		Session session = chbdb.isValidSession(sid);
@@ -652,34 +667,34 @@ public String deleteValue(final HttpServletRequest request){
 		String action = "DELDATA";
 		
 		ArrayList<Object> obs = new ArrayList<Object>();
-		if(chb.deleteValue(idvalue)){
-			pat = chb.getPatientById(Integer.parseInt(idpatient));
+		if(cdisdb.deleteValue(idvalue)){
+			pat = cdisdb.getPatientById(Integer.parseInt(idpatient));
 			obs.add(pat);
-			Hcp hcps = chb.getHcpOfPatient(pat.getIdpatient());
+			Hcp hcps = cdisdb.getHcpOfPatient(pat.getIdpatient());
 			obs.add(hcps);
-			Diabet latest_diabet = (Diabet) chb.getValues("Diabet", pat.getIdpatient(),"asc");
+			Diabet latest_diabet = (Diabet) cdisdb.getValues("Diabet", pat.getIdpatient(),"asc");
 			obs.add(latest_diabet);
-			MDVisit latest_mdvisit = (MDVisit) chb.getValues("MDVisit", pat.getIdpatient(),"asc");
+			MDVisit latest_mdvisit = (MDVisit) cdisdb.getValues("MDVisit", pat.getIdpatient(),"asc");
 			//obs.add(latest_mdvisit.getLatestMDVisit());
 			obs.add(latest_mdvisit);
-			Renal latest_renal = (Renal) chb.getValues("Renal", pat.getIdpatient(),"asc");
+			Renal latest_renal = (Renal) cdisdb.getValues("Renal", pat.getIdpatient(),"asc");
 			//obs.add(latest_renal.getLatestRenal());
 			obs.add(latest_renal);
-			Lipid latest_lipid = (Lipid) chb.getValues("Lipid", pat.getIdpatient(),"asc");
+			Lipid latest_lipid = (Lipid) cdisdb.getValues("Lipid", pat.getIdpatient(),"asc");
 			//obs.add(latest_lipid.getLatestLipid());
 			obs.add(latest_lipid);
-			Lab latest_lab = (Lab) chb.getValues("Lab", pat.getIdpatient(),"asc");
+			Lab latest_lab = (Lab) cdisdb.getValues("Lab", pat.getIdpatient(),"asc");
 			//obs.add(latest_lab.getLatestLab());
 			obs.add(latest_lab);
-			Complications latest_complications = (Complications) chb.getValues("Complications", pat.getIdpatient(),"asc");
+			Complications latest_complications = (Complications) cdisdb.getValues("Complications", pat.getIdpatient(),"asc");
 			//obs.add(latest_complications.getLatestComplications());
 			obs.add(latest_complications);
-			Miscellaneous latest_miscellaneous = (Miscellaneous) chb.getValues("Miscellaneous", pat.getIdpatient(),"asc");
+			Miscellaneous latest_miscellaneous = (Miscellaneous) cdisdb.getValues("Miscellaneous", pat.getIdpatient(),"asc");
 			//obs.add(latest_miscellaneous.getLatestMiscellaneous());
 			obs.add(latest_miscellaneous);
-			Meds latest_meds = (Meds) chb.getValues("Meds", pat.getIdpatient(),"asc");
+			Meds latest_meds = (Meds) cdisdb.getValues("Meds", pat.getIdpatient(),"asc");
 			obs.add(latest_meds);
-			Depression latest_dep = (Depression) chb.getValues("Depression", pat.getIdpatient(),"asc");
+			Depression latest_dep = (Depression) cdisdb.getValues("Depression", pat.getIdpatient(),"asc");
 			obs.add(latest_dep);
 		}
 		
@@ -788,7 +803,7 @@ public String validateHcp(String hcpid, String hcpName){
 	return result;
 }
 
-@RequestMapping(value = {"/service/data/addPatientRecord"}, method = RequestMethod.GET)
+@RequestMapping(value = {"/service/data/addPatientRecord"}, method = RequestMethod.POST)
 public String addPatientRecord(final HttpServletRequest request){
 		Gson json = new GsonBuilder().serializeNulls().create();
 		

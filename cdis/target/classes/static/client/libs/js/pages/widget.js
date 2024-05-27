@@ -99,6 +99,8 @@ function createGraphWidget(values,arrays,container){
 
 function createTableWidget(values,arrays,container){
 	//build 
+	console.log(values)
+	console.log(arrays)
 	
 	if (values.length == 1){
 		value = values[0];
@@ -254,12 +256,15 @@ function buildTable(arrays,container,limitss){
 	var cb = container.find('.widget-table-body');
 	cb.empty();
 	var isEmpty = false;
+	
 	if(arrays.length == 1 ){
 		var arr = arrays[0];
 		var limits = limitss[0];
 		
 		$.each(arr,function(index,value){
-			if(value != null && value.value != null){
+			
+			
+			if(value != null && value.value != null && value.idvalue!='0'){
 				if(index == 0){
 					var line = $("<div>",{class:"widget-table-line first-line row line-"+(index%2),id:value.idvalue}).appendTo(cb);
 				}else{
@@ -360,7 +365,7 @@ function buildTable(arrays,container,limitss){
 		//prime should be systolic bp 
 		$.each(prime,function(index,value){
 			
-			if(value != null && value.value != null ){
+			if(value != null && value.value != null && value.idvalue!='0'){
 				var date = value.date;
 				var eObj = 0;
 				$.each(second,function(ii,vv){

@@ -1,5 +1,8 @@
 function drawABCGraphs(){
 		var abcObjArray = null;
+		
+		
+		
 		var abc = $.ajax({
 			  url: "/ncdis/service/data/getABCData?sid="+sid+"&language=en&idpatient="+patientObjArray[0].idpatient,
 			  type: "GET",async : false, cache : false,dataType: "json"

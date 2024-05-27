@@ -28,11 +28,21 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class FileTool {
+	
+	@org.springframework.beans.factory.annotation.Value("${filesfolder}")
+	private String filesFolder;
+	
+	@org.springframework.beans.factory.annotation.Value("${reports}")
+	private String reports;
+	
   public FileTool() {
   }
 
-  public static String getReport(String filename){
+  public String getReport(String filename){
     String rez="";
     String str;
 
@@ -49,12 +59,13 @@ public class FileTool {
   }
   
   
-  public static String getReportsFolder(){
+  public String getReportsFolder(){
 	  	InitialContext ic;
 	  	String result = "";
 		try {
 			ic = new InitialContext();
-			String rf = (String) ic.lookup("reports-folder");
+			//String rf = (String) ic.lookup("reports-folder");
+			String rf = reports;
 			File reportFile = new File(rf);
 			if(reportFile.exists()){
 				result  = reportFile.getAbsolutePath();
@@ -68,7 +79,7 @@ public class FileTool {
   }
   
   
-  public static String getMessage(String pathfile){
+  public  String getMessage(String pathfile){
   	File fl = new File(pathfile);
   	String message="";
   	if(fl.exists()){
@@ -94,21 +105,31 @@ public class FileTool {
   	return message;
   }
 
-  public static String getEmailProperty(String propertyName){
+  public String getEmailProperty(String propertyName){
 	  String result = "";
 	  InitialContext ic;
 	  InputStream input = null;
 		try {
 			ic = new InitialContext();
-			String rf = (String) ic.lookup("root-folder");
-			File emailConfig = new File(rf+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"email.config");
+			//String rf = (String) ic.lookup("root-folder");
+			File emailConfig = new File(filesFolder+System.getProperty("file.separator")+"email.config");
 			if(!emailConfig.exists()){
 				return "";
 			}
+			
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+	        System.out.println("++++"+emailConfig.getAbsolutePath());
+	        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+			
+			
 			Properties prop = new Properties();
 			input = new FileInputStream(emailConfig);
 			prop.load(input);
 			result = prop.getProperty(propertyName);
+			
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+	        System.out.println("++++"+result);
+	        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
 
 		} catch (NamingException e) {
 			e.printStackTrace();
@@ -156,7 +177,7 @@ public class FileTool {
   }
   
   
-  public static void setMessage(String pathfile,String message){
+  public  void setMessage(String pathfile,String message){
   	File fl = new File(pathfile);
   	try {
 			if(fl.exists()){
@@ -171,13 +192,13 @@ public class FileTool {
 		}
   }
   
-  public static String getNow(){
+  public  String getNow(){
 	Calendar cal = new GregorianCalendar();
 	String now = cal.get(Calendar.YEAR)+"-"+cal.get(Calendar.MONTH)+"-"+cal.get(Calendar.DAY_OF_MONTH);
 	return now;
 }
   
-  public static String getTimeNow(){
+  public  String getTimeNow(){
 	Calendar cal = new GregorianCalendar();
 	String now = cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
 	return now;
@@ -191,7 +212,7 @@ public class FileTool {
   	return result;
   }
   
-  public static String readContentFromFile(String fileName)
+  public  String readContentFromFile(String fileName)
 	{
 	    StringBuffer contents = new StringBuffer();
 	    

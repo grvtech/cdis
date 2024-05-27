@@ -115,7 +115,7 @@ function loadReport(reportID){
 		var linkedUsersIds = [];
 		$.each(obj.data.datasets,function(i,v){
 			var users = v.users;
-			if(users != ""){
+			if(users != ""){ 
 				var parts = users.split(";");
 				$.each(parts,function(ii,vv){
 					if(vv != ""){

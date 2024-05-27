@@ -547,6 +547,9 @@ function loadGraph(divStr, values, labels, title, limits, valueName){
 		var ten = 10;
 		var serie = [];
 		var lastvalues = [];
+		
+		
+		
 		if(values.length > 0){
 			if(values.length < ten){ten = values.length;}
 			var iday  = moment(labels[0]);

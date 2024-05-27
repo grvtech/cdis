@@ -67,7 +67,6 @@ function getUser(iduser){
 		});
 		request.done(function( json ) {
 			uObj = json.objs[0];
-			
 		});
 
 		request.fail(function( jqXHR, textStatus ) {
@@ -818,6 +817,11 @@ function populateRecord(){
 		$("<div>",{class:"panel-record-dtype"}).appendTo($(".panel-record"));
 	}
 	$(".panel-record-dtype").text(dtype[patientObjArray[2].dtype.values[0].value]);
+	
+	if($(".panel-record-dtypedate").length == 0){
+		$("<div>",{class:"panel-record-dtypedate"}).appendTo($(".panel-record"));
+	}
+	$(".panel-record-dtypedate").text(patientObjArray[2].dtype.values[0].date);
 }
 
 function populatePageside(){
@@ -1209,6 +1213,7 @@ function loadPatientObject(key,value){
 			patientObjArray = json.objs;
 			if(isDemo){patientObjArray = demoData(patientObjArray,"patient");}
 			patientObj = patientObjArray[0];
+			console.log(patientObjArray)
 		});
 		patient.fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );

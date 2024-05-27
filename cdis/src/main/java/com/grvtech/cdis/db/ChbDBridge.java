@@ -99,8 +99,10 @@ public User getUser(String username, String password){
 
 public ArrayList<Object> getUsers(){
 	ArrayList<Object> result = new ArrayList<>();
-	String sql = "select * from ncdis.ncdis.users where iduser > 0 and active = 1 or (active=0 and phone='GRV') order by fname,lname asc ";
+	String sql = "select * from ncdis.ncdis.users where iduser > 0 and active = 1 order by fname,lname asc ";
+	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
 	System.out.println("get users : "+sql);
+	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
     for (Map row : rows) {
         User obj = new User();
@@ -149,20 +151,22 @@ public Cisystem getUserSystem(User u){
 
 public User getUser(int iduser){
 	User result = new User();
-    String sql="select * from ncdis.ncdis.users where iduser="+iduser+" and active=1 or (active=0 and phone='GRV')";
+    String sql="select * from ncdis.ncdis.users where iduser="+iduser+" and active=1";
     List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
     if(rows.size() > 0 ) {
     	Map<String, Object> row = rows.get(0);
     	result.setUsername(row.get("username").toString());
     	result.setPassword(row.get("password").toString());
-    	result.setFirstname((String)row.get("firstname"));
-    	result.setLastname((String)row.get("lastname"));
+    	result.setFirstname((String)row.get("fname"));
+    	result.setLastname((String)row.get("lname"));
     	result.setEmail(row.get("email").toString());
     	result.setIduser(row.get("iduser").toString());
     	result.setPhone((String)row.get("phone"));
     	result.setIdcommunity(row.get("idcommunity").toString());
     	result.setActive(row.get("active").toString());
     	result.setIdprofesion(row.get("idprofesion")==null?"":row.get("idprofesion").toString());
+    	result.setReset(row.get("reset")==null?"":row.get("reset").toString());
+    	result.setConfirmmail(row.get("confirmmail")==null?"":row.get("confirmmail").toString());
     }
 	return result;
 }
@@ -177,17 +181,22 @@ public void setUser(User user){
    		+ "password='"+user.getPassword()+"', "
    		+ "active='"+user.getActive()+"', "
    		+ "idcommunity='"+user.getIdcommunity()+"', "
+   		+ "reset='"+user.getReset()+"', "
+   		+ "confirmmail='"+user.getConfirmmail()+"', "
    		+ "idprofesion='"+user.getIdprofesion()+"' "
    		+ "where iduser = '"+Integer.parseInt(user.getIduser())+"'";
 	
+	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
+	System.out.println(sql);
+	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
 	jdbcTemplate.update(sql);
 }
 
 public int addUser(User user){
 	int result = 0;
-	String sql = "insert into ncdis.ncdis.users (fname,lname,username,password,email,phone,idcommunity,idprofesion,active) "
+	String sql = "insert into ncdis.ncdis.users (fname,lname,username,password,email,phone,idcommunity,idprofesion,active, reset,confirmmail) "
 		    		+ "values ('"+user.getFirstname()+"','"+user.getLastname()+"','"+user.getUsername()+"','"+user.getPassword()+"','"+user.getEmail()+"',"
-    				+ "'"+user.getPhone()+"','"+user.getIdcommunity()+"','"+user.getIdprofesion()+"','"+user.getActive()+"')";
+    				+ "'"+user.getPhone()+"','"+user.getIdcommunity()+"','"+user.getIdprofesion()+"','"+user.getActive()+"',"+"'"+user.getReset()+"',"+"'"+user.getConfirmmail()+"')";
 	jdbcTemplate.update(sql);
 
 	String sql1 = "select TOP 1 iduser from ncdis.ncdis.users order by iduser desc";
@@ -256,6 +265,8 @@ public User getUser(String idsession){
     	result.setIdcommunity(row.get("idcommunity").toString());
     	result.setActive(row.get("active").toString());
     	result.setIdprofesion(row.get("idprofesion")==null?"":row.get("idprofesion").toString());
+    	result.setReset(row.get("reset").toString());
+    	result.setConfirmmail(row.get("confirmmail").toString());
     }
 		
 	return result;
@@ -287,7 +298,7 @@ public Session getUserSession(String ipuser, String iduser) {
     if(rows.size() > 0 ) {
     	Map<String, Object> row = rows.get(0);
     	result.setIdsession(row.get("idsession").toString());
-    	result.setIduser(row.get("iduser").toString());
+    	//result.setIduser(row.get("iduser").toString());
     	result.setIpuser(row.get("ipuser")==null?"":row.get("ipuser").toString());
     	result.setCreated(row.get("created")==null?0:((java.util.Date)row.get("created")).getTime());
     	result.setModified(row.get("modified")==null?0:((java.util.Date)row.get("modified")).getTime());
@@ -330,7 +341,9 @@ public boolean setUserSession(Session ses){
 	}else {
 		sql = "update ncdis.session set modified='"+sdf.format(now)+"',reswidth='"+session.getReswidth()+"',resheight='"+session.getResheight()+"' where idsession='"+session.getIdsession()+"'";
 	}
+	System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
 	System.out.println(sql);
+	System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
 	jdbcTemplate.update(sql);
 	result = true;
 	return result;
@@ -359,14 +372,16 @@ public User isValidUser(String email, String username){
     	Map<String, Object> row = rows.get(0);
     	result.setUsername(row.get("username").toString());
     	result.setPassword(row.get("password").toString());
-    	result.setFirstname((String)row.get("firstname"));
-    	result.setLastname((String)row.get("lastname"));
+    	result.setFirstname((String)row.get("fname"));
+    	result.setLastname((String)row.get("lname"));
     	result.setEmail(row.get("email").toString());
     	result.setIduser(row.get("iduser").toString());
     	result.setPhone((String)row.get("phone"));
     	result.setIdcommunity(row.get("idcommunity").toString());
     	result.setActive(row.get("active").toString());
     	result.setIdprofesion(row.get("idprofesion")==null?"":row.get("idprofesion").toString());
+    	result.setReset(row.get("reset").toString());
+    	result.setConfirmmail(row.get("confirmmail").toString());
     }
 	return result;
 }
@@ -728,10 +743,15 @@ public boolean setScheduleVisit(String idschedule, String iduser, String idpatie
 	boolean result = false;
 	String sql = "";
 	if(idschedule.equals("0")){
-		sql="insert into ncdis.ncdis.schedulevisits (iduser,datevisit,idpatient,idprofesion,frequency) values ("+iduser+","+scheduledate+","+idpatient+","+idprofesion+","+frequency+")";
+		sql="insert into ncdis.ncdis.schedulevisits (iduser,datevisit,idpatient,idprofesion,frequency) values ("+iduser+",'"+scheduledate+"',"+idpatient+","+idprofesion+",'"+frequency+"')";
 	}else{
-		sql = "update ncdi.ncdis.schedulevisits set iduser="+iduser+", datevisit="+scheduledate+", idpatient="+idpatient+", frequency="+frequency+" where idschedulevisits="+idschedule+"";
+		sql = "update ncdi.ncdis.schedulevisits set iduser="+iduser+", datevisit='"+scheduledate+"', idpatient="+idpatient+", frequency='"+frequency+"' where idschedulevisits="+idschedule+"";
 	}
+	
+	System.out.println("++++++++++++++++++++++++++++++++++++++++++");
+	System.out.println(sql);
+	System.out.println("++++++++++++++++++++++++++++++++++++++++++");
+	
 	jdbcTemplate.update(sql);
 	result = true;
 	return result;

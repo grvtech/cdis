@@ -20,19 +20,18 @@ import com.grvtech.cdis.util.FileTool;
 
 @Service
 public class Renderer {
-	private  String[] operatorsStr = new String[] {"equal", "more than", "less than", "between", "starting", "until", "multi"};
-	private  String[] operatorsOp = new String[] {"=",">=","<=","between",">=","<=", "in"};
+	private static String[] operatorsStr = new String[] {"equal", "more than", "less than", "between", "starting", "until", "multi"};
+	private static String[] operatorsOp = new String[] {"=",">=","<=","between",">=","<=", "in"};
 	
-	private  String[] valueStr = new String[] {"90.0", "90.1"};
-	private  String[] valueValue = new String[] {"('1','2','3','4','10','11')", "('1','2')"};
+	private static String[] valueStr = new String[] {"90.0", "90.1", "90.2", "90.3"};
+	private static String[] valueValue = new String[] {"('1','2','3','4','10','11')", "('1','2')", "('3')", "('4')"};
 	
-	@Value("${rootfolder}")
-	private String rootfolder;
+	@Value("${filesfolder}")
+	private String filesfolder;
 	
 	
-	public  String renderOperator(String opStr){
+	public static String renderOperator(String opStr){
 		
-		//System.out.println("OPERATOR : "+opStr);
 		String result = "=";
 		int index = Arrays.asList(operatorsStr).indexOf(opStr);
 		if(index >= 0){
@@ -41,7 +40,7 @@ public class Renderer {
 		return result;
 	}
 	
-	public  String renderValue(String valStr){
+	public static String renderValue(String valStr){
 		String result = "( )";
 		int index = Arrays.asList(valueStr).indexOf(valStr);
 		if(index >= 0){
@@ -51,13 +50,13 @@ public class Renderer {
 	}
 	
 	
-	public  String renderName(String name){
+	public String renderName(String name){
 		String result = "";
-		InitialContext ic;
+		//InitialContext ic;
 		try {
-			ic = new InitialContext();
-			
-			File fieldsFile = new File(rootfolder+System.getProperty("file.separator")+"content"+System.getProperty("file.separator")+"fields.properties");
+			//ic = new InitialContext();
+			//String rf = (String) ic.lookup("root-folder");
+			File fieldsFile = new File(filesfolder+System.getProperty("file.separator")+"fields.properties");
 			
 			FileInputStream fileInput = new FileInputStream(fieldsFile);
 			Properties properties = new Properties();
@@ -72,9 +71,7 @@ public class Renderer {
 					break;
 				}
 			}
-		} catch (NamingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		}  catch (IOException e) {
 			e.printStackTrace();
 		}
 		return result;

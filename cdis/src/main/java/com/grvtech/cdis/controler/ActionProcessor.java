@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.net.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,6 +73,12 @@ public class ActionProcessor {
 	
 	@Autowired
 	CdisDBridge cdisdb;
+	
+	@Autowired
+	FileTool ft;
+	
+	@Autowired
+	MailTool mt;
 	
 	@Value("${frontpage}")
 	private String frontpageFile;
@@ -156,7 +165,7 @@ public String getReports(final HttpServletRequest request){
 @RequestMapping(value = {"/service/action/executeReport3CustomValue"}, method = RequestMethod.GET)
 public String executeReport3CustomValue(final HttpServletRequest request){
 	Gson json = new Gson();
-	CdisDBridge db = new CdisDBridge();
+	
 	String result = "";
 	JsonParser jp = new JsonParser();
 	
@@ -170,7 +179,7 @@ public String executeReport3CustomValue(final HttpServletRequest request){
 	if(request.getParameter("dtype") != null){dtype = request.getParameter("dtype").toString();}
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-    Hashtable<String, Object> reportObject = db.a1cReportCustomValue(cvalue,idcommunity,dtype);
+    Hashtable<String, Object> reportObject = cdisdb.a1cReportCustomValue(cvalue,idcommunity,dtype);
 	ArrayList<Object> obs = new ArrayList<Object>();
 	obs.add(reportObject);
 	result = json.toJson(new MessageResponse(true,language,obs));
@@ -180,7 +189,7 @@ public String executeReport3CustomValue(final HttpServletRequest request){
 @RequestMapping(value = {"/service/action/executeReport4CustomValue"}, method = RequestMethod.GET)
 public String executeReport4CustomValue(final HttpServletRequest request){
 	Gson json = new Gson();
-	CdisDBridge db = new CdisDBridge();
+	
 	String result = "";
 	JsonParser jp = new JsonParser();
 	
@@ -199,7 +208,7 @@ public String executeReport4CustomValue(final HttpServletRequest request){
 	if(request.getParameter("dtype") != null){dtype = request.getParameter("dtype").toString();}
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-    Hashtable<String, Object> reportObject = db.ldlReportCustomValue(sens,pvalue,idcommunity,dtype);
+    Hashtable<String, Object> reportObject = cdisdb.ldlReportCustomValue(sens,pvalue,idcommunity,dtype);
 	ArrayList<Object> obs = new ArrayList<Object>();
 	obs.add(reportObject);
 	result = json.toJson(new MessageResponse(true,language,obs));
@@ -561,10 +570,10 @@ public String executeReport(final HttpServletRequest request){
 	return result;
 }
 
-@RequestMapping(value = {"/service/action/setFrontPageMessage"}, method = RequestMethod.GET)
+@RequestMapping(value = {"/service/action/setFrontPageMessage"}, method = RequestMethod.POST)
 public String setFrontPageMessage(final HttpServletRequest request){
 	Gson json = new Gson();
-		
+	
 	String result = "";
 	String sid = request.getParameter("sid").toString();
 	String language = request.getParameter("language").toString();
@@ -578,7 +587,7 @@ public String setFrontPageMessage(final HttpServletRequest request){
 		if(!frontPageFile.exists()){
 			frontPageFile.createNewFile();
 		}
-		FileTool.setMessage(frontPageFile.getAbsolutePath(), message);
+		ft.setMessage(frontPageFile.getAbsolutePath(), message);
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
@@ -591,6 +600,8 @@ public String setFrontPageMessage(final HttpServletRequest request){
 @RequestMapping(value = {"/service/action/sendUserMessage"}, method = RequestMethod.GET)
 public String sendUserMessage(final HttpServletRequest request){
 	Gson json = new Gson();
+	
+	
 	String result = "";
 	String nameUser = request.getParameter("nameUser").toString();
 	String messageUser = request.getParameter("messageUser").toString();
@@ -599,14 +610,14 @@ public String sendUserMessage(final HttpServletRequest request){
 	String language = request.getParameter("language").toString();
 	
 	String messagEmail = "<b><p>Hello CDIS user</p></b><p>New message from : "+emailUser+"<br><br><b>Message:</b><br><pre>"+messageUser+"</pre></p>";
-	MailTool.sendMailInHtml("CDIS User Message", messagEmail, FileTool.getEmailProperty("admin."+adminUser));
+	mt.sendMailInHtml("CDIS User Message", messagEmail, ft.getEmailProperty("admin."+adminUser));
 	
 	ArrayList<Object> obs = new ArrayList<Object>();
 	result = json.toJson(new MessageResponse(true,language,obs));
 	return result;
 }
 
-@RequestMapping(value = {"/service/action/forgotPassword"}, method = RequestMethod.GET)
+@RequestMapping(value = {"/service/action/forgotPassword"}, method = RequestMethod.POST)
 public String forgotPassword(final HttpServletRequest request){
 	Gson json = new Gson();
 	String result = "";
@@ -614,16 +625,17 @@ public String forgotPassword(final HttpServletRequest request){
 	String usernameUser = request.getParameter("usernameUser").toString();
 	String emailUser = request.getParameter("emailUser").toString();
 	String language = request.getParameter("language").toString();
-	String server = request.getParameter("server").toString();
+	String server = request.getServerName();
+	int port = request.getServerPort();
 	
 
 	User u = chbdb.isValidUser(emailUser, usernameUser);
 	if(!u.getIduser().equals("0")){
 		chbdb.setResetPassword(u.getIduser(),"1");
 		String params = "rst=1&iduser="+u.getIduser(); 
-		String url = "https://"+server+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
-		String messagEmail = "<b><p>CDIS Password reset</p></b><p>Hello "+u.getFirstname()+" "+u.getLastname()+"<br> Click on the button below to reset your password<br><br><a href='"+url+"'>Reset Password</a></p>";
-		MailTool.sendMailInHtml("CDIS Password Reset", messagEmail, u.getEmail());
+		String url = "https://"+server+":"+port+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
+		String messagEmail = "<b><p>CDIS Password reset</p></b><p>Hello <b>"+u.getFirstname()+" "+u.getLastname()+"</b></p><p>Click on the button below to reset your password<br><br><a href='"+url+"'>Reset Password</a></p>";
+		mt.sendMailInHtml("CDIS Password Reset", messagEmail, u.getEmail());
 		
 		ArrayList<Object> obs = new ArrayList<Object>();
 		String msg = "You initiated password reset. Click on Reset Password button in the email you received to reset your password.";
@@ -640,6 +652,7 @@ public String forgotPassword(final HttpServletRequest request){
 @RequestMapping(value = {"/service/action/subscribe"}, method = RequestMethod.GET)
 public String subscribe(final HttpServletRequest request){
 		Gson json = new Gson();
+		
 		String result = "";
 		String firstnameUser = request.getParameter("firstnameSub").toString();
 		String lastnameUser = request.getParameter("lastnameSub").toString();
@@ -647,7 +660,9 @@ public String subscribe(final HttpServletRequest request){
 		String idprofesionUser = request.getParameter("idprofesionSub").toString();
 		String emailUser = request.getParameter("emailSub").toString();
 		String language = request.getParameter("language").toString();
-		String server = request.getParameter("server").toString();
+		//String server = request.getParameter("server").toString();
+		String server = request.getServerName();
+		int port = request.getServerPort();
 		
 		String usernameUser = lastnameUser.toLowerCase().trim()+firstnameUser.toLowerCase().substring(0,1);
 		String pass = request.getParameter("passwordSub").toString();
@@ -695,12 +710,12 @@ public String subscribe(final HttpServletRequest request){
 				//MailTool.sendMailText("CDIS New User Subscribe", , "support@grvtech.ca");
 				
 				String messagEmail = "<b><p>Hello CDIS Administrator</p></b><p>New user is subscribed to CDIS.<br>The user should confirm the email in order to finish subscription.<br>Login to CDIS and go to Users section to view users pending. <br>The administrator can confirm users email in order to activate subscription.<br><b>User Info:</b><br><b>Name :</b> "+u.getFirstname()+" "+u.getLastname()+"<br><b>Username :</b> "+u.getUsername()+"<br><b>User Email :</b> "+u.getEmail()+"<br><br><b>An email will be sent to the user to confirm email and activate subscription.</b></p>";
-				MailTool.sendMailInHtml("CDIS New User Subscribe", messagEmail, "admins@grvtech.ca");
+				mt.sendMailInHtml("CDIS New User Subscribe", messagEmail, "admins@grvtech.ca");
 				
 				String params = "confirm=1&iduser="+idPendingUser; 
-				String url = "https://"+server+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
+				String url = "https://"+server+":"+port+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
 				String messagEmailUser = "<b><p>Welcome to CDIS</p></b><p>In order to activate your CDIS subscription you should confirm the email.<br><br><b>Click on the button below to confirm your email and activate the subscription</b><br><br><a href='"+url+"'>Confirm Email</a></p>";
-				MailTool.sendMailInHtml("CDIS Subscribe", messagEmailUser, u.getEmail());
+				mt.sendMailInHtml("CDIS Subscribe", messagEmailUser, u.getEmail());
 				
 				String message = "Subscribe to CDIS.\nYou will receive an email with a button to confirm email and activate the subscription. ";
 				ArrayList<Object> obs = new ArrayList<Object>();
@@ -718,22 +733,30 @@ public String subscribe(final HttpServletRequest request){
 	return result;
 }
 
-@RequestMapping(value = {"/service/action/confirmUserEmail"}, method = RequestMethod.GET)
+@RequestMapping(value = {"/service/action/confirmUserEmail"}, method = RequestMethod.POST)
 public String confirmUserEmail(final HttpServletRequest request){
 	Gson json = new Gson();
-	ChbDBridge chbdb = new ChbDBridge();
+	
+	
 	String result = "";
 	String language = request.getParameter("language").toString();
 	String iduser = request.getParameter("iduser").toString();
-	String server = request.getParameter("server").toString();
+	String server = request.getServerName();
+	int port = request.getServerPort();
 	
-	User u = chbdb.getUser(Integer.parseInt(iduser));	
+	User u = chbdb.getUser(Integer.parseInt(iduser));
+	
+	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
+	System.out.println("iduser : "+iduser);
+	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
+	
+	
 	
 	if(!u.getIduser().equals("0")){
 		chbdb.setEmailConfirm(iduser, "0");
 		
-		String messagEmail = "<b><p>Hello "+u.getFirstname()+" "+u.getLastname()+"</p></b><p>You email was confirmed with success!<br><br>Use you new credentials to login into CDIS<br><br><a href='https://"+server+"/ncdis'>Login to CDIS</a></p>";
-		MailTool.sendMailInHtml("CDIS Email Confirmed Successfully", messagEmail, u.getEmail());
+		String messagEmail = "<b><p>Hello "+u.getFirstname()+" "+u.getLastname()+"</p></b><p>You email was confirmed with success!<br><br>Use you new credentials to login into CDIS<br><br><a href='https://"+server+":"+port+"/ncdis'>Login to CDIS</a></p>";
+		mt.sendMailInHtml("CDIS Email Confirmed Successfully", messagEmail, u.getEmail());
 		
 		ArrayList<Object> obs = new ArrayList<Object>();
 		MessageResponse mr = new MessageResponse(true,language,obs);
@@ -746,17 +769,18 @@ public String confirmUserEmail(final HttpServletRequest request){
 	return result;
 }
 
-@RequestMapping(value = {"/service/action/resetUserPassword"}, method = RequestMethod.GET)
+@RequestMapping(value = {"/service/action/resetUserPassword"}, method = RequestMethod.POST)
 public String resetUserPassword(final HttpServletRequest request){
 	Gson json = new Gson();
-	ChbDBridge chbdb = new ChbDBridge();
+	
 	String result = "";
 	
 	String language = request.getParameter("language").toString();
 	String usernameUser = request.getParameter("username").toString();
 	String pass = request.getParameter("passwordr").toString();
 	String iduser = request.getParameter("iduser").toString();
-	String server = request.getParameter("server").toString();
+	String server = request.getServerName();
+	int port = request.getServerPort();
 	
 	String encPassword = "";
 	String clearPassword = "";
@@ -772,8 +796,8 @@ public String resetUserPassword(final HttpServletRequest request){
 		u.setPassword(encPassword);
 		chbdb.resetUserPassword(u);
 		
-		String messagEmail = "<b><p>Hello "+u.getFirstname()+" "+u.getLastname()+"</p></b><p>You reset you password with success!<br><br>Use you new credentials to login into CDIS<br><br><a href='https://"+server+"/ncdis'>Login to CDIS</a></p>";
-		MailTool.sendMailInHtml("CDIS Password Reset Successfully", messagEmail, u.getEmail());
+		String messagEmail = "<b><p>Hello <b>"+u.getFirstname()+" "+u.getLastname()+"</b></p></b><p>You reset you password with success!<br><br>Use you new credentials to login into CDIS<br><br><a href='https://"+server+":"+port+"/ncdis'>Login to CDIS</a></p>";
+		mt.sendMailInHtml("CDIS Password Reset Successfully", messagEmail, u.getEmail());
 		
 		String message = "You successfully reset your password\n.";
 		ArrayList<Object> obs = new ArrayList<Object>();
@@ -793,6 +817,7 @@ public String resetUserPassword(final HttpServletRequest request){
 public String getFrontPageMessage(final HttpServletRequest request){
 	Gson json = new Gson();
 	String result = "";
+	
 	String language = request.getParameter("language").toString();
 	// criteria can be name|chart|ramq
 	//HashMap<String, String> userData  = chbdb.getUser(sid);
@@ -804,7 +829,7 @@ public String getFrontPageMessage(final HttpServletRequest request){
 		if(!frontPageFile.exists()){
 			frontPageFile.createNewFile();
 		}
-		message = FileTool.getMessage(frontPageFile.getAbsolutePath());
+		message = ft.getMessage(frontPageFile.getAbsolutePath());
 		
 		HashMap<String, String> map = new HashMap<>();
 		map.put("message", message);
@@ -853,7 +878,7 @@ public String readPatientNote(final HttpServletRequest request){
 	String result = "";
 	String language = request.getParameter("language").toString();
 	String sid = request.getParameter("sid").toString();
-	String noteid = request.getParameter("nojteid").toString();
+	String noteid = request.getParameter("noteid").toString();
 	User user = chbdb.getUser(sid);
 	chbdb.readPatientNote(noteid);
 	ArrayList<Object> obs = new ArrayList<Object>();
@@ -919,18 +944,17 @@ public String getUserTop5Dataset(final HttpServletRequest request){
 	return result;
 }
 	
-@RequestMapping(value = {"/service/action/saveReport"}, method = RequestMethod.GET)
-public String saveReport(final HttpServletRequest request){
+@RequestMapping(value = {"/service/action/saveReport"}, method = RequestMethod.POST)
+public String saveReport(final HttpServletRequest request, @RequestBody String payload){
 	Gson json = new Gson();
 	String result = "";
 	JsonParser jp = new JsonParser();
-	String raw = request.getParameter("rawPost").toString();
 	String language = request.getParameter("language").toString();
 	String iduser = request.getParameter("iduser").toString();
 	
 	Gson gson = new Gson();
     JsonParser parser = new JsonParser();
-    JsonObject jObject = parser.parse(raw).getAsJsonObject();
+    JsonObject jObject = parser.parse(payload).getAsJsonObject();
     
     jObject.addProperty("iduser", iduser);
     String reportCode = cdisdb.saveReport(jObject);
@@ -1180,6 +1204,11 @@ public String generateDataReport(final HttpServletRequest request){
 		    	 for(JsonElement obj : hdr ){header.add(obj);}
 		    	 datasets = executeReportLocalList(); 
 		    	 
+		    }else if(reportType.equals("nohba1c")){
+		    	 JsonArray hdr = jObject.get("data").getAsJsonObject().get("header").getAsJsonArray();
+		    	 for(JsonElement obj : hdr ){header.add(obj);}
+		    	 datasets = executeReportNoHBA1c(); 
+		    	 
 		    }
 		    
 		    System.out.println("-------------------------------------------------");
@@ -1241,7 +1270,7 @@ public ArrayList<Object> executeReportFlist(String dataName, JsonArray criterias
 	        datasetObject.put(scse.getSubname(), scse.getSubvalue());
 	}
 	
-	ArrayList<Hashtable<String, String>> dataset = cdisdb.executeReportFlist(dataName, criterias);
+	List<Map<String, Object>> dataset = cdisdb.executeReportFlist(dataName, criterias);
 	datasetObject.put("set",dataset);
 	result.add(datasetObject);
 	return result;

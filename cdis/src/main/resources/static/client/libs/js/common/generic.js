@@ -1,5 +1,6 @@
 /*generic functions*/
 
+
 function loadTemplate(pageName,callBack){
 	var ua = window.navigator.userAgent;
 	var msie1 = ua.indexOf("Edge");

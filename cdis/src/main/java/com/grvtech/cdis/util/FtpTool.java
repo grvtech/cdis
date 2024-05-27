@@ -17,19 +17,30 @@ public class FtpTool {
 		boolean result = false;
 		
 		
-        String server = "10.76.105.79";
+        //String server = "10.76.105.79";
+		String server = "192.168.2.220";
         int port = 21;
-        String user = "18technocentre\\cdis";
-        String pass = "cdis2015";
+        //String user = "18technocentre\\cdis";
+        //String pass = "cdis2015";
+        String user = "radu";
+        String pass = "andrei07";
         
         if(place.equals("chisasibi")){
-        	server = "10.76.105.79";
-            user = "18technocentre\\cdis";
-            pass = "cdis2015";
+        	//server = "10.76.105.79";
+            //user = "18technocentre\\cdis";
+            //pass = "cdis2015";
+            
+            server = "192.168.2.220";
+            user = "radu";
+            pass = "andrei07";
         }else if(place.equals("chibougamou")){
-        	server = "10.68.32.48";
-            user = "omnitechr10\\omniftp";
-            pass = "ImportExport";
+        	//server = "10.68.32.48";
+            //user = "omnitechr10\\omniftp";
+            //pass = "ImportExport";
+            
+        	server = "192.168.2.220";
+            user = "radu";
+            pass = "andrei07";
         }else{
         	return false;
         }
@@ -44,6 +55,7 @@ public class FtpTool {
  
             // APPROACH #1: uploads first file using an InputStream
             File firstLocalFile = new File(localFilePath);
+            ftpClient.changeWorkingDirectory("ftpscaner");
             ftpClient.changeWorkingDirectory("IN");
             //ftpClient.changeWorkingDirectory("IN");
             
@@ -53,6 +65,9 @@ public class FtpTool {
  
             System.out.println("Start uploading first file");
             result = ftpClient.storeFile(firstRemoteFile, inputStream);
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+            System.out.println(result);
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
             inputStream.close();
             if (result) {
                 System.out.println("The first file is uploaded successfully.");

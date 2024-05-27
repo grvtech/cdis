@@ -260,6 +260,6 @@
 			"idcommunity": "9",
 			"set": ["45", "1", "0", "0", "0"]
 		}],
-		"header": ["Normal renal function (no CKD or stage 1) or mild impairment (stage 2)", "Stage 3A (between 45 and 60)", "Stage 3B (between 30 and 45)", "Stage 4 (between 15 and 30)", "Stage 5 (under 15)"]
+		"header": ["Normal renal function (no CKD or stage 1) or mild impairment (stage 2)", "Stage 3A (between 45 and 60) and ACRatio >= 3.0", "Stage 3B (between 30 and 45) and ACRatio >= 3.0", "Stage 4 (between 15 and 30) and ACRatio >= 3.0", "Stage 5 (under 15) and ACRatio >= 3.0"]
 	}
 }

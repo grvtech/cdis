@@ -183,30 +183,35 @@ public class CdisDBridge {
 		MessageResponse result = new MessageResponse("EDITP-DB",false,"en",new ArrayList<>());
 		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
 		
-		String query = "insert into ncdis.ncdis.patient (ramq,chart,band,giu,jbnqa,fname,lname,sex,dob,mfname,mlname,pfname,plname,address,postalcode,dod,death_cause,idcommunity,phone,entrydate,active) "
+		String query = "insert into ncdis.ncdis.patient (ramq,chart,band,giu,jbnqa,fname,lname,sex,dob,mfname,mlname,pfname,plname,address,postalcode,dod,death_cause,idcommunity,phone,iscree,entrydate,active) "
 				+" values("
-				+ pat.getRamq().toUpperCase()+","
-				+ pat.getChart()+","
-				+ pat.getBand().toUpperCase()+","
-				+ pat.getGiu()+","
-				+ pat.getJbnqa()+","
-				+ pat.getFname()+","
-				+ pat.getLname()+","
-				+ pat.getSex()+","
-				+ pat.getDob()+","
-				+ pat.getMfname()+","
-				+ pat.getMlname()+","
-				+ pat.getPfname()+","
-				+ pat.getPlname()+","
-				+ pat.getAddress()+","
-				+ pat.getPostalcode()+","
-				+ pat.getDod()+","
-				+ pat.getDcause()+","
-				+ pat.getIdcommunity()+","
-				+ pat.getPhone()+","
-				+ sdf.format(new Date())+","
+				+ "'"+pat.getRamq().toUpperCase()+"'"+","
+				+ "'"+pat.getChart()+"'"+","
+				+ "'"+pat.getBand().toUpperCase()+"'"+","
+				+ "'"+pat.getGiu()+"'"+","
+				+ "'"+pat.getJbnqa()+"'"+","
+				+ "'"+pat.getFname()+"'"+","
+				+ "'"+pat.getLname()+"'"+","
+				+ "'"+pat.getSex()+"'"+","
+				+ "'"+pat.getDob()+"'"+","
+				+ "'"+pat.getMfname()+"'"+","
+				+ "'"+pat.getMlname()+"'"+","
+				+ "'"+pat.getPfname()+"'"+","
+				+ "'"+pat.getPlname()+"'"+","
+				+ "'"+pat.getAddress()+"'"+","
+				+ "'"+pat.getPostalcode()+"'"+","
+				+ "'"+pat.getDod()+"'"+","
+				+ "'"+pat.getDcause()+"'"+","
+				+ "'"+pat.getIdcommunity()+"'"+","
+				+ "'"+pat.getPhone()+"'"+","
+				+ "'"+pat.getIscree()+"'"+","
+				+ "'"+sdf.format(new Date())+"'"+","
 				+ "'1')";
-		    
+		
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println("+"+query);
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		
 	    int stat = jdbcTemplate.update(query);
 		    
 	    result.setStatus(stat);
@@ -280,7 +285,7 @@ public Object getValues(String section, int idpatient, String sort){
 	sections.put("Lipid", "LIP");
 	sections.put("Lab", "LAB");
 	sections.put("Complications", "COM");
-	sections.put("Miscellanous", "MISC");
+	sections.put("Miscellaneous", "MISC");
 	sections.put("Meds", "MEDS");
 	sections.put("Depression", "DEP");
 
@@ -345,6 +350,94 @@ public Object getValues(String section, int idpatient, String sort){
 	    
 	return result;
 }
+
+
+public Object getAllValues(String section, String sectionCODE, int idpatient, String sort){
+	Object result = null;
+	//Context initContext;
+	//DataSource ds;
+	//ResultSet rs = null;
+	//PreparedStatement cs=null;
+	//Connection conn = null;
+	
+	
+	try {
+		//initContext = new InitialContext();
+		//Context envContext  = (Context)initContext.lookup("java:comp/env");
+		//ds = (DataSource)initContext.lookup("jdbc/ncdis");
+		//conn = ds.getConnection();
+		
+		String sql = "select avv.idvalue , dv.data_name as name, dv.data_unit as unit, avv.datevalue as date, avv.value as value , dv.data_type as type, lower(dv.data_code) as code, dv.data_order as dorder"
+				+ " from"
+				+ " (select dd.iddata, dd.data_name, dd.data_unit , dd.data_code,dd.data_type, dd.data_order"
+				+ " from ncdis.ncdis.cdis_data dd left join ncdis.ncdis.cdis_section css on dd.idsection = css.idsection "
+				+ " where css.section_code = '"+sectionCODE+"') as dv"
+				+ " "
+			+ " left join (select vv.idvalue, vv.datevalue, vv.value, vv.iddata"
+			+ " from ncdis.ncdis.cdis_value vv where vv.idpatient = '"+idpatient+"'  and vv.iddata in (select dd.iddata"
+									+ " from ncdis.ncdis.cdis_data dd left join ncdis.ncdis.cdis_section css on dd.idsection = css.idsection"
+									+ " where css.section_code = '"+sectionCODE+"' )"
+			+ " ) avv on dv.iddata = avv.iddata order by avv.datevalue desc";
+		
+		
+	    //cs=conn.prepareStatement(sql);
+	    //cs.setEscapeProcessing(true);
+	    //cs.setQueryTimeout(90);
+	    //cs.setInt(1, idpatient);
+		
+		List<Map<String,Object>> rows = jdbcTemplate.queryForList(sql);
+	    //rs = cs.executeQuery();
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    HashMap<String, Values> params = new HashMap<String, Values>();
+	    ArrayList<String> columns = new ArrayList<>();
+	    
+	    for(Map row : rows) {
+	    	Values av = new Values();
+	    	String c = row.get("code").toString();
+	    	if(columns.contains(c)){
+	    		av = params.get(c);
+	    	}else{
+	    		columns.add(c);
+	    	}
+	    	
+	    	String dStr = "NULL";
+	    	if(row.get("date") != null){
+	    		dStr = sdf.format(Date.parse(row.get("date").toString()));
+	    	}
+	        Value val = new Value(Integer.parseInt(row.get("idvalue").toString()) , row.get("name").toString(), row.get("value").toString(), row.get("type").toString(), dStr, row.get("unit").toString(), row.get("code").toString(), Integer.parseInt(row.get("dorder").toString()));
+	        av.addValue(val);
+	        params.put(c,av);
+	    }
+	    
+	   
+	    String className = "com.grvtech.cdis.model."+section;
+	    try {
+	    	Class cl = Class.forName(className);
+		    Constructor[] cons = cl.getConstructors();
+		    //Constructor con = cons[0];
+		    Constructor con =  cl.getConstructor(HashMap.class);
+			result = con.newInstance(params);
+		} catch (InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	}catch (Exception e) {
+		e.printStackTrace();
+	} 
+	
+	
+	return result;
+}
+
 
 public ValueLimit getValueLimits(String valuename){
 	ValueLimit result = null;
@@ -560,7 +653,10 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 					+ "order by nn.idpatient asc";
 			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 			
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
 			System.out.println(sql);
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
+			
 			
 		    int index=0;
 			for(Map row : rows) {
@@ -671,7 +767,9 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 				
 			}
 
-			
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
+			System.out.println(sql);
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
 			
 			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		    int index=0;
@@ -730,7 +828,11 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 
 						}
 					
+						System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
 						System.out.println(sql);
+						System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
+						
+						
 						List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 					    int index=0;
 						for(Map row : rows) {
@@ -744,6 +846,11 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 					}
 				}else{
 					sql = "select count(pp.idpatient) as cnt from ncdis.ncdis.patient pp "+subStrFrom+" where pp.active=1 and (pp.dod is null or pp.dod = '1900-01-01') and pp."+nom+" "+op+" '"+val+"' "+subStrWhere +"  ";
+					
+					System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
+					System.out.println(sql);
+					System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
+					
 					List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 				    int index=0;
 					for(Map row : rows) {
@@ -778,6 +885,12 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 				/* start section 50++   */
 				String criteriaStr = "select count(*) as cnt  from "+table+" bb";
 				String criteriaWhere = "where bb."+criteria.getName()+" "+renderer.renderOperator(criteria.getOperator())+" "+criteria.getValue();
+				
+				System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+				System.out.println("+"+criteria.getValue());
+				System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+				
+				
 				String subcriteriaStr = "";
 				if(subcriterias.size() > 0){
 					for(int x=0;x<subcriterias.size();x++){
@@ -795,6 +908,11 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 					
 					//sql = criteriaStr +" "+subcriteriaStr + " "+criteriaWhere;
 					sql = criteriaStr + " "+criteriaWhere +" "+subcriteriaStr ;
+					
+					System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+					System.out.println("+"+sql);
+					System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+					
 					List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 				    int index=0;
 					for(Map row : rows) {
@@ -864,6 +982,12 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 									+ " and cc.maxdate is not null"
 									+ " and bb.datevalue = (select max(xx.datevalue) from ncdis.ncdis.cdis_value xx where xx.iddata='"+rsc.getSubiddata()+"' and xx.idpatient = bb.idpatient group by xx.idpatient)";
 						}
+						
+						System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
+						System.out.println(sql);
+						System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
+						
+						
 						List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 					    int index=0;
 						for(Map row : rows) {
@@ -882,6 +1006,12 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 									+ "and nn.iddata = '"+criteria.getIddata()+"' "
 									+ " "+ criteriaStr+ " "+subStrWhere
 											+ " ";
+					
+					
+					System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
+					System.out.println(sql);
+					System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
+					
 					List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 				    int index=0;
 					for(Map row : rows) {
@@ -902,8 +1032,8 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 		return result;
 	}
 
-	public ArrayList<Hashtable<String, String>> executeReportFlist(String dataName, JsonArray criterias){
-		ArrayList<Hashtable<String, String>> result = new ArrayList<>();
+	public List<Map<String, Object>> executeReportFlist(String dataName, JsonArray criterias){
+		List<Map<String, Object>> result = new ArrayList<>();
 		Gson gson = new Gson();
 		String iddata = getIddata(dataName);
 		
@@ -915,6 +1045,7 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 
+		
 		@SuppressWarnings("unchecked")
 		ResultSetMetaData rsm = jdbcTemplate.query(sql,new ResultSetExtractor<ResultSetMetaData>() {
 	        @Override
@@ -923,42 +1054,48 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 	            return rsmd;
 	        }
 	     });
-
-	    //ResultSetMetaData rsmd = rsmdList.get(0);
-	    int columns;
-		try {
-			columns = rsm.getColumnCount();
-			ArrayList<ReportCriteria> rcList = new ArrayList<>();
-		    for(JsonElement criteria : criterias ){
-		        ReportCriteria cse = gson.fromJson( criteria , ReportCriteria.class);
-		        rcList.add(cse);
-		    }
-		   
-
-			for(Map row : rows) {
-		    	Hashtable<String, String> r = new Hashtable<>();
-		    	for(ReportCriteria rc : rcList){
-		    		for(int i=1;i<=columns;i++){
-		    
-		    			if(rc.getName().equals(rsm.getColumnName(i))){
-		    				String colVal = row.get(rsm.getColumnName(i)).toString(); 
-		    				if(colVal == null) colVal = "";
-		    				r.put(rc.getName(), colVal);
-		    				if(rc.getDate().equals("yes")){
-		    					String colValDate = row.get(rsm.getColumnName(i)+"Date").toString();
-		    					if(colValDate == null) colValDate = "";
-		    					r.put(rc.getName()+"_collecteddate", colValDate);
-		    				}
-		    				break;
-		    			}
-		    		}
-		    	}
-		    	result.add(r);
-			}
 		
-		} catch (SQLException e) {
-			e.printStackTrace();
+	    //ResultSetMetaData rsmd = rsmdList.get(0);
+		
+		
+		if(rows.size() > 0) {
+			 int columns;
+				try {
+					columns = rsm.getColumnCount();
+					ArrayList<ReportCriteria> rcList = new ArrayList<>();
+				    for(JsonElement criteria : criterias ){
+				        ReportCriteria cse = gson.fromJson( criteria , ReportCriteria.class);
+				        rcList.add(cse);
+				    }
+				   
+
+					for(Map row : rows) {
+				    	Map<String, Object> r = new Hashtable<>();
+				    	for(ReportCriteria rc : rcList){
+				    		for(int i=1;i<=columns;i++){
+				    
+				    			if(rc.getName().equals(rsm.getColumnName(i))){
+				    				String colVal = row.get(rsm.getColumnName(i))!=null?row.get(rsm.getColumnName(i)).toString():""; 
+				    				if(colVal == null) colVal = "";
+				    				r.put(rc.getName(), colVal);
+				    				if(rc.getDate().equals("yes")){
+				    					String colValDate = row.get(rsm.getColumnName(i)+"Date")!=null?row.get(rsm.getColumnName(i)+"Date").toString():"";
+				    					if(colValDate == null) colValDate = "";
+				    					r.put(rc.getName()+"_collecteddate", colValDate);
+				    				}
+				    				break;
+				    			}
+				    		}
+				    	}
+				    	result.add(r);
+					}
+				
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
+		
+	   
     return result;
 }
 	
@@ -1111,7 +1248,7 @@ public ArrayList<Note> getPatientNotes(int idpatient){
 	
 public boolean setPatientNotes(Note note){
 	boolean result = false;
-	String sql = "insert into ncdis.ncdis.notes (note,datenote,iduser,idpatient,active,iduserto, viewed) values (?,getdate(),'"+note.getIduser()+"','"+note.getIdpatient()+"','1', '"+note.getIduserto()+"','"+note.getViewed()+"')";
+	String sql = "insert into ncdis.ncdis.notes (note,datenote,iduser,idpatient,active,iduserto, viewed) values ('"+note.getNote()+"',getdate(),'"+note.getIduser()+"','"+note.getIdpatient()+"','1', '"+note.getIduserto()+"','"+note.getViewed()+"')";
 	jdbcTemplate.update(sql);
     result = true;
 	return result;
@@ -1546,13 +1683,14 @@ public  Hashtable<String, ArrayList<Object>> getHbA1cValueItem(int period, Strin
 	
 
 public ArrayList<Object> executeReportNoHBA1c(){
+	//ArrayList<Object> result = new ArrayList<>();
 	ArrayList<Object> result = new ArrayList<>();
 	Gson gson = new Gson();
-	Context initContext;
-	DataSource ds;
-	ResultSet rs = null;
-	Statement cs=null;
-	Connection conn = null;
+	//Context initContext;
+	//DataSource ds;
+	//ResultSet rs = null;
+	//Statement cs=null;
+	//Connection conn = null;
 	
 	String sql = "select  u.idpatient,u.active,u.sex, ISNULL(u.fname,'')+' '+ ISNULL(u.lname,'') as fullname, u.ramq,u.chart,u.idcommunity,"
 			+ " datediff(year, u.dob, getdate()) as age, "
@@ -1569,12 +1707,51 @@ public ArrayList<Object> executeReportNoHBA1c(){
 			+ "where u.active=1 and (u.dod is null or u.dod='1900-01-01') and value1 is null";
 	
 	try {
-		initContext = new InitialContext();
-		ds = (DataSource)initContext.lookup("jdbc/ncdis");
-		conn = ds.getConnection();
-	    cs=conn.createStatement();		    
-	    cs.setEscapeProcessing(true);
-	    rs = cs.executeQuery(sql);
+		//initContext = new InitialContext();
+		//ds = (DataSource)initContext.lookup("jdbc/ncdis");
+		//conn = ds.getConnection();
+	    //cs=conn.createStatement();		    
+	   // cs.setEscapeProcessing(true);
+		
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println(sql);
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		
+		 List<Map<String,Object>> rows = jdbcTemplate.queryForList(sql);
+		
+		 @SuppressWarnings("unchecked")
+			ResultSetMetaData rsm = jdbcTemplate.query(sql,new ResultSetExtractor<ResultSetMetaData>() {
+		        @Override
+		        public ResultSetMetaData extractData(ResultSet rs) throws SQLException, DataAccessException {
+		            ResultSetMetaData rsmd = rs.getMetaData();
+		            return rsmd;
+		        }
+		     });
+		
+		 int columns = rsm.getColumnCount();
+		   
+		 for(Map row : rows) {
+			 
+			/*
+	    	for(int i=1;i<=columns;i++){
+	    		String colVal = row.get(rsm.getColumnName(i))!=null?row.get(rsm.getColumnName(i)).toString():""; 
+	    		if(colVal == null) colVal = "";
+					row.put(rsm.getColumnName(i), colVal);
+	    	}
+	    	*/
+		    result.add(row);
+		 }
+
+		 
+	    //rs = cs.executeQuery(sql);
+		/*
+		if(rows.size() > 0 ) {
+			for(Map row:rows) {
+				
+			}
+		}
+		
+		
 	    ResultSetMetaData rsm =  rs.getMetaData();
 	    int columns = rsm.getColumnCount();
 	   
@@ -1587,19 +1764,12 @@ public ArrayList<Object> executeReportNoHBA1c(){
 	    	}
 	    	result.add(row);
 	    }
-	}catch (SQLException se) {
-        se.printStackTrace();
-    } catch (NamingException e) {
+	    */
+	    
+	}catch (Exception e) {
 		e.printStackTrace();
-	} finally {
-        try {
-            rs.close();
-            cs.close();
-            conn.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-   } 
+	} 
+	
 	return result;
 }
 

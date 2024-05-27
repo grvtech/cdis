@@ -70,7 +70,6 @@ function initNavigation() {
 	    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 	}
 
-
 	function gti(){window.location = "index.html";}/*go to index*/
 	function gts(s,l){
 		var p = window.btoa("sid="+sid+"&language="+l+"&ts="+moment());

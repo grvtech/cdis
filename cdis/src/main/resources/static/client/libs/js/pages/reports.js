@@ -262,7 +262,8 @@ function buildReportToolbar(divToolbarObj, reportObject){
 				    dataType: 'json',
 				    async: false,
 				    success: function(msg) {
-				        window.location = "reports.html?section=dahboard&sid="+sid+"&language=en";
+				        //window.location = "reports.html?section=dahboard&sid="+sid+"&language=en";
+				        $(".raportContainer").remove();
 				    }
 				});
 			}

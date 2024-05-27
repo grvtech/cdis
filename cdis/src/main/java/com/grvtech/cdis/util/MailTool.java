@@ -35,27 +35,37 @@ import javax.mail.internet.MimeMultipart;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 
 
+@Service
 public class MailTool {
+	
+	@org.springframework.beans.factory.annotation.Value("${filesfolder}")
+	private String filesFolder;
+	
+	@Autowired
+	FileTool ft;
 	
 	public MailTool() {
 		super();
 	}
 
-	public static boolean sendMailText(String subject,String body,String to){
+	public boolean sendMailText(String subject,String body,String to){
 		boolean result = false;
 		Session mailSession = null;
         Properties props = new Properties();
         
+        
         props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.host", FileTool.getEmailProperty("smtp.host"));
-        props.put("mail.smtp.port", FileTool.getEmailProperty("smtp.port"));
+        props.put("mail.smtp.host", ft.getEmailProperty("smtp.host"));
+        props.put("mail.smtp.port", ft.getEmailProperty("smtp.port"));
         
         /*local config*/
-        props.setProperty("mail.smtp.user", FileTool.getEmailProperty("smtp.user"));
-        props.setProperty("mail.smtp.pass", FileTool.getEmailProperty("smtp.pass"));
+        props.setProperty("mail.smtp.user", ft.getEmailProperty("smtp.user"));
+        props.setProperty("mail.smtp.pass", ft.getEmailProperty("smtp.pass"));
         
         /*local config*/
         
@@ -68,7 +78,7 @@ public class MailTool {
 			MimeMessage message = new MimeMessage(mailSession);
 			message.setContent(body, "text/plain");
 			message.setSubject(subject);
-			message.setFrom(FileTool.getEmailProperty("smtp.from"));
+			message.setFrom(ft.getEmailProperty("smtp.from"));
 			message.addRecipient(Message.RecipientType.TO,   new InternetAddress(to));
 			//message.addRecipient(Message.RecipientType.BCC,   new InternetAddress("radu@grvtech.ca"));
 			//transport.connect(FileTool.getEmailProperty("smtp.user"), FileTool.getEmailProperty("smtp.pass"));
@@ -92,6 +102,7 @@ public class MailTool {
         props.setProperty("mail.host", "smtp.vincelli.com");
         Session mailSession = Session.getDefaultInstance(props, null);
         Transport transport;
+        
 		try {
 			transport = mailSession.getTransport();
 			MimeMessage message = new MimeMessage(mailSession);
@@ -111,7 +122,7 @@ public class MailTool {
 			MailDateFormat mdf = new MailDateFormat();
 			message.setSentDate(new Date());
 			message.setSubject(subject);
-			message.setFrom(FileTool.getEmailProperty("smtp.from"));
+			message.setFrom(ft.getEmailProperty("smtp.from"));
 			message.addRecipient(Message.RecipientType.TO,   new InternetAddress(to));
 			transport.connect();
 	        transport.sendMessage(message,message.getRecipients(Message.RecipientType.TO));
@@ -127,11 +138,10 @@ public class MailTool {
 
 	
 	//Method to replace the values for keys
-	private static String readEmailFromHtml(String filePath, Map<String, String> input)
-	{
-	    String msg = FileTool.readContentFromFile(filePath);
-	    try
-	    {
+	private  String readEmailFromHtml(String filePath, Map<String, String> input){
+		
+	    String msg = ft.readContentFromFile(filePath);
+	    try{
 	    Set<Entry<String, String>> entries = input.entrySet();
 		    for(Map.Entry<String, String> entry : entries) {
 		        msg = msg.replace(entry.getKey().trim(), entry.getValue().trim());
@@ -144,12 +154,13 @@ public class MailTool {
 	 
 	
 	
-	public static void sendMailInHtml(String subject, String htmlMessage, String to){
+	public void sendMailInHtml(String subject, String htmlMessage, String to){
+		 
 	 try {
 		 
 	 		//Email data 
-           final String Email_Id = FileTool.getEmailProperty("smtp.user");        //change to your email ID
-           final String password = FileTool.getEmailProperty("smtp.pass");                 //change to your password
+           final String Email_Id = ft.getEmailProperty("smtp.user");        //change to your email ID
+           final String password = ft.getEmailProperty("smtp.pass");                 //change to your password
            String recipient_mail_id = to;   //change to recipient email id
            String mail_subject = subject;
             
@@ -158,15 +169,15 @@ public class MailTool {
             Properties props = System.getProperties();
             props.put("mail.transport.protocol", "smtp");
             
-            if(FileTool.getEmailProperty("smtp.tls").equals("true")){
+            if(ft.getEmailProperty("smtp.tls").equals("true")){
             	props.put("mail.smtp.starttls.enable", "true");
-            	props.put("mail.smtp.ssl.trust", FileTool.getEmailProperty("smtp.host"));
+            	props.put("mail.smtp.ssl.trust", ft.getEmailProperty("smtp.host"));
             	props.put("mail.smtp.auth", "true");
 	            props.put("mail.debug", "false");
             }
             
-            props.put("mail.smtp.host", FileTool.getEmailProperty("smtp.host"));
-            props.put("mail.smtp.port", FileTool.getEmailProperty("smtp.port"));
+            props.put("mail.smtp.host", ft.getEmailProperty("smtp.host"));
+            props.put("mail.smtp.port", ft.getEmailProperty("smtp.port"));
 	            
 	        Session session = Session.getInstance(props,
 	                new javax.mail.Authenticator() {
@@ -178,12 +189,16 @@ public class MailTool {
 	        
 	        
 	        MimeMessage message = new MimeMessage(session);
-	 
+	        
+	        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+	        System.out.println("++++"+ft.getEmailProperty("smtp.from"));
+	        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+	        
 	         try {
 	            //Set email data 
-	            message.setFrom(new InternetAddress(FileTool.getEmailProperty("smtp.from")));
+	            message.setFrom(new InternetAddress(ft.getEmailProperty("smtp.from")));
 	            message.addRecipient(Message.RecipientType.TO,new InternetAddress(recipient_mail_id));
-	            message.addRecipient(Message.RecipientType.CC,new InternetAddress(FileTool.getEmailProperty("admin.cc")));
+	            message.addRecipient(Message.RecipientType.CC,new InternetAddress(ft.getEmailProperty("admin.cc")));
 	            message.setSubject(mail_subject);
 	            MimeMultipart multipart = new MimeMultipart();
 	            BodyPart messageBodyPart = new MimeBodyPart();
@@ -192,8 +207,9 @@ public class MailTool {
 	            InitialContext ic;
 				try {
 					ic = new InitialContext();
-					String rf = (String) ic.lookup("root-folder");
-					templatePath = rf+System.getProperty("file.separator")+"config";
+					//String rf = (String) ic.lookup("root-folder");
+					//String rf = filesFolder;
+					templatePath = filesFolder;
 					//String messagEmail = "<b><p>Hello Administrator</p></b><p>New user is subscribed to CDIS.<br>Login to CDIS and go to Users section.<br>Click on the button pending users to see the users that subscribed to CDIS but are not active yet.Click on the user to select it and click on the button Activate to allow the user to log in to CDIS.<br><br><b>An email will be sent to the user to annouce the activation.</b></p>";
 					//MailTool.sendMailInHtml("CDIS New User Subscribe", messagEmail, "support@grvtech.ca", templatePath);
 				} catch (NamingException e) {
@@ -228,7 +244,7 @@ public class MailTool {
 	 
 	            //Conect to smtp server and send Email
 	            Transport transport = session.getTransport("smtp");            
-	            transport.connect(FileTool.getEmailProperty("smtp.host"), Email_Id, password);
+	            transport.connect(ft.getEmailProperty("smtp.host"), Email_Id, password);
 	            transport.sendMessage(message, message.getAllRecipients());
 	            transport.close();
 	            System.out.println("Mail sent successfully..."); 

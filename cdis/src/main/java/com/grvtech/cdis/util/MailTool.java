@@ -190,9 +190,6 @@ public class MailTool {
 	        
 	        MimeMessage message = new MimeMessage(session);
 	        
-	        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
-	        System.out.println("++++"+ft.getEmailProperty("smtp.from"));
-	        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
 	        
 	         try {
 	            //Set email data 
@@ -247,7 +244,6 @@ public class MailTool {
 	            transport.connect(ft.getEmailProperty("smtp.host"), Email_Id, password);
 	            transport.sendMessage(message, message.getAllRecipients());
 	            transport.close();
-	            System.out.println("Mail sent successfully..."); 
 	         
 	        }catch (MessagingException ex) {
 	                Logger.getLogger(MailTool.class.getName()).log(Level.SEVERE, null, ex);

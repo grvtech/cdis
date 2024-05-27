@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.text.DateFormat;
@@ -14,18 +13,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -42,31 +37,32 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 import com.grvtech.cdis.db.CdisDBridge;
 import com.grvtech.cdis.db.ChbDBridge;
 import com.grvtech.cdis.model.Action;
-import com.grvtech.cdis.model.Event;
 import com.grvtech.cdis.model.MessageResponse;
 import com.grvtech.cdis.model.Note;
-import com.grvtech.cdis.model.Renderer;
 import com.grvtech.cdis.model.Report;
 import com.grvtech.cdis.model.ReportCriteria;
 import com.grvtech.cdis.model.ReportSubcriteria;
 import com.grvtech.cdis.model.Role;
 import com.grvtech.cdis.model.ScheduleVisit;
 import com.grvtech.cdis.model.Session;
-
 //import com.grv.cdis.model.SearchPatient;
 import com.grvtech.cdis.model.User;
 import com.grvtech.cdis.util.FileTool;
-import com.grvtech.cdis.util.ImportNames;
 import com.grvtech.cdis.util.MailTool;
 import com.grvtech.cdis.util.Misc;
 import com.grvtech.cdis.util.SecurityTool;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 @RestController
 public class ActionProcessor {
+	
+	Logger logger = LogManager.getLogger(ActionProcessor.class);
 	
 	@Autowired
 	ChbDBridge chbdb;
@@ -121,7 +117,9 @@ public String loginSession(final HttpServletRequest request){
 		obs.add(user);
 		result = json.toJson(new MessageResponse(act,true,language,obs));
 		chbdb.setEvent(user.getIduser(), act.getIdaction(), "1", userSession.getIdsession());
+		logger.log(Level.INFO, "User "+username+" has logged successfuly");
 	}else{
+		logger.log(Level.INFO, "User "+username+" failed to log");
 		result = json.toJson(new MessageResponse(act,false,language,null));
 	}
 	return result;
@@ -159,6 +157,7 @@ public String getReports(final HttpServletRequest request){
 		HashMap<String, ArrayList<Report>> reports = cdisdb.getUserReports(r.getCode(), userData.getIdcommunity(), userData.getIduser());
 		obs.add(reports);
 		result = json.toJson(new MessageResponse(true,language,obs));
+		logger.log(Level.INFO,"getReports");
 		return result;
 	}
 
@@ -183,6 +182,7 @@ public String executeReport3CustomValue(final HttpServletRequest request){
 	ArrayList<Object> obs = new ArrayList<Object>();
 	obs.add(reportObject);
 	result = json.toJson(new MessageResponse(true,language,obs));
+	logger.log(Level.INFO,"execute Report 3 custom value");
 	return result;
 }
 
@@ -212,6 +212,7 @@ public String executeReport4CustomValue(final HttpServletRequest request){
 	ArrayList<Object> obs = new ArrayList<Object>();
 	obs.add(reportObject);
 	result = json.toJson(new MessageResponse(true,language,obs));
+	logger.log(Level.INFO,"execute Rep 4 custom value");
 	return result;
 }
 
@@ -221,13 +222,11 @@ public String executeReport(final HttpServletRequest request){
 	String result = "";
 	JsonParser jp = new JsonParser();
 	
-	//String raw = request.getParameter("rawPost").toString();
-	
-	
 	String raw ="";
 	try {
 		raw = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
 	} catch (IOException e) {
+		logger.log(Level.ERROR,"unable to read request lines from report");
 		e.printStackTrace();
 	}
 	
@@ -333,15 +332,8 @@ public String executeReport(final HttpServletRequest request){
 	    		//list : count | idpatient | key | value | date 
 		    	//graph : count | key | value 
 	    	
-	    	System.out.println(rc.getName());
-	    	
-	    	
 	    	
 		    ArrayList<ArrayList<String>> criteriaSet = cdisdb.executeReport(rc, "list", slcs);
-		    for(int x=0; x<criteriaSet.size();x++) {
-		    	//System.out.println(criteriaSet.get(x));
-		    }
-		    
 		    
 		    report.put(rc.getName(), criteriaSet);
 	    	ArrayList<String> criteriaPatients = new ArrayList<>();
@@ -383,11 +375,9 @@ public String executeReport(final HttpServletRequest request){
 		    			}
 		    		}
 		    		idpatients.removeAll(toRemove);
-		    		 System.out.println("id patients size : "+idpatients.size());
 		    	}
 	    }	
 	    
-	    System.out.println("id patients size : "+idpatients.size());
 	    
 	    for(int x=0;x<idpatients.size();x++){
 	    	String idpat = idpatients.get(x);
@@ -427,8 +417,6 @@ public String executeReport(final HttpServletRequest request){
 	    	
 	    	
 	    	//now create line
-	    	System.out.println("============++++++++++++++++++++++++");
-	    	System.out.println(bigSet);
 	    	for(int q=0;q<bigSet;q++){
 	    		ArrayList<String> setLine = new ArrayList<>();
 	    		for(int qq=0;qq<lcs.size();qq++){
@@ -499,10 +487,6 @@ public String executeReport(final HttpServletRequest request){
 	    	
 	    }
 	   
-	    System.out.println("========================================");
-	    for(int x=0;x<set.size();x++) {
-	    	System.out.println(set.get(x));
-	    }
 	    
     }else{
     	//graphdata = getGraphdata
@@ -567,6 +551,7 @@ public String executeReport(final HttpServletRequest request){
 	ArrayList<Object> obs = new ArrayList<Object>();
 	obs.add(reportObject);
 	result = json.toJson(new MessageResponse(true,language,obs));
+	logger.log(Level.INFO,"execute report");
 	return result;
 }
 
@@ -589,11 +574,13 @@ public String setFrontPageMessage(final HttpServletRequest request){
 		}
 		ft.setMessage(frontPageFile.getAbsolutePath(), message);
 	} catch (IOException e) {
+		logger.log(Level.ERROR,"error seting front page");
 		e.printStackTrace();
 	}
 	
 	//obs.add(reports);
 	result = json.toJson(new MessageResponse(true,language,obs));
+	logger.log(Level.INFO,"set front page");
 	return result;
 }
 	
@@ -614,6 +601,7 @@ public String sendUserMessage(final HttpServletRequest request){
 	
 	ArrayList<Object> obs = new ArrayList<Object>();
 	result = json.toJson(new MessageResponse(true,language,obs));
+	logger.log(Level.INFO,"send user message");
 	return result;
 }
 
@@ -642,7 +630,9 @@ public String forgotPassword(final HttpServletRequest request){
 		MessageResponse mr = new MessageResponse(true,language,obs);
 		mr.setMessage(msg);
 		result = json.toJson(mr);
+		logger.log(Level.INFO,"send forgot password message");
 	}else{
+		logger.log(Level.INFO,"wrong user");
 		ArrayList<Object> obs = new ArrayList<Object>();
 		result = json.toJson(new MessageResponse("FORGOT-FALSE",false,language,obs));
 	}
@@ -722,8 +712,9 @@ public String subscribe(final HttpServletRequest request){
 				MessageResponse mr = new MessageResponse(true,language,obs);
 				mr.setMessage(message);
 				result = json.toJson(mr);
-				
+				logger.log(Level.INFO,"save user profile for user " +idPendingUser);
 			}else{
+				logger.log(Level.ERROR,"error saving profile of user "+idPendingUser);
 				ArrayList<Object> obs = new ArrayList<Object>();
 				MessageResponse mr = new MessageResponse(false,language,obs);
 				result = json.toJson(mr);
@@ -746,11 +737,6 @@ public String confirmUserEmail(final HttpServletRequest request){
 	
 	User u = chbdb.getUser(Integer.parseInt(iduser));
 	
-	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
-	System.out.println("iduser : "+iduser);
-	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
-	
-	
 	
 	if(!u.getIduser().equals("0")){
 		chbdb.setEmailConfirm(iduser, "0");
@@ -766,6 +752,7 @@ public String confirmUserEmail(final HttpServletRequest request){
 		MessageResponse mr = new MessageResponse(false,language,obs);
 		result = json.toJson(mr);
 	}
+	logger.log(Level.INFO,"confirm mail for user "+iduser);
 	return result;
 }
 
@@ -804,7 +791,9 @@ public String resetUserPassword(final HttpServletRequest request){
 		MessageResponse mr = new MessageResponse(true,language,obs);
 		mr.setMessage(message);
 		result = json.toJson(mr);
+		logger.log(Level.INFO,"reset password for user : "+iduser);
 	}else{
+		logger.log(Level.ERROR,"no user wit id  : "+iduser);
 		ArrayList<Object> obs = new ArrayList<Object>();
 		MessageResponse mr = new MessageResponse(false,language,obs);
 		mr.setMessage("User is invalid");
@@ -1036,7 +1025,7 @@ public void writeReportFile(String reportCode, String content){
 
 @RequestMapping(value = {"/service/action/writeOutcomeFile"}, method = RequestMethod.GET)
 public void writeOutcomeFile(String outcomeFile, String content){
-	InitialContext ic;
+	
 	try {
 		File reportFile = new File(reportsFolder+System.getProperty("file.separator")+"outcomes"+System.getProperty("file.separator")+outcomeFile);
 		Writer writer = new FileWriter(reportFile);
@@ -1091,7 +1080,6 @@ public String generateDataReport(final HttpServletRequest request){
 			    //build subcriteria from input if exists 
 			    ArrayList<ArrayList<ReportSubcriteria>> matrix = new ArrayList<>();
 			    
-			    //System.out.println("INput array size : "+jArrayI.size());
 			    for(int iobj=0;iobj<jArrayI.size();iobj++){
 			        JsonObject input = jArrayI.get(iobj).getAsJsonObject();
 			        String iname = input.get("name").getAsString();
@@ -1099,8 +1087,6 @@ public String generateDataReport(final HttpServletRequest request){
 			        if(matrix.size() > 0){
 			        	JsonArray varr = input.get("values").getAsJsonArray();
 			        	int ml = matrix.size();
-			        	//System.out.println("freeze matrix size : "+ml);
-			        	//System.out.println("start loop for subscriteria :   "+iname);
 			        	
 			        	for(int jj=0;jj<varr.size();jj++){
 			        		ReportSubcriteria scs1 = new ReportSubcriteria();
@@ -1113,21 +1099,19 @@ public String generateDataReport(final HttpServletRequest request){
 			        		for(int ii=0;ii<ml;ii++){
 			        			ArrayList<ReportSubcriteria> ars1 = new ArrayList<>();
 				        		ArrayList<ReportSubcriteria> ars = matrix.get(ii);
-				        		//System.out.println("subcriteria array size in loop: "+ars.size());
 				        		for(ReportSubcriteria xx : ars){
 				        			ars1.add(xx);
 				        		}
-				        		//System.out.println("subcriteria array1 size in loop before add: "+ars1.size());
+
 			        			//ars1 = ars;
 				        		ars1.add(scs1);
-				        		//System.out.println("subcriteria array1 size in loop after add: "+ars1.size());
+
 					        	matrix.add(ars1);
 				        	}
 			        	}
 			        	
 			        	for(int iii=0;iii<ml;iii++){
 			        		ArrayList<ReportSubcriteria> d1 = matrix.get(0);
-			        		//System.out.println("delete array from index :"+iii+"   with size : "+d1.size());
 			        		matrix.remove(0);
 			        	}
 			        	
@@ -1148,7 +1132,6 @@ public String generateDataReport(final HttpServletRequest request){
 			        }
 			    }
 
-	    		//System.out.println("-------------------------------------------------matrix size "+matrix.size());
 			    for(int x=0;x<matrix.size();x++){
 			    	ArrayList<ReportSubcriteria> sc = matrix.get(x);
 				    ArrayList<ArrayList<String>> set = new ArrayList<>();
@@ -1211,16 +1194,11 @@ public String generateDataReport(final HttpServletRequest request){
 		    	 
 		    }
 		    
-		    System.out.println("-------------------------------------------------");
 		    dataObject.put("header",header);
 		    dataObject.put("datasets",datasets);
 			
 			jObject.add("data", json.toJsonTree(dataObject));
 			writeReportFile(reportCode, jObject.toString());
-			System.out.println("-------------------------------------------------");
-			
-			System.out.println("REPORT "+ reportCode+" GENERATED");
-			System.out.println("-------------------------------------------------");
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1292,13 +1270,10 @@ public ArrayList<Object> executeReportNoHBA1c(){
 
 @RequestMapping(value = {"/service/action/generateDataOutcomes"}, method = RequestMethod.GET)
 public String generateDataOutcomes(final HttpServletRequest request){
-	
 	String result = "";
 	JsonParser jp = new JsonParser();
-	
-	InitialContext ic;
 	try {
-		ic = new InitialContext();
+		
 		Gson gson = new Gson();
 
 	    Hashtable<String,ArrayList<Hashtable<String,String>>> t12 = cdisdb.getHbA1cTrend("1_2");
@@ -1424,7 +1399,7 @@ public String generateDataOutcomes(final HttpServletRequest request){
 	    String vpdmtcontent = gson.toJson(vpdmtotals);
 	    writeOutcomeFile(vpdmtout, vpdmtcontent);
 	    
-	} catch (NamingException e) {
+	} catch (Exception e) {
 		e.printStackTrace();
 	}
 	return "Outcome files GENERATED";
@@ -1441,9 +1416,9 @@ public String getImportOmnilabFiles(final HttpServletRequest request){
 	
 	int p = Integer.parseInt(period)*-1;
 	ArrayList<Object> obs = new ArrayList<Object>();
-	InitialContext ic;
+	
 	try {
-		ic = new InitialContext();
+		
 		//String rf = (String) ic.lookup("reports-folder");
 		File importFolder = new File(reportsFolder+System.getProperty("file.separator")+"import");
 		FileFilter fileFilter = new FileFilter(){
@@ -1461,7 +1436,6 @@ public String getImportOmnilabFiles(final HttpServletRequest request){
 	            }
 	         }
 	      };
-	     System.out.println(importFolder.getAbsolutePath());
 	     
 	     File[] list = importFolder.listFiles(fileFilter);
 	     ArrayList<String> files = new ArrayList<>();
@@ -1488,11 +1462,9 @@ public String getImportOmnilabFiles(final HttpServletRequest request){
 	    	 */
 	     }
 	     result = json.toJson(files);
-	} catch (NamingException e) {
+	} catch (Exception e) {
 		e.printStackTrace();
-	} catch (ParseException e) {
-		e.printStackTrace();
-	}
+	} 
 	return result;
 }
 

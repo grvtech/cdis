@@ -50,7 +50,6 @@ public class Misc {
 		    String date="";
 		    if(rezDate != null && !rezDate.equals("")){
 			    String year = rezDate.substring(0,4);
-			    //System.out.println("Date string is :"+rezDate);
 			    if(!year.equals("1900")){
 			    	String day = rezDate.substring(8);
 			    	if(day.length() == 1){day = "0"+day;}

@@ -1,13 +1,6 @@
 package com.grvtech.cdis.db;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,18 +9,11 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
+import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 import com.grvtech.cdis.model.Action;
 import com.grvtech.cdis.model.Cisystem;
@@ -39,7 +25,9 @@ import com.grvtech.cdis.model.ScheduleVisit;
 import com.grvtech.cdis.model.SearchPatient;
 import com.grvtech.cdis.model.Session;
 import com.grvtech.cdis.model.User;
-
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /*
  * Data bridge to users databases and actions also for messaging between users
@@ -54,6 +42,7 @@ import com.grvtech.cdis.model.User;
 @Service
 public class ChbDBridge {
 	
+	Logger logger = LogManager.getLogger(ChbDBridge.class);
 	
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -100,9 +89,6 @@ public User getUser(String username, String password){
 public ArrayList<Object> getUsers(){
 	ArrayList<Object> result = new ArrayList<>();
 	String sql = "select * from ncdis.ncdis.users where iduser > 0 and active = 1 order by fname,lname asc ";
-	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
-	System.out.println("get users : "+sql);
-	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
     for (Map row : rows) {
         User obj = new User();
@@ -186,9 +172,6 @@ public void setUser(User user){
    		+ "idprofesion='"+user.getIdprofesion()+"' "
    		+ "where iduser = '"+Integer.parseInt(user.getIduser())+"'";
 	
-	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
-	System.out.println(sql);
-	System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
 	jdbcTemplate.update(sql);
 }
 
@@ -293,7 +276,6 @@ public boolean setEvent(String iduser, String idaction, String idsystem, String 
 public Session getUserSession(String ipuser, String iduser) {
 	Session result = new Session();
 	String sql = "select * from ncdis.ncdis.session ss where iduser = "+iduser+" and ipuser='"+ipuser+"' and active=1 group by  idsession,iduser, ipuser, created,modified,reswidth,resheight,active having  datediff(minute, max(modified), GETDATE()) < (Select convert(int,value) from ncdis.ncdis.configuration where keia='session')";
-	System.out.println(sql);
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
     if(rows.size() > 0 ) {
     	Map<String, Object> row = rows.get(0);
@@ -341,9 +323,6 @@ public boolean setUserSession(Session ses){
 	}else {
 		sql = "update ncdis.session set modified='"+sdf.format(now)+"',reswidth='"+session.getReswidth()+"',resheight='"+session.getResheight()+"' where idsession='"+session.getIdsession()+"'";
 	}
-	System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
-	System.out.println(sql);
-	System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
 	jdbcTemplate.update(sql);
 	result = true;
 	return result;
@@ -360,7 +339,11 @@ public Session getUserSession(int iduser, String ip){
 public Session isValidSession(String idsession){
 	Session result = new Session();
 	result = getUserSession(idsession);
+	logger.log(Level.INFO, "========================================================");
+	logger.log(Level.INFO, "This is test log message");
+	logger.log(Level.INFO, "========================================================");
 	return result;
+	
 }
 	
 	
@@ -748,10 +731,6 @@ public boolean setScheduleVisit(String idschedule, String iduser, String idpatie
 		sql = "update ncdi.ncdis.schedulevisits set iduser="+iduser+", datevisit='"+scheduledate+"', idpatient="+idpatient+", frequency='"+frequency+"' where idschedulevisits="+idschedule+"";
 	}
 	
-	System.out.println("++++++++++++++++++++++++++++++++++++++++++");
-	System.out.println(sql);
-	System.out.println("++++++++++++++++++++++++++++++++++++++++++");
-	
 	jdbcTemplate.update(sql);
 	result = true;
 	return result;
@@ -765,7 +744,6 @@ public ArrayList<Object> getUserPatients(String iduser, String hcpcat){
 		    + " left join ncdis.ncdis.community cc on pp.idcommunity = cc.idcommunity"
 		    + " left join ncdis.ncdis.patient_hcp ph on pp.idpatient = ph.idpatient "
 		    + " where pp.active=1 and (pp.dod is null or pp.dod='1900-01-01') and ph."+hcpcat+" = '"+iduser+"'";
-    System.out.println(sql);
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 	for(Map row : rows) {
     	HashMap<String, String> obj = new HashMap<>();

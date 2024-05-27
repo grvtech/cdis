@@ -117,19 +117,12 @@ public class FileTool {
 				return "";
 			}
 			
-			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
-	        System.out.println("++++"+emailConfig.getAbsolutePath());
-	        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
-			
 			
 			Properties prop = new Properties();
 			input = new FileInputStream(emailConfig);
 			prop.load(input);
 			result = prop.getProperty(propertyName);
 			
-			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
-	        System.out.println("++++"+result);
-	        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
 
 		} catch (NamingException e) {
 			e.printStackTrace();

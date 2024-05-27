@@ -25,7 +25,6 @@ import com.grvtech.cdis.model.Community;
 import com.grvtech.cdis.model.Complications;
 import com.grvtech.cdis.model.Depression;
 import com.grvtech.cdis.model.Diabet;
-import com.grvtech.cdis.model.Event;
 import com.grvtech.cdis.model.Hcp;
 import com.grvtech.cdis.model.Lab;
 import com.grvtech.cdis.model.Lipid;

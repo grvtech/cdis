@@ -431,7 +431,6 @@ public class Manager {
 		 }
 		 List l = Arrays.asList(legend);
 		 int index = l.indexOf(columnName);
-		 //System.out.println("INDEX : "+index+"  value "+columnValue);
 		 if(index >= 0){
 			 result = getValueOfLegend(index, columnValue);
 		 }
@@ -454,7 +453,6 @@ public class Manager {
 	            Element root = doc.getDocumentElement();
 	            NodeList sections = root.getElementsByTagName("section");
 	            Element section = (Element)sections.item(idSection);
-	            //System.out.println("SECTION ID:"+section.getAttribute("id")+"-----"+idField+"--------");
 	            NodeList items = section.getElementsByTagName("item");
 	            for(int i=0;i<items.getLength();i++){
 	            	Element item = (Element)items.item(i);

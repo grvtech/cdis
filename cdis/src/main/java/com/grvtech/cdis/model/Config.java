@@ -79,7 +79,6 @@ private String[] options=null;
   				BufferedReader bw = new BufferedReader(fwr);
   				while(bw.ready()){
   					String line = bw.readLine();
-  					//System.out.println("LINE CONFIG:"+line);
   					Config c = new Config();
   					c.setConfig(line);
   					al.add(c);

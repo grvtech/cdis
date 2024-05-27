@@ -154,8 +154,6 @@ public class Patient {
 		if(map.get("plname") != null){this.plname = ((String[])map.get("plname"))[0];}
 		if(map.get("address") != null){this.address = ((String[])map.get("address"))[0];}
 		if(map.get("postalcode") != null){this.postalcode = ((String[])map.get("postalcode"))[0];}
-		//System.out.println("THE MAP:"+map);
-		//System.out.println("THE DOD:"+((String[])map.get("dod"))[0]);
 		if(map.get("dod") != null){this.dod = ((String[])map.get("dod"))[0];}
 		if(map.get("dcause") != null){this.dcause = ((String[])map.get("dcause"))[0];}
 		if(map.get("idcommunity") != null){this.idcommunity = ((String[])map.get("idcommunity"))[0];}

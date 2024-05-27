@@ -61,9 +61,6 @@ public class ActionServiceServlet extends HttpServlet {
 			String[] rStr = {rawStr};
 			postData.put("rawPost", rStr);
 			
-			System.out.println("=========================================");
-			System.out.println(rawStr);
-			System.out.println("=========================================");
 			String ipStr = getIpAddr(request);
 			String[] ipStrArr = {ipStr};
 			postData.put("ipuser", ipStrArr);

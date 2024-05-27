@@ -17,15 +17,21 @@ import com.grvtech.cdis.model.Diabet;
 import com.grvtech.cdis.model.Patient;
 import com.grvtech.cdis.model.Value;
 import com.grvtech.cdis.model.Values;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class ImportNames {
+	
+	Logger logger = LogManager.getLogger(ImportNames.class);
 	
 	/*
 	 * "CDIS";"JBNQA";"MPI";"RAMQ";"Name";"First name";"Father's name";"AKA";"Sex";"DOB";"Community";"Deceased";"DOD";"Native";"Band number"
 	 * */
 	
 	
-	public static void importNames(){
+	public  void importNames(){
 		CdisDBridge db = new CdisDBridge();
 		InitialContext ic;
 		try {
@@ -36,15 +42,14 @@ public class ImportNames {
 				BufferedReader br = new BufferedReader(new FileReader(care4File)); 
 				String line;
 				while ((line = br.readLine()) != null) {
-					System.out.println(line);
 					line = line.replaceAll("\"","");
 					String[] parts = line.split(";");
 					
 					if(parts[0].equals("CDIS")){
-						System.out.println("Header Line");
+						logger.info("Header line");
+						
 					}else{
 						if(parts.length >= 3){
-							//System.out.println("First name : "+parts[0]+"  Last Name : "+parts[1]+ " RAMQ : "+parts[2].replaceAll(" ",""));
 							String ramq = parts[3].replaceAll(" ","");
 							String patientID = parts[0].replaceAll(" ","");
 							String jbqna = parts[1].replaceAll(" ","");
@@ -124,16 +129,14 @@ public class ImportNames {
 				BufferedReader br = new BufferedReader(new FileReader(care4File)); 
 				String line;
 				while ((line = br.readLine()) != null) {
-					System.out.println(line);
 					line = line.replaceAll("\"","");
 					String[] parts = line.split(";");
 					
 					if(parts[0].equals("CDIS")){
-						System.out.println("Header Line");
+
 					}else{
 						if(parts.length >= 3){
-							//System.out.println("First name : "+parts[0]+"  Last Name : "+parts[1]+ " RAMQ : "+parts[2].replaceAll(" ",""));
-							
+						
 							String patientID = parts[0].replaceAll(" ","");
 							String ipm = parts[1].replaceAll(" ","");
 							String ddate = parts[3].replaceAll(" ","");
@@ -154,7 +157,6 @@ public class ImportNames {
 									if(v!= null){
 										String d = v.getDate();
 										String vv = v.getValue();
-										System.out.println("db date value : "+v.getDate() +"    file date value "+ddate);
 										SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
 										if(d != "NULL"){
 											Date dObj = sdf2.parse(d); 
@@ -162,7 +164,6 @@ public class ImportNames {
 												hasDate = true;
 												db.editValue("dtype", idd, d, patientID	, Integer.toString(v.getIdvalue()));
 											}else{
-												System.out.println("date ne egale  valoarea bd :  "+vv +"    db date value "+d);
 												/*
 												if(vv.equals("3") || vv.equals("5") || vv.equals("6") || vv.equals("9")){
 													db.editValue("dtype", "10", d, patientID	, Integer.toString(v.getIdvalue()));

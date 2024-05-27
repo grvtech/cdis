@@ -6,14 +6,43 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+
+
+@Service
 public class FtpTool {
 
-	public static boolean putFile(String localFilePath, String place) {
+	Logger logger = LogManager.getLogger(FtpTool.class);
+	
+	@Value("${ftp.chisasibi}")
+	private String ftpChisasibi;
+	
+	@Value("${ftp.chisasibi.user}")
+	private String ftpChisasibiUser;
+	
+	@Value("${ftp.chisasibi.password}")
+	private String ftpChisasibiPassword;
+	
+	@Value("${ftp.chibougamou}")
+	private String ftpChibougamou;
+	
+	@Value("${ftp.chibougamou.user}")
+	private String ftpChibougamouUser;
+	
+	@Value("${ftp.chibougamou.password}")
+	private String ftpChibougamouPassword;
+	
+	
+	public boolean putFile(String localFilePath, String place) {
 		boolean result = false;
 		
 		
@@ -26,17 +55,17 @@ public class FtpTool {
         String pass = "andrei07";
         
         if(place.equals("chisasibi")){
-        	//server = "10.76.105.79";
-            //user = "18technocentre\\cdis";
-            //pass = "cdis2015";
+        	//server = ftpChisasibi;
+            //user = ftpChisasibiUser;
+            //pass = ftpChisasibiPassword;
             
             server = "192.168.2.220";
             user = "radu";
             pass = "andrei07";
         }else if(place.equals("chibougamou")){
-        	//server = "10.68.32.48";
-            //user = "omnitechr10\\omniftp";
-            //pass = "ImportExport";
+        	//server = ftpChibougamou;
+            //user = ftpChibougamouUser;
+            //pass = ftpChibougamouPassword;
             
         	server = "192.168.2.220";
             user = "radu";
@@ -63,18 +92,13 @@ public class FtpTool {
  
             InputStream inputStream = new FileInputStream(firstLocalFile);
  
-            System.out.println("Start uploading first file");
             result = ftpClient.storeFile(firstRemoteFile, inputStream);
-            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
-            System.out.println(result);
-            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
             inputStream.close();
             if (result) {
-                System.out.println("The first file is uploaded successfully.");
+            	logger.info("Upload file with success on "+place);
             }
  
         } catch (IOException ex) {
-            System.out.println("Error: " + ex.getMessage());
             ex.printStackTrace();
         } finally {
             try {
@@ -92,7 +116,7 @@ public class FtpTool {
 	
 	
 	
-	public static boolean getFile(String localFilePath, String place) {
+	public boolean getFile(String localFilePath, String place) {
 		
 		boolean result = false;
 		
@@ -147,20 +171,17 @@ public class FtpTool {
             	}
             }
             
-            System.out.println("The file to download : "+remoteFile);
             if(!remoteFile.equals("")){
-            	System.out.println("Start downloading first file");
             	result = ftpClient.retrieveFile(remoteFile, output);
             }
             //close output stream
             output.close();
             
             if (result) {
-                System.out.println("The first file is downloaded successfully.");
+                logger.info("file was downloade successfuly from "+place);
             }
  
         } catch (IOException ex) {
-            System.out.println("Error: " + ex.getMessage());
             ex.printStackTrace();
         } finally {
             try {

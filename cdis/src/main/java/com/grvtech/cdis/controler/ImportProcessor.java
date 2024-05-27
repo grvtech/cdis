@@ -55,6 +55,10 @@ public class ImportProcessor {
 	FileTool ft;
 	
 	@Autowired
+	FtpTool ftp;
+	
+	
+	@Autowired
 	MailTool mt;
 	
 	@org.springframework.beans.factory.annotation.Value("${reports}")
@@ -68,13 +72,13 @@ public class ImportProcessor {
 		Gson json = new Gson();
 		String result = "";
 		String exportRamqFile = cdisdb.exportRamq();
-		if(!FtpTool.putFile(exportRamqFile, "chisasibi")){
+		if(!ftp.putFile(exportRamqFile, "chisasibi")){
 			result = "chisasibi - not exported";
 		}else {
 			result = " chisasibi exported ";
 		}
 		
-		if(!FtpTool.putFile(exportRamqFile, "chibougamou")){
+		if(!ftp.putFile(exportRamqFile, "chibougamou")){
 			result += "chisbougamou - not exported";
 		}else {
 			result += " chisbougamou exported ";
@@ -426,7 +430,7 @@ public class ImportProcessor {
 		
 		try {
 			File importFile = new File(rf+System.getProperty("file.separator")+"files"+System.getProperty("file.separator")+"import-"+place+"_"+dateStr+".csv");
-			if(FtpTool.getFile(importFile.getAbsolutePath(), place)){
+			if(ftp.getFile(importFile.getAbsolutePath(), place)){
 			//if(importFile.exists()){
 			/*this is for local testing*/	
 				fw.write("File download from "+place+" - SUCCES\n");

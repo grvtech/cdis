@@ -10,6 +10,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -71,6 +73,7 @@ public class CdisDBridge {
 	    	Map<String,Object> line = rs.get(i);
 	    	result.add(line.get("name_en").toString());
 	    }
+	    logger.log(Level.INFO, "Get all comunities :"+result.size() );
 		return result;
 	}
 	
@@ -84,6 +87,7 @@ public class CdisDBridge {
             line.put("name",(row.get("name")==null?"":row.get("name").toString()));
             result.add(line);
         }
+        logger.log(Level.INFO, "Get HCPs hcp:"+hcp + "Search term :"+term );
 		return result;
 	}
 	
@@ -107,6 +111,7 @@ public class CdisDBridge {
 	        		(row.get("dcause")==null?"":row.get("dcause").toString()), (row.get("entrydate")==null?"":row.get("entrydate").toString()), (row.get("idcommunity")==null?"":row.get("idcommunity").toString()), (row.get("community")==null?"":row.get("community").toString()), (row.get("idprovince")==null?"":row.get("idprovince").toString()),(row.get("phone")==null?"":row.get("phone").toString()));
 			
 		}
+		logger.log(Level.INFO, "Get Patient By RAMQ :"+result.getIdpatient()+ "RAMQ:"+result.getRamq() );
 		return result;
 	}
 	
@@ -132,7 +137,7 @@ public class CdisDBridge {
 	        		(row.get("dcause")==null?"":row.get("dcause").toString()), (row.get("entrydate")==null?"":row.get("entrydate").toString()), (row.get("idcommunity")==null?"":row.get("idcommunity").toString()), (row.get("community")==null?"":row.get("community").toString()), (row.get("idprovince")==null?"":row.get("idprovince").toString()),(row.get("phone")==null?"":row.get("phone").toString()));
 			
 		}
-		
+		logger.log(Level.INFO, "Get Patient By ID :"+result.getIdpatient()+ "RAMQ:"+result.getRamq() );
 		return result;
 	}
 
@@ -164,6 +169,7 @@ public class CdisDBridge {
 		jdbcTemplate.update(sql);
 			
 	    result.setStatus(0);
+	    logger.log(Level.INFO, "Update Patient idpatient:"+pat.getIdpatient() );
 		return result;
 	}
 	
@@ -198,7 +204,7 @@ public class CdisDBridge {
 				+ "'1')";
 		logger.log(Level.INFO, query);
 	    int stat = jdbcTemplate.update(query);
-		    
+	    logger.log(Level.INFO, "Add Patient ramq:"+pat.getRamq() );    
 	    result.setStatus(stat);
 	return result;
 }
@@ -212,6 +218,7 @@ public Hcp getHcpById(String idpatient){
 		Map row = rows.get(0);
 		result = 	new Hcp( (row.get("casem")==null?"":row.get("casem").toString()) , (row.get("md")==null?"":row.get("md").toString()), (row.get("nut")==null?"":row.get("nut").toString()), (row.get("nur")==null?"":row.get("nur").toString()), (row.get("chr")==null?"":row.get("chr").toString()), row.get("idpatient").toString());
 	}
+	 logger.log(Level.INFO, "Get HCP by IDpatient  idpatient:"+idpatient );
 	return result;
 }
 	
@@ -224,6 +231,7 @@ public Hcp getHcpOfPatient(int idpatient){
 		Map row = rows.get(0);
 		result = 	new Hcp( (row.get("casem")==null?"":row.get("casem").toString()) , (row.get("md")==null?"":row.get("md").toString()), (row.get("nut")==null?"":row.get("nut").toString()), (row.get("nur")==null?"":row.get("nur").toString()), (row.get("chr")==null?"":row.get("chr").toString()), row.get("idpatient").toString());
 	}
+	logger.log(Level.INFO, "Get HCP by IDpatient  idpatient:"+idpatient );
 	return result;
 }
 	
@@ -234,6 +242,7 @@ public int deleteHcpOfPatient(int idpatient){
 	int result = 0;
 	String sql="delete from ncdis.patient_hcp where idpatient = "+idpatient+";";
 	result = jdbcTemplate.update(sql);
+	logger.log(Level.INFO, "Delete HCP of IDpatient  idpatient:"+idpatient );
 	return result;
 }
 
@@ -245,6 +254,7 @@ public boolean setHcpOfPatient(int idpatient,  String casem, String md, String n
 	String sql = "insert into ncdis.patient_hcp (idpatient, casem, md, nut, nur,chr, idsystem) values ("+idpatient+",0,"+md+","+nut+","+nur+","+chr+", 1)";
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Set HCP by IDpatient  idpatient:"+idpatient+ " HCPS casem:"+casem+"  MD:"+md+"  nut:"+nut+"  nur:"+nur+" chr:"+chr );
 	return result;
 }
 
@@ -254,6 +264,7 @@ public boolean setOneHcpOfPatient(String idpatient,  String iduser, String hcpco
 	String sql= "update ncdis.ncdis.patient_hcp set "+hcpcode+"="+iduser+" where idpatient="+idpatient;
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Set ONE HCP by IDpatient  idpatient:"+idpatient+ " iduser:"+iduser+"  code:"+hcpcode );
 	return result;
 }
 	
@@ -330,7 +341,7 @@ public Object getValues(String section, int idpatient, String sort){
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-	    
+    logger.log(Level.INFO, "Get Values  idpatient:"+idpatient+ " section:"+section);   
 	return result;
 }
 
@@ -353,11 +364,14 @@ public Object getAllValues(String section, String sectionCODE, int idpatient, St
 									+ " where css.section_code = '"+sectionCODE+"' )"
 			+ " ) avv on dv.iddata = avv.iddata order by avv.datevalue desc";
 		
-		
+		System.out.println("++++++++++++++++++++++++++++++++++++++++");
+		System.out.println("sql :"+sql);
+		System.out.println("++++++++++++++++++++++++++++++++++++++++");
 		
 		List<Map<String,Object>> rows = jdbcTemplate.queryForList(sql);
 	    //rs = cs.executeQuery();
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    DateTimeFormatter sdf1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	    HashMap<String, Values> params = new HashMap<String, Values>();
 	    ArrayList<String> columns = new ArrayList<>();
 	    
@@ -372,11 +386,31 @@ public Object getAllValues(String section, String sectionCODE, int idpatient, St
 	    	
 	    	String dStr = "NULL";
 	    	if(row.get("date") != null){
-	    		dStr = sdf.format(Date.parse(row.get("date").toString()));
+	    		
+	    		System.out.println("++++++++++++++++++++++++++++++++++++++++");
+				System.out.println("date :"+row.get("date").toString());
+				System.out.println("++++++++++++++++++++++++++++++++++++++++");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+	    		LocalDateTime ldt =  LocalDateTime.parse(row.get("date").toString(), formatter);
+	    		
+	    		//dStr = sdf.format(Date.parse(row.get("date").toString()));
+	    		dStr = sdf1.format(ldt);
+	    		
+	    		
+	    		
+	    		System.out.println("++++++++++++++++++++++++++++++++++++++++");
+		    	System.out.println("params  :"+row.get("idvalue") +" "+ row.get("name") +" "+ row.get("value")+" "+ row.get("type")+" "+ dStr+" "+ row.get("unit")+" "+ row.get("code")+" "+ row.get("dorder"));
+				System.out.println("params  :"+Integer.parseInt(row.get("idvalue").toString()) +" "+ row.get("name").toString() +" "+ row.get("value").toString()+" "+ row.get("type").toString()+" "+ dStr+" "+ row.get("unit").toString()+" "+ row.get("code").toString()+" "+ Integer.parseInt(row.get("dorder").toString()));
+				System.out.println("++++++++++++++++++++++++++++++++++++++++");
+		    	
+		        Value val = new Value(Integer.parseInt(row.get("idvalue").toString()) , row.get("name").toString(), row.get("value").toString(), row.get("type").toString(), dStr, row.get("unit").toString(), row.get("code").toString(), Integer.parseInt(row.get("dorder").toString()));
+		        av.addValue(val);
+		        params.put(c,av);
+	    		
+	    		
 	    	}
-	        Value val = new Value(Integer.parseInt(row.get("idvalue").toString()) , row.get("name").toString(), row.get("value").toString(), row.get("type").toString(), dStr, row.get("unit").toString(), row.get("code").toString(), Integer.parseInt(row.get("dorder").toString()));
-	        av.addValue(val);
-	        params.put(c,av);
+	    	
+	    	
 	    }
 	    
 	   
@@ -404,7 +438,7 @@ public Object getAllValues(String section, String sectionCODE, int idpatient, St
 		e.printStackTrace();
 	} 
 	
-	
+	logger.log(Level.INFO, "Get ALL Values  idpatient:"+idpatient+ " section:"+section);
 	return result;
 }
 
@@ -417,6 +451,7 @@ public ValueLimit getValueLimits(String valuename){
 		Map row = rows.get(0);
 		result = new ValueLimit(row.get("minvalue").toString(), row.get("maxvalue").toString(), row.get("startvalue").toString(), row.get("endvalue").toString());
 	}
+	logger.log(Level.INFO, "Get Values limit  for value:"+valuename);
 	return result;
 }
 	
@@ -429,14 +464,16 @@ public HashMap<String, String> getABCData(String idpatient){
     	String v = row.get("value").toString();
     	result.put(k, v);
 	}
+	logger.log(Level.INFO, "Get ABC data");
 	return result;
 }
 
 public boolean addValue(String valueName, String valueValue, String valueDate, String idpatient){
 	boolean result = false;
-	String sql = "insert into ncdis.ncdis.cdis_value (idpatient, datevalue, value, iddata) values ("+idpatient+", '"+valueDate+"', '"+valueValue+"', (select iddata from ncdis.ncdis.cdis_data where data_code = '"+valueName+"'));";
+	String sql = "insert into ncdis.ncdis.cdis_value (idpatient, datevalue, value, iddata, entrydate) values ("+idpatient+", '"+valueDate+"', '"+valueValue+"', (select iddata from ncdis.ncdis.cdis_data where data_code = '"+valueName+"'), getDate())";
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Add value for idpatient:"+idpatient+"  value:"+valueName+"   value:"+valueValue +"  valuedate:"+valueDate);
 	return result;	
 }
 	
@@ -445,6 +482,7 @@ public boolean deleteValue(String idvalue){
 	String sql = "delete from ncdis.ncdis.cdis_value where idvalue = '"+idvalue+"'";
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Delete Value idvalue:"+idvalue);
 	return result;	
 }
 	
@@ -454,6 +492,7 @@ public boolean editValue(String valueName, String valueValue, String valueDate, 
 	String sql = "update ncdis.ncdis.cdis_value set datevalue = '"+valueDate+"', value = '"+valueValue+"' where idpatient = '"+idpatient+"' and iddata = (select iddata from ncdis.ncdis.cdis_data where data_code = '"+valueName+"') and idvalue = '"+idvalue+"';";
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Edit Value idvalue:"+idvalue+ " for idpatient:"+idpatient );
 	return result;	
 }
 	
@@ -485,6 +524,7 @@ public boolean editPatient(Patient patient){
 		
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Edit Patient idpatient:"+patient.getIdpatient());
 	return result;	
 }
 	
@@ -494,6 +534,7 @@ public boolean deletePatient(String idpatient){
 	String sql = "update ncdis.ncdis.patient  set active=0 where idpatient = '"+idpatient+"'";
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Delete Patient idpatient:"+idpatient);
 	return result;	
 }
 	
@@ -516,6 +557,7 @@ public ArrayList<Report> getReports(String iduser, String idcommunity, String ty
 		Report rep = new Report(row.get("idreport").toString(), row.get("report_name")==null?"":row.get("report_name").toString(), row.get("report_code")==null?"":row.get("report_code").toString(), row.get("owner")==null?"":row.get("owner").toString(), row.get("modified")==null?"":row.get("modified").toString());
     	result.add(rep);
 	}
+	logger.log(Level.INFO, "Get Reports ");
 	return result;
 }
 
@@ -565,6 +607,7 @@ public HashMap<String, ArrayList<Report>> getUserReports(String userRole, String
 		predefinedReports = getReports(iduser, "0","REP"); 
 		result.put("predefined",predefinedReports);
 	}
+	logger.log(Level.INFO, "Get  User Reports iduser:"+iduser);
 	return result;
 }
 
@@ -577,6 +620,7 @@ public String saveReport(JsonObject reportObject){
 	result = sdf.format(new Date());
 	String sql = "insert into ncdis.ncdis.reports (report_name, report_code, iduser, created) values ('"+reportObject.get("title").getAsString()+"','PERSONAL"+sdf.format(new Date())+"','"+reportObject.get("iduser").getAsString()+"','"+reportObject.get("generated").getAsString()+"')";
 	jdbcTemplate.update(sql);
+	logger.log(Level.INFO, "Save Report report: "+reportObject.get("title").getAsString());
 	return result;	
 }
 
@@ -965,7 +1009,7 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 				}
 			}
 		}
-	
+	logger.log(Level.INFO, "Execute Report ");
 		return result;
 	}
 
@@ -1032,7 +1076,7 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 				}
 		}
 		
-	   
+		logger.log(Level.INFO, "Execute Report FLIST");
     return result;
 }
 	
@@ -1145,6 +1189,7 @@ public ArrayList<Object> executeReportLocalList(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		logger.log(Level.INFO, "Execute Report Locallist");
 	return result;
 }
 
@@ -1801,7 +1846,7 @@ public  Hashtable<String,ArrayList<Hashtable<String,String>>> getHbA1cTrend(Stri
 	}catch (Exception se) {
         se.printStackTrace();
     }
-	
+	logger.log(Level.INFO, "Execute HBA1c Trend");
 	return result;
 }
 
@@ -1896,7 +1941,7 @@ public  Hashtable<String,ArrayList<Hashtable<String,String>>> getHbA1cPeriod(Str
 	}catch (Exception se) {
         se.printStackTrace();
     } 
-	
+	logger.log(Level.INFO, "Execute HBA1c Period");
 	return result;
 }
 
@@ -2003,7 +2048,7 @@ public  Hashtable<String,ArrayList<Hashtable<String,String>>> getHbA1cValue(Stri
 	}catch (Exception se) {
 	    se.printStackTrace();
 	} 
-
+	logger.log(Level.INFO, "Execute HBA1c Value");
 	return result;
 }
 
@@ -2093,7 +2138,7 @@ public Hashtable<String, Object> a1cReportCustomValue(String cvalue, String idco
 	} catch (Exception e) {
 		e.printStackTrace();
 	} 
-	
+	logger.log(Level.INFO, "Execute HBA1c custom value");
 	return result;
 }
 
@@ -2196,7 +2241,7 @@ public Hashtable<String, Object> ldlReportCustomValue(String sens, String pvalue
 	} catch (Exception e) {
 		e.printStackTrace();
 	} 
-
+	logger.log(Level.INFO, "Execute LDL custom value");
 	return result;
 }
 
@@ -2276,7 +2321,7 @@ public  int getNumberOfPatients(String idcommunity, String since, String gender,
 			
 			result = Integer.parseInt(line.get("cnt").toString());
 	    }
-			
+		logger.log(Level.INFO, "Get number of patients");
 	return result;
 }
 
@@ -2522,7 +2567,7 @@ public  Hashtable<String, ArrayList<Object>> getPValidationData(String idlist) {
 		result.put("header", header);
 		result.put("data", data);
 		
-	
+		logger.log(Level.INFO, "Execute Pvalidation data");
 	return result;
 }
 
@@ -2617,6 +2662,7 @@ public  Hashtable<String, ArrayList<Object>> getPrevalenceNow(String idcommunity
 	    }
 
 	result.put("series", series);
+	logger.log(Level.INFO, "Execute Prevalence now");
 	return result;
 }
 
@@ -2717,7 +2763,7 @@ public  Hashtable<String, ArrayList<Object>> getPrevalenceNowLastYear(String idc
 	    }
 	    
 	result.put("series", series);
-	
+	logger.log(Level.INFO, "Execute prevalence now last year");
 	return result;
 }
 
@@ -2814,6 +2860,7 @@ public  Hashtable<String, ArrayList<Object>> getIncidenceNow(String idcommunity,
 	    }
 
 		result.put("series", series);
+		logger.log(Level.INFO, "Execute Incidence Now");
 	return result;
 }
 
@@ -2918,7 +2965,7 @@ public  Hashtable<String, ArrayList<Object>> getIncidenceNowLastYear(String idco
 		    }
 			
 		result.put("series", series);
-				
+		logger.log(Level.INFO, "Execute Incidence Now Last Year");	
 	return result;
 }
 
@@ -3024,6 +3071,7 @@ public  Hashtable<String, ArrayList<Object>> getPrevalenceHistory(String idcommu
 	}catch (ParseException e) {
 		e.printStackTrace();
 	}
+	logger.log(Level.INFO, "Execute Prevalence History");
 	return result;
 }
 
@@ -3130,7 +3178,7 @@ public  Hashtable<String, ArrayList<Object>> getIncidenceHistory(String idcommun
 	} catch (ParseException e) {
 		e.printStackTrace();
 	} 
-	
+	logger.log(Level.INFO, "Execute Incidence History");
 	return result;
 }
 

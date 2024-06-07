@@ -74,7 +74,7 @@ INDEX PAGE
 	height: 40px;
 	padding: 0 8px;
 	margin: 0;
-	background: #fffffff;
+	background-color: #ffffff;
 	border: 1px solid #ffffff;
 	width:300px;
 	font-size: 150%;
@@ -131,8 +131,23 @@ INDEX PAGE
 	 display: block;
 	font-size: 100%;
 	color: #000000;
+	font-weight:bold;
+}
+.dialog-forgot-username{
+	display:grid;
+	grid-template-columns:40% 60%;
 }
 
+.dialog-forgot-username .fusername{
+	display:grid;
+	grid-template-columns:90% 10%;
+}
+
+.dialog-forgot-username .fusername span{
+	text-align:right;
+	font-size:0.6vw;
+	line-height:25px;
+}
 
 #dialog-subscribe  fieldset { padding:0; border:0; margin-top:25px; border:none;}
 #dialog-forgot  fieldset { padding:0; border:0; margin-top:25px; border:none;}

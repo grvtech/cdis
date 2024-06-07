@@ -189,9 +189,6 @@ public class MailTool {
 	        
 	        
 	        MimeMessage message = new MimeMessage(session);
-	        
-	        
-	         try {
 	            //Set email data 
 	            message.setFrom(new InternetAddress(ft.getEmailProperty("smtp.from")));
 	            message.addRecipient(Message.RecipientType.TO,new InternetAddress(recipient_mail_id));
@@ -203,13 +200,8 @@ public class MailTool {
 	            String templatePath = "";
 	            InitialContext ic;
 				try {
-					ic = new InitialContext();
-					//String rf = (String) ic.lookup("root-folder");
-					//String rf = filesFolder;
 					templatePath = filesFolder;
-					//String messagEmail = "<b><p>Hello Administrator</p></b><p>New user is subscribed to CDIS.<br>Login to CDIS and go to Users section.<br>Click on the button pending users to see the users that subscribed to CDIS but are not active yet.Click on the user to select it and click on the button Activate to allow the user to log in to CDIS.<br><br><b>An email will be sent to the user to annouce the activation.</b></p>";
-					//MailTool.sendMailInHtml("CDIS New User Subscribe", messagEmail, "support@grvtech.ca", templatePath);
-				} catch (NamingException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 	            
@@ -245,13 +237,12 @@ public class MailTool {
 	            transport.sendMessage(message, message.getAllRecipients());
 	            transport.close();
 	         
-	        }catch (MessagingException ex) {
-	                Logger.getLogger(MailTool.class.getName()).log(Level.SEVERE, null, ex);
-	        }catch (Exception ae) {
-	            ae.printStackTrace();
-	        }    
-	   }catch(Exception exception){
-            exception.printStackTrace();
-       }
+	         
+	   }catch (MessagingException ex) {
+           //Logger.getLogger(MailTool.class.getName()).log(Level.SEVERE, null, ex);
+		   ex.printStackTrace();
+	   }catch (Exception ae) {
+		   ae.printStackTrace();
+	   } 
 	}
 }

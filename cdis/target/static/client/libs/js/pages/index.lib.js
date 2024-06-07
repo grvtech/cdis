@@ -291,13 +291,16 @@ function validatePasswordConfirmReset() {
 function forgotPassword() {
     var valid = true;
     $(".mf").removeClass( "ui-state-error" );
-    valid = valid && checkLength(  $( "#usernameUser" ), "Username" );
+    
+    if(!$("#fusername").prop("checked")){
+		valid = valid && checkLength(  $( "#usernameUser" ), "Username" );
+	}
     valid = valid && checkLength(  $( "#emailUser" ), "Email" );
     valid = valid && checkRegexp(  $( "#emailUser" ), emailRegex, "eg. name@domain.com" );
 
 
     if ( valid ) {
-    	var data = "language=en"+"&usernameUser="+$("#usernameUser").val()+"&emailUser="+$("#emailUser").val();
+    	var data = "language=en"+"&usernameUser="+$("#usernameUser").val()+"&emailUser="+$("#emailUser").val()+"&fusername="+$("#fusername").prop("checked");
     	var mes = $.ajax({
     		  url: "/ncdis/service/action/forgotPassword",
     		  type: "POST",

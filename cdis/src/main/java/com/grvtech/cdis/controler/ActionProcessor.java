@@ -613,6 +613,10 @@ public String forgotPassword(final HttpServletRequest request){
 	String usernameUser = request.getParameter("usernameUser").toString();
 	String emailUser = request.getParameter("emailUser").toString();
 	String language = request.getParameter("language").toString();
+	String fusername = request.getParameter("fusername").toString();
+	if(fusername.equals("true")) {
+		usernameUser = chbdb.getUsernameByEmail(emailUser);
+	}
 	String server = request.getServerName();
 	int port = request.getServerPort();
 	
@@ -622,7 +626,7 @@ public String forgotPassword(final HttpServletRequest request){
 		chbdb.setResetPassword(u.getIduser(),"1");
 		String params = "rst=1&iduser="+u.getIduser(); 
 		String url = "https://"+server+":"+port+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
-		String messagEmail = "<b><p>CDIS Password reset</p></b><p>Hello <b>"+u.getFirstname()+" "+u.getLastname()+"</b></p><p>Click on the button below to reset your password<br><br><a href='"+url+"'>Reset Password</a></p>";
+		String messagEmail = "<b><p>CDIS Password reset</p></b><p>Hello <b>"+u.getFirstname()+" "+u.getLastname()+"</b></p><p><b>Username:</b>"+u.getUsername()+"</p><p>Click on the button below to reset your password<br><br><a href='"+url+"'>Reset Password</a></p>";
 		mt.sendMailInHtml("CDIS Password Reset", messagEmail, u.getEmail());
 		
 		ArrayList<Object> obs = new ArrayList<Object>();
@@ -704,7 +708,7 @@ public String subscribe(final HttpServletRequest request){
 				
 				String params = "confirm=1&iduser="+idPendingUser; 
 				String url = "https://"+server+":"+port+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
-				String messagEmailUser = "<b><p>Welcome to CDIS</p></b><p>In order to activate your CDIS subscription you should confirm the email.<br><br><b>Click on the button below to confirm your email and activate the subscription</b><br><br><a href='"+url+"'>Confirm Email</a></p>";
+				String messagEmailUser = "<p><b>Welcome to CDIS</b></p><p><b>Name :</b> "+u.getFirstname()+" "+u.getLastname()+"<br><b>Username :</b> "+u.getUsername()+"<br><b>User Email :</b> "+u.getEmail()+"<br></p><p>In order to activate your CDIS subscription you should confirm the email.<br><br><b>Click on the button below to confirm your email and activate the subscription</b><br><br><a href='"+url+"'>Confirm Email</a></p>";
 				mt.sendMailInHtml("CDIS Subscribe", messagEmailUser, u.getEmail());
 				
 				String message = "Subscribe to CDIS.\nYou will receive an email with a button to confirm email and activate the subscription. ";
@@ -783,7 +787,7 @@ public String resetUserPassword(final HttpServletRequest request){
 		u.setPassword(encPassword);
 		chbdb.resetUserPassword(u);
 		
-		String messagEmail = "<b><p>Hello <b>"+u.getFirstname()+" "+u.getLastname()+"</b></p></b><p>You reset you password with success!<br><br>Use you new credentials to login into CDIS<br><br><a href='https://"+server+":"+port+"/ncdis'>Login to CDIS</a></p>";
+		String messagEmail = "<p>Hello <b>"+u.getFirstname()+" "+u.getLastname()+"</b></p><p><b>Username : </b>"+u.getUsername()+"</p><p>You reset you password with success!<br><br>Use you new credentials to login into CDIS<br><br><a href='https://"+server+":"+port+"/ncdis'>Login to CDIS</a></p>";
 		mt.sendMailInHtml("CDIS Password Reset Successfully", messagEmail, u.getEmail());
 		
 		String message = "You successfully reset your password\n.";

@@ -61,6 +61,9 @@ public class ImportProcessor {
 	@Autowired
 	MailTool mt;
 	
+	@org.springframework.beans.factory.annotation.Value("${homefolder}")
+	private String homefolder;
+	
 	@org.springframework.beans.factory.annotation.Value("${reports}")
 	private String reportsFolder;
 	
@@ -116,6 +119,10 @@ public class ImportProcessor {
 			//ic = new InitialContext();
 			//rf = (String) ic.lookup("reports-folder");
 			reportFile = new File(reportsFolder+System.getProperty("file.separator")+"import"+System.getProperty("file.separator")+"import_"+dateStr+".json");
+			System.out.println("++++++++++++++++++++++++++++++++++++++++");
+			System.out.println("report file "+reportFile.getAbsolutePath());
+			System.out.println("++++++++++++++++++++++++++++++++++++++++");
+			
 			if(!reportFile.exists())reportFile.createNewFile();
 			FileWriter fw =  new FileWriter(reportFile,true);
 			fw.write(result);
@@ -217,6 +224,11 @@ public class ImportProcessor {
 					}
 					if(valuesDates.contains(dbFormat.format(fileDate))){
 						//date is already in db should I update ????
+						
+						System.out.println("++++++++++++++++++++++++++++++++++++++++");
+						System.out.println("date is already in db for "+fileDate);
+						System.out.println("++++++++++++++++++++++++++++++++++++++++");
+						
 					}else{
 						//date is not in db
 						if(fileDoubleValue > 0){
@@ -233,6 +245,28 @@ public class ImportProcessor {
 							result.add(insert);
 							cdisdb.addValue(vars[x].toLowerCase(), Double.toString(fileDoubleValue), dbFormat.format(fileDate), Integer.toString(pat.getIdpatient()));
 						}
+					}
+				}else {
+					
+					System.out.println("++++++++++++++++++++++++++++++++++++++++");
+					System.out.println("values is null");
+					System.out.println("new value : "+fileDoubleValue);
+					System.out.println("++++++++++++++++++++++++++++++++++++++++");
+					
+					//date is not in db
+					if(fileDoubleValue > 0){
+						
+						if(vars[x].toLowerCase().equals("hba1c")){
+							if(fileDoubleValue > 1){
+								fileDoubleValue = fileDoubleValue * 0.01;
+							}
+						}
+						Hashtable<String, String> insert = new Hashtable<>();
+						insert.put("namevalue", vars[x].toLowerCase());
+						insert.put("datevalue",dbFormat.format(fileDate));
+						insert.put("value", Double.toString(fileDoubleValue));
+						result.add(insert);
+						cdisdb.addValue(vars[x].toLowerCase(), Double.toString(fileDoubleValue), dbFormat.format(fileDate), Integer.toString(pat.getIdpatient()));
 					}
 				}
 			}
@@ -417,20 +451,25 @@ public class ImportProcessor {
 		String rf = "";
 		FileWriter fw = null;
 		try {
-			ic = new InitialContext();
-			rf = (String) ic.lookup("root-folder");
-			logFile = new File(rf+System.getProperty("file.separator")+"files"+System.getProperty("file.separator")+"log-"+place+"_"+dateStr+".log");
+			logFile = new File(homefolder+System.getProperty("file.separator")+"logs"+System.getProperty("file.separator")+"log-"+place+"_"+dateStr+".log");
 			fw = new FileWriter(logFile,true);
-		} catch (NamingException e) {
-			e.printStackTrace();
+			System.out.println("++++++++++++++++++++++++++++++++++++++++");
+			System.out.println(logFile.getAbsolutePath());
+			System.out.println("++++++++++++++++++++++++++++++++++++++++");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		try {
-			File importFile = new File(rf+System.getProperty("file.separator")+"files"+System.getProperty("file.separator")+"import-"+place+"_"+dateStr+".csv");
+			File importFile = new File(homefolder+System.getProperty("file.separator")+"files"+System.getProperty("file.separator")+"import-"+place+"_"+dateStr+".csv");
+			System.out.println("++++++++++++++++++++++++++++++++++++++++");
+			System.out.println(importFile.getAbsolutePath());
+			System.out.println("++++++++++++++++++++++++++++++++++++++++");
 			if(ftp.getFile(importFile.getAbsolutePath(), place)){
+				System.out.println("++++++++++++++++++++++++++++++++++++++++");
+				System.out.println("get file success");
+				System.out.println("++++++++++++++++++++++++++++++++++++++++");
+				
 			//if(importFile.exists()){
 			/*this is for local testing*/	
 				fw.write("File download from "+place+" - SUCCES\n");
@@ -569,6 +608,10 @@ public class ImportProcessor {
 					
 					
 				}
+			}else {
+				System.out.println("++++++++++++++++++++++++++++++++++++++++");
+				System.out.println("ftp get file not working");
+				System.out.println("++++++++++++++++++++++++++++++++++++++++");
 			}
 			
 		}catch(Exception ex){

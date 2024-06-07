@@ -174,7 +174,7 @@ function isUserLoged(sessionId){
 		request.done(function( json ) {
 			var sObj = json.objs[0];
 			if(sObj != null){
-				if((sObj.idsession != null) && (sObj.idsession != "") ){
+				if((sObj.idsession != null) && (sObj.idsession != "") &&  (sObj.idsession != "0")){
 					userObj = getUserBySession(sObj.idsession);
 					if(userObj[0].username=="demo")isDemo=true;
 					userProfileObj = getUserProfile(sObj.iduser, 1);

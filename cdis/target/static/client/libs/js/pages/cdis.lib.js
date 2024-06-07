@@ -828,10 +828,10 @@ function initEditPatientSection(){
 	});
 	$("#radio-sex label").on("change",function() {$("input[name='sex']").val($(this).find("input[type='radio']").val());});
 	$("#radio-iscree label").on("change",function() {$("input[name='iscree']").val($(this).find("input[type='radio']").val());});
-	$("#chr-value").on("blur",function(){if($(this).val()== ""){$("#chrid").val("");}});
-	$("#md-value").on("blur",function(){if($(this).val()== ""){$("#mdid").val("");}});
-	$("#nur-value").on("blur",function(){if($(this).val()== ""){$("#nurid").val("");}});
-	$("#nut-value").on("blur",function(){if($(this).val()== ""){$("#nutid").val("");}});
+	$("#chr").on("blur",function(){if($(this).val()== ""){$("#chrid").val("");}});
+	$("#md").on("blur",function(){if($(this).val()== ""){$("#mdid").val("");}});
+	$("#nur").on("blur",function(){if($(this).val()== ""){$("#nurid").val("");}});
+	$("#nut").on("blur",function(){if($(this).val()== ""){$("#nutid").val("");}});
 	$("#cancel-editpatient").on("click",function() {gtc(sid,"en",patientObj.ramq,"patient");});
 	
 	$("#save-editpatient").on("click",showEditPatientConfirm);
@@ -845,29 +845,41 @@ function initEditPatientSection(){
 function getHcpObject(){
 	var hcpObject = getObjectArray("hcp",patientObjArray);
 	$(usersArray).each(function(k,v){
-		if(hcpObject.chr != null || hcpObject.chr != ""){
+		if(hcpObject.chr != null && hcpObject.chr != "" && hcpObject.chr != "0" ){
 			if(v.iduser == hcpObject.chr){
 				hcpObject["chr"] = (capitalizeFirstLetter((v.firstname).toLowerCase())+" "+capitalizeFirstLetter((v.lastname).toLowerCase()));
 				hcpObject["chrid"] = v.iduser;
 			}
+		}else{
+			hcpObject["chr"] = "";
+			hcpObject["chrid"] = "";
 		}
-		if(hcpObject.md != null || hcpObject.md != ""){
+		if(hcpObject.md != null && hcpObject.md != "" &&  hcpObject.md != "0"){
 			if(v.iduser == hcpObject.md){
 				hcpObject["md"] = (capitalizeFirstLetter((v.firstname).toLowerCase())+" "+capitalizeFirstLetter((v.lastname).toLowerCase()));
 				hcpObject["mdid"] = v.iduser;
 			}
+		}else{
+			hcpObject["md"] = "";
+			hcpObject["mdid"] = "";
 		}
-		if(hcpObject.nur != null || hcpObject.nur != ""){
+		if(hcpObject.nur != null && hcpObject.nur != "" && hcpObject.nur != "0"){
 			if(v.iduser == hcpObject.nur){
 				hcpObject["nur"] = (capitalizeFirstLetter((v.firstname).toLowerCase())+" "+capitalizeFirstLetter((v.lastname).toLowerCase()));
 				hcpObject["nurid"] = v.iduser;
 			}
+		}else{
+			hcpObject["nur"] = "";
+			hcpObject["nurid"] = "";
 		}
-		if(hcpObject.nut != null || hcpObject.nut != ""){
+		if(hcpObject.nut != null && hcpObject.nut != "" && hcpObject.nut != "0"){
 			if(v.iduser == hcpObject.nut){
 				hcpObject["nut"] = (capitalizeFirstLetter((v.firstname).toLowerCase())+" "+capitalizeFirstLetter((v.lastname).toLowerCase()));
 				hcpObject["nutid"] = v.iduser;
 			}
+		}else{
+			hcpObject["nut"] = "";
+			hcpObject["nutid"] = "";
 		}
 	});
 	return hcpObject;

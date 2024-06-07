@@ -60,6 +60,7 @@ public Action getAction(String actionCode){
         result.setDescription(row.get("action_description").toString());
         result.setCode(row.get("action_code").toString());    
     }
+	logger.log(Level.INFO, "Get Action :"+result.getCode());
 	return result;
 }
 	
@@ -81,7 +82,7 @@ public User getUser(String username, String password){
     	result.setActive(row.get("active").toString());
     	result.setIdprofesion(row.get("idprofesion")==null?"":row.get("idprofesion").toString());
     }
-	
+    logger.log(Level.INFO, "Get User :"+result.getUsername()+"  "+result.getEmail()+"  iduser : "+result.getIduser() );
 	return result;
 }
 	
@@ -104,6 +105,7 @@ public ArrayList<Object> getUsers(){
         obj.setIdprofesion(row.get("idprofesion")==null?"":row.get("idprofesion").toString());
         result.add(obj);
     }
+    logger.log(Level.INFO, "Get List of users :"+result.size());
 	return result;
 }
 	
@@ -154,6 +156,7 @@ public User getUser(int iduser){
     	result.setReset(row.get("reset")==null?"":row.get("reset").toString());
     	result.setConfirmmail(row.get("confirmmail")==null?"":row.get("confirmmail").toString());
     }
+    logger.log(Level.INFO, "Get User by ID:"+result.getUsername()+"  "+result.getEmail()+"  iduser : "+result.getIduser() );
 	return result;
 }
 
@@ -173,6 +176,7 @@ public void setUser(User user){
    		+ "where iduser = '"+Integer.parseInt(user.getIduser())+"'";
 	
 	jdbcTemplate.update(sql);
+	logger.log(Level.INFO, "Set User : iduser : "+user.getIduser() );
 }
 
 public int addUser(User user){
@@ -187,7 +191,9 @@ public int addUser(User user){
 	if(rows.size() > 0) {
 		Map row = rows.get(0);
 		result = (Integer) row.get("iduser");
+		logger.log(Level.INFO, "Set User :"+result );
     }
+	
 	return result;
 }
 
@@ -251,16 +257,32 @@ public User getUser(String idsession){
     	result.setReset(row.get("reset").toString());
     	result.setConfirmmail(row.get("confirmmail").toString());
     }
+    logger.log(Level.INFO, "Get User ID Session :"+result.getUsername()+"  "+result.getEmail()+"  iduser : "+result.getIduser() );
+	return result;
+}
+
+
+public String getUsernameByEmail(String email){
+	String result = "";
+	String sql = "SELECT nnu.username from ncdis.ncdis.users nnu where nnu.email = '"+email+"' and nnu.active = 1";
+	
+	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+    if(rows.size() == 1) {
+    	for(Map row:rows) {
+    		result = row.get("username").toString();
+    	}
+    }
 		
 	return result;
 }
 
-	
+
 public boolean setEvent(String iduser, String idaction, String idsystem, String idsession){
 	boolean result = false;
 	String sql = "INSERT INTO ncdis.events (idaction,idsystem,iduser,idsession,created )  VALUES ("+idaction+", "+idsystem+", "+iduser+", '"+idsession+"',GETDATE()) ";
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Set Event : "+idaction+"  user:"+iduser+" session:"+idsession );
 	return result;
 }
 	
@@ -269,6 +291,7 @@ public boolean setEvent(String iduser, String idaction, String idsystem, String 
 	String sql = "INSERT INTO ncdis.events (idaction,idsystem,iduser,idsession,data,created )  VALUES ("+idaction+", "+idsystem+", "+iduser+", '"+idsession+"','"+data+"',GETDATE()) ";
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Set Event : "+idaction+"  user:"+iduser+" session:"+idsession );
 	return result;
 }
 	
@@ -288,7 +311,7 @@ public Session getUserSession(String ipuser, String iduser) {
     	result.setResheight(row.get("resheight")==null?0:((Integer)row.get("resheight")));
     	result.setActive(row.get("active")==null?0:((Integer)row.get("active")));
     }
-	
+    logger.log(Level.INFO, "Get User Session by iduser and ipuser : iduser:"+result.getIduser()+"  session:"+result.getIdsession() );
 	return result;
 }
 
@@ -307,6 +330,7 @@ public Session getUserSession(String idsession) {
     	result.setResheight(row.get("resheight")==null?0:((Integer)row.get("resheight")));
     	result.setActive(row.get("active")==null?0:((Integer)row.get("active")));
     }
+    logger.log(Level.INFO, "Get User Session by idsession : iduser:"+result.getIduser()+"  session:"+result.getIdsession() );
 	return result;
 }
 
@@ -325,6 +349,7 @@ public boolean setUserSession(Session ses){
 	}
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Set User Session  : iduser:"+session.getIduser()+"  session:"+session.getIdsession() );
 	return result;
 }
 	
@@ -339,9 +364,7 @@ public Session getUserSession(int iduser, String ip){
 public Session isValidSession(String idsession){
 	Session result = new Session();
 	result = getUserSession(idsession);
-	logger.log(Level.INFO, "========================================================");
-	logger.log(Level.INFO, "This is test log message");
-	logger.log(Level.INFO, "========================================================");
+	logger.log(Level.INFO, "Valid Session for :"+result.getIduser()+" session : "+idsession+"   "+result.getIpuser());
 	return result;
 	
 }
@@ -366,6 +389,7 @@ public User isValidUser(String email, String username){
     	result.setReset(row.get("reset").toString());
     	result.setConfirmmail(row.get("confirmmail").toString());
     }
+    logger.log(Level.INFO, "is Valid user by email and username : iduser:"+result.getIduser()+"  session:"+result.getUsername() );
 	return result;
 }
 	
@@ -375,6 +399,7 @@ public boolean logoutSession(String idsession){
 	String sql = "update ncdis.ncdis.session set active = 0 where idsession = '"+idsession+"'";
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Logout session : idsession:"+idsession );
 	return result;
 }
 	
@@ -401,6 +426,8 @@ public ArrayList<Object> getPatientsList(String criteria, String term){
     			(row.get("giu")==null?"":row.get("giu").toString()));
     	result.add(sp);
     }
+    
+    logger.log(Level.INFO, "Get Patient List : patients:"+result.size() );
 	return result;
 }
 	
@@ -433,6 +460,7 @@ public ArrayList<Object> getPatientsList(String criteria, String term, User user
     			(row.get("giu")==null?"":row.get("giu").toString()));
     	result.add(sp);
     }
+    logger.log(Level.INFO, "Get Patient List : patients:"+result.size() );
 	return result;
 }
 	
@@ -463,6 +491,8 @@ public ArrayList<Object> getDiabetByCommunity(String graphtype){
     }
    	result.add(men);
    	result.add(women);
+   	
+   	logger.log(Level.INFO, "Get Diabet By Community ");
 	return result;
 }
 	
@@ -487,6 +517,7 @@ public ArrayList<Object> getDiabetByType(){
     }
    	result.add(men);
    	result.add(women);
+   	logger.log(Level.INFO, "Get Diabet by Type:" );
 	return result;
 }
 	
@@ -533,6 +564,7 @@ public ArrayList<Object> getDiabetByYear(String year){
     	dataset.add(serie);
 	}
     result.add(dataset);
+    logger.log(Level.INFO, "Get Diabet by Year ");
 	return result;
 }
 	
@@ -543,6 +575,7 @@ public String getLastLogin(String iduser){
 	for(Map row : rows) {
 		result = row.get("val").toString();    
 	}
+	logger.log(Level.INFO, "Get last Session iduser:"+iduser );
 	return result;
 }
 
@@ -558,6 +591,7 @@ public HashMap<String, String> getLastPatient(String iduser){
 	for(Map row : rows) {
 		result.put(row.get("app").toString(), row.get("data").toString());    
 	}
+	logger.log(Level.INFO, "Get Last Patient : iduser:"+iduser);
 	return result;
 }
 
@@ -575,6 +609,7 @@ public HashMap<String, String> getLastReport(String iduser){
 		result.put("id", row.get("idreport").toString());
     	result.put("name", row.get("report_name").toString());    
 	}
+	logger.log(Level.INFO, "Get Last Report  iduser:"+iduser+"  idreport:"+result.get("id"));
 	return result;
 }
 	
@@ -596,6 +631,7 @@ public ArrayList<Object> getUserMessages(String iduser){
   		sent.add(new Message(row1.get("idmessage").toString(), (row1.get("from_user_fname")==null?"":row1.get("from_user_fname").toString())+" "+(row1.get("from_user_lname")==null?"":row1.get("from_user_lname").toString()),(row1.get("to_iduser")==null?"":row1.get("to_iduser").toString()),(Boolean)row1.get("read"), (Boolean)row1.get("isdelivered"), (row1.get("dcreate")==null?"":row1.get("dcreate").toString()),(row1.get("message")==null?"":row1.get("message").toString())));    
   	}
     result.add(sent);
+    logger.log(Level.INFO, "Get User Messages iduser:"+iduser);
 	return result;
 }
 	
@@ -640,6 +676,7 @@ public ArrayList<ArrayList<String>> getUserActions(){
     	line.add(row.get("created").toString());
     	result.add(line);
 	}
+	logger.log(Level.INFO, "Get User Actions ");
 	return result;
 }
 
@@ -660,6 +697,9 @@ public ArrayList<Note> getUserNotes(String iduserto){
     			row.get("viewed").toString());
         result.add(note);
     }
+    
+    logger.log(Level.INFO, "Get User Notes iduser:"+iduserto );
+    
 	return result;
 }
 	
@@ -698,6 +738,7 @@ public boolean readPatientNote(String noteid){
 	String sql = "update ncdis.ncdis.notes set viewed=1 where idnote = '"+noteid+"'";
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Read Patient Note idnote:"+noteid );
 	return result;
 }
 	
@@ -706,6 +747,7 @@ public boolean deletePatientNote(String noteid){
 	String sql = "delete from ncdis.ncdis.notes where idnote = '"+noteid+"'";
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Delete Patient Note idnote :"+noteid);
 	return result;
 }
 
@@ -719,6 +761,7 @@ public ScheduleVisit getScheduleVisit(String idpatient, String iduser){
 			result = new ScheduleVisit(row.get("idpatient").toString(), row.get("iduser").toString(), row.get("nextdate").toString(), row.get("frequency").toString(), row.get("idprofesion").toString());
 		}
     }
+	logger.log(Level.INFO, "Get Scheduled Visits iduser:"+iduser+"   idpatient:"+idpatient );
 	return result;
 }
 
@@ -733,6 +776,7 @@ public boolean setScheduleVisit(String idschedule, String iduser, String idpatie
 	
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Set Scheduled  Visit  iduser:"+iduser +"   idpatient:"+idpatient );
 	return result;
 }
 
@@ -757,6 +801,8 @@ public ArrayList<Object> getUserPatients(String iduser, String hcpcat){
     	obj.put("datevisit", sv.getDatevisit());
     	result.add(obj);
     }
+	
+	logger.log(Level.INFO, "Get User Patient List : iduser:"+iduser );
 	return result;
 }
 
@@ -765,6 +811,7 @@ public boolean setResetPassword(String iduser, String rbit){
     String sql = "update ncdis.ncdis.users set reset = "+rbit+" where iduser = "+iduser+"";
     jdbcTemplate.update(sql);
     result = true;
+    logger.log(Level.INFO, "Set Reset Password  iduser:"+iduser);
 	return result;
 }
 
@@ -773,6 +820,7 @@ public boolean setEmailConfirm(String iduser, String confirm){
 	String sql = "update ncdis.ncdis.users set confirmmail = "+confirm+" where iduser = "+iduser+"";
 	jdbcTemplate.update(sql);
 	result = true;
+	logger.log(Level.INFO, "Set Email Confirm iduser:"+iduser);
 	return result;
 }	
 	
@@ -782,6 +830,7 @@ public void resetUserPassword(User user){
 				+ "reset='0' "
 				+ "where iduser = "+Integer.parseInt(user.getIduser())+" ";
 	jdbcTemplate.update(sql);
+	logger.log(Level.INFO, "Reset User Password:"+user.getIduser() );
 }
 
 public Hashtable<String,ArrayList<ArrayList<String>>> getUserDashboard(String iduser){

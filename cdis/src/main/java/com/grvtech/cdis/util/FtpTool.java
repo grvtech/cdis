@@ -120,23 +120,48 @@ public class FtpTool {
 		
 		boolean result = false;
 		
-		 String server = "10.76.105.79";
-	        int port = 21;
-	        String user = "18technocentre\\cdis";
-	        String pass = "cdis2015";
-	        
-	        if(place.equals("chisasibi")){
-	        	server = "10.76.105.79";
-	            user = "18technocentre\\cdis";
-	            pass = "cdis2015";
-	        }else if(place.equals("chibougamou")){
-	        	server = "10.68.32.48";
-	            user = "omnitechr10\\omniftp";
-	            pass = "ImportExport";
-	        }else{
-	        	return false;
-	        }
-		
+		/*
+		String server = "10.76.105.79";
+        int port = 21;
+        String user = "18technocentre\\cdis";
+        String pass = "cdis2015";
+        
+        if(place.equals("chisasibi")){
+        	server = "10.76.105.79";
+            user = "18technocentre\\cdis";
+            pass = "cdis2015";
+        }else if(place.equals("chibougamou")){
+        	server = "10.68.32.48";
+            user = "omnitechr10\\omniftp";
+            pass = "ImportExport";
+        }else{
+        	return false;
+        }
+		*/
+		String server = "192.168.2.220";
+		int port = 21;
+        String user = "radu";
+        String pass = "andrei07";
+        
+		if(place.equals("chisasibi")){
+        	//server = ftpChisasibi;
+            //user = ftpChisasibiUser;
+            //pass = ftpChisasibiPassword;
+            
+            server = "192.168.2.220";
+            user = "radu";
+            pass = "andrei07";
+        }else if(place.equals("chibougamou")){
+        	//server = ftpChibougamou;
+            //user = ftpChibougamouUser;
+            //pass = ftpChibougamouPassword;
+            
+        	server = "192.168.2.220";
+            user = "radu";
+            pass = "andrei07";
+        }else{
+        	return false;
+        }
        
  
         FTPClient ftpClient = new FTPClient();
@@ -146,9 +171,19 @@ public class FtpTool {
             ftpClient.login(user, pass);
             ftpClient.enterLocalPassiveMode();
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+            
+            System.out.println("++++++++++++++++++++++++++++++++++++++++");
+			System.out.println("ftp connect succsefully");
+			System.out.println("++++++++++++++++++++++++++++++++++++++++");
  
             // APPROACH #1: uploads first file using an InputStream
             File firstLocalFile = new File(localFilePath);
+            
+            System.out.println("++++++++++++++++++++++++++++++++++++++++");
+			System.out.println("change directory for local ftp from ftpscanner");
+			ftpClient.changeWorkingDirectory("ftpscaner");
+			System.out.println("++++++++++++++++++++++++++++++++++++++++");
+            
             ftpClient.changeWorkingDirectory("OUT");
             //ftpClient.changeWorkingDirectory("OUT");
             
@@ -162,14 +197,26 @@ public class FtpTool {
             String remoteFile = "";
             
             FTPFile[] files = ftpClient.listFiles();
+            
+            
+            
             for(int i=0; i<files.length;i++){
             	FTPFile f = files[i];
+            	System.out.println("++++++++++++++++++++++++++++++++++++++++");
+    			System.out.println(f.getName());
+    			System.out.println("++++++++++++++++++++++++++++++++++++++++");
             	if(f.getName().toLowerCase().equals(firstRemoteFile.toLowerCase())){
             		remoteFile = f.getName();
             	}else if(f.getName().toLowerCase().equals(firstRemoteFileAlt.toLowerCase())){
             		remoteFile = f.getName();
             	}
             }
+            
+            
+            
+            System.out.println("++++++++++++++++++++++++++++++++++++++++");
+			System.out.println(remoteFile);
+			System.out.println("++++++++++++++++++++++++++++++++++++++++");
             
             if(!remoteFile.equals("")){
             	result = ftpClient.retrieveFile(remoteFile, output);

@@ -87,7 +87,7 @@ public String getUserDashboard(final HttpServletRequest request){
 	String language = request.getParameter("language").toString();
 	User user = chbdb.getUser(Integer.parseInt(iduser));
 	if(!user.getIduser().equals("0")){
-		Hashtable<String,ArrayList<ArrayList<String>>>  dashboard = chbdb.getUserDashboard(iduser); 
+		Hashtable<String,ArrayList<ArrayList<String>>>  dashboard = chbdb.getUserDashboard(iduser);
 		ArrayList<Object> obs = new ArrayList<>();
 		obs.add(dashboard);
 		result = json.toJson(new MessageResponse(true,language,obs));

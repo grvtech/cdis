@@ -1,9 +1,10 @@
+/*
 if(location.hostname !== 'localhost' && location.hostname.toLowerCase() !== 'cdis.reg18.rtss.qc.ca'){
 	location.replace('https://cdis.reg18.rtss.qc.ca/ncdis');
 }else if (location.protocol !== 'https:') {
     location.replace(`https:${location.href.substring(location.protocol.length)}`);
 }
-
+*/
 var page = getPage();
 var applanguage="en";
 var userObj = null;

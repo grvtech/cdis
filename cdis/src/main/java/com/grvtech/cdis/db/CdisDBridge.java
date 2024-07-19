@@ -1086,7 +1086,7 @@ public ArrayList<Object> executeReportLocalList(){
 	ArrayList<Object> result = new ArrayList<>();
 	ArrayList<Object> resultBuffer = new ArrayList<>();
 	Gson gson = new Gson();
-		
+		/*
 		String sql = "select tt1.idpatient"
 				+ ",ISNULL(p.fname,'')+' '+ ISNULL(p.lname,'') as fullname "
 				+ ",p.ramq as ramq "
@@ -1122,7 +1122,45 @@ public ArrayList<Object> executeReportLocalList(){
 						+ " and p.active=1 and (p.dod is null or p.dod='1900-01-01') "
 						+ " and p.idcommunity != 10 "
 				+ " order by delta desc ";
-
+		*/
+	
+	String sql = "select tt1.idpatient"
+			+ ",ISNULL(p.fname,'')+' '+ ISNULL(p.lname,'') as fullname "
+			+ ",p.ramq as ramq "
+			+ ",p.sex as sex "
+			+ ",p.chart as chart"
+			+ ",p.idcommunity "
+			+ ",datediff(year, p.dob, getdate()) as age "
+			+ ",tt3.value as dtype "
+			+ ",tt3.datevalue as ddate "
+			+ ",datediff(year, tt3.datevalue, getdate()) as dduration "
+			+ ",tt4.users as users "
+			+ ",datediff(day, tt1.datevalue, getdate()) as dayslastlab"
+			+ ",tt1.datevalue as last_hba1c_collecteddate "
+			+ ",round(tt1.value,3) as last_hba1c "
+			+ ",tt2.datevalue as secondlast_hba1c_collecteddate "
+			+ ",round(tt2.value,3) as secondlast_hba1c "
+			+ ",round(try_convert(float, tt1.value) - try_convert(float, tt2.value), 3) as delta"
+				+ " from "  
+				+ "(select aa.datevalue, aa.value, aa.idpatient, aa.seqnum from (select cd.* , row_number() over (partition by cd.idpatient order by datevalue desc) as seqnum from ncdis.ncdis.cdis_value cd where cd.iddata=27 and cd.datevalue <= getdate()) aa where aa.seqnum = 1) as tt1 "
+				+ "left join "
+					+ "(select aa.datevalue, aa.value, aa.idpatient, aa.seqnum from (select cd.* , row_number() over (partition by cd.idpatient order by datevalue desc) as seqnum from ncdis.ncdis.cdis_value cd where cd.iddata=27 and cd.datevalue <= getdate()) aa where aa.seqnum = 2) as tt2 "
+						+ "on tt1.idpatient = tt2.idpatient "
+					+ "left join "
+					+ "ncdis.ncdis.patient p "
+						+ "on  tt1.idpatient = p.idpatient "
+					+ "left join "
+					+ "(select aa.datevalue, aa.value, aa.idpatient, aa.seqnum from (select cd.* , row_number() over (partition by cd.idpatient order by datevalue desc) as seqnum from ncdis.ncdis.cdis_value cd where cd.iddata=1 and cd.datevalue <= getdate()) aa where aa.seqnum = 1) as tt3 "
+						+ "on tt1.idpatient = tt3.idpatient "
+					+ "left join "
+					+ "(SELECT idpatient, case when isnumeric(chr) =1  or isnumeric(nut)=1 or isnumeric(nur)=1 or isnumeric(md)=1 then concat(chr,';',nur,';',nut,';',md) else '0' end as users FROM [ncdis].[ncdis].[patient_hcp] where isnumeric(chr) =1  or isnumeric(nut)=1 or isnumeric(nur)=1 or isnumeric(md)=1) as tt4 "
+						+ "on tt1.idpatient = tt4.idpatient "
+				+ " where "
+					+ " tt2.value is not null "
+					+ " and p.active=1 and (p.dod is null or p.dod='1900-01-01') "
+					+ " and p.idcommunity != 10 "
+			+ " order by delta desc ";
+	
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		@SuppressWarnings("unchecked")
 		ResultSetMetaData rsm = jdbcTemplate.query(sql,new ResultSetExtractor<ResultSetMetaData>() {
@@ -1256,6 +1294,7 @@ public String exportRamq(){
 				e.printStackTrace();
 			}    	
 	    }
+    	fw.close();
 	    result = exportFile.getAbsolutePath();
 	} catch (IOException e1) {
 		e1.printStackTrace();

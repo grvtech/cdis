@@ -441,7 +441,7 @@ function login() {
 		request.done(function( json ) {
 			
 		  if(json.status == "0"){
-			  $("#errortext").text(json.message);
+			  $("#errortext").text("Wrong Username or Password");
 		  }else{
 			 userObj = json.objs[0];
 			 sid = getSession(userObj.iduser);

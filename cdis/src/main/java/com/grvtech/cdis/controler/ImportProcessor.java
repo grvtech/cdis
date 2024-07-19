@@ -75,11 +75,7 @@ public class ImportProcessor {
 		Gson json = new Gson();
 		String result = "";
 		String exportRamqFile = cdisdb.exportRamq();
-		if(!ftp.putFile(exportRamqFile, "chisasibi")){
-			result = "chisasibi - not exported";
-		}else {
-			result = " chisasibi exported ";
-		}
+		
 		
 		if(!ftp.putFile(exportRamqFile, "chibougamou")){
 			result += "chisbougamou - not exported";
@@ -87,6 +83,11 @@ public class ImportProcessor {
 			result += " chisbougamou exported ";
 		}
 		
+		if(!ftp.putFile(exportRamqFile, "chisasibi")){
+			result = "chisasibi - not exported";
+		}else {
+			result = " chisasibi exported ";
+		}
 		result = json.toJson(result);
 		
 		return result;
@@ -119,10 +120,6 @@ public class ImportProcessor {
 			//ic = new InitialContext();
 			//rf = (String) ic.lookup("reports-folder");
 			reportFile = new File(reportsFolder+System.getProperty("file.separator")+"import"+System.getProperty("file.separator")+"import_"+dateStr+".json");
-			System.out.println("++++++++++++++++++++++++++++++++++++++++");
-			System.out.println("report file "+reportFile.getAbsolutePath());
-			System.out.println("++++++++++++++++++++++++++++++++++++++++");
-			
 			if(!reportFile.exists())reportFile.createNewFile();
 			FileWriter fw =  new FileWriter(reportFile,true);
 			fw.write(result);
@@ -225,10 +222,6 @@ public class ImportProcessor {
 					if(valuesDates.contains(dbFormat.format(fileDate))){
 						//date is already in db should I update ????
 						
-						System.out.println("++++++++++++++++++++++++++++++++++++++++");
-						System.out.println("date is already in db for "+fileDate);
-						System.out.println("++++++++++++++++++++++++++++++++++++++++");
-						
 					}else{
 						//date is not in db
 						if(fileDoubleValue > 0){
@@ -248,10 +241,6 @@ public class ImportProcessor {
 					}
 				}else {
 					
-					System.out.println("++++++++++++++++++++++++++++++++++++++++");
-					System.out.println("values is null");
-					System.out.println("new value : "+fileDoubleValue);
-					System.out.println("++++++++++++++++++++++++++++++++++++++++");
 					
 					//date is not in db
 					if(fileDoubleValue > 0){
@@ -453,22 +442,13 @@ public class ImportProcessor {
 		try {
 			logFile = new File(homefolder+System.getProperty("file.separator")+"logs"+System.getProperty("file.separator")+"log-"+place+"_"+dateStr+".log");
 			fw = new FileWriter(logFile,true);
-			System.out.println("++++++++++++++++++++++++++++++++++++++++");
-			System.out.println(logFile.getAbsolutePath());
-			System.out.println("++++++++++++++++++++++++++++++++++++++++");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		try {
 			File importFile = new File(homefolder+System.getProperty("file.separator")+"files"+System.getProperty("file.separator")+"import-"+place+"_"+dateStr+".csv");
-			System.out.println("++++++++++++++++++++++++++++++++++++++++");
-			System.out.println(importFile.getAbsolutePath());
-			System.out.println("++++++++++++++++++++++++++++++++++++++++");
 			if(ftp.getFile(importFile.getAbsolutePath(), place)){
-				System.out.println("++++++++++++++++++++++++++++++++++++++++");
-				System.out.println("get file success");
-				System.out.println("++++++++++++++++++++++++++++++++++++++++");
 				
 			//if(importFile.exists()){
 			/*this is for local testing*/	

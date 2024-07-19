@@ -1,6 +1,6 @@
 server.servlet.contextPath=/ncdis
 #server.port:8081
-server.port: 443
+server.port: 543
 server.ssl.key-store:D:\\java\\keystores\\keystore.p12
 server.ssl.key-store-password: springboot
 server.ssl.keyStoreType: PKCS12
@@ -23,4 +23,4 @@ ftp.chisasibi.user=18technocentre\\cdis
 ftp.chisasibi.password=cdis2015
 ftp.chibougamou=10.68.32.48
 ftp.chibougamou.user=omnitechr10\\omniftp
-ftp.chibougamou.password=ImportExport
+ftp.chibougamou.password=ImportExport  

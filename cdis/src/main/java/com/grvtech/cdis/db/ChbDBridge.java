@@ -179,8 +179,30 @@ public void setUser(User user){
 	logger.log(Level.INFO, "Set User : iduser : "+user.getIduser() );
 }
 
+public int getNextIdTable(String tableName){
+	int result = 0;
+	String id = "";
+	if(tableName.equals("users")) {id = "iduser";}
+	String sql = "select max("+id+") as lastid from ncdis.ncdis."+tableName+" ";
+		    		
+	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+	if(rows.size() > 0) {
+		Map row = rows.get(0);
+		result = Integer.parseInt(row.get("lastid").toString());
+		logger.log(Level.INFO, "Last User ID in BD :"+result );
+		if(result > 0) {
+			result++;
+		}
+		logger.log(Level.INFO, "Last User ID to be inserted :"+result );
+    }
+	return result;
+}
+
+
+
 public int addUser(User user){
 	int result = 0;
+	//int iduser = getNextIdTable("users");
 	String sql = "insert into ncdis.ncdis.users (fname,lname,username,password,email,phone,idcommunity,idprofesion,active, reset,confirmmail) "
 		    		+ "values ('"+user.getFirstname()+"','"+user.getLastname()+"','"+user.getUsername()+"','"+user.getPassword()+"','"+user.getEmail()+"',"
     				+ "'"+user.getPhone()+"','"+user.getIdcommunity()+"','"+user.getIdprofesion()+"','"+user.getActive()+"',"+"'"+user.getReset()+"',"+"'"+user.getConfirmmail()+"')";
@@ -889,7 +911,7 @@ public Hashtable<String,ArrayList<ArrayList<String>>> getUserDashboard(String id
 	    	activity.add(l);
 	    }
 	    result.put("activity",activity);
-	    
+	  System.out.println(result);  
 	    
 	return result;
 }

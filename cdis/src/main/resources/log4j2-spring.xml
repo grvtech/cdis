@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
     <Appenders>
+        
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout
                 pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />
         </Console>
-
+ 		
         <RollingFile name="RollingFile"
             fileName="./logs/cdis-logger.log"
             filePattern="./logs/$${date:yyyy-MM}/cdis-logger-%d{-dd-MMMM-yyyy}-%i.log.gz">
@@ -25,13 +26,13 @@
 
     <Loggers>
         <!-- LOG everything at INFO level -->
-        <Root level="error">
+        <Root level="INFO">
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
         </Root>
 
         <!-- LOG "com.baeldung*" at TRACE level -->
-        <Logger name="com.grvtech" level="trace"></Logger>
+        <Logger name="com.grvtech" level="INFO"></Logger>
     </Loggers>
 
 </Configuration>

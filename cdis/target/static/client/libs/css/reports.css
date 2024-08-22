@@ -461,7 +461,7 @@ REPORTS PAGE CSS
 .custom-list-header div{
 	margin:5px;
 	display:inline-block;
-	border:1px solid #0000000;
+	border:1px solid #000000;
 }
 
 .custom-list-header div .lab{
@@ -620,28 +620,9 @@ REPORTS PAGE CSS
 	font-size: 13px;
 }
 */
-.fullscreen-modal{
-	position:absolute;
-	background-color:#efefef;
-	width:100%;
-	height:100%;
-	top:0px;
-	left:0px;
-	z-index:100000;
-	display:grid;
-	grid-template-rows:35px auto 35px;
-	font-size: 13px;
-}
 
 
-/*
-.fullscreen-modal-header{height:25px;background:#4b3b3b;display: flex;flex-direction:row;flex-wrap: nowrap;}
-.fullscreen-modal-header > div{flex:1 0;}
-.fullscreen-modal-header-logo{max-width:20px;height:25px;background:no-repeat url(../images/cdis-logo50.png) #4b3b3b center center;background-size: 15px 20px;}
-.fullscreen-modal-header-cdis{max-width:50px;height:25px;line-height:25px;color:#fff;font-size:1.1rem;font-weight:bold;}
-.fullscreen-modal-header-title{max-width:100px;height:25px;color:#fff;line-height:25px;text-align:right; padding-right:3px;font-size:1.1rem;}
-.fullscreen-modal-header-close{max-width:25px;height:25px;color:#fff;background:#db4437;line-height:25px;text-align:center;font-size:1.2rem;}
-*/
+.fullscreen-modal{position:absolute;background-color:#8492ad;width:100%;height:100%;top:0px;left:0px;z-index:100000;display:grid;grid-template-rows:35px auto 35px;font-size: 13px;font-family:Tahoma;}
 
 .fullscreen-modal-header{height:35px;background:#4b3b3b;display:grid;grid-template-columns:35px 70px auto 35px;}
 .fullscreen-modal-header-logo{height:35px;background:no-repeat url(../images/cdis-logo50.png) #4b3b3b center center;background-size: 25px 35px;}
@@ -650,7 +631,17 @@ REPORTS PAGE CSS
 .fullscreen-modal-header-close{height:35px;color:#fff;background:#db4437;line-height:35px;text-align:center;font-size:1.3vm;}
 
 
-.fullscreen-modal-body{display:grid;grid-template-columns:150px auto;background:#5c6c9d;}
+.fullscreen-modal-body{display:grid;grid-template-columns:200px auto;}
+.fullscreen-modal-body .fullscreen-modal-body-toolbar{background:#5c6c9d;}
+
+
+.fullscreen-modal-body-toolbar .fullscreen-modal-body-toolbar-header{background:#db4437;font-size:0.9vw;text-align:center;color:#fff;padding:5px;}
+.fullscreen-modal-body-toolbar .fmbt-item{font-size:0.8vw;text-align:center;padding:5px;cursor:pointer;}
+.fullscreen-modal-body-toolbar .fmbt-item.hov{font-weight: bold;background:#db4437;color:#fff;}
+.fullscreen-modal-body-toolbar .fmbt-item.selected{font-weight:bold;background:#4b3b3b;color:#fff;}
+.fullscreen-modal-body-toolbar-button{text-align:center;}
+.fullscreen-modal-body-toolbar-spacer{height:50px;}
+
 
 .fullscreen-modal-toolbar{display:grid;}
 .fullscreen-modal-toolbar-form{flex:1 0;max-height:150px;min-height:150px;padding:10px;}
@@ -665,29 +656,42 @@ REPORTS PAGE CSS
 
 .fmb-table{
 	display:grid;
-	grid-template-columns: grid-auto-columns: minmax(0, 1fr);
+	grid-template-columns: grid-auto-columns minmax(0, 1fr);
    	grid-auto-flow: column;
+   	font-family:Tahoma;
+   	font-size:1.1em;
+   	background:#efefef;
  }
 
-.fmb-table-header{
-	font-weight:bold;
+.fmb-edit{
+	width:50px;
+	border:1px solid #cdcdcd;
+	text-align:center;
+	margin:0px;
+	vertical-align: top;
 }
 
-.fmb-table-body-header-container{
-	display:grid;
-	grid-template-rows: 25px 25px;
-	
-}
+.fmb-table-header{font-weight:bold;}
+.fmb-table-header .gol{height:50px;}
+.fmb-table-header-cell{padding: 4px 2px 4px 2px;text-align:center;cursor:pointer;}
+.hov{background:#4b3b3b;color:#fff;}
+
+
+.fmb-table-body-header-container{display:grid;grid-template-rows: 25px 25px; text-align:center;padding: 4px 2px 4px 2px;border-bottom:1px solid #000;}
+.gol{border-bottom:1px solid #000;}
+.gr15{font-weight:bold;}
+
 .fmb-table-body-header-container-columns{
 	display:grid;
-	grid-template-columns: 50px 50px 50px;
+	grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+	background:#cdcdcd;
+	font-weight:bold;
 }
-.fmb-table-body-cell-container{
-	display:grid;
-	grid-template-columns: 50px 50px 50px;
-}
+.fmb-table-body-cell-container{display:grid;grid-template-columns: 33% 33% 33% ;text-align:center;}
+.fmb-table-body-cell-container > *{padding: 4px 2px 4px 2px;}
 
-
+.editPopulationButtonsContainer{text-align:center; margin:auto;padding:10px;}
+.editPopulationButtonsContainer .cisbutton{font-size:1.1vw;}
 
 .criteria-wraper{display:flex;flex-direction:row;flex-wrap:wrap;}
 .criteria-wraper > div{flex:1 0;padding:3px;}
@@ -697,7 +701,7 @@ REPORTS PAGE CSS
 
 .list-title{height:30px;color:#4d4d4d;font-weight:500;text-align:center;line-height:30px;font-size:1.05rem;}
 .list-header{height:30px;display:flex;flex-direction: row;flex-wrap: nowrap;font-size:0.9rem;}
-.list-header .column{flex:1 0;font-weight:700;text-align:center;text-align:center;vertical-align:middle;line-height:30px;overflow: hidden;border:1px solid $cdcdcd;}
+.list-header .column{flex:1 0;font-weight:700;text-align:center;text-align:center;vertical-align:middle;line-height:30px;overflow: hidden;border:1px solid #cdcdcd;}
 .list-header .column-sort{display:inline-block;padding:3px;height:100%;line-height:30px;}
 .list-header .sorted-column{background:#db4437;color:#ffffff;}
 
@@ -719,4 +723,5 @@ REPORTS PAGE CSS
 
 
 
+}
 

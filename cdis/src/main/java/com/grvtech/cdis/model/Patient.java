@@ -58,6 +58,7 @@ public class Patient {
 	private String idcommunity;
 	private String community;
 	private String phone;
+	private String active;
 	
 	
 	
@@ -66,7 +67,7 @@ public class Patient {
 			String dob, String mfname, String mlname, String pfname,
 			String plname, String address, String city, String province,
 			String postalcode, int consent, int iscree, String dod,
-			String dcause, String entrydate,  String idcommunity,  String community, String idprovince,String phone) {
+			String dcause, String entrydate,  String idcommunity,  String community, String idprovince,String phone, String active) {
 		super();
 		this.idpatient = idpatient;
 		this.ramq = ramq;
@@ -103,6 +104,7 @@ public class Patient {
 		this.idcommunity = idcommunity;
 		this.community = community;
 		this.phone= phone;
+		this.active = active;
 	}
 
 	public MessageResponse setPatient(Map<String, String[]> map) {
@@ -159,6 +161,7 @@ public class Patient {
 		if(map.get("idcommunity") != null){this.idcommunity = ((String[])map.get("idcommunity"))[0];}
 		if(map.get("idprovince") != null){this.idprovince = ((String[])map.get("idprovince"))[0];}
 		if(map.get("phone") != null){this.phone = ((String[])map.get("phone"))[0];}
+		if(map.get("active") != null){this.active = ((String[])map.get("active"))[0];}
 	
 		if(flag){
 			result.setLanguage(language);
@@ -406,7 +409,13 @@ public class Patient {
 		this.phone = phone;
 	}
 	
-	
+	public String getActive() {
+		return active;
+	}
+
+	public void setActive(String active) {
+		this.active = active;
+	}
 
 	
 }

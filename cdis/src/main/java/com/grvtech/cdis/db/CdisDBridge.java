@@ -101,6 +101,11 @@ public class CdisDBridge {
 				+ "		where p.ramq = '"+ramq+"'";
 		
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		
+		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println(sql);
+		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		
 		if(rows.size() > 0 ) {
 			Map<String, Object> row = rows.get(0);
 			result = 	new Patient((Integer)row.get("idpatient"), row.get("ramq").toString(), row.get("chart").toString(), (row.get("band")==null?"":row.get("band").toString()),
@@ -108,7 +113,7 @@ public class CdisDBridge {
 	        		(row.get("dob")==null?"":row.get("dob").toString()), (row.get("mfname")==null?"":row.get("mfname").toString()), (row.get("mlname")==null?"":row.get("mlname").toString()), (row.get("pfname")==null?"":row.get("pfname").toString()),
 	        		(row.get("plname")==null?"":row.get("plname").toString()), (row.get("address")==null?"":row.get("address").toString()), (row.get("city")==null?"":row.get("city").toString()), (row.get("province")==null?"":row.get("province").toString()),
 	        		(row.get("postalcode")==null?"":row.get("postalcode").toString()), row.get("consent")==null?0:(short)row.get("consent"), row.get("iscree")==null?-1:(short)row.get("iscree"), (row.get("dod")==null?"":row.get("dod").toString()),
-	        		(row.get("dcause")==null?"":row.get("dcause").toString()), (row.get("entrydate")==null?"":row.get("entrydate").toString()), (row.get("idcommunity")==null?"":row.get("idcommunity").toString()), (row.get("community")==null?"":row.get("community").toString()), (row.get("idprovince")==null?"":row.get("idprovince").toString()),(row.get("phone")==null?"":row.get("phone").toString()));
+	        		(row.get("dcause")==null?"":row.get("dcause").toString()), (row.get("entrydate")==null?"":row.get("entrydate").toString()), (row.get("idcommunity")==null?"":row.get("idcommunity").toString()), (row.get("community")==null?"":row.get("community").toString()), (row.get("idprovince")==null?"":row.get("idprovince").toString()),(row.get("phone")==null?"":row.get("phone").toString()),(row.get("active")==null?"0":row.get("active").toString()));
 			
 		}
 		logger.log(Level.INFO, "Get Patient By RAMQ :"+result.getIdpatient()+ "RAMQ:"+result.getRamq() );
@@ -134,7 +139,7 @@ public class CdisDBridge {
 	        		(row.get("dob")==null?"":row.get("dob").toString()), (row.get("mfname")==null?"":row.get("mfname").toString()), (row.get("mlname")==null?"":row.get("mlname").toString()), (row.get("pfname")==null?"":row.get("pfname").toString()),
 	        		(row.get("plname")==null?"":row.get("plname").toString()), (row.get("address")==null?"":row.get("address").toString()), (row.get("city")==null?"":row.get("city").toString()), (row.get("province")==null?"":row.get("province").toString()),
 	        		(row.get("postalcode")==null?"":row.get("postalcode").toString()), row.get("consent")==null?0:Integer.parseInt(row.get("consent").toString()), row.get("iscree")==null?1:Integer.parseInt(row.get("iscree").toString()), (row.get("dod")==null?"":row.get("dod").toString()),
-	        		(row.get("dcause")==null?"":row.get("dcause").toString()), (row.get("entrydate")==null?"":row.get("entrydate").toString()), (row.get("idcommunity")==null?"":row.get("idcommunity").toString()), (row.get("community")==null?"":row.get("community").toString()), (row.get("idprovince")==null?"":row.get("idprovince").toString()),(row.get("phone")==null?"":row.get("phone").toString()));
+	        		(row.get("dcause")==null?"":row.get("dcause").toString()), (row.get("entrydate")==null?"":row.get("entrydate").toString()), (row.get("idcommunity")==null?"":row.get("idcommunity").toString()), (row.get("community")==null?"":row.get("community").toString()), (row.get("idprovince")==null?"":row.get("idprovince").toString()),(row.get("phone")==null?"":row.get("phone").toString()),(row.get("active")==null?"0":row.get("active").toString()));
 			
 		}
 		logger.log(Level.INFO, "Get Patient By ID :"+result.getIdpatient()+ "RAMQ:"+result.getRamq() );
@@ -251,7 +256,7 @@ public int deleteHcpOfPatient(int idpatient){
 public boolean setHcpOfPatient(int idpatient,  String casem, String md, String nut, String nur, String chr){
 	boolean result = false;
 	deleteHcpOfPatient(idpatient);
-	String sql = "insert into ncdis.patient_hcp (idpatient, casem, md, nut, nur,chr, idsystem) values ("+idpatient+",0,"+md+","+nut+","+nur+","+chr+", 1)";
+	String sql = "insert into ncdis.patient_hcp (idpatient, casem, md, nut, nur,chr, idsystem) values ("+idpatient+",0,'"+md+"','"+nut+"','"+nur+"','"+chr+"',1)";
 	jdbcTemplate.update(sql);
 	result = true;
 	logger.log(Level.INFO, "Set HCP by IDpatient  idpatient:"+idpatient+ " HCPS casem:"+casem+"  MD:"+md+"  nut:"+nut+"  nur:"+nur+" chr:"+chr );
@@ -364,9 +369,9 @@ public Object getAllValues(String section, String sectionCODE, int idpatient, St
 									+ " where css.section_code = '"+sectionCODE+"' )"
 			+ " ) avv on dv.iddata = avv.iddata order by avv.datevalue desc";
 		
-		System.out.println("++++++++++++++++++++++++++++++++++++++++");
-		System.out.println("sql :"+sql);
-		System.out.println("++++++++++++++++++++++++++++++++++++++++");
+		//System.out.println("++++++++++++++++++++++++++++++++++++++++");
+		//System.out.println("sql :"+sql);
+		//System.out.println("++++++++++++++++++++++++++++++++++++++++");
 		
 		List<Map<String,Object>> rows = jdbcTemplate.queryForList(sql);
 	    //rs = cs.executeQuery();
@@ -387,9 +392,9 @@ public Object getAllValues(String section, String sectionCODE, int idpatient, St
 	    	String dStr = "NULL";
 	    	if(row.get("date") != null){
 	    		
-	    		System.out.println("++++++++++++++++++++++++++++++++++++++++");
-				System.out.println("date :"+row.get("date").toString());
-				System.out.println("++++++++++++++++++++++++++++++++++++++++");
+	    		//System.out.println("++++++++++++++++++++++++++++++++++++++++");
+				//System.out.println("date :"+row.get("date").toString());
+				//System.out.println("++++++++++++++++++++++++++++++++++++++++");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 	    		LocalDateTime ldt =  LocalDateTime.parse(row.get("date").toString(), formatter);
 	    		
@@ -398,10 +403,10 @@ public Object getAllValues(String section, String sectionCODE, int idpatient, St
 	    		
 	    		
 	    		
-	    		System.out.println("++++++++++++++++++++++++++++++++++++++++");
-		    	System.out.println("params  :"+row.get("idvalue") +" "+ row.get("name") +" "+ row.get("value")+" "+ row.get("type")+" "+ dStr+" "+ row.get("unit")+" "+ row.get("code")+" "+ row.get("dorder"));
-				System.out.println("params  :"+Integer.parseInt(row.get("idvalue").toString()) +" "+ row.get("name").toString() +" "+ row.get("value").toString()+" "+ row.get("type").toString()+" "+ dStr+" "+ row.get("unit").toString()+" "+ row.get("code").toString()+" "+ Integer.parseInt(row.get("dorder").toString()));
-				System.out.println("++++++++++++++++++++++++++++++++++++++++");
+	    		//System.out.println("++++++++++++++++++++++++++++++++++++++++");
+		    	//System.out.println("params  :"+row.get("idvalue") +" "+ row.get("name") +" "+ row.get("value")+" "+ row.get("type")+" "+ dStr+" "+ row.get("unit")+" "+ row.get("code")+" "+ row.get("dorder"));
+				//System.out.println("params  :"+Integer.parseInt(row.get("idvalue").toString()) +" "+ row.get("name").toString() +" "+ row.get("value").toString()+" "+ row.get("type").toString()+" "+ dStr+" "+ row.get("unit").toString()+" "+ row.get("code").toString()+" "+ Integer.parseInt(row.get("dorder").toString()));
+				//System.out.println("++++++++++++++++++++++++++++++++++++++++");
 		    	
 		        Value val = new Value(Integer.parseInt(row.get("idvalue").toString()) , row.get("name").toString(), row.get("value").toString(), row.get("type").toString(), dStr, row.get("unit").toString(), row.get("code").toString(), Integer.parseInt(row.get("dorder").toString()));
 		        av.addValue(val);
@@ -537,7 +542,17 @@ public boolean deletePatient(String idpatient){
 	logger.log(Level.INFO, "Delete Patient idpatient:"+idpatient);
 	return result;	
 }
-	
+
+
+public boolean deleteDeletePatient(int idpatient){
+	boolean result = false;
+	String sql = "delete from ncdis.ncdis.patient where idpatient = '"+idpatient+"'";
+	jdbcTemplate.update(sql);
+	result = true;
+	logger.log(Level.INFO, "Delete for Real Patient idpatient:"+idpatient);
+	return result;	
+}
+
 	
 public ArrayList<Report> getReports(String iduser, String idcommunity, String type){
 	ArrayList<Report> result = new ArrayList<>();
@@ -2690,7 +2705,8 @@ public  Hashtable<String, ArrayList<Object>> getPrevalenceNow(String idcommunity
 								+ " ppp.value is not null "
 								+ cStr + gStr + dtStr + aStr 
 						+ " ) as t ";
-
+		
+		
 		List<Map<String,Object>> rs = jdbcTemplate.queryForList(sql);
 
 		
@@ -2791,7 +2807,7 @@ public  Hashtable<String, ArrayList<Object>> getPrevalenceNowLastYear(String idc
 								+ " ppp.value is not null "
 								+ cStr + gStr + dtStr + aStr 
 						+ " ) as t ";
-
+		System.out.println(sql);
 		List<Map<String,Object>> rs = jdbcTemplate.queryForList(sql);
 
 		
@@ -3220,6 +3236,49 @@ public  Hashtable<String, ArrayList<Object>> getIncidenceHistory(String idcommun
 	logger.log(Level.INFO, "Execute Incidence History");
 	return result;
 }
+
+
+public ArrayList<String> getDoubleRamqs(){
+	ArrayList<String> result = new ArrayList<>();
+	String sql = "SELECT ramq, COUNT(*) FROM ncdis.ncdis.patient GROUP BY ramq HAVING COUNT(*) > 1";
+	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+	for(Map row : rows) {
+		result.add(row.get("ramq").toString());
+	}
+	return result;
+}
+
+
+public int getLowestId(String ramq){
+	int result = 0;
+	String sql = "select min(idpatient) as idpatient from ncdis.ncdis.patient where ramq='"+ramq+"'";
+	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+	for(Map row : rows) {
+		result = Integer.parseInt(row.get("idpatient").toString());
+	}
+	return result;
+}
+
+public ArrayList<Integer> getIdsOfPatient(String ramq){
+	ArrayList<Integer> result = new ArrayList<>();
+	String sql = "SELECT idpatient FROM ncdis.ncdis.patient where ramq='"+ramq+"'";
+	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+	for(Map row : rows) {
+		result.add(Integer.parseInt(row.get("idpatient").toString()));
+	}
+	return result;
+}
+
+
+public boolean transferCdisValues(int fromid , int toid){
+	boolean result = false;
+	String sql = "update ncdis.ncdis.cdis_value set idpatient='"+toid+"' where idpatient = '"+fromid+"'";
+	jdbcTemplate.update(sql);
+	result = true;
+	logger.log(Level.INFO, "Transfer data from Id patient:"+fromid+" to Patient idpatient:"+toid);
+	return result;
+}
+
 
 
 }

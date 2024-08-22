@@ -448,9 +448,10 @@ public class ImportProcessor {
 		
 		try {
 			File importFile = new File(homefolder+System.getProperty("file.separator")+"files"+System.getProperty("file.separator")+"import-"+place+"_"+dateStr+".csv");
-			if(ftp.getFile(importFile.getAbsolutePath(), place)){
+			
+			//if(ftp.getFile(importFile.getAbsolutePath(), place)){
 				
-			//if(importFile.exists()){
+			if(importFile.exists()){
 			/*this is for local testing*/	
 				fw.write("File download from "+place+" - SUCCES\n");
 				FileInputStream fstream = new FileInputStream(importFile);
@@ -524,7 +525,6 @@ public class ImportProcessor {
 					Hashtable<String,Object> r = new Hashtable<>();
 					pat = cdisdb.getPatientByRamq(ramqStr);
 					r.put("ramq", ramqStr);
-					
 					
 					if(pat.isValidPatient()){
 						r.put("idcommunity", pat.getIdcommunity());

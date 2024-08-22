@@ -28,6 +28,17 @@ initPandi();
  * 
  * */
 $(document).ready(function(){
+	loadPopulationEI();
+});
+
+$("#pandiManageDataButton").on("click",openPandiManageData);
+
+/*
+ * FUNCTIONS
+ * */
+
+
+function loadPopulationEI(){
 	var request = $.ajax({
 		  url: '/ncdis/client/reports/population.json?_'+moment(),
 		  type: "GET",
@@ -40,13 +51,8 @@ $(document).ready(function(){
 		request.fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );
 		});
-});
+}
 
-$("#pandiManageDataButton").on("click",openPandiManageData);
-
-/*
- * FUNCTIONS
- * */
 
 function initPandi(){
 	//$("#pandi").css("display","grid");
@@ -138,6 +144,12 @@ function openPandiManageData(){
 
 
 function buildPandiManageDataBody(container){
+	$(container).empty();
+	var toolbar = $("<div>",{class:"fullscreen-modal-body-toolbar"}).appendTo(container);
+	var table = $("<div>",{class:"fullscreen-modal-body-table"}).appendTo(container);
+	
+	buildPandiManageDataBodyToolbar(toolbar);
+	/*
 	var toolbar = $("<div>",{class:"fullscreen-modal-body-toolbar"}).appendTo(container);
 	var table = $("<div>",{class:"fullscreen-modal-body-table"}).appendTo(container);
 	
@@ -146,14 +158,149 @@ function buildPandiManageDataBody(container){
 		var y = k.replace("year_","");
 		$("<div>",{class:"fmbt-item"}).text(y).appendTo(toolbar).click({"container":table,"year":y},buildpandiManageDataTable);
 	});
+	*/
 }
 
 
-function buildpandiManageDataTable(event){
-	var container = event.data.container;
-	var year = event.data.year;
+function buildPandiManageDataBodyToolbar(container){
+	$(container).append($("<div>",{class:"fullscreen-modal-body-toolbar-header"}).text("Population data years"));
+	$.each(populationEI, function(k,v){
+		var y = k.replace("year_","");
+		$("<div>",{class:"fmbt-item"}).text(y)
+			.appendTo(container)
+			.hover(
+				function() {
+				    $( this ).addClass("hov");
+				    
+				}, function() {
+					$( this ).removeClass("hov");
+				}
+			)
+			.click(
+				function(){
+					$(".fmbt-item").removeClass("selected");
+					$( this ).addClass("selected");
+					buildpandiManageDataTable(y);
+				}
+			);
+	});
+	$(container).append($("<div>",{class:"fullscreen-modal-body-toolbar-spacer"}));
+	$(container).append($("<div>",{class:"fullscreen-modal-body-toolbar-button"}).append($("<div>",{class:"cisbutton",id:"addYearButton"}).text("Add Year").click(function(){addNewYearToPopulation();})));
+	$(container).append($("<div>",{class:"fullscreen-modal-body-toolbar-spacer"}));
+	$(container).append($("<div>",{class:"fullscreen-modal-body-toolbar-button"}).append($("<div>",{class:"cisbutton",id:"editPopulation"}).text("Edit Population Table").click(function(){editPopulation();})));
+}
+
+function editPopulation(){
+	var tbs = $(".fmb-table-body");
+	$.each(tbs, function(x,t){
+		var c = $(t).find(".fmb-table-body-header-community");
+		var com = c.text().toLowerCase();
+		var lines = $(t).find(".fmb-table-body-cell-container");
+		lastid = lines.length-1;
+		$.each(lines, function(y,line){
+			 
+			if(y < lastid){
+				var gr = "gr"+y;
+				var mdiv = $(line).find(".fmb-table-body-line-m");
+				var fdiv = $(line).find(".fmb-table-body-line-f");
+				var tdiv = $(line).find(".fmb-table-body-line-t");
+				var mValue = $(mdiv).text(); 
+				var fValue = $(fdiv).text();
+				$(mdiv).empty();
+				$(fdiv).empty();
+				
+				var editm = $("<input>",{class:"fmb-edit",id:com+"-"+gr+"-m", name:com+"-"+gr+"-m",value:mValue}).appendTo(mdiv);
+				var editf = $("<input>",{class:"fmb-edit",id:com+"-"+gr+"-f", name:com+"-"+gr+"-f",value:fValue}).appendTo(fdiv);
+				
+				editm.on("blur", function(){
+					$(tdiv).text(Number($(this).val())+Number($(editf).val()))
+					var totm = 0;
+					$.each($(".fmb-table-body-line-m."+com+" input"), function(a,b){
+							totm = totm + Number($(b).val());
+						
+					});
+					$(".fmb-table-body-line-m.gr15."+com).text(totm);
+					$(".fmb-table-body-line-t.gr15."+com).text(Number(totm) + Number($(".fmb-table-body-line-f.gr15."+com).text()));
+				});
+				editf.on("blur", function(){
+					$(tdiv).text(Number($(this).val())+Number($(editm).val()));
+					var totf = 0;
+					$.each($(".fmb-table-body-line-f."+com+" input"), function(a,b){
+							totf = totf + Number($(b).val());
+						
+					});
+					$(".fmb-table-body-line-f.gr15."+com).text(totf);
+					$(".fmb-table-body-line-t.gr15."+com).text(Number(totf) + Number($(".fmb-table-body-line-m.gr15."+com).text()));
+				});	
+			}
+			
+			
+		});
+	});
+	
+	//add save button
+	var bcontainer = $("<div>",{class:"editPopulationButtonsContainer"}).appendTo($(".fullscreen-modal-body-table"));
+	var savePopulationButton = $("<div>",{class:"cisbutton"}).text("Save Population Table for year "+$(".fmbt-item.selected").text()).appendTo(bcontainer);
+	savePopulationButton.click(function(){
+		saveYearToPopulation($(".fmbt-item.selected").text());
+	});
+	
+}
+
+function addNewYearToPopulation(){
+	setTimeout(showProgress,10,$(".fullscreen-modal-body"));
+	var data = {};
+		$.ajax({
+			  url: "/ncdis/service/data/addNewYearPopulation?sid="+sid+"&language=en",
+			  data : data,
+			  async:false,
+			  dataType: "json"
+			}).done(function( json ) {
+				loadPopulationEI();
+				buildPandiManageDataBody($(".fullscreen-modal-body"));
+				setTimeout(hideProgress,100,$(".fullscreen-modal-body"));
+			}).fail(function( jqXHR, textStatus ) {
+			  alert( "Request failed: " + textStatus );
+			});	
+	
+}
+
+
+function saveYearToPopulation(year){
+	setTimeout(showProgress,10,$(".fullscreen-modal-body"));
+	var data = $("#populationData").serialize();
+		$.ajax({
+			  url: "/ncdis/service/data/saveYearPopulation?sid="+sid+"&language=en&year="+year,
+			  data : data,
+			  async:false,
+			  dataType: "json"
+			}).done(function( json ) {
+				loadPopulationEI();
+				buildPandiManageDataBody($(".fullscreen-modal-body"));
+				buildpandiManageDataTable(year);
+				$(".fmbt-item").removeClass("selected");
+				$.each($(".fmbt-item"), function(x,o){
+					var t = $(this).text();
+					if(t == year){
+						$( this ).addClass("selected");		
+					}
+				});
+				
+				setTimeout(hideProgress,100,$(".fullscreen-modal-body"));
+			}).fail(function( jqXHR, textStatus ) {
+			  alert( "Request failed: " + textStatus );
+			});	
+	
+}
+
+
+
+function buildpandiManageDataTable(year){ 
+	var container = $(".fullscreen-modal-body-table");
+	//var year = event.data.year;
 	$(container).empty();
-	var tbl = $("<div>",{class:"fmb-table"}).appendTo(container);
+	var ftbl = $("<form>",{id:"populationData"}).appendTo(container);
+	var tbl = $("<div>",{class:"fmb-table"}).appendTo(ftbl);
 	$.each(populationEI, function(k,v){
 		var y = k.replace("year_","");
 		if(y == year){
@@ -161,9 +308,21 @@ function buildpandiManageDataTable(event){
 				if(index==0){
 					//build vertical header of table
 					var tblh = $("<div>",{class:"fmb-table-header"}).appendTo(tbl);
-					$("<div>",{class:"fmb-table-header-cell"}).html("&nbsp;").appendTo(tblh);
+					$("<div>",{class:"fmb-table-header-cell gol"}).html("&nbsp;").appendTo(tblh);
 					$.each(obj.groups, function(x,y){
-						$("<div>",{class:"fmb-table-header-cell"}).text(y.name).appendTo(tblh);
+						$("<div>",{class:"fmb-table-header-cell gr"+x})
+							.text(y.name)
+							.hover(
+								function() {
+								    $( this ).addClass("hov");
+								    $(".gr"+x).addClass("hov");
+  								}, function() {
+    								$( this ).removeClass("hov");
+    								$(".gr"+x).removeClass("hov");
+  								}
+							)
+							
+							.appendTo(tblh);
 					});
 				}
 				var tblc = $("<div>",{class:"fmb-table-body"}).appendTo(tbl);
@@ -176,9 +335,9 @@ function buildpandiManageDataTable(event){
 				
 				$.each(obj.groups, function(x,y){
 					var tblcellrow = $("<div>",{class:"fmb-table-body-cell-container"}).appendTo(tblc);
-					$("<div>",{class:"fmb-table-body-header-m"}).text(y.m).appendTo(tblcellrow);
-					$("<div>",{class:"fmb-table-body-header-f"}).text(y.f).appendTo(tblcellrow);
-					$("<div>",{class:"fmb-table-body-header-f"}).text(y.t).appendTo(tblcellrow);
+					$("<div>",{class:"fmb-table-body-line-m gr"+x +" "+obj.name.toLowerCase()}).text(y.m).appendTo(tblcellrow);
+					$("<div>",{class:"fmb-table-body-line-f gr"+x +" "+obj.name.toLowerCase()}).text(y.f).appendTo(tblcellrow);
+					$("<div>",{class:"fmb-table-body-line-t gr"+x +" "+obj.name.toLowerCase()}).text(y.t).appendTo(tblcellrow);
 				});
 				
 				

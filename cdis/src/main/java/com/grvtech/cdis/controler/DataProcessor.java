@@ -1,16 +1,25 @@
 package com.grvtech.cdis.controler;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import javax.lang.model.element.VariableElement;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.net.util.Base64;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.grvtech.cdis.db.CdisDBridge;
 import com.grvtech.cdis.db.ChbDBridge;
 import com.grvtech.cdis.model.Action;
@@ -45,9 +59,14 @@ import com.grvtech.cdis.model.Values;
 import com.grvtech.cdis.util.MailTool;
 import com.grvtech.cdis.util.Misc;
 
+import jdk.javadoc.internal.doclets.toolkit.Content;
+import jdk.javadoc.internal.doclets.toolkit.FieldWriter;
+
 @RestController
 public class DataProcessor {
 	
+	
+	Logger logger = LogManager.getLogger(DataProcessor.class);
 	
 	@Autowired
 	ChbDBridge chbdb;
@@ -57,6 +76,9 @@ public class DataProcessor {
 	
 	@Autowired
 	MailTool mt;
+	
+	@org.springframework.beans.factory.annotation.Value("${reports}")
+	private String reportsFolder;
 	
 /*
  * /service/data/getUser?iduser=XX
@@ -1073,6 +1095,260 @@ public String getPandiHistory(final HttpServletRequest request){
 	
 	return result;
 }
+
+
+@RequestMapping(value = {"/service/data/addNewYearPopulation"}, method = RequestMethod.GET)
+public String addNewYearPopulation(final HttpServletRequest request){
+	Gson json = new Gson();
+	Gson json2 = new Gson();
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	String result = "";
+	
+	
+	String sid = request.getParameter("sid").toString();
+	String filename = reportsFolder+System.getProperty("file.separator")+"population.json";
+	try {
+		JsonReader reader = new JsonReader(new FileReader(filename));
+		JsonElement element = json2.fromJson(reader, JsonElement.class);
+		
+		if(element.isJsonObject()){
+			
+			JsonObject obj = element.getAsJsonObject();
+			JsonElement last = new JsonElement() {
+				
+				@Override
+				public JsonElement deepCopy() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+			};
+			String year = "";
+            Set<Map.Entry<String, JsonElement>> entries = obj.entrySet();//will return members of your object
+            for (Map.Entry<String, JsonElement> entry: entries) {
+                System.out.println(entry.getKey());
+                year = entry.getKey();
+                last = entry.getValue();
+            }
+            int y = Integer.parseInt(year.replace("year_", ""));
+            y++;
+            String nextKey = "year_"+y;
+            System.out.println("=======================================");
+            System.out.println(nextKey);
+            System.out.println("=======================================");
+            obj.add(nextKey, last);
+            
+            JsonWriter gw = new JsonWriter(new FileWriter(filename));
+            gw.setIndent("       ");
+            
+            gson.toJson(obj,gw);
+            gw.flush();
+            gw.close();
+            
+            
+		}
+		
+		
+	} catch (FileNotFoundException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	
+	ArrayList<Object> obs = new ArrayList<>();
+	result = json.toJson(new MessageResponse(true,"en",obs));
+	
+	return result;
+}
+
+
+@RequestMapping(value = {"/service/data/saveYearPopulation"}, method = RequestMethod.GET)
+public String saveYearPopulation(final HttpServletRequest request){
+	Gson json = new Gson();
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	String result = "";
+	
+	
+	String sid = request.getParameter("sid").toString();
+	String yearEdit = request.getParameter("year").toString();
+	String filename = reportsFolder+System.getProperty("file.separator")+"population.json";
+	Map<String, String[]> params = request.getParameterMap();
+	
+	
+	try {
+		JsonReader reader = new JsonReader(new FileReader(filename));
+		JsonElement element = json.fromJson(reader, JsonElement.class);
+		
+		if(element.isJsonObject()){
+			
+			JsonObject obj = element.getAsJsonObject();
+            Set<Map.Entry<String, JsonElement>> entries = obj.entrySet();//will return members of your object
+            for (Map.Entry<String, JsonElement> entry: entries) {
+                String yearLabel = entry.getKey();
+                String year = yearLabel.replace("year_","");
+                if(year.equals(yearEdit)) {
+                	JsonElement yearObj = entry.getValue();
+                    JsonArray elems = yearObj.getAsJsonArray();
+                    for(int i=0;i<elems.size();i++) {
+                    	JsonElement comunity =  elems.get(i);
+                    	JsonObject comunityObj = comunity.getAsJsonObject();
+                    	String com = comunityObj.get("name").getAsString();
+                    	JsonArray groups =  comunityObj.get("groups").getAsJsonArray();
+                    	//System.out.println("=======================================");
+                        //System.out.println(com);
+                        //System.out.println("=======================================");
+                        int totm = 0;
+                        int totf = 0;
+                        for( int j=0;j<groups.size();j++) {
+                        	JsonObject group = groups.get(j).getAsJsonObject();
+                        	if(j<groups.size()-1) {
+    	                    	
+    	                    	//System.out.println("=======================================");
+    	                        //System.out.println(group.get("name").getAsString());
+    	                        //System.out.println("=======================================");
+    	                        String mValue = group.get("m").getAsString();
+    	                        String fValue = group.get("f").getAsString();
+    	                        String tValue = group.get("t").getAsString();
+    	                        
+    	                        
+    	                        //System.out.println("=======================================");
+    	                        //System.out.println(com.toLowerCase()+"-gr"+j+"-m");
+    	                        //System.out.println("=======================================");
+    	                        int mForm = Integer.parseInt(request.getParameter(com.toLowerCase()+"-gr"+j+"-m"));
+    	                        totm = totm+mForm;
+    	                        int fForm = Integer.parseInt(request.getParameter(com.toLowerCase()+"-gr"+j+"-f"));
+    	                        totf = totf+fForm;
+    	                        group.addProperty("m", request.getParameter(com.toLowerCase()+"-gr"+j+"-m"));
+    	                        group.addProperty("f", request.getParameter(com.toLowerCase()+"-gr"+j+"-f"));
+    	                        group.addProperty("t", Integer.toString(mForm+fForm));
+                        	}else {
+                        		group.addProperty("m", Integer.toString(totm));
+                        		group.addProperty("f", Integer.toString(totf));
+                        		group.addProperty("t", Integer.toString(totm+totf));
+                        	}
+                            
+                    	}
+                    }
+                }
+                
+            }
+            JsonWriter gw = new JsonWriter(new FileWriter(filename));
+            gw.setIndent("       ");
+            
+            gson.toJson(obj,gw);
+            gw.flush();
+            gw.close();
+		}
+		
+	} catch (FileNotFoundException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	
+	
+	Set keys =  params.keySet();
+	Iterator<String> it = keys.iterator();
+	while(it.hasNext()) {
+		String key = it.next();
+		System.out.println("Key is :"+key +"   and value is :"+params.get(key)[0]);
+	}
+		
+	
+	
+	ArrayList<Object> obs = new ArrayList<>();
+	result = json.toJson(new MessageResponse(true,"en",obs));
+	
+	return result;
+}
+
+
+
+@RequestMapping(value = {"/service/data/fixDoubleRamqPatients"}, method = RequestMethod.GET)
+public String fisDoubleRamqPatients(final HttpServletRequest request){
+	Gson json = new Gson();
+	String result = "";
+	
+	
+	
+	//get double ramqs as list
+	//for each ramq 
+		//get ids of ramqs
+		//get the lowest id
+			// make it active and transfer data that is not in low id patient from high id patient
+			// transfer hcp associations from high id patients to low id patient
+			// transfer cdisdata from high id patients to low id patient
+			//delete all high id patient hcp association and id patient
+	
+	ArrayList<Object> obs = new ArrayList<>();
+	ArrayList<String> doubleramqs = cdisdb.getDoubleRamqs();
+	
+	if(doubleramqs.size() > 0) {
+		for(String ramq : doubleramqs) {
+			int lowid = cdisdb.getLowestId(ramq);
+			Patient lowp = cdisdb.getPatientById(lowid);
+			lowp.setActive("1");
+			ArrayList<Integer> ids = cdisdb.getIdsOfPatient(ramq);
+			for(int id : ids) {
+				if(lowid!=id) {
+					Patient hip = cdisdb.getPatientById(id);
+					obs.add(hip);
+					if(!lowp.getChart().equals(hip.getChart()) && lowp.getChart().equals("0"))lowp.setChart(hip.getChart());
+					if(!lowp.getBand().equals(hip.getBand()) && (lowp.getBand().equals("") || lowp.getBand() == null))lowp.setBand(hip.getBand());
+					if(!lowp.getFname().equals(hip.getFname()) && (lowp.getFname().equals("FIRSTNAME") || lowp.getFname().equals("")) && (!hip.getFname().equals("FIRSTNAME") && !hip.getFname().equals("")))lowp.setFname(hip.getFname());
+					if(!lowp.getLname().equals(hip.getLname()) && (lowp.getLname().equals("LASTNAME") || lowp.getLname().equals("")) && (!hip.getLname().equals("LASTNAME") && !hip.getLname().equals("")))lowp.setLname(hip.getLname());
+					if(!lowp.getPhone().equals(hip.getPhone()) && (lowp.getPhone().equals("0") || lowp.getPhone() == null) && (!hip.getPhone().equals("") && hip.getPhone()!= null))lowp.setPhone(hip.getPhone());
+					if(!lowp.getJbnqa().equals(hip.getJbnqa()) && (lowp.getJbnqa().equals("") || lowp.getJbnqa().equals("0")) && (!hip.getJbnqa().equals("") && !hip.getJbnqa().equals("0")))lowp.setJbnqa(hip.getJbnqa());
+					if(!lowp.getGiu().equals(hip.getGiu()) && (lowp.getGiu().equals("") || lowp.getGiu() == null) && (!hip.getGiu().equals("") && hip.getGiu()!= null))lowp.setGiu(hip.getGiu());
+					if(!lowp.getDod().equals(hip.getDod()) && (lowp.getDod().equals("") || lowp.getDod().equals("1900-01-01")) && (!hip.getDod().equals("") && !hip.getDod().equals("1900-01-01")))lowp.setDod(hip.getDod());
+					if(!lowp.getDcause().equals(hip.getDcause()) && (lowp.getDcause().equals("") || lowp.getDcause() == null) && (!hip.getDcause().equals("") && hip.getDcause() != null))lowp.setDcause(hip.getDcause());
+					
+					cdisdb.updatePatient(lowp);
+					
+					
+					Hcp hcp = cdisdb.getHcpOfPatient(id);
+					Hcp lowhcp = cdisdb.getHcpOfPatient(lowid);
+					if(lowhcp.getMd().equals("")  &&  !lowhcp.getMd().equals(hcp.getMd())) lowhcp.setMd(hcp.getMd());
+					if(lowhcp.getNur().equals("")  &&  !lowhcp.getNur().equals(hcp.getNur())) lowhcp.setNur(hcp.getNur());
+					if(lowhcp.getNut().equals("")  &&  !lowhcp.getNut().equals(hcp.getNut())) lowhcp.setNut(hcp.getNut());
+					if(lowhcp.getChr().equals("")  &&  !lowhcp.getChr().equals(hcp.getChr())) lowhcp.setChr(hcp.getChr());
+					cdisdb.setHcpOfPatient(lowid, lowhcp.getCasem(), lowhcp.getMd(), lowhcp.getNut(), lowhcp.getNur(), lowhcp.getChr());
+					
+					cdisdb.transferCdisValues(id,lowid);
+					
+					cdisdb.deleteHcpOfPatient(id);
+					cdisdb.deleteDeletePatient(id);
+				}
+			}
+			obs.add(lowp);
+		}
+	}
+	/*
+	String idcommunity = request.getParameter("idcommunity").toString();
+	String sex = request.getParameter("sex").toString();
+	String dtype = request.getParameter("dtype").toString();
+	String age = request.getParameter("age").toString();
+	String since = request.getParameter("since").toString();
+	
+	Hashtable<String, ArrayList<Object>> serie1 = cdisdb.getPrevalenceHistory(idcommunity,sex,dtype, age, since);
+	obs.add(serie1);
+	Hashtable<String, ArrayList<Object>> serie2 = cdisdb.getIncidenceHistory(idcommunity,sex,dtype, age,since);
+	obs.add(serie2);
+	Hashtable<String, ArrayList<Object>> serie3 = cdisdb.getPrevalenceHistory(idcommunity,"0",dtype,"0", since);
+	obs.add(serie3);
+	Hashtable<String, ArrayList<Object>> serie4 = cdisdb.getIncidenceHistory(idcommunity,"0",dtype,"0",since);
+	obs.add(serie4);
+	*/
+	
+	result = json.toJson(new MessageResponse(true,"en",obs));
+	logger.info(result);
+	return result;
+}
+
+
 
 
 }

@@ -59,8 +59,8 @@ import com.grvtech.cdis.model.Values;
 import com.grvtech.cdis.util.MailTool;
 import com.grvtech.cdis.util.Misc;
 
-import jdk.javadoc.internal.doclets.toolkit.Content;
-import jdk.javadoc.internal.doclets.toolkit.FieldWriter;
+
+
 
 @RestController
 public class DataProcessor {
@@ -1268,7 +1268,7 @@ public String saveYearPopulation(final HttpServletRequest request){
 
 
 @RequestMapping(value = {"/service/data/fixDoubleRamqPatients"}, method = RequestMethod.GET)
-public String fisDoubleRamqPatients(final HttpServletRequest request){
+public String fixDoubleRamqPatients(final HttpServletRequest request){
 	Gson json = new Gson();
 	String result = "";
 	
@@ -1318,6 +1318,8 @@ public String fisDoubleRamqPatients(final HttpServletRequest request){
 					cdisdb.setHcpOfPatient(lowid, lowhcp.getCasem(), lowhcp.getMd(), lowhcp.getNut(), lowhcp.getNur(), lowhcp.getChr());
 					
 					cdisdb.transferCdisValues(id,lowid);
+					cdisdb.cleanCdisValues(lowid);
+					
 					
 					cdisdb.deleteHcpOfPatient(id);
 					cdisdb.deleteDeletePatient(id);
@@ -1326,6 +1328,8 @@ public String fisDoubleRamqPatients(final HttpServletRequest request){
 			obs.add(lowp);
 		}
 	}
+	
+	//cdisdb.cleanCdisValues(3302);
 	/*
 	String idcommunity = request.getParameter("idcommunity").toString();
 	String sex = request.getParameter("sex").toString();
@@ -1349,6 +1353,18 @@ public String fisDoubleRamqPatients(final HttpServletRequest request){
 }
 
 
+@RequestMapping(value = {"/service/data/cleanDoubleValuePatients"}, method = RequestMethod.GET)
+public String cleanDoubleValuePatients(final HttpServletRequest request){
+	String result = "";
+	ArrayList<Integer> ids = cdisdb.getIdsOfAllPatients();
+	if(ids.size() > 0) {
+		for(int id : ids) {
+			cdisdb.cleanCdisValues(id);
+		}
+	}
+	logger.info(result);
+	return result;
+}
 
 
 }

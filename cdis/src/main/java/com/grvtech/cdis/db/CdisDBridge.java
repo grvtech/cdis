@@ -3269,6 +3269,16 @@ public ArrayList<Integer> getIdsOfPatient(String ramq){
 	return result;
 }
 
+public ArrayList<Integer> getIdsOfAllPatients(){
+	ArrayList<Integer> result = new ArrayList<>();
+	String sql = "SELECT idpatient FROM ncdis.ncdis.patient";
+	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+	for(Map row : rows) {
+		result.add(Integer.parseInt(row.get("idpatient").toString()));
+	}
+	return result;
+}
+
 
 public boolean transferCdisValues(int fromid , int toid){
 	boolean result = false;
@@ -3276,6 +3286,31 @@ public boolean transferCdisValues(int fromid , int toid){
 	jdbcTemplate.update(sql);
 	result = true;
 	logger.log(Level.INFO, "Transfer data from Id patient:"+fromid+" to Patient idpatient:"+toid);
+	return result;
+}
+
+
+public boolean cleanCdisValues(int id){
+	boolean result = false;
+	String sql = "select * from ncdis.ncdis.cdis_value  where idpatient = '"+id+"'";
+	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+	ArrayList<String> hash = new ArrayList<>();
+	for(Map row : rows) {
+		String dv = row.get("datevalue")==null?"NULL":row.get("datevalue").toString();
+		String v = row.get("value")==null?"NULL":row.get("value").toString();
+		
+		String h = row.get("idpatient").toString()+dv+v+row.get("iddata").toString();
+		if(hash.size() == 0) {
+			hash.add(h);
+		}
+		if(hash.contains(h)) {
+			jdbcTemplate.update("delete from ncdis.ncdis.cdis_value where idvalue='"+row.get("idvalue").toString()+"'");
+		}else {
+			hash.add(h);
+		}
+	}
+	result = true;
+	logger.log(Level.INFO, "Clean data for Id patient:"+id);
 	return result;
 }
 

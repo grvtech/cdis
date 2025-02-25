@@ -13,7 +13,7 @@ var fllstr = "";
  * MAIN SECTION
  * */
 refreshUserNotes(sid);
-$(".cdisfooter-left").hover(function(){$(".leftfootermenu").toggle("fade");},function(){$(".leftfootermenu").toggle("fade");});
+
 if(fll=='1'){
 	//show back to local list button
 	var fllramq =  getParameterByName("fll_ramq");
@@ -34,25 +34,7 @@ if(c != ""){
 	$("#criteria").text($("#radios  :radio:checked").text());
 }
 	
-$("#menu li").each(function( index ) {
-	var sclass = $(this).children("span").attr("class");
-	var sec = sclass.substring(0,sclass.indexOf("_icon"));
-	$(this).click(function() {
-		if(isDemo){
-			if(sec == "notes"){
-				var bconfig = {"width":"300","height":"250"};
-				var bbut = [{"text":"Close","action":"closeGRVPopup"}];
-				var txt = "<p><center><span style='color:yellow;font-size:35px;'><i class='fa fa-exclamation-triangle'></i></span><br><b>This function si not available in demo mode.</b></center></p>";
-				showGRVPopup("CDIS Demo Mode",txt,bbut,bconfig);
-			}else{
-				gtc(sid,"en",getParameterByName("ramq"),sec,fllstr);	
-			}
-		}else{
-			gtc(sid,"en",patientObj.ramq,sec,fllstr);	
-		}
-		
-	});
-});
+
 
 
 $("#search").autocomplete(
@@ -149,13 +131,12 @@ $("#criteria").on("click",function(e){if(cdisSection != "dashboard"){$("#radios"
  * */
 
 function clearSections(){
-	//$("#ub_cdisbody_page > div").hide();
-	$(".page").empty();
+	$(".cdisPage").empty();
 }
 
 function selectSection(section){
-	$("#menu li").removeClass("selected");
-	$("#menu li").each(function( index ) {
+	$("#grvSectionsMenu li").removeClass("selected");
+	$("#grvSectionsMenu li").each(function( index ) {
 		$(this).children("."+section+"_icon_").parent().addClass("selected");
 	});
 	loadSection(section);
@@ -175,17 +156,14 @@ function loadPatient(){
 	if(dtypevalue == 5){
 		sec = "patientblank";
 	}
-	$(".mainpage .main .page").load("/ncdis/client/templates/cdis."+sec+".html", function(patientObjArr){
+	
+	$(".cdisPage").load("/ncdis/client/templates/cdis."+sec+".html", function(patientObjArr){
 		cdisSection = "patient";
-		$(".side").hide();
-		$(".cdismenu").hide();
-		$("#menu li").removeClass("selected");
-		$("#menu li").children(".patient_icon_").parent().addClass("selected");
-		
+		$("#grvSectionsMenu li").removeClass("selected");
+		$("#grvSectionsMenu li").children(".patient_icon_").parent().addClass("selected");
 		drawPatientRecord(patientObjArray);
 		drawABCGraphs();
 		populatePageside();
-		
 		var hcpObject = patientObjArray[1];
 		var cnt = 0;
 		
@@ -202,11 +180,14 @@ function loadPatient(){
 		});
 		initPage();
 	});
+	/**/
 }
 
+
+/*
 function loadNotes(){
 	clearSections();
-	$(".mainpage .main .page").load("/ncdis/client/templates/cdis.notes.html", function(patientObjArr){
+	$(".page .main .pagebody").load("/ncdis/client/templates/cdis.notes.html", function(patientObjArr){
 		cdisSection = "notes";
 		
 		$("#ub_cdisbody_page").css("position","absolute");
@@ -219,14 +200,14 @@ function loadNotes(){
 		$(".temporar").show();
 		drawPatientRecord(patientObjArray);
 		$("#temporarDiv").hide();
-		$("#patient-record-buttons").hide();
+		
 		$(".cdisbody").css("height",$("#ub_cdisbody_page").height());
 		$(".cdisbody_patient_record").css("height",$("#ub_cdisbody_page").height());
 		$(".cdisbody_patient").fadeIn(350);
 		backArray.push("cdis.html?sid="+sid);
 		backArrayIndex++;
-		$("#menu li").removeClass("selected");
-		$("#menu li").each(function( index ) {
+		$("#grvSectionsMenu li").removeClass("selected");
+		$("#grvSectionsMenu li").each(function( index ) {
 			$(this).children(".notes_icon_").parent().addClass("selected");
 		});
 		var hcpObj = patientObjArray[1];
@@ -242,6 +223,8 @@ function loadNotes(){
 		initPage();
 	});
 }
+*/
+
 
 function drawPatientSection(section, sectionObj, valuesArr){
 	
@@ -259,11 +242,12 @@ function loadSection(section){
 	if(section == "patient"){
 		loadPatient();
 	}else{
-		$(".mainpage .main .page").load("/ncdis/client/templates/cdis."+section+".html", function(){
+		$(".cdisPage").load("/ncdis/client/templates/cdis."+section+".html", function(){
 			initPage();
 			initLocalPage(section);
 		});
 	}
+	
 }
 
 
@@ -357,14 +341,14 @@ function drawPatientRecord(pObj){
 	patientObj = prepareData(patientObj);
 	
 	if(patientObj.deceased == 1){
-		$(".dead").css("display","inline-block");
-		$("#name_value").addClass("name-label-deceased");
+		$(".dead").css("display","block");
+		$("#name_value").addClass("cdisDeceased");
 	}else{
-		$("#name_value" ).removeClass("name-label-deceased");
+		$("#name_value" ).removeClass("cdisDeceased");
 		$(".dead").css("display","none");
 	}
 	
-	$("#patient-record div .record").each(function( index ) {
+	$(".cdisPatientRecordSummary .record").each(function( index ) {
 		if($( this ).attr("id") == "name_value"){
 			$(this).text(patientObj.lname +" "+patientObj.fname);
 		}else if($( this ).attr("id") == "sex_value"){
@@ -395,53 +379,58 @@ function drawPatientRecord(pObj){
 	/* diabet history table*/
 	var dobj = pObj[2];
 	var vd = dobj.dtype.values;
+	if(vd.length > 1){
+			$.each(vd,function(index,val){
+			var linie = $("<tr>",{id:"diabetid-"+val.idvalue});
+			var cdate = $("<td>",{class:"diabet-history-value"}).text(val.date);
+			var ii = val.value;
+			if(val.value == "10"){ii=3;}
+			if(val.value == "11"){ii=4;}
+			
+			var ctype = $("<td>",{class:"diabet-history-value"}).text(dtype[ii]);
+			var btype = $("<td>",{class:"diabet-history-value"});
+			linie.append(cdate);
+			linie.append(ctype);
+			linie.append(btype);
+			if(vd.length > 1){
+				if(userProfileObj.role.idrole == 1){
+					var bb = $("<span>",{id:"diabet-"+val.idvalue}).html("<i class=\"fa fa-times-circle\" aria-hidden=\"true\"></i>").appendTo(btype);
+					bb.click(function(){
+						var $d = $("<div>",{id:"dialog-confirm",title:"Delete diabetes type"}).appendTo($("body"));
+						var $p = $("<p>").text("This type of diabetes will be permanently deleted. Are you sure ?").appendTo($d); 
+						$d.dialog({
+						      resizable: false,
+						      height: "auto",
+						      width: 400,
+						      modal: true,
+						      buttons: {
+						        "Delete diabates type": function() {
+						        	deleteValue(val.idvalue,patientObjArray);
+									$("#diabetid-"+val.idvalue).remove();
+									if($("#diabet-history tr").length == 3){
+										$(".diabet-history-value span").hide();
+									}
+									$( this ).dialog( "close" );
+							        $(this.remove());
+						        },
+						        Cancel: function() {
+						          $( this ).dialog( "close" );
+						          $(this.remove());
+						        }
+						      }
+						    });
+					});
+				}
+			}		
+			$("#diabet-history").append(linie);
+			
+		});
+	}else{
+		/*only one diabetes type in history*/
+		$("#diabet-history").hide();
+	}
 	
-	$.each(vd,function(index,val){
-		var linie = $("<tr>",{id:"diabetid-"+val.idvalue});
-		var cdate = $("<td>",{class:"diabet-history-value"}).text(val.date);
-		var ii = val.value;
-		if(val.value == "10"){ii=3;}
-		if(val.value == "11"){ii=4;}
-		
-		var ctype = $("<td>",{class:"diabet-history-value"}).text(dtype[ii]);
-		var btype = $("<td>",{class:"diabet-history-value"});
-		linie.append(cdate);
-		linie.append(ctype);
-		linie.append(btype);
-		if(vd.length > 1){
-			if(userProfileObj.role.idrole == 1){
-				var bb = $("<span>",{id:"diabet-"+val.idvalue}).html("<i class=\"fa fa-times-circle\" aria-hidden=\"true\"></i>").appendTo(btype);
-				bb.click(function(){
-					var $d = $("<div>",{id:"dialog-confirm",title:"Delete diabetes type"}).appendTo($("body"));
-					var $p = $("<p>").text("This type of diabetes will be permanently deleted. Are you sure ?").appendTo($d); 
-					$d.dialog({
-					      resizable: false,
-					      height: "auto",
-					      width: 400,
-					      modal: true,
-					      buttons: {
-					        "Delete diabates type": function() {
-					        	deleteValue(val.idvalue,patientObjArray);
-								$("#diabetid-"+val.idvalue).remove();
-								if($("#diabet-history tr").length == 3){
-									$(".diabet-history-value span").hide();
-								}
-								$( this ).dialog( "close" );
-						        $(this.remove());
-					        },
-					        Cancel: function() {
-					          $( this ).dialog( "close" );
-					          $(this.remove());
-					        }
-					      }
-					    });
-				});
-			}
-		}		
-		$("#diabet-history").append(linie);
-		
-	});
-	$("#editpatient-button, #editpatient-button-second").click(function() {
+	$("#editpatient-button, #grvPatientRecordEditPatientButton").click(function() {
 		if(isDemo){
 			var bconfig = {"width":"300","height":"250"};
 			var bbut = [{"text":"Close","action":"closeGRVPopup"}];
@@ -449,7 +438,6 @@ function drawPatientRecord(pObj){
 			showGRVPopup("CDIS Demo Mode",txt,bbut,bconfig);
 		}else{
 			gtc(sid,"en",patientObj.ramq,"editpatient");
-			//window.location = "cdis.html?section=editpatient&ramq="+patientObj.ramq+"&sid="+sid+"&language=en";
 		}
 	});
 }
@@ -465,7 +453,7 @@ function printHistoryGraph(title){
 }
 
 function printSectionGraphs(title){
-		$("section").printJQPlot(title);
+		$("#grvPrintPanel").printJQPlot(title);
 }
 
 function animateButton(obj){
@@ -525,6 +513,7 @@ function deleteValue(idvalue,patientObjectArray){
 	
 }
 
+/*
 function toggleRecord(flag){
 	if(cdisSection == "editpatient" || cdisSection == "frontpage" || cdisSection == "addpatient" || cdisSection == "personalinfo" || cdisSection == "users" ||  cdisSection == "audit"){
 		$(".cdisbody_patient_record").hide();
@@ -552,6 +541,7 @@ function toggleRecord(flag){
 	}
 	
 }
+*/
 
 function initAutocompleteHcp(obj){
 	obj.autocomplete({
@@ -614,6 +604,29 @@ function initLocalPage(section){
 	}else{
 		initLocalSection(section);
 	}
+	
+	
+	$("#grvSectionsMenu li").each(function( index ) {
+	var sclass = $(this).children("span").attr("class");
+	var sec = sclass.substring(0,sclass.indexOf("_icon"));
+	$(this).click(function() {
+		if(isDemo){
+			if(sec == "notes"){
+				var bconfig = {"width":"300","height":"250"};
+				var bbut = [{"text":"Close","action":"closeGRVPopup"}];
+				var txt = "<p><center><span style='color:yellow;font-size:35px;'><i class='fa fa-exclamation-triangle'></i></span><br><b>This function si not available in demo mode.</b></center></p>";
+				showGRVPopup("CDIS Demo Mode",txt,bbut,bconfig);
+			}else{
+				gtc(sid,"en",getParameterByName("ramq"),sec,fllstr);	
+			}
+		}else{
+			gtc(sid,"en",patientObj.ramq,sec,fllstr);	
+		}
+		
+		});
+	});
+	
+	
 }
 
 
@@ -646,12 +659,12 @@ function initAddPatientSection(){
 	/*
 	 * MAIN
 	 * */
-	$(".cdismenu").hide();
-	$(".side").hide();
-	$(".cdisbody_addpatient").fadeIn(350);
-	$(".fnew").hide();
-	$(".freports").hide();
-	resetForm($("#addpatient-form"));
+	
+	
+	$(".cdisPanelSectionAddPatient").fadeIn(350);
+	$(".cdisFnew").hide();
+	$(".cdisFreports").hide();
+	resetForm($("#grvAddPatientForm"));
 	initAutocompleteHcp($("#chr"));
 	initAutocompleteHcp($("#md"));
 	initAutocompleteHcp($("#nur"));
@@ -674,14 +687,23 @@ function initAddPatientSection(){
 	});
 	$("#radio-sex label").on("change",function() {$("input[name='sex']").val($(this).find("input[type='radio']").val());});
 	$("#radio-iscree label").on("change",function() {$("input[name='iscree']").val($(this).find("input[type='radio']").val());});
-	$("#cancel-addpatient").on("click",function() {gts(sid,"en");});
+	
+	$("#grvAddPatientCancelButton").on("click",function() {
+		var fp = getParameterByName("frompage");
+		var r =  getParameterByName("fr");
+		if(fp == "cdis"){
+			gtc(sid,"en",r,"patient");
+		}else{
+			gts("en",sid);
+		}
+	});
 	$("#add-patient").on("click",addPatient);
 	$('#myModal').on('show.bs.modal', populateAddPatientConfirm);
-	$("#save-addpatient").on("click",showAddPatientConfirm);
+	$("#grvAddPatientSaveButton").on("click",showAddPatientConfirm);
 }
 
 function addPatient(){
-	var data = $('#addpatient-form').serialize();
+	var data = $('#grvAddPatientForm').serialize();
 	data+="&sid="+sid+"&language=en";
 	var save = $.ajax({
 		  url: "/ncdis/service/data/addPatientRecord?sid="+sid+"&language=en",
@@ -784,12 +806,9 @@ function initEditPatientSection(){
 	 * MAIN
 	 * */
 	
-	
-	$(".cdismenu").hide();
-	$(".side").hide();
-	$(".cdisbody_editpatient").fadeIn(350);
-	$(".fnew").hide();
-	$(".freports").hide();
+	$(".cdisPanelSectionEditPatient").fadeIn(350);
+	$(".cdisFnew").hide();
+	$(".cdisFreports").hide();
 	
 	patientObj = prepareData(patientObj);
 	if(patientObj.deceased == 1){$("#deceased-section").show();}else{$("#deceased-section").hide();}
@@ -799,11 +818,11 @@ function initEditPatientSection(){
 	initAutocompleteHcp($("#nur"));
 	initAutocompleteHcp($("#nut"));
 	
-	resetForm($("#editpatient-form"));
-	populateForm($("#editpatient-form"), prepareData(patientObj));
-	populateForm($("#editpatient-form"), prepareData(diabetObj));
+	resetForm($("#grvEditPatientForm"));
+	populateForm($("#grvEditPatientForm"), prepareData(patientObj));
+	populateForm($("#grvEditPatientForm"), prepareData(diabetObj));
 	var hcpObject = getHcpObject();
-	populateForm($("#editpatient-form"), hcpObject);
+	populateForm($("#grvEditPatientForm"), hcpObject);
 	
 	//disable ramq so it cannot be modified
 	$("#ramq-value").prop("disabled",true);
@@ -832,10 +851,10 @@ function initEditPatientSection(){
 	$("#md").on("blur",function(){if($(this).val()== ""){$("#mdid").val("");}});
 	$("#nur").on("blur",function(){if($(this).val()== ""){$("#nurid").val("");}});
 	$("#nut").on("blur",function(){if($(this).val()== ""){$("#nutid").val("");}});
-	$("#cancel-editpatient").on("click",function() {gtc(sid,"en",patientObj.ramq,"patient");});
 	
-	$("#save-editpatient").on("click",showEditPatientConfirm);
-	$("#deletepatient-button").on("click",deletePatient);
+	$("#grvEditPatientCancelButton").on("click",function() {gtc(sid,"en",patientObj.ramq,"patient");});
+	$("#grvEditPatientSaveButton").on("click",showEditPatientConfirm);
+	$("#grvEditPatientDeleteButton").on("click",deletePatient);
 	
 	$("#edit-patient").on("click",editPatient);
 	$('#myModalEdit').on('show.bs.modal', populateAddPatientConfirm);
@@ -890,7 +909,7 @@ function editPatient() {
 	$("#errortext-patient").html("");
 	//remove disabled ramq so we can sen it
 	$("#ramq-value").prop("disabled",false);
-	var data = $('#editpatient-form').serialize();
+	var data = $('#grvEditPatientForm').serialize();
 	data+="&sid="+sid+"&language=en&casem=&idpatient="+patientObjArray[0].idpatient;
 	var save = $.ajax({
 		  url: "/ncdis/service/data/savePatientRecord",
@@ -965,7 +984,7 @@ function deletePatient() {
 
 function showEditPatientConfirm() {
 	$("#errortext-patient").html("");
-	//var data = $('#addpatient-form').serialize();
+	//var data = $('#grvAddPatientForm').serialize();
 	//data+="&sid="+sid+"&language=en";
 	
 	var validRamq = validateRamq($("#ramq-value").val());
@@ -996,8 +1015,8 @@ function initNotesLocalSection(){
 	 * MAIN
 	 * */
 	
-	$("#menu li").removeClass("selected");
-	$("#menu li").each(function( index ) {
+	$("#grvSectionsMenu li").removeClass("selected");
+	$("#grvSectionsMenu li").each(function( index ) {
 		$(this).children(".notes_icon_").parent().addClass("selected");
 	});
 	
@@ -1059,8 +1078,8 @@ function initSchedulevisistsLocalSection(){
 	$(profession_array).each(function(ind,vArr){
 		drawPatientSchedule(patientObjArray[0].idpatient,vArr[0]);
 	});
-	$("#menu li").removeClass("selected");
-	$("#menu li").each(function( index ) {
+	$("#grvSectionsMenu li").removeClass("selected");
+	$("#grvSectionsMenu li").each(function( index ) {
 		$(this).children(".schedulevisits_icon_").parent().addClass("selected");
 	});
 	populateRecord();
@@ -1266,8 +1285,8 @@ function initLocalSection(section){
 	populateRecord();
 	populatePageside();
 	
-	$("#menu li").removeClass("selected");
-	$("#menu li").each(function( index ) {
+	$("#grvSectionsMenu li").removeClass("selected");
+	$("#grvSectionsMenu li").each(function( index ) {
 		$(this).children("."+section+"_icon_").parent().addClass("selected");
 	});
 }

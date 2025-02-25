@@ -1,15 +1,7 @@
 /**
 SEARCH PAGE CSS
 */
-/*
-.search{position:relative;width:1000px;height:150px;margin:auto;}
-.search .searchlabel{width:auto; text-align:center;font-size:220%;color:#ffffff;margin-top:20px;}
-.search .ssearch{position:absolute;left:150px;width:850px;height:100%;}
-.search .scriteria{position:absolute;width:150px;left:0px;margin:-42px 0px 0px 0px;border:1px solid #4b3b3b;}
-.search #criteria{position:absolute;width:150px;left:0px;margin:0px 0px 0px 0px;height:42px;border-top:1px solid #4b3b3b;border-bottom:1px solid #4b3b3b;border-left:1px solid #4b3b3b;line-height:40px;font-family: Sans-Serif,Tahoma,Verdana,Arial,sans-serif;font-size: 100%;text-transform: uppercase;text-align: center;color:#ffffff;cursor:pointer;background-color:#4b3b3b;}
-.search .sbutton{position:absolute;right:0px;width:90px;height:100%;margin: 0;border: 1px solid #4b3b3b;background:no-repeat url(../images/ic_search_wht_24dp_r1.png) #4b3b3b center center;top:1px;}
-.search .ssearch .searchtext{width:100%;height:40px;color:#000000;margin:0px;padding-left:10px;border-left:none;border-bottom:1px solid #4b3b3b;border-top:1px solid #4b3b3b;border-right:1px solid #4b3b3b;font-family: Sans-Serif,Tahoma,Verdana,Arial,sans-serif;font-size: 100%;text-transform: uppercase;text-align: left;}
-*/
+
 
 
 .search{width:1000px;height:150px;margin:auto;padding:0px;display:flex;flex-direction:row;flex-wrap:nowrap;}
@@ -26,15 +18,11 @@ SEARCH PAGE CSS
 .search #radios .ui-corner-left{border-bottom-left-radius: 0px;-moz-border-bottom-left-radius: 0px;-webkit-border-bottom-left-radius: 0px;border-top-left-radius: 0px;-moz-border-top-left-radius: 0px;-webkit-border-top-left-radius: 0px;}
 .search #radios .ui-widget {font-family: Sans-Serif,Verdana,Arial,sans-serif;font-size: 100%;height:42px;top:0px;left:0px;}
 .search #radios .ui-widget:hover {background-color:#db4437;color:#ffffff;}
-/**/
-.dashboard-menu{position:relative;width:1000px;text-align:right;margin:auto;padding:5px;}
-.search-message{width:1000px;margin:auto;background-color:#ededed;margin-top:10px;margin-bottom:10px;}
 
-
-#radios{border-color:#4b3b3b;}
-#radios .btn-default{background-color:#ececec;margin-bottom:0px;}
-#radios .btn-default.active{background-color:#4b3b3b;color:#ffffff;font-weight:bold;}
-#radios .btn.focus {  outline: none;box-shadow:none;}
+.search #radios{border-color:#4b3b3b;}
+.search #radios .btn-default{background-color:#ececec;margin-bottom:0px;}
+.search #radios .btn-default.active{background-color:#4b3b3b;color:#ffffff;font-weight:bold;}
+.search #radios .btn.focus {  outline: none;box-shadow:none;}
 
 
 .ui-autocomplete{width:612px;margin-left:-200px;height:400px;overflow: auto;-moz-border-radius: 0px;-webkit-border-radius: 0px;border-radius: 0px;}
@@ -48,30 +36,47 @@ SEARCH PAGE CSS
 
 
 
-.notes-alert{position:relative;height:100px;width:1000px;margin:auto;z-index:2;background-color:#efefef;display:none;overflow-x: hidden;padding:5px;}
-.notes-alert .message{position:relative;background-color:#fefefe;text-align:left;font-size:90%;line-height:25px;margin:3px;padding:3px;}
-.notes-alert .message-button{position:absolute;color:#cdcdcd;font-size:80%;cursor:pointer;right:15px;width:auto;top:2px;}
-.notes-alert .message-button:hover{color:#4d4d4d;font-weight:bold;}
+/**/
 
-.personal-patients{position:relative;max-height:250px;width:1000px;margin:auto;z-index:2;background-color:#efefef;overflow-x: hidden;padding:5px;}
-.personal-patients .linkedHeader{position:relative;width:auto;padding:5px;background:#cdcdcd;border:1px solid #4d4d4d;}
-.personal-patients .linkedHeader #linkedPatients{position:absolute;right:2px;top:6px;}
+.cdisSearchMessage{width:100%;background-color:#ededed;}
+.cdisDashboardMenu{width:100%;text-align:right;padding:5px;}
 
-.personal-patients table{width:100%;display:none;border:1px solid #4d4d4d;}
-.personal-patients table thead{font-size:90%;font-weight:bold;background:#4d4d4d;color:#ffffff;text-transform: uppercase;}
-.personal-patients table tbody{font-size:80%;background:#ffffff;}
-.personal-patients table thead td{padding:5px;text-align:center;}
-.personal-patients table tbody td{padding:5px;text-align:center;}
-.personal-patients table tbody tr{background:#ffffff;cursor:pointer;}
-.personal-patients table tbody tr:hover{background:#cdcdcd;}
 
-.personal-patients table tbody tr.notvisits{background:#ffc4c4;}
-.personal-patients table tbody tr.notvisits:hover{background:#cdcdcd;}
-.futurevisits{}
-.personal-patients table tbody tr.currentvisits{background:#c4ffc8;}
-.personal-patients table tbody tr.currentvisits:hover{background:#cdcdcd;}
-.personal-patients p{margin:2px;padding:2px;}
-.personal-patients #userfullname{font-weight:bold;}
+.cdisNotesAlert{position:relative;height:100px;width:1000px;margin:auto;z-index:2;background-color:#efefef;display:none;overflow-x: hidden;padding:5px;}
+.cdisNotesAlert .cdisNoteMessage{position:relative;background-color:#fefefe;text-align:left;font-size:90%;line-height:25px;margin:3px;padding:3px;}
+.cdisNotesAlert .cdisNoteMessageButton{position:absolute;color:#cdcdcd;font-size:80%;cursor:pointer;right:15px;width:auto;top:2px;}
+.cdisNotesAlert .cdisNoteMessageButton:hover{color:#4d4d4d;font-weight:bold;}
+
+.cdisDashboardUser{position:relative;height:300px;width:1000px;margin:auto;z-index:2;background-color:#efefef;display:block;overflow-x:hidden;overflow-y:hidden;padding:5px;}
+.cdisDashboardUserPanel5{display:grid;grid-template-columns:200px 200px 200px 200px 200px;height:60px;padding:3px;}
+.cdisDashboardUserPanel2{display:grid;grid-template-columns:250px 750px;height:200px;}
+.cdisDashboardUserTableValue{display:block;width:250px;font-size:13px;border:1px outset #cdcdcd;}
+.cdisDashboardUserSingleValue{display:grid;grid-template-rows:50% 50%;width:180px; border:1px outset #cdcdcd; margin:5px;text-align:center;border-radius:5px;font-size:14px;font-weight:bold;background-color:#cdcdcd;}
+.cdisDashboardUserTableValueLine{display:grid;grid-template-columns:50% 50%;text-align:center;cursor:pointer;font-weight:bold;}
+.cdisDashboardUserTableValueLine:hover{background-color:#4b3b3b;color:#ffffff;font-weight:bold;}
+.cdisDashboardUserTableValueHeader{background-color:#4d4d4d;color:#ffffff;font-weight:bold;padding-left:3px;}
+.cdisActivityGraph{width:700px; height:200px;margin-left:10px;}
+.cdisActivityGraph .jqplot-title{font-size:0.9em;font-weight:bold;}
+
+
+
+
+.cdisPersonalPatients{position:relative;max-height:250px;width:1000px;margin:auto;z-index:2;background-color:#efefef;overflow-x: hidden;padding:5px;}
+.cdisPersonalPatients .cdisPersonalPatientsHeader{position:relative;width:auto;padding:5px;background:#cdcdcd;border:1px solid #4d4d4d;display:grid;grid-template-columns:auto 150px;}
+.cdisPersonalPatients table{width:100%;display:none;border:1px solid #4d4d4d;}
+.cdisPersonalPatients table thead{font-size:90%;font-weight:bold;background:#4d4d4d;color:#ffffff;text-transform: uppercase;}
+.cdisPersonalPatients table tbody{font-size:80%;background:#ffffff;}
+.cdisPersonalPatients table thead td{padding:5px;text-align:center;}
+.cdisPersonalPatients table tbody td{padding:5px;text-align:center;}
+.cdisPersonalPatients table tbody tr{background:#ffffff;cursor:pointer;}
+.cdisPersonalPatients table tbody tr:hover{background:#cdcdcd;}
+.cdisPersonalPatients table tbody tr.notvisits{background:#ffc4c4;}
+.cdisPersonalPatients table tbody tr.notvisits:hover{background:#cdcdcd;}
+.cdisPersonalPatients table tbody tr.currentvisits{background:#c4ffc8;}
+.cdisPersonalPatients table tbody tr.currentvisits:hover{background:#cdcdcd;}
+.cdisPersonalPatients p{margin:2px;padding:2px;}
+.cdisPersonalPatients #grvPersonalPatientsUserFullname{font-weight:bold;}
+
 
 
 @media screen  and  (max-width: 1370px) {
@@ -82,34 +87,11 @@ SEARCH PAGE CSS
 	.search .scriteria{flex:1 0;max-width:150px;left:0px;top:0px;margin:0px;border:1px solid #4b3b3b;}
 	.search .sbutton{position:absolute;right:0px;width:90px;height:100%;margin: 0;border: 1px solid #4b3b3b;background:no-repeat url(../images/ic_search_wht_24dp_r1.png) #4b3b3b center center;top:1px;}
 	.search .ssearch .searchtext{width:100%;height:100%;color:#000000;margin:0px;padding-left:10px;border-left:none;border-bottom:1px solid #4b3b3b;border-top:1px solid #4b3b3b;border-right:1px solid #4b3b3b;font-family: Sans-Serif,Tahoma,Verdana,Arial,sans-serif;font-size: 100%;text-transform: uppercase;text-align: left;}
-	.search-message{width:800px;margin:auto;background-color:#ededed;margin-top:10px;margin-bottom:10px;}
-	.personal-patients{position:relative;max-height:250px;width:800px;margin:auto;z-index:2;background-color:#efefef;overflow-x: hidden;padding:5px;}
-	.dashboard-menu{position:relative;width:800px;text-align:right;margin:auto;padding:5px;}
+	.cdisSearchMessage{width:800px;margin:auto;background-color:#ededed;margin-top:10px;margin-bottom:10px;}
+	.cdisPersonalPatients{position:relative;max-height:250px;width:800px;margin:auto;z-index:2;background-color:#efefef;overflow-x: hidden;padding:5px;}
+	.cdisDashboardMenu{position:relative;width:800px;text-align:right;margin:auto;padding:5px;}
 	.ui-autocomplete{width:650px;height:300px;overflow: auto;-moz-border-radius: 0px;-webkit-border-radius: 0px;border-radius: 0px;}
 }
-@media screen  and  (min-width: 1370px) and (max-width: 1601px) {
-	.search{width:1000px;height:150px;margin:auto;padding:0px;display:flex;flex-direction:row;flex-wrap:nowrap;}
-	.search .ssearch{flex:1 0;}
-	.search .ssearch .label{width:auto; text-align:center;font-size:220%;color:#ffffff;margin:0px;}
-	.search .ssearch .input{height:30px;}
-	.search .scriteria{flex:1 0;max-width:150px;left:0px;top:0px;margin:0px;border:1px solid #4b3b3b;}
-	.search .sbutton{position:absolute;right:0px;width:90px;height:100%;margin: 0;border: 1px solid #4b3b3b;background:no-repeat url(../images/ic_search_wht_24dp_r1.png) #4b3b3b center center;top:1px;}
-	.search .ssearch .searchtext{width:100%;height:100%;color:#000000;margin:0px;padding-left:10px;border-left:none;border-bottom:1px solid #4b3b3b;border-top:1px solid #4b3b3b;border-right:1px solid #4b3b3b;font-family: Sans-Serif,Tahoma,Verdana,Arial,sans-serif;font-size: 100%;text-transform: uppercase;text-align: left;}
-	.search-message{width:1000px;margin:auto;background-color:#ededed;margin-top:10px;margin-bottom:10px;}
-	.personal-patients{position:relative;max-height:250px;width:1000px;margin:auto;z-index:2;background-color:#efefef;overflow-x: hidden;padding:5px;}
-	.dashboard-menu{position:relative;width:1000px;text-align:right;margin:auto;padding:5px;}
-	.ui-autocomplete{width:850px;height:300px;overflow: auto;-moz-border-radius: 0px;-webkit-border-radius: 0px;border-radius: 0px;}
-}
 
 
-.dashboard-user{position:relative;height:300px;width:1000px;margin:auto;z-index:2;background-color:#efefef;display:block;overflow-x:hidden;overflow-y:hidden;padding:5px;}
-.panel5-dashboard{display:grid;grid-template-columns:200px 200px 200px 200px 200px;height:60px;padding:3px;}
-.panel2-dashboard{display:grid;grid-template-columns:250px 750px;height:200px;}
-.tablevalue-dashboard{display:block;width:250px;font-size:13px;border:1px outset #cdcdcd;}
-.singlevalue-dashboard{display:grid;grid-template-rows:50% 50%;width:180px; border:1px outset #cdcdcd; margin:5px;text-align:center;border-radius:5px;font-size:14px;font-weight:bold;background-color:#cdcdcd;}
-.tablevalue-line-dashboard{display:grid;grid-template-columns:50% 50%;text-align:center;cursor:pointer;font-weight:bold;}
-.tablevalue-line-dashboard:hover{background-color:#4b3b3b;color:#ffffff;font-weight:bold;}
-.tablevalue-header-dashboard{background-color:#4d4d4d;color:#ffffff;font-weight:bold;padding-left:3px;}
-.activitygraph-dahsboard{width:700px; height:200px;margin-left:10px;}
-.activitygraph-dahsboard .jqplot-title{font-size:0.9em;font-weight:bold;}
  

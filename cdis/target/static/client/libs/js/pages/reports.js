@@ -19,11 +19,11 @@ function loadReportsTemplate(){
 
 
 
-
+/*
 
 function buildReport(repObject, dataset){
 	
-		var raper = $("#wraper");
+		var raper = $("#grvWraper");
 		$("html, body").animate({ scrollTop: 0 }, "fast");
 		$("html, body").css("overflow", "hidden");
 		
@@ -101,15 +101,6 @@ function getReportObjectFromCriterias(){
 					criteria["section"] = "2";
 					
 					criteria["value"] = index;
-					/*
-					if(index == "3"){
-						criteria["value"] = "10";
-					}else if(index == "4"){
-						criteria["value"] = "11";
-					}else{
-						criteria["value"] = index;
-					}
-					*/
 					criteria["operator"] = "equal";
 					criteria["display"] = value;
 					criteria["date"] = "no";
@@ -306,12 +297,6 @@ function buildReportToolbar(divToolbarObj, reportObject){
 		$("#report-export-toolbar").toggle( "slide" );
 	});
 	
-	/*
-	$exportEXCELReport.click(function(){
-		$(".raportTable").tableExport({type:'excel',escape:'false'});
-		$("#report-export-toolbar").toggle( "slide" );
-	});
-	*/
 	
 	$exportTo.click(function(){
 		if(reportObject.type != "list"){
@@ -353,24 +338,6 @@ function buildCriteriaList(criteriasArray, divObj){
 							}
 						});
 						
-						/*
-						$("#"+objItem.name+"-operator-id-button").hide();
-						$("#"+objItem.name+"-"+objItem.type+"-value1-id-button").hide();
-						$("#"+objItem.name+"-"+objItem.type+"-value2-id-button").hide();
-						
-						var ss = $("#"+objItem.name+"-"+objItem.type+"-collected-date-operator-id");
-						if(ss.length > 0){
-							ss[0].selectedIndex = 0;
-							ss.selectmenu("refresh");
-						}
-						$("#"+objItem.name+"-"+objItem.type+"-value1-id").hide();
-						$("#"+objItem.name+"-"+objItem.type+"-value2-id").hide();
-						$("#"+objItem.name+"-"+objItem.type+"-collected-date-value1-id").hide();
-						$("#"+objItem.name+"-"+objItem.type+"-collected-date-value1-id").val("");
-						$("#"+objItem.name+"-"+objItem.type+"-collected-date-value2-id").hide();
-						$("#"+objItem.name+"-"+objItem.type+"-collected-date-value2-id").val("");
-						$("#"+objItem.name+"-"+objItem.type+"-collected-date-id").hide();
-						*/
 						removeFromSummary(objItem);
 						//removeFromSummaryCD(objItem);
 						
@@ -502,12 +469,11 @@ function cleanAll(){
 		addToSummary
 	}
 	$(".report-criteria-category").show();
-	
-	
-	
 }
+*/
 
 
+/*
 function addToSummary(objItem, message){
 	var isGraph = $("input[name='reporttype']").filter("[value='graph']").prop('checked');
 	if(message == null){
@@ -629,8 +595,8 @@ function removeFromSummaryCD(objItem){
 		$("#"+objItem.name+"-collected-date-summary").remove();
 	}
 }
-
-
+*/
+/*
 function createOperator(objItem){
 	if(objItem.type != "none"){
 		var tr = $("#"+objItem.name+"-table tr");
@@ -823,6 +789,9 @@ function createValues(objItem){
 }
 
 
+
+
+
 function createCD(objItem){
 	if(objItem.type == "value"){
 		addToSummaryCD(objItem);
@@ -922,6 +891,8 @@ function createCD(objItem){
 	}
 }
 
+
+
 function getCriterias(cObject){
 	var result = [];
 	if($.type(cObject) === "array"){
@@ -990,7 +961,7 @@ function getCriterias(cObject){
 	}
 	return result;
 }
-
+*/
 
 
 function prepareCustomReport(reportObject){
@@ -1009,65 +980,6 @@ function prepareCustomReport(reportObject){
 	return result;
 }
 
-
-function executeAsyncReport(reportObject){
-	buildAsyncReport(reportObject);
-	$.ajax({
-	    url: "/ncdis/service/action/executeReport?language=en&idreport="+reportObject.id+"&owner="+reportObject.owner+"&type="+reportObject.type+"&graphtype="+reportObject.graphtype+"&subcriteriatype="+reportObject.subcriteriatype,
-	    type: 'POST',
-	    data:JSON.stringify(reportObject),
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    async: true,
-	    success: function(msg) {
-	    	var dataset = msg.objs[0];
-	    	$("#loadingLineTr").remove();
-	    	if($.type(dataset) === "object"){
-	    		var ds = dataset.dataset;
-	    		if(reportObject.type == "graph"){
-	    			drawReportGraph(reportObject,dataset);
-	    		}
-	    		if(ds.length > 0){
-	    			$.each(dataset.header,function(qq, value){
-	    				$("<th>").text(value).appendTo($("#headLineTr"));
-	    			});
-	    			$.each(dataset.dataset,function(index, arrLine){
-	    				var rline = $("<tr>").appendTo($("#reportBodyTable"));
-	    				$.each(arrLine,function(ii, arrValue){
-	    					$("<td>").text(arrValue).appendTo(rline);
-	    				});
-	    			});
-	    		}
-	    	}
-	    }
-	});
-}
-
-
-function buildAsyncReport(ro){
-	var raper = $("#wraper");
-	$("html, body").animate({ scrollTop: 0 }, "fast");
-	$("html, body").css("overflow", "hidden");
-	
-	var report = $("<div>",{class:"raportContainer"}).appendTo(raper);
-	var reportH = $("<div>",{class:"raportHeader umbra"}).append($("<div>",{class:"raportHeaderLogo"}).text("CDIS")).append($("<div>",{class:"raportHeaderButtons"})).appendTo(report);
-	var reportB = $("<div>",{class:"raportBody"}).appendTo(report);
-	reportB.css("height",(report.height()-110)+"px");
-	
-	buildReportToolbar($(".raportHeaderButtons"), ro);
-	
-	if(ro.type == "graph"){
-		var graphContainer = $("<div>",{class:"graphContainer"}).appendTo(reportB);
-		$("<div>",{id:"graphReport"}).appendTo(graphContainer);
-	}
-	var listContainer = $("<div>",{class:"listContainer jqplot-cdistarget", style:"border:0px solid #000000;"}).appendTo(reportB);
-	var reportTable = $("<table>",{class:"raportTable",cellpadding:3,cellspacing:0,border:0}).appendTo(listContainer);
-	var thead = $("<thead>").appendTo(reportTable);
-	var tbody = $("<tbody>",{id:"reportBodyTable"}).appendTo(reportTable);
-	$(tbody).append($("<tr>",{id:"loadingLineTr"}).append("<td>",{valign:"middle",align:"center"}).append($("<div>",{class:"modal-span"}).text("Generating CDIS report...")));
-	var reportHeadLine = $("<tr>",{id:"headLineTr"}).appendTo(thead);
-	
-}
 
 
 

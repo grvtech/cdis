@@ -1,23 +1,22 @@
-<div id="reportsPage" class="pageClass">
-	<div class="reportsheader uss">
-		<div class="lmenu"></div>
-		<div class="logo">CDIS</div>
-		<div style="position:absolute;right:20px;font-size:170%;color:white;top:50%;margin-top:-20px;line-height:40px;font-familiy:Trebuchet MS;">Reports</div>
-	</div>
-	<div id="ub_reportsbody" class="reportsbody">
-		<div id="ub_reportsbody_header"></div>
-		<div id="ub_reportsbody_page">
-			<div class="reportsbody_dashboard" >
-				<div id="tabs">
+<div id="grvHeader" class="uss">
+	<div class="cdisLogo"></div>
+	<div class="cdisName">CDIS</div>
+	<div class="cdisTitle">Search Patient</div>
+	<div class="">&nbsp;</div>
+	<ul class="cdisHeaderMenu">
+		<li class="messages ubs" data-toggle="tooltip" data-placement="left" title="Patient Messages"><i class="fa fa-envelope"></i></li>
+		<li class="personalinfo ubs" data-toggle="tooltip" data-placement="left" title="Personal Info"><i class="fa fa-user"></i></li>
+		<li class="users ubs" data-toggle="tooltip" data-placement="left" title="Users Administration"><i class="fa fa-users"></i></li>
+		<li class="frontpage ubs" data-toggle="tooltip" data-placement="left" title="Front page message"><i class="fa fa-comment"></i></li>
+		<li class="audit ubs" data-toggle="tooltip" data-placement="left" title="Users action log"><i class="fa fa-list"></i></li>	</ul>
+</div>
+
+
+<div class="cdisPage">
+	<!-- 
+	<div class="cdisReportsPage">
+				<div id="grvReportsTabs">
 				  <ul>
-				    <!-- <li id="dashtab"><a href="#dashboard">Clinical Data</a></li> -->
-				    <!--  <li id="listtab"><a href="/ncdis/client/templates/reports.lists.html">Clinical Lists</a></li> -->
-				    <!-- <li id="perstab"><a href="/ncdis/client/templates/reports.personal.html">Personal Reports</a></li> -->
-				    <!--<li id="admintab"><a href="/ncdis/client/templates/reports.admin.html">Admin Reports</a></li> -->
-				    <!--  <li id="surtab"><a href="/ncdis/client/templates/reports.sur.html">Surveillance Data</a></li> -->
-				    <!-- <li id="surtab"><a href="#surveillance">Indicators and Outcomes</a></li> -->
-				    
-				    
 				    <li id="dashtab"><a href="/ncdis/client/templates/reports.dashboard.html">Clinical Data</a></li>
 				    <li id="customtab"><a href="/ncdis/client/templates/reports.custom.html">Custom Reports</a></li>
 				    <li id="surtab"><a href="/ncdis/client/templates/reports.surveillence.html">Indicators and Outcomes</a></li>
@@ -25,23 +24,48 @@
 				    <li id="panditab"><a href="/ncdis/client/templates/reports.pandi.html">Prevalence and Incidence</a></li>
 				    <li id="importomnilabtab"><a href="/ncdis/client/templates/reports.importomnilab.html">Import from Omnilab Reports</a></li>
 				  </ul>
-				  <div id="fullscreen-button" class="cisbutton ">Full screen dashboard</div>
-				  <!-- 
-				  <div id="dashboard" class="contentTab"></div>
-				  <div id="surveillance" class="contentTab"></div>
-				  <div id="pvalidation" class="contentTab"></div>
-				  <div id="pandi" class="contentTab"></div>
-				  <div id="importomnilab" class="contentTab"></div>
-				   -->
+				  <div id="fullscreen-button" class="cdisCisButton ">Full screen dashboard</div>
 				</div>
-			</div>
+	</div>
+	 -->
+	 
+	 <div style="height:100%;display:block;">
+		<div id="grvTabs" type="grvwtabs" class="uss">
+		  <ul>
+		    <li target="/ncdis/client/templates/reports.dashboard.html">Clinical Data</li>
+		    <li target="/ncdis/client/templates/reports.custom.html">Custom Reports</li>
+		    <li target="/ncdis/client/templates/reports.surveillence.html">Indicators and Outcomes</li>
+		    <li target="/ncdis/client/templates/reports.pvalidation.html">Patient Validation Tool</li>
+		    <li target="/ncdis/client/templates/reports.pandi.html">Prevalence and Incidence</li>
+		    <li target="/ncdis/client/templates/reports.importomnilab.html">Import from Omnilab Reports</li>
+		  </ul>
+		  <article></article>
 		</div>
 	</div>
-	<div class="reportsfooter">
-		<ul class="leftfootermenu">
-			<li class="flogout ubs" ><span></span></li><div class="label flogoutlabel uss">Logout</div>
-			<li class="fback ubs"><span></span></li><div class="label fbacklabel uss">Find patient</div>
-		</ul>
-	</div>	
+	 
+	 
 </div>
+
+<div id="grvFooter">
+	<!-- 
+	<div class="cdisFooterRight">
+		<ul class="cdisExpandMenu">
+			<li class="cdisFlogout ubs" data-toggle="tooltip" data-placement="left" title="Logout from CDIS"><span></span></li>
+			<li class="cdisFreports ubs" data-toggle="tooltip" data-placement="left" title="Load CDIS reports"><span></span></li>
+			<li class="cdisFnew ubs" data-toggle="tooltip" data-placement="left" title="Add new patient to CDIS"><span></span></li>
+		</ul>
+		<div class="cdisRootMenu ubs"><i class="fa fa-bars" aria-hidden="true"></i></div>
+	</div>
+	 -->
+	<div class="cdisFooterLeft">
+		<ul class="cdisLeftFooterMenu">
+			<li class="cdisFlogout ubs" data-toggle="tooltip" data-placement="right" title="Logout from CDIS"><span></span></li>
+			<li class="cdisFback ubs" data-toggle="tooltip" data-placement="top" title="Back to search patient"><span></span></li>
+		</ul>
+	</div>
+</div>
+
 <script src="client/libs/js/pages/reports.lib.js?_20240520" type="text/javascript"></script>
+
+
+

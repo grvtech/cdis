@@ -1,7 +1,6 @@
-<div class="pagebody">
-	<div class="admin_users uss">
+	<div class="cdisAdminUsers uss">
 		<h1>Users Administration</h1>
-		<div id="users-toolbar">
+		<div class="cdisAdminUsersToolbar">
 			<div id="filter-input">
 				<input name="filter" id="filter-id" class="filter-input" placeholder="Filter Users"/>
 				<div id="clearfilter-button" class="cisbutton">Clear Filter</div>
@@ -13,25 +12,16 @@
 			<div id="edituser-button" class="cisbutton" data-toggle="tooltip" title="Edit user"><i class="fa fa-pencil"></i> Edit User</div>
 			<div id="deleteuser-button" class="cisbutton" data-toggle="tooltip" title="Delete user"><i class="fa fa-trash"></i> Delete User</div>
 		</div>
-		<div id="users-container">
+		
+		
+		<div class="cdisAdminUsersContainer">
 			<table border=0 id="users-table" cellpadding=0 cellspacing=0>
-				<thead>
-					<tr>
-						<td>Fist Name</td>
-						<td>Last Name</td>
-						<td>Username</td>
-						<td>Email</td>
-						<td style="width:60px;"></td>
-						<td style="width:60px;"></td>
-					</tr>
-				</thead>
-				<tbody>
-					
-				</tbody>
+				<thead><tr><td>Fist Name</td><td>Last Name</td><td>Username</td><td>Email</td><td style="width:60px;"></td><td style="width:60px;"></td></tr></thead>
+				<tbody></tbody>
 			</table>
 		</div>
 		
-		<div id="users-form">
+		<div class="cdisAdminUsersEditUserForm">
 			<form action="" name="userForm" id="user-form">
 				<p class="validateTips">All form fields except phone are required.</p>
 				<input name="iduser" id="iduser-id" type="hidden"/>
@@ -48,12 +38,6 @@
 						<td class="td-label"><label for="username">Username</label></td>
 						<td><input name="username" id="username-id" type="text" class="text" /></td>
 					</tr>
-					<!-- 
-					<tr>
-						<td class="td-label"><label for="password">Password</label></td>
-						<td><input name="password" id="password-id" type="text" class="text" /></td>
-					</tr>
-					 -->
 					<tr>
 						<td class="td-label"><label for="role">Role</label></td>
 						<td><select name="role" id="role-id"></select></td>
@@ -78,11 +62,11 @@
 					</tr>
 					<tr><td colspan="2"></td></tr>
 					<tr>
-						<td colspan="2" align="right"><div class="cisbutton" id="save-edituser-button">Save</div> <div class="cisbutton" id="cancel-edituser-button">Cancel</div></td>
+						<td colspan="2" align="right"><div class="cdisCisButton" id="save-edituser-button">Save</div> <div class="cdisCisButton" id="cancel-edituser-button">Cancel</div></td>
 					</tr>
 				</table>
 			</form>
 		</div>
 		<div>&nbsp;</div>
 	</div>
-</div>
+

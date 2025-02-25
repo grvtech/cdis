@@ -525,7 +525,7 @@ function plotGraph(valueName, valueArray, valueLimitsObj){
 function plotGraphHistory(valueName, valueArray, valueLimitsObj){
 	
 	var label = eval("label_"+valueName);
-	var $w = $("#wraper");
+	var $w = $("#grvWraper");
 	var wmd = $("<div>", {id:"fullscreen",class:"uss widget-fullscreen-modal"});
 	$w.scrollTop();
 	$w.css("overflow","hidden");

@@ -1,5 +1,5 @@
-.widget-container{padding:10px;width:100%;margin:auto;}
-.widget-container .widget-body{position:relative;}
+.widget-container{padding:10px;width:100%;margin:auto;height:100%;}
+.widget-container .widget-body{position:relative; }
 .widget-container .widget-table-line{padding:5px;text-align:center;font-size:75%;}
 .widget-container .widget-table-line:hover{background-color:#abc2e8;}
 .widget-container .widget-table-line:hover .delete-inline{display:block;}
@@ -7,25 +7,25 @@
 .widget-container .first-line{padding:5px 0px 5px 0px !important;font-size:90% !important;font-weight:bold;}
 
 
-.graph-widget{width:100%;height:350px;background-color:#fefefe;padding:0px;}
+.graph-widget{width:100%;background-color:#fefefe;padding:0px;}
 .graph-widget .widget-header{position:relative;background-color:#8aa5f7;margin:0px;height:35px;}
 .graph-widget .widget-title{line-height:35px;color:#ffffff;font-weight:bold;}
 .graph-widget .widget-menu{text-align : right;padding:2px;}
-.graph-widget .widget-graph{position:relative;height:310px;margin:auto;width:95% !important;}
+.graph-widget .widget-graph{position:relative;margin:auto;width:95% !important;}
 .graph-widget .widget-table{width:250px;height:315px;top:0px;left:0px;background-color:#f7f7f7;position:absolute;padding:0px;display:none;z-index:10;}
 .graph-widget .widget-table-header{height:35px;background-color:#4d4d4d;color:#ffffff;font-weight:bold;font-size:90%;margin:0px;text-align:center;padding:5px;}
 .graph-widget .widget-table-body{height:275px; overflow-y: auto;overflow-x: hidden;}
 
 .panel-section .graph-widget .widget-graph{width:95% !important;}
 
-.table-widget{width:100%;height:350px;background-color:#fefefe;padding:0px;}
+.table-widget{width:100%;height:250px;background-color:#fefefe;padding:0px;}
 .table-widget .widget-header{position:relative;background-color:#8aa5f7;margin:0px;height:70px;}
 .table-widget .widget-title{line-height:35px;color:#ffffff;font-weight:bold;padding-left:10px;}
 .table-widget .widget-menu{text-align : right;padding:2px;}
-.table-widget .widget-body{position:relative;height:280px;}
+.table-widget .widget-body{position:relative;height:180px;}
 .table-widget .widget-table{width:100%;height:100%;top:0px;left:0px;background-color:#f7f7f7;position:absolute;padding:0px;z-index:10;}
 .table-widget .widget-table-header{height:35px;background-color:#4d4d4d;color:#ffffff;font-weight:bold;font-size:90%;margin:0px;text-align:center;padding:5px;}
-.table-widget .widget-table-body{height:245px; overflow-y: auto;overflow-x: hidden;}
+.table-widget .widget-table-body{height:145px; overflow-y: auto;overflow-x: hidden;}
 
 .panel-section .table-widget{width:100%;height:250px;background-color:#fefefe;padding:0px;}
 .panel-section .table-widget .widget-body{position:relative;height:180px;}

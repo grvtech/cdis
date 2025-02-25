@@ -2,17 +2,24 @@ package com.grvtech.cdis.controler;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -37,6 +44,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import com.grvtech.cdis.db.CdisDBridge;
 import com.grvtech.cdis.db.ChbDBridge;
 import com.grvtech.cdis.model.Action;
@@ -50,6 +58,7 @@ import com.grvtech.cdis.model.ScheduleVisit;
 import com.grvtech.cdis.model.Session;
 //import com.grv.cdis.model.SearchPatient;
 import com.grvtech.cdis.model.User;
+import com.grvtech.cdis.util.FileFilterTool;
 import com.grvtech.cdis.util.FileTool;
 import com.grvtech.cdis.util.MailTool;
 import com.grvtech.cdis.util.Misc;
@@ -72,6 +81,9 @@ public class ActionProcessor {
 	
 	@Autowired
 	FileTool ft;
+	
+	@Autowired
+	Misc misc;
 	
 	@Autowired
 	MailTool mt;
@@ -108,7 +120,7 @@ public String loginSession(final HttpServletRequest request){
 	Session userSession = null;
 
 	if(!user.getIduser().equals("0")){
-		String ip =  Misc.getIpAddr(request);
+		String ip =  misc.getIpAddr(request);
 		String combination = ip+user.getUsername()+ (new Date()).toString();
 		String idsession = DigestUtils.md5Hex(combination);
 		userSession = new Session(idsession, user.getIduser(), ip, 0, 0, Integer.parseInt(reswidth),Integer.parseInt(resheight),1);
@@ -220,7 +232,7 @@ public String executeReport4CustomValue(final HttpServletRequest request){
 public String executeReport(final HttpServletRequest request){
 	Gson json = new Gson();
 	String result = "";
-	JsonParser jp = new JsonParser();
+	
 	
 	String raw ="";
 	try {
@@ -231,111 +243,71 @@ public String executeReport(final HttpServletRequest request){
 	}
 	
 	String language = request.getParameter("language").toString();
-	String repid = "0";
-	if(request.getParameter("idreport") != null){
-		repid = request.getParameter("idreport").toString();
-	}
-	String owner = "";
-	if(request.getParameter("owner") != null){
-		owner = request.getParameter("owner").toString();
-	}
-	String type = "list";
-	if(request.getParameter("type") != null){type = request.getParameter("type").toString();}
-	
-	String graphtype = "none";
-	if(request.getParameter("graphtype") != null){
-		graphtype = request.getParameter("graphtype").toString();
-	}
-	
-	String title = "Custom Report";
-	if(request.getParameter("title") != null){
-		title = request.getParameter("title").toString();
-	}
-	
-	String subcriteriatype = "multi"; //multi or single multi - set combined with all sub criterias; single set split by subcriteria
-	if(request.getParameter("subcriteriatype") != null){
-		subcriteriatype = request.getParameter("subcriteriatype").toString();
-	}
-	
-	/*
-	 * cache conditions:
-	 * 
-	 * is last add data > timestame cache then execute report + store cache
-	 * after each import data execute reports with flag store cache directly
-	 * 
-	 * */
-	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-	
+	SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddHHmmss");
 	Gson gson = new Gson();
-    JsonParser parser = new JsonParser();
-    JsonObject jObject = parser.parse(raw).getAsJsonObject();
+    //JsonParser parser = new JsonParser();
+    //JsonObject jObject = parser.parse(raw).getAsJsonObject();
+    //JsonObject jObject = gson.fromJson(raw, JsonObject.class);
     
+    JsonObject jObject = JsonParser.parseString(raw).getAsJsonObject();
+	String type = jObject.get("type").getAsString();
     JsonArray jArrayC = jObject.get("criteria").getAsJsonArray();
     JsonArray jArraySC = jObject.get("subcriteria").getAsJsonArray();
-
-    ArrayList<ReportCriteria> lcs = new ArrayList<ReportCriteria>();
-    ArrayList<ReportSubcriteria> slcs = new ArrayList<ReportSubcriteria>();
-
     
-    String filter = "all";
-    String hcp = "";
-    String hcpid = "";
-   
+    ArrayList<ReportCriteria> lcs = new ArrayList<ReportCriteria>();
+    ArrayList<ReportCriteria> slcs = new ArrayList<ReportCriteria>();//subcriterias
+    
+    String filter = "allhcp";
     
     if(jObject.has("filter")){
     	filter = jObject.get("filter").getAsString();
-		hcp = jObject.get("hcp").getAsString();
-		hcpid = jObject.get("hcpid").getAsString();
     }
-    
-	
-   
     
     for(JsonElement obj : jArrayC ){
         ReportCriteria cse = gson.fromJson( obj , ReportCriteria.class);
-        cse.setIddata(cdisdb.getIddata(cse.getName()));
-        //cse.loadIddata();
         lcs.add(cse);
+        System.out.println("=========================================");
+        System.out.println(" criteria name : "+cse.getName());
+        System.out.println(" criteria value : "+cse.getValue());
+        System.out.println(" criteria iddata : "+cse.getIddata());
+        System.out.println("=========================================");
     }
+    
     for(JsonElement obj : jArraySC ){
-        ReportSubcriteria scse = gson.fromJson( obj , ReportSubcriteria.class);
-        scse.setSubiddata(cdisdb.getIddata(scse.getSubname()));
-        //scse.loadIddata();
+        //ReportSubcriteria scse = gson.fromJson( obj , ReportSubcriteria.class);
+    	ReportCriteria scse = gson.fromJson( obj , ReportCriteria.class);
     	slcs.add(scse);
     }
+
     ArrayList<String> header = new ArrayList<>();
     ArrayList<ArrayList<String>> set = new ArrayList<>();
-    //ArrayList<Object> graphdata = new ArrayList<>();
+    
+    System.out.println("=========================================");
+    System.out.println(" type: "+type);
+    System.out.println("=========================================");
     
     if(type.equals("list")){
-    	ArrayList<String> allIdpatients = new ArrayList<>();
+    	ArrayList<String> idpatients = new ArrayList<>();
     	
-    	if(filter.equals("all")){
-    		allIdpatients = cdisdb.getIdPatients();
+    	if(filter.equals("allhcp")){
+    		idpatients = cdisdb.getIdPatients();
     	}else{
-    		allIdpatients = cdisdb.getIdFilterPatients(hcp,hcpid);
+    		idpatients = cdisdb.getIdFilterPatients(filter);
     	}
     	
-    	ArrayList<String> idpatients = allIdpatients;
-    	
-    	
     	Hashtable<String, ArrayList<ArrayList<String>>> report = new Hashtable<>();
-	    for(int i=0;i<lcs.size();i++){
+	    for(int i=0;i<lcs.size();i++){ 
 	    	ReportCriteria rc = lcs.get(i);
 	    	
 	    	header.add(rc.getDisplay());
-	    	if(rc.getDate().equals("yes")){
-	    		header.add(rc.getDatedisplay());
-	    	}
+    		//list : count | idpatient | key | value | date 
+	    	//graph : count | key | value 
 	    	
-	    		//list : count | idpatient | key | value | date 
-		    	//graph : count | key | value 
-	    	
-	    	
-		    ArrayList<ArrayList<String>> criteriaSet = cdisdb.executeReport(rc, "list", slcs);
+		    ArrayList<ArrayList<String>> criteriaSet = cdisdb.executeReport(rc);
 		    
 		    report.put(rc.getName(), criteriaSet);
+		    
 	    	ArrayList<String> criteriaPatients = new ArrayList<>();
 	    	for(int ii=0;ii<criteriaSet.size();ii++){
 	    		ArrayList<String> line = criteriaSet.get(ii);
@@ -345,52 +317,27 @@ public String executeReport(final HttpServletRequest request){
 	    		}
 	    	}
 		    	
-		    if(rc.getType().equals("set")){
-		    		
-		    		int rem = 0;
-		    		int iter = 0;
-		    		int iterfound = 0;
-		    		ArrayList<String> toRemove = new ArrayList<>();
-		    		
-		    		
-		    		for(int k=0;k<idpatients.size();k++){
-		    			String idpatientP = idpatients.get(k);
-		    			if(!criteriaPatients.contains(idpatientP)){
-	    					if(!toRemove.contains(idpatientP)){
-	    						toRemove.add(idpatientP);
-	    					}
-		    			}
-		    		}
-		    		idpatients.removeAll(toRemove);
-		    	}else{
-		    		
-		    		ArrayList<String> toRemove = new ArrayList<>();
-		    		if(criteriaPatients.size() > idpatients.size()){
-		    			for(String idpatient : criteriaPatients){
-		    				if(!idpatients.contains(idpatient)){
-		    					if(!toRemove.contains(idpatient)){
-		    						toRemove.add(idpatient);
-		    					}
-		    				}
-		    			}
-		    		}
-		    		idpatients.removeAll(toRemove);
+	    	//remove patients from idpatients if are not in criteria set
+	    	
+		    ArrayList<String> toRemove = new ArrayList<>();
+		    for(int k=0;k<idpatients.size();k++){
+		    	String idpatientP = idpatients.get(k);
+		    	if(!criteriaPatients.contains(idpatientP)){
+	    			if(!toRemove.contains(idpatientP)){toRemove.add(idpatientP);}
 		    	}
+		    }
+		    idpatients.removeAll(toRemove);
+		    
 	    }	
-	    
 	    
 	    for(int x=0;x<idpatients.size();x++){
 	    	String idpat = idpatients.get(x);
 	    	Hashtable<ReportCriteria, ArrayList<ArrayList<String>>> patientMap = new Hashtable<>();
 	    	
-	    	
 	    	for(int y=0;y<lcs.size();y++){
 	    		ReportCriteria rcc = lcs.get(y);
 	    		String rccName = rcc.getName();
-	    		boolean hasCD = false;
-	    		if(rcc.getDate().equals("yes")){
-	    			hasCD = true;
-	    		}
+
 	    		ArrayList< ArrayList<String>>  rcset =  report.get(rccName);
 	    		ArrayList< ArrayList<String>>  rcsetPatient =  new ArrayList<>();
 	    		for(int z=0;z<rcset.size();z++){
@@ -402,7 +349,6 @@ public String executeReport(final HttpServletRequest request){
 	    		}
 	    		patientMap.put(rcc, rcsetPatient);
 	    	}
-	    			    	
 	    	
 	    	//now obtain bigest set
 	    	
@@ -417,41 +363,13 @@ public String executeReport(final HttpServletRequest request){
 	    	
 	    	
 	    	//now create line
-	    	for(int q=0;q<bigSet;q++){
+	    	for(int q=0;q<bigSet;q++){ 
 	    		ArrayList<String> setLine = new ArrayList<>();
 	    		for(int qq=0;qq<lcs.size();qq++){
 	    			ReportCriteria r = lcs.get(qq);
 	    			
 	    			ArrayList<ArrayList<String>> rpset = patientMap.get(r);
 	    			
-	    			if(r.getName().equals("dtype")){
-	    				
-	    				
-	    				if(q >= rpset.size()){
-	    					if(rpset.size() == 0){
-	    						setLine.add("");
-		    					if(r.getDate().equals("yes")){
-		    						setLine.add("");
-		    					}
-	    					}else{
-	    						
-		    					ArrayList<String> rpsetLine = rpset.get(rpset.size()-1);
-		    					setLine.add(rpsetLine.get(3));
-		    					if(r.getDate().equals("yes")){
-		    						setLine.add(rpsetLine.get(4));
-		    					}
-	    					}
-	    				}else{
-	    					ArrayList<String> rpsetLine = rpset.get(q);
-	    					setLine.add(rpsetLine.get(3));
-	    					if(r.getDate().equals("yes")){
-	    						setLine.add(rpsetLine.get(4));
-	    					}
-	    				}
-	    				/**/
-	    			}else{
-	    				//ArrayList<ArrayList<String>> rpset = patientMap.get(r);
-	    				
 	    				
 	    				if(rpset.size() > 0){
 			    			if(r.getSection().equals("1")){
@@ -459,38 +377,229 @@ public String executeReport(final HttpServletRequest request){
 			    				ArrayList<String> rpsetLine = rpset.get(0);
 			    				setLine.add(rpsetLine.get(3));
 			    			}else{
-			    				
 			    				if(q >= rpset.size()){
 			    					setLine.add(" ");
-			    					if(r.getDate().equals("yes")){
-			    						setLine.add(" ");
-			    					}
 			    				}else{
 			    					ArrayList<String> rpsetLine = rpset.get(q);
 			    					setLine.add(rpsetLine.get(3));
-			    					if(r.getDate().equals("yes")){
-			    						setLine.add(rpsetLine.get(4));
-			    					}
 			    				}
 			    			}
 	    				}else{
 	    					setLine.add(" ");
-	    					if(r.getDate().equals("yes")){
-	    						setLine.add(" ");
-	    					}
 	    				}
-	    			}
+	    			
 	    		}
 	    		set.add(setLine);
 	    	}
-	    	/**/
-	    	
 	    }
-	   
 	    
     }else{
     	//graphdata = getGraphdata
+    	//2 criterias : dtype and idcommunity
+    	// for dtype :   header is type 1... type2 ....
+    	// for dtype : data is numbers 
+    	// for dtype only one dataset - always
     	
+    	//for id community : if value is 0 - onlyone dataset with header = the comunities
+    	// for idcommunity : if value different from 0 :  if only one digit 1 to 9 - only one dataset with header the month based on report period ex: August 2024 Sept2024 ....
+    	//for id community : if value contains _ (underscore) = 2 datasets with the same header - time 
+    	
+    	//if value is 0
+    	// aproach : apply all subcriteria conditions as in list => list of idpatients that respect the subcriteria 
+    	// with the list of ids count patients based on criteria dtype or idcommunity
+    	
+    	//if value different of 0 means idcommunity
+    	// get idpatient from that community then for each subcriteria count patients based on datevalue from begining to max() each end of month in the period list ( last 6 months = header of 6 months) 
+    	// for last 2 years we have a header with 24 values
+    	
+    	//for graph i know there is only one criteria so...
+    	
+    	ReportCriteria criteria = lcs.get(0);
+    	String criteriaValue = criteria.getValue();
+    	
+    	if(criteriaValue.equals("0")) {
+    		//build header
+    		if(criteria.getName().equals("dtype")) {
+    			header = cdisdb.getDiabetesTypes("normal");
+    		}else if(criteria.getName().equals("idcommunity")) {
+    			header = cdisdb.getAllCommunities();
+    		}
+    		
+    		
+    		ArrayList<String> idpatients = new ArrayList<>();
+    		ArrayList<HashMap<String,String>> idpatientsWithCriteria = cdisdb.getIdPatientsForCustomReportGraph(criteria,filter);
+        	for(HashMap row: idpatientsWithCriteria){
+        		idpatients.add(row.get("idpatient").toString());
+        	}
+        	
+        	
+    	    for(int i=0;i<slcs.size();i++){ 
+    	    	ReportCriteria subcriteria = slcs.get(i);
+    		    ArrayList<ArrayList<String>> criteriaSet = cdisdb.executeReport(subcriteria);
+    		    
+    	    	ArrayList<String> criteriaPatients = new ArrayList<>();
+    	    	//get all idpatient from criteriaset
+    	    	for(int ii=0;ii<criteriaSet.size();ii++){
+    	    		ArrayList<String> line = criteriaSet.get(ii);
+    	    		String idp = line.get(1);
+    	    		if(!criteriaPatients.contains(idp)){
+    	    			criteriaPatients.add(idp);
+    	    		}
+    	    	}
+    		    	
+    	    	//remove patients from idpatients if are not in criteria set
+    		    ArrayList<String> toRemove = new ArrayList<>();
+    		    for(int k=0;k<idpatients.size();k++){
+    		    	String idpatientP = idpatients.get(k);
+    		    	if(!criteriaPatients.contains(idpatientP)){
+    	    			if(!toRemove.contains(idpatientP)){toRemove.add(idpatientP);}
+    		    	}
+    		    }
+    		    idpatients.removeAll(toRemove);
+    	    }	
+    	    
+    	    //idpatient is the list now build the set
+    	    HashMap<String,String> line = new HashMap<>();
+    	    for(int x=0;x<idpatients.size();x++){
+    	    	String idpat = idpatients.get(x);
+    	    	String cr = "";
+    	    	for(HashMap pline: idpatientsWithCriteria) {
+    	    		 if(pline.get("idpatient").equals(idpat)) {
+    	    			 cr = pline.get("criteria").toString();
+    	    			 break;
+    	    		 }
+    	    	}
+    	    	
+    	    	int num = 0;
+    	    	if(line.keySet().contains(cr)) {
+    	    		num = Integer.parseInt(line.get(cr));
+    	    	}
+    	    	num++;
+    	    	line.put(cr, Integer.toString(num));
+    	    }
+    	    ArrayList<String> setLine = new ArrayList<>();
+    		for(String col : header) {
+    			setLine.add(line.get(col));
+    		}
+    		set.add(setLine);
+    		
+    	}else {
+    		
+    		// build header
+    		String period = jObject.get("period").getAsString();
+    		// period is 6 = last 6 month 12 =last 12 months 1 =last year (if we are in 2024 that means 2023) 2 = last 2 years ( 24 columns) 
+    		header = misc.getHeaderGraphCustomReportPeriod(period);
+    		
+    		if(criteria.getValue().indexOf("_") >=0) {
+    			//the value is with 2 communities
+    			String[] parts = criteria.getValue().split("_");
+    			
+    			for(int i=0;i<parts.length;i++) {
+    				criteria.setValue(parts[i]);
+    				ArrayList<HashMap<String,String>> idpatientsWithCriteria = cdisdb.getIdPatientsForCustomReportGraph(criteria,filter);
+    				ArrayList<String> idpatients = new ArrayList<>();
+    	        	for(HashMap row: idpatientsWithCriteria){
+    	        		idpatients.add(row.get("idpatient").toString());
+    	        	}
+
+    	        	Hashtable<String, ArrayList<ArrayList<String>>> report = new Hashtable<>();
+    	    	    for(int j=0;j<slcs.size();j++){ 
+    	    	    	ReportCriteria subcriteria = slcs.get(j);
+    	    		    ArrayList<ArrayList<String>> criteriaSet = cdisdb.getSetGraphCustomReportPeriod(subcriteria,header);
+    	    	    	
+    	    	    	//get all idpatient from criteriaset
+    	    	    	for(int ii=0;ii<criteriaSet.size();ii++){
+    	    	    		ArrayList<String> column = criteriaSet.get(ii);
+    	    	    		ArrayList<String> toRemove = new ArrayList();
+    	    	    		for(String idp :column) {
+    	    	    			if(!idpatients.contains(idp))toRemove.add(idp);
+    	    	    		}
+    	    	    		column.removeAll(toRemove);
+    	    	    		criteriaSet.set(ii, column);
+    	    	    	}
+    	    		    
+    	    	    	report.put(subcriteria.getName(), criteriaSet);
+    	    	    	
+    	    	    }
+    	        	
+    	    	    ArrayList<String> subset = new ArrayList<>();
+    	    	    
+    	    	    for(int k=0;k<header.size();k++) {
+    	    	    	ArrayList<String> reference = new ArrayList<>();
+    	    	    	for(int kk=0;kk<slcs.size();kk++){
+    	    	    		ReportCriteria subcriteria = slcs.get(kk);
+    	    	    		ArrayList<ArrayList<String>> cSet = report.get(subcriteria.getName());
+    	    	    		ArrayList<String> column = cSet.get(k);
+    	    	    		if(reference.size() == 0 ) reference = column;
+    	    	    		ArrayList<String> toRemove = new ArrayList<>();
+    	    	    		for(String idp:reference) {
+    	    	    			if(!column.contains(idp))toRemove.add(idp);
+    	    	    		}
+    	    	    		reference.removeAll(toRemove);
+    	    	    	}
+    	    	    	subset.add(Integer.toString(reference.size()));
+    	    	    }
+    				set.add(subset);
+    			}
+    			
+    		}else {
+    			
+    			ArrayList<HashMap<String,String>> idpatientsWithCriteria = cdisdb.getIdPatientsForCustomReportGraph(criteria,filter);
+				ArrayList<String> idpatients = new ArrayList<>();
+	        	for(HashMap row: idpatientsWithCriteria){
+	        		idpatients.add(row.get("idpatient").toString());
+	        	}
+
+	        	Hashtable<String, ArrayList<ArrayList<String>>> report = new Hashtable<>();
+	    	    for(int j=0;j<slcs.size();j++){ 
+	    	    	ReportCriteria subcriteria = slcs.get(j);
+	    		    ArrayList<ArrayList<String>> criteriaSet = cdisdb.getSetGraphCustomReportPeriod(subcriteria,header);
+	    	    	
+	    	    	//get all idpatient from criteriaset
+	    	    	for(int ii=0;ii<criteriaSet.size();ii++){
+	    	    		ArrayList<String> column = criteriaSet.get(ii);
+	    	    		ArrayList<String> toRemove = new ArrayList();
+	    	    		for(String idp :column) {
+	    	    			if(!idpatients.contains(idp))toRemove.add(idp);
+	    	    		}
+	    	    		column.removeAll(toRemove);
+	    	    		criteriaSet.set(ii, column);
+	    	    	}
+	    		    
+	    	    	report.put(subcriteria.getName(), criteriaSet);
+	    	    	
+	    	    }
+	        	
+	    	    ArrayList<String> subset = new ArrayList<>();
+	    	    
+	    	    for(int k=0;k<header.size();k++) {
+	    	    	ArrayList<String> reference = new ArrayList<>();
+	    	    	for(int kk=0;kk<slcs.size();kk++){
+	    	    		ReportCriteria subcriteria = slcs.get(kk);
+	    	    		ArrayList<ArrayList<String>> cSet = report.get(subcriteria.getName());
+	    	    		ArrayList<String> column = cSet.get(k);
+	    	    		if(reference.size() == 0 ) reference = column;
+	    	    		ArrayList<String> toRemove = new ArrayList<>();
+	    	    		for(String idp:reference) {
+	    	    			if(!column.contains(idp))toRemove.add(idp);
+	    	    		}
+	    	    		reference.removeAll(toRemove);
+	    	    	}
+	    	    	subset.add(Integer.toString(reference.size()));
+	    	    }
+				set.add(subset);
+    			
+    		}
+    		
+    		System.out.println("=====================================");
+    		System.out.println(header);
+    		System.out.println("=====================================");
+    		System.out.println("=====================================");
+    		System.out.println(set);
+    		System.out.println("=====================================");
+    	}
+    	
+    	/*
     	Hashtable<ReportCriteria, ArrayList<ArrayList<String>>> map = new Hashtable<>();
     	for(int i=0;i<lcs.size();i++){
     		ReportCriteria rc = lcs.get(i);
@@ -540,14 +649,32 @@ public String executeReport(final HttpServletRequest request){
     		}
     		set.add(setLine);
     	}
-    	
+    	*/
     	
     }
     	    
     Hashtable<String, Object> reportObject = new Hashtable<>();
-    
     reportObject.put("dataset", set);
     reportObject.put("header", header);
+    JsonElement jset = gson.toJsonTree(set); 
+    JsonElement jheader = gson.toJsonTree(header);
+    jObject.add("dataset", jset);
+    jObject.add("header", jheader);
+    String owner = jObject.get("owner").getAsString();
+    String note = jObject.get("note").getAsString();
+    if(note!=null)note="Custom Report";
+    int l = 200;
+    if(note.length() < l) l = note.length();
+    String reportName = note.substring(0, l);
+    String reportCode = "CR_"+owner+"_"+sdf1.format(new Date());
+    jObject.addProperty("id", reportCode);
+    
+    try (Writer writer = new FileWriter(reportsFolder+System.getProperty("file.separator")+"history"+System.getProperty("file.separator")+reportCode+".json")) {
+        gson.toJson(jObject, writer);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+    
 	ArrayList<Object> obs = new ArrayList<Object>();
 	obs.add(reportObject);
 	result = json.toJson(new MessageResponse(true,language,obs));
@@ -936,7 +1063,66 @@ public String getUserTop5Dataset(final HttpServletRequest request){
 	result = json.toJson(new MessageResponse(true,language,obs));
 	return result;
 }
+
+
+@RequestMapping(value = {"/service/action/getUserReportHistory"}, method = RequestMethod.GET)
+public String getUserReportHistory(final HttpServletRequest request) throws FileNotFoundException{
+	Gson json = new Gson();
+	ArrayList<Object> obs = new ArrayList<Object>();
+	String result = "";
+	String language = request.getParameter("language").toString();
+	String iduser = request.getParameter("iduser").toString();
+	String sort = request.getParameter("sort").toString();
+	ArrayList<HashMap> userReports = new ArrayList<>();
 	
+	File historyFolder = new File(reportsFolder+System.getProperty("file.separator")+"history");
+	if(historyFolder.exists()) {
+		String filePrefix = "CR_"+iduser;
+		File[] files = historyFolder.listFiles(new FileFilterTool(".json", filePrefix));
+		for(int i=0;i<files.length;i++) {
+			try {
+				File r = files[i];
+				JsonReader jr = new JsonReader(new FileReader(r));
+				JsonObject jo = JsonParser.parseReader(jr).getAsJsonObject();
+				HashMap<String, String> rep = new HashMap<>();
+				rep.put("id", jo.get("id").getAsString());
+				rep.put("note", jo.get("note").getAsString());
+				rep.put("generated", jo.get("generated").getAsString());
+				rep.put("title", jo.get("title").getAsString());
+				rep.put("type", jo.get("type").getAsString());
+				userReports.add(rep);
+				jr.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	if(sort.equals("asc")) {
+		Collections.sort(userReports, new Comparator<HashMap>() {
+		  public int compare(HashMap o1, HashMap o2) {
+			  final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			  LocalDateTime dateTime1 = LocalDateTime.parse(o1.get("generated").toString(), formatter);
+			  LocalDateTime dateTime2 = LocalDateTime.parse(o2.get("generated").toString(), formatter);
+		      return  dateTime1.compareTo(dateTime2) ;
+		  }
+		});
+	}else {
+		Collections.sort(userReports, new Comparator<HashMap>() {
+		  public int compare(HashMap o1, HashMap o2) {
+			  final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			  LocalDateTime dateTime1 = LocalDateTime.parse(o1.get("generated").toString(), formatter);
+			  LocalDateTime dateTime2 = LocalDateTime.parse(o2.get("generated").toString(), formatter);
+		      return  dateTime2.compareTo(dateTime1) ;
+		  }
+		});
+	}
+	
+	obs.add(userReports);
+	result = json.toJson(new MessageResponse(true,language,obs));
+	return result;
+}
+
+
 @RequestMapping(value = {"/service/action/saveReport"}, method = RequestMethod.POST)
 public String saveReport(final HttpServletRequest request, @RequestBody String payload){
 	Gson json = new Gson();
@@ -1145,7 +1331,8 @@ public String generateDataReport(final HttpServletRequest request){
 			    		if(!header.contains(rc.getDisplay())){
 			    			header.add(rc.getDisplay());
 			    		}
-			    		ArrayList<ArrayList<String>> criteriaSet = cdisdb.executeReport(rc, reportType, sc);
+			    		//ArrayList<ArrayList<String>> criteriaSet = cdisdb.executeReport(rc, reportType, sc);
+			    		ArrayList<ArrayList<String>> criteriaSet = cdisdb.executeReportBackupMethod(rc, reportType, sc);
 			    		map.put(rc, criteriaSet);
 			    	}
 		    		ArrayList<String> setLine = new ArrayList<>();
@@ -1174,6 +1361,7 @@ public String generateDataReport(final HttpServletRequest request){
 				        col.put("type", cse.getType());
 				        col.put("format", cse.getFormat());
 				        header.add(col);
+				        /*
 				        if(cse.getDate().equals("yes")){
 				        	HashMap<String, String> cold = new HashMap<>();
 				        	cold.put("name", cse.getDatename());
@@ -1182,6 +1370,7 @@ public String generateDataReport(final HttpServletRequest request){
 				        	cold.put("format", cse.getDateformat());
 				        	header.add(cold);
 				        }
+				        */
 				    }
 		    	 String dataName = reportId.substring("LIST.".length()).toLowerCase();
 		    	 datasets = executeReportFlist(dataName, jArrayC, jArraySC); 
@@ -1469,6 +1658,36 @@ public String getImportOmnilabFiles(final HttpServletRequest request){
 	} catch (Exception e) {
 		e.printStackTrace();
 	} 
+	return result;
+}
+
+
+
+@RequestMapping(value = {"/service/action/deleteUserReportHistory"}, method = RequestMethod.GET)
+public String deleteUserReportHistory(final HttpServletRequest request){
+	Gson json = new Gson();
+	ArrayList<Object> obs = new ArrayList<Object>();
+	String result = "";
+	String language = request.getParameter("language").toString();
+	String idreport = request.getParameter("idreport").toString();
+	String fileName = idreport+".json";
+	File reportFile = new File(reportsFolder+System.getProperty("file.separator")+"history"+System.getProperty("file.separator")+fileName);
+	boolean flag = false;
+	try {
+        Files.delete(Paths.get(reportFile.getAbsolutePath()));
+        flag= true;
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+	
+	/*
+	if(reportFile.exists()) {
+		flag = reportFile.delete();
+	}
+	//obs.add(userReports);
+	 * 
+	 */
+	result = json.toJson(new MessageResponse(flag,language,obs));
 	return result;
 }
 

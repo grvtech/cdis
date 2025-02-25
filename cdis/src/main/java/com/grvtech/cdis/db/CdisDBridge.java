@@ -77,6 +77,22 @@ public class CdisDBridge {
 		return result;
 	}
 	
+	public ArrayList<String> getDiabetesTypes(String config){
+		ArrayList<String> result = new ArrayList<String>();
+		String limit = "4";
+		if(config.equals("extended"))limit = "5"; 
+		String sql = "select diabet_name from ncdis.cdis_diabet where iddiabet <= '"+limit+"' order by iddiabet asc";
+			
+		List<Map<String,Object>> rs = jdbcTemplate.queryForList(sql);
+	    for(int i=0;i<rs.size();i++) {
+	    	Map<String,Object> line = rs.get(i);
+	    	result.add(line.get("diabet_name").toString());
+	    }
+	    logger.log(Level.INFO, "Get diabet Types :"+result.size() );
+		return result;
+	}
+	
+	
 	public ArrayList<HashMap<String, String>> getHcps(String hcp , String term){
 		ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
 		String sql = "SELECT iduser,concat(UPPER(LEFT(fname,1))+LOWER(SUBSTRING(fname,2,LEN(fname))),' ',UPPER(LEFT(lname,1))+LOWER(SUBSTRING(lname,2,LEN(lname)))) as name FROM ncdis.ncdis.users where active=1 and idprofesion = (select [idprofesion] from ncdis.ncdis.profesion where profesion_code = '"+hcp.toUpperCase()+"') and (lname like '%"+term+"%' or fname like '%"+term+"%')";
@@ -90,6 +106,22 @@ public class CdisDBridge {
         logger.log(Level.INFO, "Get HCPs hcp:"+hcp + "Search term :"+term );
 		return result;
 	}
+	
+	public ArrayList<HashMap<String, String>> getAllHcps(){
+		ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
+		String sql = "SELECT iduser,idprofesion, concat(UPPER(LEFT(fname,1))+LOWER(SUBSTRING(fname,2,LEN(fname))),' ',UPPER(LEFT(lname,1))+LOWER(SUBSTRING(lname,2,LEN(lname)))) as name  FROM ncdis.ncdis.users where active=1 ";
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+        for (Map row : rows) {
+        	HashMap<String, String> line = new HashMap<>();
+            line.put("iduser",row.get("iduser").toString());
+            line.put("name",(row.get("name")==null?"":row.get("name").toString()));
+            line.put("idprofesion",row.get("idprofesion").toString());
+            result.add(line);
+        }
+        logger.log(Level.INFO, "Get All HCPs ");
+		return result;
+	}
+
 	
 	
 	public Patient getPatientByRamq(String ramq){
@@ -652,19 +684,19 @@ public String getIddata(String dataName){
 }
 	
 	
-public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, String reportType, ArrayList<ReportSubcriteria> subcriterias){
+public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria){
 	ArrayList<ArrayList<String>> result = new ArrayList<>();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
-	if(reportType.equals("list")){
-		String val = criteria.getValue();
-		String nom = criteria.getName();
-		String op = renderer.renderOperator(criteria.getOperator());
+	
+	String val = criteria.getValue();
+	String nom = criteria.getName();
+	String op = renderer.renderOperator(criteria.getOperator());
 			
-		if(criteria.getSection().equals("1")){
+	if(criteria.getSection().equals("1")){
 			String criteriaStr = " and nn."+nom+" "+op+" '"+val+"' ";
 			if(op.equals("between")){
-				String[] parts = val.split("\\s*and+\\s*");
+				String[] parts = val.split("\\s*\\|+\\s*");
 				String part1 = parts[0].trim();
 				String part2 = parts[1].trim();
 				String between1 = "'"+part1+"'";
@@ -674,12 +706,16 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 				criteriaStr = " and nn."+nom+" "+op+" "+between1+" and "+ between2;
 			}
 				
-			if(val.equals("all") || val.equals("0")){criteriaStr = "";}
+			if(val.equals("0")){criteriaStr = "";}
 			String vn = "nn."+nom;
 			String sql = "select nn.idpatient, "+vn+"  from ncdis.ncdis.patient nn  "
 					+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
 					+ " "+ criteriaStr+ " "
 					+ "order by nn.idpatient asc";
+			System.out.println("=========================================");
+			System.out.println("SQL : "+sql);
+			System.out.println("=========================================");
+			
 			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 			
 			
@@ -698,7 +734,6 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 		    		line.add(row.get("idpatient").toString());
 		    		line.add(nom);
 		    		if(criteria.getName().equals("sex") || criteria.getName().equals("idcommunity") || criteria.getName().equals("dtype")){
-		    			
 		    			line.add(renderer.renderName(nom+"."+row.get(nom).toString()));
 					}else{
 						line.add(row.get(nom).toString());
@@ -711,40 +746,40 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 			
 			
 			
-		}else{
+	}else{
 			String sql = "";
+			if(op.equals("between")){
+				String[] parts = val.split("\\s*\\|+\\s*");
+				String part1 = parts[0].trim();
+				String part2 = parts[1].trim();
+				String between1 = "'"+part1+"'";
+				String between2 = "'"+part2+"'";
+				if(part1.indexOf("(") >= 0 && part1.indexOf(")") >= 0){between1 = part1;}
+				if(part2.indexOf("(") >= 0 && part2.indexOf(")") >= 0){between2 = part2;}
+				val = between1+" and "+ between2;
+			}else {
+				val = "'"+val+"'";
+			}				
+			
 			String criteriaStr = " and cast(nn.value as float) "+op+" "+val+" ";
 			String criteriaStrSub = " and cast(aa.value as float) "+op+" "+val+" ";
-
-			if(op.equals("=")){
-				String[] parts = val.split("\\s*or+\\s*");
-				if(parts.length > 1){
-					criteriaStr = "  ";
-					criteriaStrSub = "  ";
-					for(int i=0;i<parts.length;i++){
-						String part = parts[i].trim();
-						if(i == 0){
-							criteriaStr += " and (cast(nn.value as float) "+op+" "+part+" ";
-							criteriaStrSub += " and (cast(aa.value as float) "+op+" "+part+" ";
-						}else if(i == parts.length -1){
-							criteriaStr += " or cast(nn.value as float) "+op+" "+part+") ";
-							criteriaStrSub += " or cast(aa.value as float) "+op+" "+part+") ";
-						}else{
-							criteriaStr += " or cast(nn.value as float) "+op+" "+part+" ";
-							criteriaStrSub += " or cast(aa.value as float) "+op+" "+part+" ";
-						}
-						
-					}
-				}
+			
+			if(nom.indexOf("CollectedDate") >= 0) {
+				criteriaStr = " and cast(nn.datevalue as datetime) "+op+" "+val+" ";
+				criteriaStrSub = " and cast(aa.datevalue as datetime) "+op+" "+val+" ";
 			}
+			
+			System.out.println("=========================================");
+			System.out.println("Value : "+nom);
+			System.out.println("Value : "+val);
+			System.out.println("=========================================");
 				
-			if(criteria.getDatevalue().equals("last")){
-				if(val.equals("all") || val.equals("0")){
-					criteriaStr = "";
-					criteriaStrSub = "";
-				}
+			if(criteria.getValue().equals("0")){
+				criteriaStr = "";
+				criteriaStrSub = "";
+			}	
 				
-				sql = "select aa.idpatient,replace(convert(varchar,aa.datevalue,102),'.','-') as datevalue, aa.value "
+			sql = "select aa.idpatient,replace(convert(varchar,aa.datevalue,102),'.','-') as datevalue, aa.value "
 						+ " from ncdis.dbo.LastdateValue aa "
 						+ "where isnumeric(aa.value)=1  "
 						+ "and aa.iddata='"+criteria.getIddata()+"' "
@@ -752,48 +787,11 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 						+ "order by aa.idpatient asc";
 				
 				
-			}else if(criteria.getDatevalue().equals("all")){
-				if(val.equals("all")){
-					criteriaStr = "";
-				}
-				sql = "select nn.idpatient, replace(convert(varchar,nn.datevalue,102),'.','-') as datevalue,nn.value from ncdis.ncdis.cdis_value nn  "
-						+ "where "
-						+ "isnumeric(nn.value) =1 and  nn.iddata = '"+criteria.getIddata()+"' "
-						+ " "+ criteriaStr+ " "
-						+ "order by nn.idpatient asc";
-			}else{
-				if(val.equals("all")){
-					criteriaStr = "";
-				}
-				
-				String dateValue = criteria.getDatevalue();
-				String dateOperator = criteria.getDateoperator();
-				if(dateOperator.equals("between")){
-					String[] parts = dateValue.split("\\s*and+\\s*");
-					String part1 = parts[0].trim();
-					String part2 = parts[1].trim();
-					String between1 = "'"+part1+"'";
-					String between2 = "'"+part2+"'";
-					
-					if(part1.indexOf("(") >= 0 && part1.indexOf(")") >= 0){
-						between1 = part1;
-					}
-					if(part2.indexOf("(") >= 0 && part2.indexOf(")") >= 0){
-						between2 = part2;
-					}
-					dateValue = between1+" and "+between2;
-				}
-				
-				sql = "select nn.idpatient, replace(convert(varchar,nn.datevalue,102),'.','-') as datevalue,nn.value from ncdis.ncdis.cdis_value nn  "
-						+ "where nn.datevalue "+renderer.renderOperator(dateOperator)+" "+dateValue
-								+ " and nn.iddata = '"+criteria.getIddata()+"' "
-								+ " "+ criteriaStr+ " "
-										+ "order by nn.idpatient asc";
-				
-				
-			}
-
 			
+			System.out.println("=========================================");
+			System.out.println("SQL : "+sql);
+			System.out.println("=========================================");
+			/**/
 			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		    int index=0;
 			for(Map row : rows) {
@@ -804,68 +802,290 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 	    		if(criteria.getName().equals("sex") || criteria.getName().equals("idcommunity") || criteria.getName().equals("dtype")){
 	    			line.add( renderer.renderName(nom+"."+row.get("value").toString()));
 				}else{
-					line.add(row.get("value").toString());
+					if(nom.indexOf("CollectedDate") >= 0) {
+						line.add(row.get("datevalue").toString());
+					}else {
+						line.add(row.get("value").toString());
+					}
 				}
-	    		line.add(row.get("datevalue").toString());
 	    		result.add(line);
 	    		index++;
 			}
+	}
+	
+	logger.log(Level.INFO, "Execute Report ");
+	return result;
+	}
+
+
+public ArrayList<ArrayList<String>> getSetGraphCustomReportPeriod(ReportCriteria criteria, ArrayList<String> header){
+	ArrayList<ArrayList<String>> result = new ArrayList<>();
+	String section = criteria.getSection();
+	String val = criteria.getValue();
+	String nom = criteria.getName();
+	String op = renderer.renderOperator(criteria.getOperator());
+	String sql = "";
+	// if idcommunity is criteria there is no header we fall on value=0
+	//if section=1 data come from different tables  idcommunity - date of birth header applies like that : 
+	
+	if(section.equals("1")) {
+		//basicaly the only criteria here is date of birth
+		String criteriaStr = " and nn."+nom+" "+op+" '"+val+"'";
+		if(op.equals("between")){
+			String[] parts = val.split("\\s*\\|+\\s*");
+			String part1 = parts[0].trim();
+			String part2 = parts[1].trim();
+			String between1 = "'"+part1+"'";
+			String between2 = "'"+part2+"'";
+			if(part1.indexOf("(") >= 0 && part1.indexOf(")") >= 0){between1 = part1;}
+			if(part2.indexOf("(") >= 0 && part2.indexOf(")") >= 0){between2 = part2;}
+			criteriaStr = " and nn."+nom+" "+op+" '"+between1+"' and '"+ between2+"'";
+		}
+		sql = "select nn.idpatient as idpatient from ncdis.ncdis.patient nn where (nn.dod='1900-01-01' or nn.dod is null) and nn.active='1' "+criteriaStr;
+		System.out.println("=====================================");
+		System.out.println(sql);
+		System.out.println("=====================================");
+		
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		// for each column in th header we add the same list of id patients - special for section 1
+		ArrayList<String> column= new ArrayList<>();
+		for(Map row:rows) {
+			column.add(row.get("idpatient").toString());
+		}
+		for(int i=0;i<header.size();i++) {
+			result.add(column);
+		}
+	}else {
+		if(op.equals("between")){
+			String[] parts = val.split("\\s*\\|+\\s*");
+			String part1 = parts[0].trim();
+			String part2 = parts[1].trim();
+			String between1 = "'"+part1+"'";
+			String between2 = "'"+part2+"'";
+			if(part1.indexOf("(") >= 0 && part1.indexOf(")") >= 0){between1 = part1;}
+			if(part2.indexOf("(") >= 0 && part2.indexOf(")") >= 0){between2 = part2;}
+			val = between1+" and "+ between2;
+		}else {
+			val = "'"+val+"'";
+		}
+		String criteriaStr = " and cast(aa.value as float) "+op+" "+val+" ";
+		
+		for(int i=0;i<header.size();i++) {
+			String c = header.get(i);
+			sql = "select x.idpatient as idpatient,aa.value from "
+					+ " (select cv.idpatient, max(cv.datevalue) as ddate from ncdis.ncdis.cdis_value cv "
+					+ "	left join  ncdis.ncdis.patient p on cv.idpatient = p.idpatient "
+					+ " where "
+					+ "	cv.iddata='"+criteria.getIddata()+"'  and cv.datevalue <= '"+c+"'  "
+					+ "	and (p.dod='1900-01-01' or p.dod is null) and p.active='1' "
+					+ " group by cv.idpatient) as x "
+					+ " left join ncdis.ncdis.cdis_value aa on x.idpatient = aa.idpatient and aa.iddata='"+criteria.getIddata()+"' and x.ddate=aa.datevalue "
+					+ " where aa.idpatient>0 "+criteriaStr;
+			
+			System.out.println("=====================================");
+    		System.out.println(sql);
+    		System.out.println("=====================================");
+    		
+			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+			ArrayList<String> column= new ArrayList<>();
+			for(Map row:rows) {
+				column.add(row.get("idpatient").toString());
+			}
+			result.add(column);
+		}
+	}
+	return result;
+}
+
+public ArrayList<ArrayList<String>> executeReportBackupMethod(ReportCriteria criteria, String reportType, ArrayList<ReportSubcriteria> subcriterias){
+ArrayList<ArrayList<String>> result = new ArrayList<>();
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+if(reportType.equals("list")){
+	String val = criteria.getValue();
+	String nom = criteria.getName();
+	String op = renderer.renderOperator(criteria.getOperator());
+		
+	if(criteria.getSection().equals("1")){
+		String criteriaStr = " and nn."+nom+" "+op+" '"+val+"' ";
+		if(op.equals("between")){
+			String[] parts = val.split("\\s*\\|+\\s*");
+			String part1 = parts[0].trim();
+			String part2 = parts[1].trim();
+			String between1 = "'"+part1+"'";
+			String between2 = "'"+part2+"'";
+			if(part1.indexOf("(") >= 0 && part1.indexOf(")") >= 0){between1 = part1;}
+			if(part2.indexOf("(") >= 0 && part2.indexOf(")") >= 0){between2 = part2;}
+			criteriaStr = " and nn."+nom+" "+op+" "+between1+" and "+ between2;
+		}
+			
+		if(val.equals("0")){criteriaStr = "";}
+		String vn = "nn."+nom;
+		String sql = "select nn.idpatient, "+vn+"  from ncdis.ncdis.patient nn  "
+				+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
+				+ " "+ criteriaStr+ " "
+				+ "order by nn.idpatient asc";
+		System.out.println("=========================================");
+		System.out.println("SQL : "+sql);
+		System.out.println("=========================================");
+		
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		
+		
+		
+	    int index=0;
+		for(Map row : rows) {
+	    	ArrayList<String> line = new ArrayList<>();
+	    	if(row.get(nom) == null || row.get(nom).toString().equals("null")) {
+	    		line.add(Integer.toString(index));
+	    		line.add(row.get("idpatient").toString());
+	    		line.add(nom);
+	    		line.add("");
+	    		line.add("");
+	    	}else{
+	    		line.add(Integer.toString(index));
+	    		line.add(row.get("idpatient").toString());
+	    		line.add(nom);
+	    		if(criteria.getName().equals("sex") || criteria.getName().equals("idcommunity") || criteria.getName().equals("dtype")){
+	    			line.add(renderer.renderName(nom+"."+row.get(nom).toString()));
+				}else{
+					line.add(row.get(nom).toString());
+				}
+	    		line.add("");
+	    	}
+	    	result.add(line);
+	    	index++;
 		}
 		
 		
 		
-	}else if(reportType.equals("graph")){
-			
-			String val = criteria.getValue();
-			String nom = criteria.getName();
-			String op = renderer.renderOperator(criteria.getOperator());
-			String sql = "";
-			int sec = Integer.parseInt(criteria.getSection());
-			
-			
-			if(sec == 1){
-				String subStrFrom = "";
-				String subStrWhere = "";
-				if(subcriterias.size() > 0){
-					for(int x=0;x<subcriterias.size();x++){
-						ReportSubcriteria rsc = subcriterias.get(x);
-						if(rsc.getSubsection().equals("1")){
-							//subStrFrom = " left join ncdis.ncdis.patient dd on pp.idpatient = dd.idpatient ";
-							subStrWhere = " and bb."+rsc.getSubname()+" "+renderer.renderOperator(rsc.getSuboperator())+" '"+rsc.getSubvalue()+ "' ";
-							sql = "select count(*) as cnt "
-									+ " from ncdis.ncdis.patient bb"
-									+ " inner join (select idpatient, dob as maxdate from ncdis.ncdis.patient where "+nom+" "+op+" '"+val+"' and (dod is null or dod ='1900-01-01')) cc"
-									+ " on bb.idpatient = cc.idpatient"
-									+ " where bb.idpatient > 0 and bb.active=1 and (bb.dod is null or bb.dod = '1900-01-01')"
-									+ subStrWhere;
-						}else{
-							//subStrFrom = " left join ncdis.ncdis.cdis_value dd on pp.idpatient = dd.idpatient ";
-							
-							sql = "select count(*) cnt"
-									+ " from ncdis.ncdis.patient bb"
-									+ "     inner join 	(select xx.idpatient, max(xx.datevalue) as mdate from ncdis.ncdis.cdis_value xx where xx.iddata='"+criteria.getIddata()+"'	and cast(case when coalesce(patindex('%[0-9]%', xx.value),0) = 0  then '0' else xx.value end as float) "+renderer.renderOperator(rsc.getSuboperator())+" '"+rsc.getSubvalue()+"' group by xx.idpatient) dd on dd.idpatient = bb.idpatient"
-									+ " where"
-									+ " bb.active  = '1' "
-									+ " and "+nom+" "+op+" "+"'"+val+"'"
-									+ " and (bb.dod is null or bb.dod = '1900-01-01')";
-
-						}
-					
-						
-						List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-					    int index=0;
-						for(Map row : rows) {
-							ArrayList<String> line = new ArrayList<>();
-					    	line.add(Integer.toString(index));
-				    		line.add(nom);
-							line.add(row.get("cnt").toString());
-				    		result.add(line);
-				    		index++;
-						}
+	}else{
+		String sql = "";
+		if(op.equals("between")){
+			String[] parts = val.split("\\s*\\|+\\s*");
+			String part1 = parts[0].trim();
+			String part2 = parts[1].trim();
+			String between1 = "'"+part1+"'";
+			String between2 = "'"+part2+"'";
+			if(part1.indexOf("(") >= 0 && part1.indexOf(")") >= 0){between1 = part1;}
+			if(part2.indexOf("(") >= 0 && part2.indexOf(")") >= 0){between2 = part2;}
+			val = between1+" and "+ between2;
+		}else {
+			val = "'"+val+"'";
+		}				
+		
+		String criteriaStr = " and cast(nn.value as float) "+op+" "+val+" ";
+		String criteriaStrSub = " and cast(aa.value as float) "+op+" "+val+" ";
+		
+		if(nom.indexOf("CollectedDate") >= 0) {
+			criteriaStr = " and cast(nn.datevalue as datetime) "+op+" "+val+" ";
+			criteriaStrSub = " and cast(aa.datevalue as datetime) "+op+" "+val+" ";
+		}
+		
+		/*
+		if(op.equals("=")){
+			String[] parts = val.split("\\s*or+\\s*");
+			if(parts.length > 1){
+				criteriaStr = "  ";
+				criteriaStrSub = "  ";
+				for(int i=0;i<parts.length;i++){
+					String part = parts[i].trim();
+					if(i == 0){
+						criteriaStr += " and (cast(nn.value as float) "+op+" "+part+" ";
+						criteriaStrSub += " and (cast(aa.value as float) "+op+" "+part+" ";
+					}else if(i == parts.length -1){
+						criteriaStr += " or cast(nn.value as float) "+op+" "+part+") ";
+						criteriaStrSub += " or cast(aa.value as float) "+op+" "+part+") ";
+					}else{
+						criteriaStr += " or cast(nn.value as float) "+op+" "+part+" ";
+						criteriaStrSub += " or cast(aa.value as float) "+op+" "+part+" ";
 					}
-				}else{
-					sql = "select count(pp.idpatient) as cnt from ncdis.ncdis.patient pp "+subStrFrom+" where pp.active=1 and (pp.dod is null or pp.dod = '1900-01-01') and pp."+nom+" "+op+" '"+val+"' "+subStrWhere +"  ";
-					
+				}
+			}
+		}
+		*/
+		
+		System.out.println("=========================================");
+		System.out.println("Value : "+nom);
+		System.out.println("Value : "+val);
+		System.out.println("=========================================");
+			
+		if(criteria.getValue().equals("0")){
+			criteriaStr = "";
+			criteriaStrSub = "";
+		}	
+			
+		sql = "select aa.idpatient,replace(convert(varchar,aa.datevalue,102),'.','-') as datevalue, aa.value "
+					+ " from ncdis.dbo.LastdateValue aa "
+					+ "where isnumeric(aa.value)=1  "
+					+ "and aa.iddata='"+criteria.getIddata()+"' "
+					+ " "+ criteriaStrSub+ " "
+					+ "order by aa.idpatient asc";
+			
+			
+		
+		System.out.println("=========================================");
+		System.out.println("SQL : "+sql);
+		System.out.println("=========================================");
+		/**/
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+	    int index=0;
+		for(Map row : rows) {
+			ArrayList<String> line = new ArrayList<>();
+	    	line.add(Integer.toString(index));
+    		line.add(row.get("idpatient").toString());
+    		line.add(nom);
+    		if(criteria.getName().equals("sex") || criteria.getName().equals("idcommunity") || criteria.getName().equals("dtype")){
+    			line.add( renderer.renderName(nom+"."+row.get("value").toString()));
+			}else{
+				if(nom.indexOf("CollectedDate") >= 0) {
+					line.add(row.get("datevalue").toString());
+				}else {
+					line.add(row.get("value").toString());
+				}
+			}
+    		result.add(line);
+    		index++;
+		}
+	}
+	
+}else if(reportType.equals("graph")){
+		
+		String val = criteria.getValue();
+		String nom = criteria.getName();
+		String op = renderer.renderOperator(criteria.getOperator());
+		String sql = "";
+		int sec = Integer.parseInt(criteria.getSection());
+		
+		
+		if(sec == 1){
+			String subStrFrom = "";
+			String subStrWhere = "";
+			if(subcriterias.size() > 0){
+				for(int x=0;x<subcriterias.size();x++){
+					ReportSubcriteria rsc = subcriterias.get(x);
+					if(rsc.getSubsection().equals("1")){
+						//subStrFrom = " left join ncdis.ncdis.patient dd on pp.idpatient = dd.idpatient ";
+						subStrWhere = " and bb."+rsc.getSubname()+" "+renderer.renderOperator(rsc.getSuboperator())+" '"+rsc.getSubvalue()+ "' ";
+						sql = "select count(*) as cnt "
+								+ " from ncdis.ncdis.patient bb"
+								+ " inner join (select idpatient, dob as maxdate from ncdis.ncdis.patient where "+nom+" "+op+" '"+val+"' and (dod is null or dod ='1900-01-01')) cc"
+								+ " on bb.idpatient = cc.idpatient"
+								+ " where bb.idpatient > 0 and bb.active=1 and (bb.dod is null or bb.dod = '1900-01-01')"
+								+ subStrWhere;
+					}else{
+						//subStrFrom = " left join ncdis.ncdis.cdis_value dd on pp.idpatient = dd.idpatient ";
+						
+						sql = "select count(*) cnt"
+								+ " from ncdis.ncdis.patient bb"
+								+ "     inner join 	(select xx.idpatient, max(xx.datevalue) as mdate from ncdis.ncdis.cdis_value xx where xx.iddata='"+criteria.getIddata()+"'	and cast(case when coalesce(patindex('%[0-9]%', xx.value),0) = 0  then '0' else xx.value end as float) "+renderer.renderOperator(rsc.getSuboperator())+" '"+rsc.getSubvalue()+"' group by xx.idpatient) dd on dd.idpatient = bb.idpatient"
+								+ " where"
+								+ " bb.active  = '1' "
+								+ " and "+nom+" "+op+" "+"'"+val+"'"
+								+ " and (bb.dod is null or bb.dod = '1900-01-01')";
+
+					}
+				
 					
 					List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 				    int index=0;
@@ -878,137 +1098,132 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 			    		index++;
 					}
 				}
-				
-			}else if(sec >= 50 ){
-				
-				String table = "ncdis.dbo.PatientAgePeriods";
-				if(sec == 50){
-					table = "ncdis.dbo.PatientAgePeriods";
-				}else if(sec == 51){
-					table = "ncdis.dbo.DiabetAgePeriods";
-				}else if(sec == 52){
-					table = "ncdis.dbo.A1CGroups";
-				}else if(sec == 53){
-					table = "ncdis.dbo.LDLGroups";
-				}else if(sec == 54){
-					table = "ncdis.dbo.GFRGroups";
-				}else if(sec == 55){
-					table = "ncdis.dbo.PCRACRGroups";
-				}
-				
-				
-				
-				/* start section 50++   */
-				String criteriaStr = "select count(*) as cnt  from "+table+" bb";
-				String criteriaWhere = "where bb."+criteria.getName()+" "+renderer.renderOperator(criteria.getOperator())+" "+criteria.getValue();
-				
-				
-				String subcriteriaStr = "";
-				if(subcriterias.size() > 0){
-					for(int x=0;x<subcriterias.size();x++){
-						ReportSubcriteria rsc = subcriterias.get(x);
-						if(rsc.getSubsection().equals("1")){
-							//subcriteriaStr += " inner join (select distinct idpatient from ncdis.ncdis.patient where "+rsc.getSubname()+" "+renderer.renderOperator(rsc.getSuboperator())+" "+rsc.getSubvalue()+" and (dod is null or dod ='1900-01-01')) cc"+x+" on bb.idpatient = cc"+x+".idpatient";
-							subcriteriaStr += " and bb."+rsc.getSubname()+" "+renderer.renderOperator(rsc.getSuboperator())+" "+rsc.getSubvalue()+" ";
-						}else if(rsc.getSubsection().equals("90")){
-							//subcriteriaStr += " inner join (select distinct idpatient from ncdis.ncdis.cdis_value where iddata = '"+rsc.getSubiddata()+"' and value "+renderer.renderOperator(rsc.getSuboperator())+" "+renderer.renderValue(rsc.getSubsection()+"."+rsc.getSubvalue())+") cc"+x+" on bb.idpatient = cc"+x+".idpatient";
-							subcriteriaStr += " and bb.dtype "+renderer.renderOperator(rsc.getSuboperator())+" "+renderer.renderValue(rsc.getSubsection()+"."+rsc.getSubvalue())+" ";
-						}else{
-							subcriteriaStr += " inner join (select distinct idpatient from ncdis.ncdis.cdis_value where iddata = '"+rsc.getSubiddata()+"' and value "+renderer.renderOperator(rsc.getSuboperator())+" "+rsc.getSubvalue()+") cc"+x+" on bb.idpatient = cc"+x+".idpatient";
-						}
-					}
-					
-					//sql = criteriaStr +" "+subcriteriaStr + " "+criteriaWhere;
-					sql = criteriaStr + " "+criteriaWhere +" "+subcriteriaStr ;
-					
-					
-					List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-				    int index=0;
-					for(Map row : rows) {
-				    	ArrayList<String> line = new ArrayList<>();
-				    	line.add(Integer.toString(index));
-			    		line.add(nom);
-						line.add(row.get("cnt").toString());
-			    		result.add(line);
-			    		index++;
-					}
-					
-				}else{
-					/*section 50 no subcriteria*/
-					sql = criteriaStr + " "+ criteriaWhere;
-					List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-				    int index=0;
-					for(Map row : rows) {
-				    	ArrayList<String> line = new ArrayList<>();
-				    	line.add(Integer.toString(index));
-			    		line.add(nom);
-						line.add(row.get("cnt").toString());
-			    		result.add(line);
-			    		index++;
-					}
-				}
-				/*end section 50 ++ */
 			}else{
+				sql = "select count(pp.idpatient) as cnt from ncdis.ncdis.patient pp "+subStrFrom+" where pp.active=1 and (pp.dod is null or pp.dod = '1900-01-01') and pp."+nom+" "+op+" '"+val+"' "+subStrWhere +"  ";
 				
-				/*section is not 1*/
-				String criteriaStr = " and nn.value "+op+" '"+val+"' ";
-				String criteriaStrSub = " and aa.value "+op+" '"+val+"' ";
-				String subStrFrom = "";
-				String subStrWhere = "";
 				
-				if(subcriterias.size() > 0){
-					for(int x=0;x<subcriterias.size();x++){
-						ReportSubcriteria rsc = subcriterias.get(x);
-						
-						if(rsc.getSubsection().equals("1")){
-							sql = "select count(*) cnt"
-									+ " from ncdis.ncdis.patient bb"
-									+ "     inner join 	(select aa.idpatient, max(datevalue) maxdate from ncdis.ncdis.cdis_value aa where  aa.iddata='"+criteria.getIddata()+"' and aa.value "+renderer.renderOperator(criteria.getOperator())+" '"+criteria.getValue()+"' group by aa.idpatient) cc"
-									+ "     on bb.idpatient = cc.idpatient"
-									+ " where (bb.dod is null or bb.dod = '1900-01-01') and "
-									+ "  bb."+rsc.getSubname()+" "+renderer.renderOperator(rsc.getSuboperator())+" '"+rsc.getSubvalue()+ "' ";
-						
-						}else if(rsc.getSubsection().equals("90")){
-							sql = "select count(*) cnt"
-									+ " from ncdis.ncdis.cdis_value bb"
-									+ "   left join 	(select aa.idpatient, max(datevalue) maxdate from ncdis.ncdis.cdis_value aa where  aa.iddata='"+criteria.getIddata()+"' and aa.value "+renderer.renderOperator(criteria.getOperator())+" '"+criteria.getValue()+"' group by aa.idpatient) cc"
-									+ "    on bb.idpatient = cc.idpatient"
-									+ " where  "
-									+ " bb.iddata  = '"+rsc.getSubiddata()+"'"
-									+ " and cast(case when coalesce(patindex('%[0-9]%', bb.value),0) = 0  then '0' else bb.value end as float) "+renderer.renderOperator(rsc.getSuboperator())+" '"+rsc.getSubvalue()+"'"
-									+ " and cc.maxdate is not null"
-									+ " and bb.datevalue = (select max(xx.datevalue) from ncdis.ncdis.cdis_value xx where xx.iddata='"+rsc.getSubiddata()+"' and xx.idpatient = bb.idpatient group by xx.idpatient)";
-						}else{
-							sql = "select count(*) cnt"
-									+ " from ncdis.ncdis.cdis_value bb"
-									+ "   left join 	(select aa.idpatient, max(datevalue) maxdate from ncdis.ncdis.cdis_value aa where  aa.iddata='"+criteria.getIddata()+"' and aa.value "+renderer.renderOperator(criteria.getOperator())+" '"+criteria.getValue()+"' group by aa.idpatient) cc"
-									+ "    on bb.idpatient = cc.idpatient"
-									+ " where  "
-									+ " bb.iddata  = '"+rsc.getSubiddata()+"'"
-									+ " and cast(case when coalesce(patindex('%[0-9]%', bb.value),0) = 0  then '0' else bb.value end as float) "+renderer.renderOperator(rsc.getSuboperator())+" '"+rsc.getSubvalue()+"'"
-									+ " and cc.maxdate is not null"
-									+ " and bb.datevalue = (select max(xx.datevalue) from ncdis.ncdis.cdis_value xx where xx.iddata='"+rsc.getSubiddata()+"' and xx.idpatient = bb.idpatient group by xx.idpatient)";
-						}
-						
-						
-						List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-					    int index=0;
-						for(Map row : rows) {
-					    	ArrayList<String> line = new ArrayList<>();
-					    	line.add(Integer.toString(index));
-				    		line.add(nom);
-							line.add(row.get("cnt").toString());
-				    		result.add(line);
-				    		index++;
-						}
+				List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+			    int index=0;
+				for(Map row : rows) {
+					ArrayList<String> line = new ArrayList<>();
+			    	line.add(Integer.toString(index));
+		    		line.add(nom);
+					line.add(row.get("cnt").toString());
+		    		result.add(line);
+		    		index++;
+				}
+			}
+			
+		}else if(sec >= 50 ){
+			
+			String table = "ncdis.dbo.PatientAgePeriods";
+			if(sec == 50){
+				table = "ncdis.dbo.PatientAgePeriods";
+			}else if(sec == 51){
+				table = "ncdis.dbo.DiabetAgePeriods";
+			}else if(sec == 52){
+				table = "ncdis.dbo.A1CGroups";
+			}else if(sec == 53){
+				table = "ncdis.dbo.LDLGroups";
+			}else if(sec == 54){
+				table = "ncdis.dbo.GFRGroups";
+			}else if(sec == 55){
+				table = "ncdis.dbo.PCRACRGroups";
+			}
+			
+			
+			
+			// start section 50++   
+			String criteriaStr = "select count(*) as cnt  from "+table+" bb";
+			String criteriaWhere = "where bb."+criteria.getName()+" "+renderer.renderOperator(criteria.getOperator())+" "+criteria.getValue();
+			
+			
+			String subcriteriaStr = "";
+			if(subcriterias.size() > 0){
+				for(int x=0;x<subcriterias.size();x++){
+					ReportSubcriteria rsc = subcriterias.get(x);
+					if(rsc.getSubsection().equals("1")){
+						//subcriteriaStr += " inner join (select distinct idpatient from ncdis.ncdis.patient where "+rsc.getSubname()+" "+renderer.renderOperator(rsc.getSuboperator())+" "+rsc.getSubvalue()+" and (dod is null or dod ='1900-01-01')) cc"+x+" on bb.idpatient = cc"+x+".idpatient";
+						subcriteriaStr += " and bb."+rsc.getSubname()+" "+renderer.renderOperator(rsc.getSuboperator())+" "+rsc.getSubvalue()+" ";
+					}else if(rsc.getSubsection().equals("90")){
+						//subcriteriaStr += " inner join (select distinct idpatient from ncdis.ncdis.cdis_value where iddata = '"+rsc.getSubiddata()+"' and value "+renderer.renderOperator(rsc.getSuboperator())+" "+renderer.renderValue(rsc.getSubsection()+"."+rsc.getSubvalue())+") cc"+x+" on bb.idpatient = cc"+x+".idpatient";
+						subcriteriaStr += " and bb.dtype "+renderer.renderOperator(rsc.getSuboperator())+" "+renderer.renderValue(rsc.getSubsection()+"."+rsc.getSubvalue())+" ";
+					}else{
+						subcriteriaStr += " inner join (select distinct idpatient from ncdis.ncdis.cdis_value where iddata = '"+rsc.getSubiddata()+"' and value "+renderer.renderOperator(rsc.getSuboperator())+" "+rsc.getSubvalue()+") cc"+x+" on bb.idpatient = cc"+x+".idpatient";
 					}
-				}else{
-					sql = "select count(nn.idpatient) as cnt from ncdis.ncdis.cdis_value nn  "+subStrFrom
-							+ "where nn.datevalue = (select max(datevalue) from ncdis.ncdis.cdis_value aa where aa.idpatient = nn.idpatient "
-							+ "and aa.iddata=(select iddata from ncdis.ncdis.cdis_data where data_code = '"+criteria.getName().toUpperCase()+"')) 	"
-									+ "and nn.iddata = '"+criteria.getIddata()+"' "
-									+ " "+ criteriaStr+ " "+subStrWhere
-											+ " ";
+				}
+				
+				//sql = criteriaStr +" "+subcriteriaStr + " "+criteriaWhere;
+				sql = criteriaStr + " "+criteriaWhere +" "+subcriteriaStr ;
+				
+				
+				List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+			    int index=0;
+				for(Map row : rows) {
+			    	ArrayList<String> line = new ArrayList<>();
+			    	line.add(Integer.toString(index));
+		    		line.add(nom);
+					line.add(row.get("cnt").toString());
+		    		result.add(line);
+		    		index++;
+				}
+				
+			}else{
+				//section 50 no subcriteria
+				sql = criteriaStr + " "+ criteriaWhere;
+				List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+			    int index=0;
+				for(Map row : rows) {
+			    	ArrayList<String> line = new ArrayList<>();
+			    	line.add(Integer.toString(index));
+		    		line.add(nom);
+					line.add(row.get("cnt").toString());
+		    		result.add(line);
+		    		index++;
+				}
+			}
+			//end section 50 ++ 
+		}else{
+			
+			//section is not 1
+			String criteriaStr = " and nn.value "+op+" '"+val+"' ";
+			String criteriaStrSub = " and aa.value "+op+" '"+val+"' ";
+			String subStrFrom = "";
+			String subStrWhere = "";
+			
+			if(subcriterias.size() > 0){
+				for(int x=0;x<subcriterias.size();x++){
+					ReportSubcriteria rsc = subcriterias.get(x);
+					
+					if(rsc.getSubsection().equals("1")){
+						sql = "select count(*) cnt"
+								+ " from ncdis.ncdis.patient bb"
+								+ "     inner join 	(select aa.idpatient, max(datevalue) maxdate from ncdis.ncdis.cdis_value aa where  aa.iddata='"+criteria.getIddata()+"' and aa.value "+renderer.renderOperator(criteria.getOperator())+" '"+criteria.getValue()+"' group by aa.idpatient) cc"
+								+ "     on bb.idpatient = cc.idpatient"
+								+ " where (bb.dod is null or bb.dod = '1900-01-01') and "
+								+ "  bb."+rsc.getSubname()+" "+renderer.renderOperator(rsc.getSuboperator())+" '"+rsc.getSubvalue()+ "' ";
+					
+					}else if(rsc.getSubsection().equals("90")){
+						sql = "select count(*) cnt"
+								+ " from ncdis.ncdis.cdis_value bb"
+								+ "   left join 	(select aa.idpatient, max(datevalue) maxdate from ncdis.ncdis.cdis_value aa where  aa.iddata='"+criteria.getIddata()+"' and aa.value "+renderer.renderOperator(criteria.getOperator())+" '"+criteria.getValue()+"' group by aa.idpatient) cc"
+								+ "    on bb.idpatient = cc.idpatient"
+								+ " where  "
+								+ " bb.iddata  = '"+rsc.getSubiddata()+"'"
+								+ " and cast(case when coalesce(patindex('%[0-9]%', bb.value),0) = 0  then '0' else bb.value end as float) "+renderer.renderOperator(rsc.getSuboperator())+" '"+rsc.getSubvalue()+"'"
+								+ " and cc.maxdate is not null"
+								+ " and bb.datevalue = (select max(xx.datevalue) from ncdis.ncdis.cdis_value xx where xx.iddata='"+rsc.getSubiddata()+"' and xx.idpatient = bb.idpatient group by xx.idpatient)";
+					}else{
+						sql = "select count(*) cnt"
+								+ " from ncdis.ncdis.cdis_value bb"
+								+ "   left join 	(select aa.idpatient, max(datevalue) maxdate from ncdis.ncdis.cdis_value aa where  aa.iddata='"+criteria.getIddata()+"' and aa.value "+renderer.renderOperator(criteria.getOperator())+" '"+criteria.getValue()+"' group by aa.idpatient) cc"
+								+ "    on bb.idpatient = cc.idpatient"
+								+ " where  "
+								+ " bb.iddata  = '"+rsc.getSubiddata()+"'"
+								+ " and cast(case when coalesce(patindex('%[0-9]%', bb.value),0) = 0  then '0' else bb.value end as float) "+renderer.renderOperator(rsc.getSuboperator())+" '"+rsc.getSubvalue()+"'"
+								+ " and cc.maxdate is not null"
+								+ " and bb.datevalue = (select max(xx.datevalue) from ncdis.ncdis.cdis_value xx where xx.iddata='"+rsc.getSubiddata()+"' and xx.idpatient = bb.idpatient group by xx.idpatient)";
+					}
 					
 					
 					List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
@@ -1021,12 +1236,35 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 			    		result.add(line);
 			    		index++;
 					}
+				}
+			}else{
+				sql = "select count(nn.idpatient) as cnt from ncdis.ncdis.cdis_value nn  "+subStrFrom
+						+ "where nn.datevalue = (select max(datevalue) from ncdis.ncdis.cdis_value aa where aa.idpatient = nn.idpatient "
+						+ "and aa.iddata=(select iddata from ncdis.ncdis.cdis_data where data_code = '"+criteria.getName().toUpperCase()+"')) 	"
+								+ "and nn.iddata = '"+criteria.getIddata()+"' "
+								+ " "+ criteriaStr+ " "+subStrWhere
+										+ " ";
+				
+				
+				List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+			    int index=0;
+				for(Map row : rows) {
+			    	ArrayList<String> line = new ArrayList<>();
+			    	line.add(Integer.toString(index));
+		    		line.add(nom);
+					line.add(row.get("cnt").toString());
+		    		result.add(line);
+		    		index++;
 				}
 			}
 		}
-	logger.log(Level.INFO, "Execute Report ");
-		return result;
-	}
+	} //end else type=graph
+
+logger.log(Level.INFO, "Execute Report ");
+return result;
+}
+
+
 
 	public List<Map<String, Object>> executeReportFlist(String dataName, JsonArray criterias){
 		List<Map<String, Object>> result = new ArrayList<>();
@@ -1074,11 +1312,13 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria, Strin
 				    				String colVal = row.get(rsm.getColumnName(i))!=null?row.get(rsm.getColumnName(i)).toString():""; 
 				    				if(colVal == null) colVal = "";
 				    				r.put(rc.getName(), colVal);
+				    				/*
 				    				if(rc.getDate().equals("yes")){
 				    					String colValDate = row.get(rsm.getColumnName(i)+"Date")!=null?row.get(rsm.getColumnName(i)+"Date").toString():"";
 				    					if(colValDate == null) colValDate = "";
 				    					r.put(rc.getName()+"_collecteddate", colValDate);
 				    				}
+				    				*/
 				    				break;
 				    			}
 				    		}
@@ -1257,11 +1497,80 @@ public ArrayList<String> getIdPatients(){
 	return result;
 }
 
+public ArrayList<HashMap<String, String>> getIdPatientsForCustomReportGraph(ReportCriteria criteria, String hcpid){
+	ArrayList<HashMap<String,String>> result = new ArrayList<>();
+	String sql = "";
+	if(hcpid.equals("allhcp")) {
+		if(criteria.getName().equals("idcommunity")) {
+			sql = "select distinct nn.idpatient as idpatient,c.name_en as criteria from ncdis.ncdis.patient nn "
+					+ " left join ncdis.ncdis.community as c on nn.idcommunity = c.idcommunity  "
+					+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1'";
+			if(!criteria.getValue().equals("0")) {
+				sql = "select distinct nn.idpatient as idpatient,c.name_en as criteria from ncdis.ncdis.patient nn "
+						+ " left join ncdis.ncdis.community as c on nn.idcommunity = c.idcommunity  "
+						+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1' and nn.idcommunity = '"+criteria.getValue()+"'";
+			}
+		}else if(criteria.getName().equals("dtype")) {
+			sql = "select distinct nn.idpatient as idpatient, d.diabet_name as criteria"
+					+ "	from "
+					+ "		ncdis.ncdis.patient nn "
+					+ "		left join "
+					+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
+					+ "			on nn.idpatient=dd.idpatient "
+					+ "		left join "
+					+ "			ncdis.ncdis.cdis_value cv on dd.idpatient = cv.idpatient and dd.ddate = cv.datevalue "
+					+ "		left join  "
+					+ "			ncdis.ncdis.cdis_diabet d on cv.value = d.iddiabet "
+					+ "	where cv.iddata=1 "
+					+ "	and (nn.dod='1900-01-01' or dod is null) and nn.active='1'";
+		}
+	}else {
+		if(criteria.getName().equals("idcommunity")) {
+			sql = "select distinct nn.idpatient as idpatient,c.name_en as criteria from ncdis.ncdis.patient nn "
+					+ " left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient "
+					+ " left join ncdis.ncdis.community as c on nn.idcommunity = c.idcommunity "
+					+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active='1' "
+					+ " and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
+			if(!criteria.getValue().equals("0")) {
+				sql = "select distinct nn.idpatient as idpatient,c.name_en as criteria from ncdis.ncdis.patient nn "
+						+ " left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient "
+						+ " left join ncdis.ncdis.community as c on nn.idcommunity = c.idcommunity "
+						+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active='1' and nn.idcommunity='"+criteria.getValue()+"' "
+						+ " and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
+			}
+		}else if(criteria.getName().equals("dtype")) {
+			sql = "select distinct nn.idpatient as idpatient, d.diabet_name as criteria"
+					+ "	from "
+					+ "		ncdis.ncdis.patient nn "
+					+ "		left join "
+					+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
+					+ "			on nn.idpatient=dd.idpatient "
+					+ "     left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient "
+					+ "		left join "
+					+ "			ncdis.ncdis.cdis_value cv on dd.idpatient = cv.idpatient and dd.ddate = cv.datevalue "
+					+ "		left join  "
+					+ "			ncdis.ncdis.cdis_diabet d on cv.value = d.iddiabet "
+					+ "	where cv.iddata=1 "
+					+ "	and (nn.dod='1900-01-01' or dod is null) and nn.active='1' "
+					+ " and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
+		}
+	}
+	
+	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+	for(Map row : rows) {
+		HashMap<String, String> l = new HashMap<>();
+		l.put("idpatient", row.get("idpatient").toString());
+		l.put("criteria", row.get("criteria").toString());
+		result.add(l);
+	}
+	return result;
+}
 
 
-public ArrayList<String> getIdFilterPatients(String hcp, String hcpid){
+
+public ArrayList<String> getIdFilterPatients(String hcpid){
 	ArrayList<String> result = new ArrayList<>();
-	String sql = "select distinct nn.idpatient from ncdis.ncdis.patient nn left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient where (nn.dod is null or nn.dod = '1900-01-01') and ph."+hcp+"='"+hcpid+"'";
+	String sql = "select distinct nn.idpatient from ncdis.ncdis.patient nn left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient where (nn.dod is null or nn.dod = '1900-01-01') and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 	for(Map row : rows) {
 		result.add(row.get("idpatient").toString());

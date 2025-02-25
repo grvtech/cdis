@@ -1,11 +1,8 @@
-
-
 /*
  * global variable for list
  * */
 
 var toolbarConfig = {"container":"locallist-toolbar","lists":[{"id":"list103","title":"Patients by HbA1c","selected":"false"},{"id":"list102","title":"Patients with no HbA1C in the ","selected":"false"},{"id":"list101","title":"HbA1c trend","selected":"false"}],"options":[]};
-//var toolbarConfig = {"container":"locallist-toolbar","lists":[{"id":"list101","title":"Trend of HBA1c value","selected":"false"},{"id":"list102","title":"Patients with old HBA1c value collected","selected":"false"},{"id":"list103","title":"Patients with high HBA1c value","selected":"false"},{"id":"list104","title":"Patients with no HBA1c value","selected":"false"}],"options":[]};
 var dataperiodValues = [6,12,24,60];
 const listConfig = {
 		"container":"locallist-list",
@@ -36,7 +33,7 @@ function openList(pfilter){
 		appFilter = initFilter(listConfig.initFilter);
 	}
 	
-	var modal = $('<div>',{id:"fullscreen_"+id,class:"fullscreen-modal"}).appendTo($("#wraper"));
+	var modal = $('<div>',{class:"cdisFullscreenLocalList"}).appendTo($("#grvWraper"));
 	buildFrameList(modal);
 	setTimeout(loadReport, 10, "locallist");
 	//setTimeout(loadNoHbA1cPatients,100);
@@ -63,13 +60,16 @@ function initFilter(initialFilter){
  * function to build the frame
  * */
 function buildFrameList(container){
-	var header = $('<div>',{class:"fullscreen-modal-header"}).appendTo(container);
-	$('<div>',{class:"fullscreen-modal-header-logo"}).appendTo(header);
-	$('<div>',{class:"fullscreen-modal-header-cdis"}).text("CDIS").appendTo(header);
-	$('<div>',{class:"fullscreen-modal-header-title"}).text("Local Patient List").appendTo(header);
-	$('<div>',{class:"fullscreen-modal-header-close"}).html($('<i>',{class:"fa fa-times"})).click(function(){gts(sid,"en");}).appendTo(header);
-	var body = $('<div>',{class:"fullscreen-modal-body"}).appendTo(container);
 	
+	/**/
+	var header = $('<div>',{id:"grvHeader"}).appendTo(container);
+	$('<div>',{class:"cdisLogo"}).appendTo(header);
+	$('<div>',{class:"cdisName"}).text("CDIS").appendTo(header);
+	$('<div>',{class:"cdisTitle"}).text("Local Patient List").appendTo(header);
+	$('<div>').appendTo(header);
+	$('<div>',{class:"cdisFullscreenLocalListClose"}).html($('<i>',{class:"fa fa-times"})).click(function(){gts(sid,"en");}).appendTo(header);
+	
+	var body = $('<div>',{class:"cdisFullscreenLocalListBody"}).appendTo(container);
 	$('<div>',{class:"gap"}).appendTo(body);
 	$('<div>',{"id":"locallist-toolbar",class:"fullscreen-modal-toolbar"}).appendTo(body);
 	$('<div>',{class:"gap"}).appendTo(body);
@@ -81,8 +81,8 @@ function buildFrameList(container){
 	
 	setTimeout(showProgress , 10, c);
 	
-	//$('<div>',{"id":"locallist-stats",class:"fullscreen-modal-stats"}).appendTo(body);
-	$('<div>',{class:"fullscreen-modal-footer"}).appendTo(container);
+	$('<div>',{class:"cdisFullscreenLocalListFooter"}).appendTo(container);
+	
 }
 
 

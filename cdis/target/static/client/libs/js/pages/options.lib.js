@@ -8,7 +8,6 @@ console.log(ob)
 /*
  * MAIN Section 
  * */
-$(".cdisfooter-left").hover(function(){$(".leftfootermenu").toggle("fade");},function(){$(".leftfootermenu").toggle("fade");});
 
 ob["community"] = report_idcommunity[ob.idcommunity];
 ob["role"] = userProfileObj.role.idrole;
@@ -57,17 +56,15 @@ function initLocalPage(section){
 
 function loadOptionsSection(section){
 	optionsSection = section;
-	$(".cdisbody_patient_alerts").hide();
 	if(section == "personalinfo"){
 		loadOptionsDashboard();
 	}
 }
 
 function loadOptionsDashboard(){
-	$(".mainpage .main .page").empty();
-	$(".mainpage .main .page").load("/ncdis/client/templates/options.personalinfo.html", function(){
+	$(".cdisPage").empty();
+	$(".cdisPage").load("/ncdis/client/templates/options.personalinfo.html", function(){
 		optionsSection = "personalinfo";
-		initPage();
 		initLocalPage("personalinfo");
 	});
 }

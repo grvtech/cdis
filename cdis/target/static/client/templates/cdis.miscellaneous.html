@@ -1,45 +1,46 @@
-<div class="pagebody">
-	<div class="panel-section uss" id="lsection_miscellaneous">
-		<div class="section-header">
-			<span class="section-title">Vaccinations / TB Status</span>
-		</div>
-		 <section>
-		 
-		 <div style="width:100%;">
-				<div class="row" >
-					<div class="col-sm-6">
-						<!-- <div class="widget-container" id="dophta"></div> -->
-						<div class="widget-container" id="dinflu"></div>
-					</div>
-					<div class="col-sm-6">
-						<div class="widget-container" id="dpneu"></div>
-					</div>
-					
-				</div>
-				<div class="row" >
-					<div class="col-sm-6">
-						<div class="widget-container" id="dppd"></div>
-					</div>
-					<div class="col-sm-6">
-						
-					</div>
-					
-				</div>
-				<div class="row" >
-					<div class="col-sm-6">
-						<div class="widget-container" id="ppd"></div>
-					</div>
-					<div class="col-sm-6">
-						<div class="widget-container" id="inh"></div>
-					</div>
-					
-				</div>
-				
-				
+<div class="cdisSectionContainer">
+	<div>
+	
+			<div class="cdisMenu">
+				<ul id="grvSectionsMenu">
+					<li><span class="patient_icon_"></span><label>Patient Summary</label></li>
+					<li><span class="mdvisits_icon_"></span><label>Clinical / Screening</label></li>
+					<li><span class="schedulevisits_icon_"></span><label>Schedule visits</label></li>
+					<li data-toggle="tooltip" data-placement="right" title="Automatic update from Omnilab"><span class="lab_icon_" ></span><label>Glucose Control</label></li>
+					<li data-toggle="tooltip" data-placement="right" title="Automatic update from Omnilab"><span class="renal_icon_"></span><label>Renal</label></li>
+					<li data-toggle="tooltip" data-placement="right" title="Automatic update from Omnilab"><span class="lipid_icon_"></span><label>Lipids</label></li>
+					<li><span class="complications_icon_"></span><label>Existing Complications</label></li>
+					<li><span class="depression_icon_"></span><label>Distress / Depression Screening</label></li>
+					<li><span class="meds_icon_"></span><label>Medication</label></li>
+					<li><span class="miscellaneous_icon_"></span><label>Vaccinations / TB Status</label></li>
+					<li><label>Messages</label><span class="notes_icon_"></span></li>
+				</ul>
 			</div>
-		 </section>
 	</div>
-</div>
-<div class="pageside">
-	<div class="panel-record uss"></div>
+	
+	<div>
+		<div class="cdisPanelSection">
+			<div class="cdisPanelSectionHeader">
+				<h1>Vaccinations / TB Status</h1>
+			</div>
+			
+			 <div>
+				<div class="cdisABCGraphsLine">
+					<div class="widget-container" id="dinflu"></div>
+					<div class="widget-container" id="dpneu"></div>
+				</div>
+				<div  class="cdisABCGraphsLine">
+					<div class="widget-container" id="dppd"></div>
+				</div>
+				<div  class="cdisABCGraphsLine">
+					<div class="widget-container" id="ppd"></div>
+					<div class="widget-container" id="inh"></div>
+				</div>
+					
+			</div>
+		</div>
+	</div>
+	
+	<div><div class="cdisRightPanel"><div class="cdisPanelRightRecord uss"></div></div></div>
+
 </div>

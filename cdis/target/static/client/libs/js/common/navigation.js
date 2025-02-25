@@ -1,7 +1,8 @@
 
 function initNavigation() {
+	$(".cdisFooterRight").hover(function(){$(".cdisExpandMenu").toggle("fade");},function(){$(".cdisExpandMenu").toggle("fade");});
 	
-	$(".fback").click(function() {gts(sid,applanguage);	});
+	$(".cdisFback").click(function() {gts(sid,applanguage);	});
 	$("#addpatient-button").click(function() {
 		//alert("add patient");
 			gtc(sid,applanguage,null,"addpatient");
@@ -34,12 +35,17 @@ function initNavigation() {
 			gtr(sid,"en",null);
 			//window.location = "cdis.html?section=frontpage&sid="+sid+"&language=en";
 		});
-		$(".freports").click(function() {gtr(sid,"en",null);});
-		$(".flogout").click(function() {logoutUser(sid);});
+		$(".cdisFreports").click(function() {gtr(sid,"en",null);});
+		$(".cdisFlogout").click(function() {logoutUser(sid);});
 
-		$(".fnew").click(function() {gtc(sid,applanguage,null,"addpatient");});
+		$(".cdisFnew").click(function() {
+			var p = getPage();
+			var plus = "&frompage="+p;
+			if(p == "cdis")plus = plus+"&fr="+patientObjArray[0].ramq;
+			gtc(sid,applanguage,null,"addpatient",plus);
+		});
 		
-		$(".cdisfull").click(function(){
+		$(".cdisFullButton").click(function(){
 			gtc(sid,applanguage,getParameterByName("ramq"),"mdvisits",fllstr);
 		});
 }
@@ -84,6 +90,7 @@ function initNavigation() {
 		window.location = "cdis.html?"+p;
 	}/*go to cdis*/
 	function gtc(s,l,r,sec,plus){
+		var pp = "sid="+sid+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+moment()+plus;
 		var p = window.btoa("sid="+sid+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+moment()+plus);
 		window.location = "cdis.html?"+p;
 	}/*go to cdis*/

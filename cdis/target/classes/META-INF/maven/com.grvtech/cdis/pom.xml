@@ -47,13 +47,13 @@
 			<artifactId>mssql-jdbc</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		 <!-- 
+		  
 		<dependency>
         	<groupId>org.springframework.boot</groupId>
         	<artifactId>spring-boot-devtools</artifactId>
         	<optional>true</optional>
    		</dependency>
-		-->
+		<!---->
 		<!-- https://mvnrepository.com/artifact/org.webjars/bootstrap -->
 		<dependency>
 		    <groupId>org.webjars</groupId>
@@ -139,6 +139,12 @@
 		    <groupId>org.webjars.npm</groupId>
 		    <artifactId>popper.js</artifactId>
 		    <version>1.16.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.webjars/chartjs -->
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>chartjs</artifactId>
+		    <version>4.4.3</version>
 		</dependency>
 		
 	</dependencies>

@@ -75,6 +75,9 @@ public class DataProcessor {
 	CdisDBridge cdisdb;
 	
 	@Autowired
+	Misc misc;
+	
+	@Autowired
 	MailTool mt;
 	
 	@org.springframework.beans.factory.annotation.Value("${reports}")
@@ -142,7 +145,20 @@ public String getHcps(final HttpServletRequest request){
 	result = json.toJson(new MessageResponse(true,language,obs));
 	return result;
 }
-	
+
+@RequestMapping(value = {"/service/data/getAllHcps"}, method = RequestMethod.GET)
+public String getAllHcps(final HttpServletRequest request){
+	Gson json = new Gson();
+	String result = "";
+	String language = request.getParameter("language").toString();
+	ArrayList<Object> obs = new ArrayList<Object>();
+	ArrayList<HashMap<String, String>> hcps = cdisdb.getAllHcps();
+	obs.add(hcps);
+	result = json.toJson(new MessageResponse(true,language,obs));
+	return result;
+}
+
+
 @RequestMapping(value = {"/service/data/getPatientNotes"}, method = RequestMethod.GET)
 public String getPatientNotes(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -398,7 +414,7 @@ public String getUserSession(final HttpServletRequest request){
 	
 	String result = "";
 	int iduser = Integer.parseInt(request.getParameter("iduser").toString());
-	String ip = Misc.getIpAddr(request);
+	String ip = misc.getIpAddr(request);
 	String language = request.getParameter("language").toString();
 	User user = chbdb.getUser(iduser);
 	if(!user.getIduser().equals("0")){

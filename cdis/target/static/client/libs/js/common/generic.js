@@ -23,16 +23,19 @@ function loadTemplate(pageName,callBack){
 		  });
 	}else{
 		
-		$body.append($("<div>",{class:"cdismodal"}).append($("<div>",{class:"modal-span"}).text("CDIS Loading..."))).addClass("loading");
-		if(callBack == null){
-			$( "#wraper").load( "client/templates/"+pageName+".html"+"?ts="+moment());
+		if(pageName == "reports"){
+			if(callBack == null){
+				$("#grvWraper").load( "client/templates/"+pageName+".html"+"?ts="+moment());
+			}else{
+				$("#grvWraper").load("client/templates/"+pageName+".html"+"?ts="+moment(), callBack);
+			}	
 		}else{
-			$( "#wraper").load("client/templates/"+pageName+".html"+"?ts="+moment(), callBack);
+			if(callBack == null){
+				$("#grvWraper").load( "client/templates/"+pageName+".html"+"?ts="+moment());
+			}else{
+				$("#grvWraper").load("client/templates/"+pageName+".html"+"?ts="+moment(), callBack);
+			}	
 		}
-		setTimeout(function(){
-			$body.removeClass("loading");
-			$(".cdismodal").remove();
-		},500);
 	}
 }
 
@@ -177,7 +180,7 @@ function makenid(length) {
 function showGRVPopup(title,text,buttons,config){
 	var id = moment();
 	$("body").css("overflow-y","hidden");
-	var modal = $('<div>',{id:"fullscreen_"+id,class:"grvpopup-fullscreen-modal"}).appendTo($("#wraper"));
+	var modal = $('<div>',{id:"fullscreen_"+id,class:"grvpopup-fullscreen-modal"}).appendTo($("#grvWraper"));
 	var sett = $('<div>',{class:"grvpopup-window"}).appendTo(modal);
 	if(typeof(config.width) != "undefined")sett.css("width",config.width+"px");
 	if(typeof(config.height) != "undefined")sett.css("height",config.height+"px");
@@ -185,13 +188,16 @@ function showGRVPopup(title,text,buttons,config){
 	var settB = $('<div>',{class:"grvpopup-window-body"}).appendTo(sett);
 	var settBB = $('<div>',{class:"grvpopup-window-body-body"}).appendTo(settB);
 	var settBF = $('<div>',{class:"grvpopup-window-body-footer"}).appendTo(settB);
-	
+	var autos = "";
+	$.each(buttons,function(x,y){autos = "auto "+autos;});
+	$(settBF).css("grid-template-columns",autos);
 	
 	$.each(buttons, function(i,button){
+		
 		var cb = $('<button>',{class:"cisbutton"}).text(button.text).appendTo(settBF);
 		cb.on("click",{"buttonAction":button.action},function (event){
 			var flag = eval(event.data.buttonAction+"()");
-			if(flag)setTimeout(closeGRVPopup,1000);
+			if(flag)setTimeout(closeGRVPopup,300);
 		});
 	});
 	

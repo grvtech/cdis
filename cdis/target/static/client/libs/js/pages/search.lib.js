@@ -10,17 +10,18 @@ var fll = getParameterByName("fll");
  * */
 
 $("#radios .btn").on("focusin",function() {$("#search").val("");$("#search").focus();});
-$("#linkedPatients").on("click",openLinkPatientsList);
-$('#surveillance-button').on("click",function(){gtr(sid,applanguage,"surveillance");});
-$('#pvalidation-button').on("click",function(){
+
+$("#grvLinkedPatientsButton").on("click",openLinkPatientsList);
+$('#grvSurveillanceButton').on("click",function(){gtr(sid,applanguage,"surveillance");});
+$('#grvPatientValidationButton').on("click",function(){
 	if(isDemo){
 		var bconfig = {"width":"300","height":"250"};
 		var bbut = [{"text":"Close","action":"closeGRVPopup"}];
 		var txt = "<p><center><span style='color:yellow;font-size:35px;'><i class='fa fa-exclamation-triangle'></i></span><br><b>This function si not available in DEMO mode.</b></center></p>";
 		showGRVPopup("CDIS Demo Mode",txt,bbut,bconfig);
 	}else{gtr(sid,applanguage,"pvalidation");}});
-//$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});
-$('#locallist-button').click(function(){
+
+$('#grvLocallistButton').click(function(){
 	setTimeout(setEvent,100,"LLIST");
 	var f = null;
 	if(fll=='1') {
@@ -36,37 +37,34 @@ $('#locallist-button').click(function(){
  * MAIN Section 
  * */
 
-$(".cdisfooter-left").hover(function(){$(".leftfootermenu").toggle("fade");},function(){$(".leftfootermenu").toggle("fade");});
-$('#search').focus();
 refreshUserNotes(sid);
+$('#search').focus();
 drawUserDashboard();
-if(typeof(userObj[0].idprofesion) != "undefined"){
-	var hcpcat = profession_index[userObj[0].idprofesion];
-	var iduser = userObj[0].iduser;
-	$("#userfullname").text( capitalizeFirstLetter(userObj[0].firstname)+" "+capitalizeFirstLetter(userObj[0].lastname));
-	getUserPatients(iduser,hcpcat);	
-}else{
-	$(".personal-patients").hide();
-}
-
 if(userNotes.length > 0){
-	$(".notes-alert").show();
+	$(".cdisNotesAlert").show();
 	$.each(userNotes, function(i,not){
 		var uzer = getUser(not.iduser);
 		var patient = getPatientInfo(not.idpatient);
-		$("<div>",{class:"message"})
+		$("<div>",{class:"cdisNoteMessage"})
 			.append($("<span>").html("New message from <b>"+uzer.firstname+" "+uzer.lastname+ "</b> for the patient <b>"+patient.ramq+"</b>"))
-			.append($("<div>",{class:"message-button"}).text("See Message").click(function(){
+			.append($("<div>",{class:"cdisNoteMessageButton"}).text("See Message").click(function(){
 				//window.location = "cdis.html?section=notes&ramq="+patient.ramq+"&sid="+sid+"&language=en";
 				gtc(sid,"en",patient.ramq,"notes");
 			}))
-		.appendTo($(".notes-alert"));
+		.appendTo($(".cdisNotesAlert"));
 	});
-	
-}else{
-	$(".cdisbody_patient_alerts").hide();
-	$(".notes_icon_").css("background","none");
 }
+
+
+if(typeof(userObj[0].idprofesion) != "undefined"){
+	var hcpcat = profession_index[userObj[0].idprofesion];
+	var iduser = userObj[0].iduser;
+	$("#grvPersonalPatientsUserFullname").text( capitalizeFirstLetter(userObj[0].firstname)+" "+capitalizeFirstLetter(userObj[0].lastname));
+	getUserPatients(iduser,hcpcat);	
+}else{
+	$(".cdisPersonalPatients").hide();
+}
+
 
 if(isDemo){$("#search").attr("type","password");}
 
@@ -175,11 +173,11 @@ if(fll == '1'){
 
 	
 function openLinkPatientsList(){
-	$(".personal-patients table").toggle();
-	if($(".personal-patients table").is(":visible")){
-		$("#linkedPatients").text("Close Patient List");
+	$(".cdisPersonalPatients table").toggle();
+	if($(".cdisPersonalPatients table").is(":visible")){
+		$("#grvLinkedPatientsButton").text("Close Patient List");
 	}else{
-		$("#linkedPatients").text("Open Patient List");
+		$("#grvLinkedPatientsButton").text("Open Patient List");
 	}
 }	
 
@@ -202,26 +200,26 @@ function getUserDashboard(){
 }	
 
 function drawUserDashboard(){
-	var container = $(".dashboard-user");
+	var container = $(".cdisDashboardUser");
 	getUserDashboard();
 	
-	var actions = $("<div>",{class:"panel5-dashboard"}).appendTo(container);
+	var actions = $("<div>",{class:"cdisDashboardUserPanel5"}).appendTo(container);
 	$.each(userDashboardObj.actions,function(key,value){
-		$("<div>",{class:"singlevalue-dashboard","data-toggle":"tooltip",title:"Number of "+value[1]+" in the last 30 days"})
-			.append($("<div>",{class:"singlevalue-dashboard-header"}).text(value[0]))
-			.append($("<div>",{class:"singlevalue-dashboard-value"}).text(value[1]))
+		$("<div>",{class:"cdisDashboardUserSingleValue","data-toggle":"tooltip",title:"Number of "+value[1]+" in the last 30 days"})
+			.append($("<div>",{class:"cdisDashboardUserSingleValueHeader"}).text(value[0]))
+			.append($("<div>",{class:"cdisDashboardUserSingleValueValue"}).text(value[1]))
 			.appendTo(actions);
 	});
 	
 	var uh = userDashboardObj.history;
 	uh.sort(compareDateAsc);
-	var p2 = $("<div>",{class:"panel2-dashboard"}).appendTo(container);
-	var history = $("<div>",{class:"tablevalue-dashboard"}).appendTo(p2);
-	$("<div>",{class:"tablevalue-header-dashboard"}).text("Last view patients (click to view details)").appendTo(history);
+	var p2 = $("<div>",{class:"cdisDashboardUserPanel2"}).appendTo(container);
+	var history = $("<div>",{class:"cdisDashboardUserTableValue"}).appendTo(p2);
+	$("<div>",{class:"cdisDashboardUserTableValueHeader"}).text("Last view patients (click to view details)").appendTo(history);
 	$.each(uh,function(key,value){
-		$("<div>",{class:"tablevalue-line-dashboard",data:value[1]})
-			.append($("<div>",{class:"tablevalue-dashboard-label"}).text(value[1]))
-			.append($("<div>",{class:"tablevalue-dashboard-value"}).text(value[0]))
+		$("<div>",{class:"cdisDashboardUserTableValueLine",data:value[1]})
+			.append($("<div>",{class:"cdisDashboardUserTableValueLabel"}).text(value[1]))
+			.append($("<div>",{class:"cdisDashboardUserTableValueValue"}).text(value[0]))
 			.appendTo(history)
 			.click(function(){
 				if(isDemo){
@@ -232,7 +230,7 @@ function drawUserDashboard(){
 				
 			});
 	});
-	$("<div>",{class:"activitygraph-dahsboard",id:"activity-graph"}).appendTo(p2);
+	$("<div>",{class:"cdisActivityGraph",id:"grvActivityGraph"}).appendTo(p2);
 	var series=[];
 	var ticks = [];
 	var s = [];
@@ -244,7 +242,7 @@ function drawUserDashboard(){
 	});
 	series.push(s);
 	
-	drawLineGraphDashboard($("#activity-graph"), series, ticks);
+	drawLineGraphDashboard($("#grvActivityGraph"), series, ticks);
 	
 }
 

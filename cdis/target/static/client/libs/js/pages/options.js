@@ -13,6 +13,7 @@ function loadOptionsTemplate(){
 		}else{
 			loadOptionsDashboard();
 		}
+		initPage();
 	}else{
 		logoutUser(sid);
 	}

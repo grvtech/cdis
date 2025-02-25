@@ -9,15 +9,8 @@ public class ReportCriteria {
 	private String value = null;
 	private String display = null;   //text to display in column header
 	private String type = null;    //all|set to show if we can take all data or just a subset
-	private String date = null;
-	private String datedisplay = null;
-	private String datename = null;
-	private String dateoperator = null;
-	private String datevalue = null;
 	private String iddata	= null;
 	private String format	= null;
-	private String dateformat	= null;
-	
 	
 	
 	public String getFormat() {
@@ -25,12 +18,6 @@ public class ReportCriteria {
 	}
 	public void setFormat(String format) {
 		this.format = format;
-	}
-	public String getDateformat() {
-		return dateformat;
-	}
-	public void setDateformat(String dateformat) {
-		this.dateformat = dateformat;
 	}
 	public String getIddata() {
 		return iddata;
@@ -74,37 +61,5 @@ public class ReportCriteria {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public String getDate() {
-		return date;
-	}
-	public void setDate(String date) {
-		this.date = date;
-	}
-	public String getDatedisplay() {
-		return datedisplay;
-	}
-	public void setDatedisplay(String datedisplay) {
-		this.datedisplay = datedisplay;
-	}
-	public String getDatename() {
-		return datename;
-	}
-	public void setDatename(String datename) {
-		this.datename = datename;
-	}
-	public String getDateoperator() {
-		return dateoperator;
-	}
-	public void setDateoperator(String dateoperator) {
-		this.dateoperator = dateoperator;
-	}
-	public String getDatevalue() {
-		return datevalue;
-	}
-	public void setDatevalue(String datevalue) {
-		this.datevalue = datevalue;
-	}
-	
-	
 	
 }

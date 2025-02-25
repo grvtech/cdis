@@ -40,8 +40,9 @@ $("#fullscreen-button").on("click",toggleFullScreen);
  * MAIN Section 
  * */
 
-
-$("#tabs").tabs({
+let grvtabs = grvwtabs("grvTabs");
+/*
+$("#grvReportsTabs").tabs({
 	create: function(event, ui){
 		if(userProfileObj.role.idrole == 2 && userProfileObj.user.username != "demo"){$( "#tabs" ).tabs("disable",4)}
 		if(isDemo)$( "#tabs" ).tabs("disable",3)
@@ -83,6 +84,8 @@ $("#tabs").tabs({
     	}
     }
 });
+
+*/
 
 if(userProfileObj.role.code!= "ROOT" && userProfileObj.role.code!= "ADMIN"){
 	$("#admintab").remove();

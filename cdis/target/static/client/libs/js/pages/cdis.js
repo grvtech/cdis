@@ -8,6 +8,7 @@ function loadCdisTemplate(){
 	if(isUserLoged(sid)){
 		var pr = getParameterByName("ramq");
 		var sec = getParameterByName("section");
+		
 		if(sec != ""){
 			if(pr != ""){
 				loadPatientObject("ramq",pr);
@@ -16,7 +17,7 @@ function loadCdisTemplate(){
 				loadSection(sec);
 			}
 		}
-		initPage();
+		
 	}else{
 		logoutUser(sid);
 	}

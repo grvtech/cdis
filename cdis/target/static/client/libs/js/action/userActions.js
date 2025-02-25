@@ -261,18 +261,18 @@ function refreshUserNotes(sessionid){
 		request.done(function( json ) {
 			userNotes = json.objs[0];
 			if(userNotes.length > 0 ){
-				$(".menu .messages").show();
+				$(".cdisHeaderMenu .messages").show();
 				var cn = null;
-				if($(".menu .messages .number").length > 0 ){
-					cn = $(".menu .messages .number");
+				if($(".cdisHeaderMenu .messages .number").length > 0 ){
+					cn = $(".cdisHeaderMenu .messages .number");
 				}else{
-					cn = $("<div>",{class:"number"}).appendTo($(".menu .messages"));
+					cn = $("<div>",{class:"number"}).appendTo($(".cdisHeaderMenu .messages"));
 				}
 				
 				cn.text(userNotes.length);
 				prepareMessageWidget(userNotes);
 			}else{
-				$(".menu .messages").hide();
+				$(".cdisHeaderMenu .messages").hide();
 			}
 			setTimeout(refreshUserNotes,30000,sessionid);
 		});
@@ -282,35 +282,35 @@ function refreshUserNotes(sessionid){
 }
 
 function prepareMessageWidget(notes){
-	if($(".menu .messages").length > 0 ){
-		var mw = $(".menu .messages");
+	if($(".cdisHeaderMenu .messages").length > 0 ){
+		var mw = $(".cdisHeaderMenu .messages");
 		var meev = getEvents(mw[0]);
 		
 		if(typeof(meev) == "undefined" || meev.mouseover.length <= 1 ){
 			mw.on("mouseenter",function(){
-				if($(".messages-details-container").length > 0){
-					$(".messages-details-container").remove();
+				if($(".cdisMessagesDetailsContainer").length > 0){
+					$(".cdisMessagesDetailsContainer").remove();
 				}
-				var mdc = $("<div>",{class:"messages-details-container"}).appendTo($("#wraper"));
+				var mdc = $("<div>",{class:"cdisMessagesDetailsContainer"}).appendTo($("#grvWraper"));
 				mdc.empty();
-				mdc.append($("<div>",{class:"arrow-up"})).append($("<div>",{class:"messages-details"}));
+				mdc.append($("<div>",{class:"arrow-up"})).append($("<div>",{class:"cdisMessagesDetails"}));
 				$.each(userNotes,function(i,not){
 					var uzer = getUser(not.iduser);
 					var patient = getPatientInfo(not.idpatient);
-					$("<div>",{class:"message"})
+					$("<div>",{class:"cdisMessage"})
 						.append($("<span>").html("New message from <b>"+uzer.firstname+" "+uzer.lastname+ "</b> for the patient <b>"+patient.ramq+"</b>"))
-						.append($("<div>",{class:"cisbutton"}).text("View").click(function(){
+						.append($("<div>",{class:"cdisCisButton"}).text("View").click(function(){
 							gtc(sid,"en",patient.ramq,"notes");
 						}))
-					.appendTo($(".messages-details"));
+					.appendTo($(".cdisMessagesDetails"));
 				});
-				$(".messages-details-container").show("fade",600);
+				$(".cdisMessagesDetailsContainer").show("fade",600);
 			}).on("mouseleave",function(){
 				setTimeout(function(){
-					if($(".messages-details-container:hover").length > 0){
-						$(".messages-details-container").on("mouseleave",function(){$(".messages-details-container").remove();});
+					if($(".cdisMessagesDetailsContainer:hover").length > 0){
+						$(".cdisMessagesDetailsContainer").on("mouseleave",function(){$(".cdisMessagesDetailsContainer").remove();});
 					}else{
-						$(".messages-details-container").remove();
+						$(".cdisMessagesDetailsContainer").remove();
 					}
 				},700);
 			});
@@ -641,6 +641,7 @@ function prepareData(data){
 }
 
 function initPage(){
+	/*
 	$(".uoptions").hide();
 	if(userProfileObj.role.idrole > 1){
 		$(".users").hide();
@@ -666,9 +667,9 @@ function initPage(){
 		$(".manage-data").hide();
 	}
 	$("#search").focus();
+	*/
 	initNavigation();
 	$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});
-
 }
 
 
@@ -727,7 +728,7 @@ function getPatientNotes(section){
 				
 					if(objNote.viewed == "0"){
 						if($(".panel-notes").length == 0){
-							$("<div>",{class:"panel-notes uss"}).appendTo($(".pageside"));
+							$("<div>",{class:"panel-notes uss"}).appendTo($(".cdisRightPanel"));
 						}
 						var n = $("<div>",{class:"noteContainer",id:"note-"+index})
 							.append("<span class='newNote'>New message</span> <span class='noteTimestamp'>"+day.format('YYYY-MM-DD')+"</span></br><span class='noteAuthor'>from <b> "+user.firstname+" "+user.lastname+" </b></span> ")
@@ -796,33 +797,27 @@ function getPatientNotes(section){
 
 
 function populateRecord(){
-	if($(".panel-record-name").length == 0){
-		$("<div>",{class:"panel-record-name"}).appendTo($(".panel-record"));
-	}
-	$(".panel-record-name").text(patientObj.lname +" "+patientObj.fname);
-	if($(".panel-record-ramq").length == 0){
-		$("<div>",{class:"panel-record-ramq"}).appendTo($(".panel-record"));
-	}
-	$(".panel-record-ramq").text(patientObj.ramq);
-	if($(".panel-record-chart").length == 0){
-		$("<div>",{class:"panel-record-chart"}).appendTo($(".panel-record"));
-	}
-	$(".panel-record-chart").text(patientObj.chart);
-	if($(".panel-record-community").length == 0){
-		$("<div>",{class:"panel-record-community"}).appendTo($(".panel-record"));
-	}
-	$(".panel-record-community").text(patientObj.community);
+	const container = $(".cdisPanelRightRecord");
+	if($(".cdisPanelRightRecordName").length == 0){$("<div>",{class:"cdisPanelRightRecordName"}).appendTo(container);}
+	$(".cdisPanelRightRecordName").text(patientObj.lname +" "+patientObj.fname);
 	
-	if($(".panel-record-dtype").length == 0){
-		$("<div>",{class:"panel-record-dtype"}).appendTo($(".panel-record"));
-	}
-	$(".panel-record-dtype").text(dtype[patientObjArray[2].dtype.values[0].value]);
+	if($(".cdisPanelRightRecordRamq").length == 0){$("<div>",{class:"cdisPanelRightRecordRamq"}).appendTo(container);}
+	$(".cdisPanelRightRecordRamq").text(patientObj.ramq);
 	
-	if($(".panel-record-dtypedate").length == 0){
-		$("<div>",{class:"panel-record-dtypedate"}).appendTo($(".panel-record"));
-	}
-	$(".panel-record-dtypedate").text(patientObjArray[2].dtype.values[0].date);
+	if($(".cdisPanelRightRecordChart").length == 0){$("<div>",{class:"cdisPanelRightRecordChart"}).appendTo(container);}
+	$(".cdisPanelRightRecordChart").text(patientObj.chart);
+	
+	if($(".cdisPanelRightRecordCommunity").length == 0){$("<div>",{class:"cdisPanelRightRecordCommunity"}).appendTo(container);}
+	$(".cdisPanelRightRecordCommunity").text(patientObj.community);
+	
+	if($(".cdisPanelRightRecordDtype").length == 0){$("<div>",{class:"cdisPanelRightRecordDtype"}).appendTo(container);}
+	$(".cdisPanelRightRecordDtype").text(dtype[patientObjArray[2].dtype.values[0].value]);
+	
+	if($(".cdisPanelRightRecordDtypedate").length == 0){$("<div>",{class:"cdisPanelRightRecordDtypedate"}).appendTo(container);}
+	$(".cdisPanelRightRecordDtypedate").text(patientObjArray[2].dtype.values[0].date);
 }
+
+
 
 function populatePageside(){
 	if(typeof(window["recomandation_"+cdisSection]) != "undefined"){
@@ -852,7 +847,7 @@ function getPatientNextVisits(poArr){
 	if(!$.isEmptyObject(svchr)){
 		if(typeof(svchr.datevisit) != "undefined"){
 			var dd = moment(svchr.datevisit);
-			var rcontainer = $("<div>",{class:"panel-visit uss"}).appendTo($(".pageside"));
+			var rcontainer = $("<div>",{class:"panel-visit uss"}).appendTo($(".cdisRightPanel"));
 			$("<div>",{class:"visit-title"}).text("CHR Next Visit").appendTo(rcontainer);
 			if(moment(svchr.datevisit).isSame(now.format('YYYY-MM-DD'), 'month')){
 				$("<div>",{class:"visit-date currentvisits"}).text(dd.format('MMMM YYYY')).appendTo(rcontainer);
@@ -866,7 +861,7 @@ function getPatientNextVisits(poArr){
 	if(!$.isEmptyObject(svmd)){
 		if(typeof(svmd.datevisit) != "undefined"){
 			var dd = moment(svmd.datevisit);
-			var rcontainer = $("<div>",{class:"panel-visit uss"}).appendTo($(".pageside"));
+			var rcontainer = $("<div>",{class:"panel-visit uss"}).appendTo($(".cdisRightPanel"));
 			$("<div>",{class:"visit-title"}).text("MD Next Visit").appendTo(rcontainer);
 			if(moment(svmd.datevisit).isSame(now.format('YYYY-MM-DD'), 'month')){
 				$("<div>",{class:"visit-date currentvisits"}).text(dd.format('MMMM YYYY')).appendTo(rcontainer);
@@ -880,7 +875,7 @@ function getPatientNextVisits(poArr){
 	if(!$.isEmptyObject(svnur)){
 		if(typeof(svnur.datevisit) != "undefined"){
 			var dd = moment(svnur.datevisit);
-			var rcontainer = $("<div>",{class:"panel-visit uss"}).appendTo($(".pageside"));
+			var rcontainer = $("<div>",{class:"panel-visit uss"}).appendTo($(".cdisRightPanel"));
 			$("<div>",{class:"visit-title"}).text("Nurse Next Visit").appendTo(rcontainer);
 			if(moment(svnur.datevisit).isSame(now.format('YYYY-MM-DD'), 'month')){
 				$("<div>",{class:"visit-date currentvisits"}).text(dd.format('MMMM YYYY')).appendTo(rcontainer);
@@ -893,7 +888,7 @@ function getPatientNextVisits(poArr){
 	if(!$.isEmptyObject(svnut)){
 		if(typeof(svnut.datevisit) != "undefined"){
 			var dd = moment(svnut.datevisit);
-			var rcontainer = $("<div>",{class:"panel-visit uss"}).appendTo($(".pageside"));
+			var rcontainer = $("<div>",{class:"panel-visit uss"}).appendTo($(".cdisRightPanel"));
 			$("<div>",{class:"visit-title"}).text("Nutritionist Next Visit").appendTo(rcontainer);
 			if(moment(svnut.datevisit).isSame(now.format('YYYY-MM-DD'), 'month')){
 				$("<div>",{class:"visit-date currentvisits"}).text(dd.format('MMMM YYYY')).appendTo(rcontainer);
@@ -910,9 +905,9 @@ function loadRecomandation(recObj){
 	var wh = $(window).height();
 	$.each(recObj.recomandations,function(index,rObj){
 		if(recObj.section == 'patient'){
-			var rcontainer = $("<div>",{class:"recomandations"}).appendTo($("#rightPanel"));
+			var rcontainer = $("<div>",{class:"recomandations"}).appendTo($("#cdisRightPanel"));
 		}else{
-			var rcontainer = $("<div>",{class:"recomandations uss"}).appendTo($(".pageside"));
+			var rcontainer = $("<div>",{class:"recomandations uss"}).appendTo($(".cdisRightPanel"));
 		}
 		if($(window).height() < h){
 			$("<div>",{class:"title"}).text(rObj.title).appendTo(rcontainer);
@@ -1069,7 +1064,6 @@ function demoData(dataObject, context){
 
 
 function getUserPatients(userId,hcpcat){
-	
 	var mObjArray = null;
 	var request = $.ajax({
 		  url: "/ncdis/service/data/getUserPatients?iduser="+userId+"&language=en&hcpcat="+hcpcat,
@@ -1080,7 +1074,7 @@ function getUserPatients(userId,hcpcat){
 		request.done(function( json ) {
 			var obArr = json.objs;
 			if(obArr.length === 0){
-				$("<tr>",{class:"notvisits"}).appendTo($(".personal-patients table tbody"))
+				$("<tr>",{class:"notvisits"}).appendTo($(".cdisPersonalPatients table tbody"))
 				.append($("<td>",{colspan:5,align:"center",style:"font-weight:bold;"}).text("No patient linked to this user!"));
 				
 			}else{
@@ -1094,7 +1088,7 @@ function getUserPatients(userId,hcpcat){
 					if(typeof(obj.datevisit)  != "undefined" ){
 						dd = moment(obj.datevisit);
 						if(moment(obj.datevisit).isSame(now.format('YYYY-MM-DD'), 'month')){
-							$("<tr>",{class:"currentvisits"}).appendTo($(".personal-patients table tbody"))
+							$("<tr>",{class:"currentvisits"}).appendTo($(".cdisPersonalPatients table tbody"))
 								.append($("<td>").text(obj.fullname))
 								.append($("<td>").text(obj.chart))
 								.append($("<td>").text(obj.ramq))
@@ -1113,7 +1107,7 @@ function getUserPatients(userId,hcpcat){
 					if(typeof(obj.datevisit)  != "undefined" ){
 						dd = moment(obj.datevisit);
 						if(!moment(obj.datevisit).isSame(now.format('YYYY-MM-DD'), 'month')){
-							$("<tr>",{class:"futurevisits"}).appendTo($(".personal-patients table tbody"))
+							$("<tr>",{class:"futurevisits"}).appendTo($(".cdisPersonalPatients table tbody"))
 								.append($("<td>").text(obj.fullname))
 								.append($("<td>").text(obj.chart))
 								.append($("<td>").text(obj.ramq))
@@ -1130,7 +1124,7 @@ function getUserPatients(userId,hcpcat){
 					var dd = "";
 					var now = moment();
 					if(typeof(obj.datevisit)  == "undefined" ){
-							$("<tr>",{class:"notvisits"}).appendTo($(".personal-patients table tbody"))
+							$("<tr>",{class:"notvisits"}).appendTo($(".cdisPersonalPatients table tbody"))
 								.append($("<td>").text(obj.fullname))
 								.append($("<td>").text(obj.chart))
 								.append($("<td>").text(obj.ramq))
@@ -1352,7 +1346,7 @@ function hideProgress(container){
 function showPopupMessage(title,text){
 	var id = moment();
 	$("body").css("overflow-y","hidden");
-	var modal = $('<div>',{id:"fullscreen_"+id,class:"popupmessage-fullscreen-modal"}).appendTo($("#wraper"));
+	var modal = $('<div>',{id:"fullscreen_"+id,class:"popupmessage-fullscreen-modal"}).appendTo($("#grvWraper"));
 	var sett = $('<div>',{class:"popupmessage-window"}).appendTo(modal);
 	var settH = $('<div>',{class:"popupmessage-window-header"}).appendTo(sett);
 	var settB = $('<div>',{class:"popupmessage-window-body"}).appendTo(sett);

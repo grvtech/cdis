@@ -1,221 +1,151 @@
-<div class="pagebody">
-<div class="cdisbody_editpatient">
-		<div class="section-header">
-			<span class="section-title">Edit Patient</span>
-		</div>
-	<div id="errortext-patient" class="errormessage"></div>
-	<form name="editpatient" id="editpatient-form" class="patient-info">
+<div class="cdisPanelSectionEditPatient uss">
+	<div class="cdisPanelSectionHeader">
+		<h1>Edit Patient</h1>
+	</div>
+	
+	<div id="grvErrorTextEditPatient" class="cdisErrorMessageForm"></div>
+	
+	<form id="grvEditPatientForm">
 		<table border="0" width="100%">
 			<tr>
 				<td valign="top">
 					<table border="0">
 						<tr>
-							<td class="label-editpatient">RAMQ Number :</td>
-							<td>
-								<div class="textField">
-									<input type="text" name="ramq" id="ramq-value" />
-								</div>
-							</td>
+							<td class="label">RAMQ Number :</td>
+							<td><input type="text" name="ramq" id="ramq-value" /></td>
 						</tr>
 						<tr>
-							<td class="label-editpatient">IPM :</td>
-							<td>
-								<div class="textField">
-									<input type="text" name="giu" id="ipm-value" />
-								</div>
-								
-							</td>
+							<td class="label">IPM :</td>
+							<td><input type="text" name="giu" id="ipm-value" /></td>
 						</tr>
 						<tr>
-							<td class="label-editpatient">Chart Number :</td>
-							<td>
-								<div class="textField">
-									<input type="text" name="chart" id="chart-value" />
-								</div>
-								
-							</td>
+							<td class="label">Chart Number :</td>
+							<td><input type="text" name="chart" id="chart-value" /></td>
 						</tr>
 						<tr style="display:none;">
-							<td class="label-editpatient">JBQBN :</td>
-							<td>
-								<div class="textField">
-									<input type="text" name="jbnqa" id="jbnqa-value"/>
-								</div>
-							</td>
+							<td class="label">JBQBN :</td>
+							<td><input type="text" name="jbnqa" id="jbnqa-value"/></td>
 						</tr>
 						<tr>
-							<td class="label-editpatient">Band :</td>
-							<td>
-								<div class="textField">
-								<input type="text" name="band" id="band-value" />
-								</div>
-							</td>
+							<td class="label">Band :</td>
+							<td><input type="text" name="band" id="band-value" /></td>
 						</tr>
 						<tr>
 							<td colspan="2" style="padding:5px;">
 								<div id="radio-sex" class="btn-group" data-toggle="buttons">
-									<label for="male-value" class="btn btn-primary">
-										<input type="radio" name="sex" id="male-value" value="1" class="radioField"/>Male
-									</label>
-									
-									<label for="female-value" class="btn btn-primary">
-										<input type="radio" name="sex" id="female-value" value="2" class="radioField"/>Female
-									</label>
+									<label for="male-value" class="btn btn-primary"><input type="radio" name="sex" id="male-value" value="1" class="radioField"/>Male</label>
+									<label for="female-value" class="btn btn-primary"><input type="radio" name="sex" id="female-value" value="2" class="radioField"/>Female</label>
 								</div>
 							</td>
 						</tr>
 						<tr>
 							<td colspan="2" style="padding:5px;">
 								<div id="radio-iscree" class="btn-group" data-toggle="buttons">
-									
-									<label for="cree-value" class="btn btn-primary">
-										<input type="radio" name="iscree" id="cree-value" value="1" class="radioField"/>Cree
-									</label>
-									
-									<label for="noncree-value" class="btn btn-primary">
-										<input type="radio" name="iscree" id="noncree-value" value="0" class="radioField"/>Non Cree
-									</label>
+									<label for="cree-value" class="btn btn-primary"><input type="radio" name="iscree" id="cree-value" value="1" class="radioField"/>Cree</label>
+									<label for="noncree-value" class="btn btn-primary"><input type="radio" name="iscree" id="noncree-value" value="0" class="radioField"/>Non Cree</label>
 								</div>
 							</td>
 						</tr>
 						<tr><td colspan="2" style="height:20px;"></td></tr>
-						
-					</table>
-					<table cellspacing="0" cellpadding="0" class="diabet-editpatient">
 						<tr>
-							<td class="label-editpatient ">Type of diabetes :</td>
-							<td ><select name="dtype" id="dtype-value" class="selectField"></select></td>
-						</tr>
-						<tr>
-							<td class="label-editpatient">Date of diagnosis:</td>
-							<td >
-								<div class="textField">
-									<input type="text" name="ddate" id="ddate-value"><i class="fa fa-calendar" aria-hidden="true"></i>
-								</div>
-								<input type="hidden" name="diabetcode" id="diabetcode-value"/>
-								<input type="hidden" name="diabetidvalue" id="diabetidvalue-value"/>
+							<td colspan="2" style="padding:5px;">
+								<table cellspacing="0" cellpadding="0">
+									<tr>
+										<td class="label ">Type of diabetes :</td>
+										<td ><select name="dtype" id="dtype-value" class="selectField"></select></td>
+									</tr>
+									<tr>
+										<td class="label">Date of diagnosis:</td>
+										<td >
+											<input type="text" name="ddate" id="ddate-value"><i class="fa fa-calendar" aria-hidden="true"></i>
+											<input type="hidden" name="diabetcode" id="diabetcode-value"/>
+											<input type="hidden" name="diabetidvalue" id="diabetidvalue-value"/>
+										</td>
+									</tr>
+								</table>
 							</td>
 						</tr>
+						<tr><td colspan="2" style="height:20px;"></td></tr>
 					</table>
 				</td>
 				<td valign="top">
 					<table border="0">
-						<tr><td class="label-editpatient">First Name :</td>
-							<td>
-								<div class="textField">
-									<input type="text" name="fname" id="fname-value"/>
-								</div>
-							</td>
+						<tr><td class="label">First Name :</td>
+							<td><input type="text" name="fname" id="fname-value"/></td>
 						</tr>
 						<tr>
-							<td class="label-editpatient">Last Name :</td>
-							<td>
-								<div class="textField">
-									<input type="text" name="lname" id="lname-value"/>
-								</div>
-							</td>
+							<td class="label">Last Name :</td>
+							<td><input type="text" name="lname" id="lname-value"/></td>
 						</tr>
-						<tr style="display:none;"><td class="label-editpatient">Mother First Name :</td><td><input type="text" name="mfname" id="mfname-value" class="textField"/></td></tr>
-						<tr style="display:none;"><td class="label-editpatient">Mother Last Name :</td><td><input type="text" name="mlname" id="mlname-value" class="textField"/></td></tr>
-						<tr style="display:none;"><td class="label-editpatient">Father First Name :</td><td><input type="text" name="pfname" id="pfname-value" class="textField"/></td></tr>
-						<tr style="display:none;"><td class="label-editpatient">Father Last Name :</td><td><input type="text" name="plname" id="plname-value" class="textField"/></td></tr>
+						<tr style="display:none;"><td class="label">Mother First Name :</td><td><input type="text" name="mfname" id="mfname-value" class="textField"/></td></tr>
+						<tr style="display:none;"><td class="label">Mother Last Name :</td><td><input type="text" name="mlname" id="mlname-value" class="textField"/></td></tr>
+						<tr style="display:none;"><td class="label">Father First Name :</td><td><input type="text" name="pfname" id="pfname-value" class="textField"/></td></tr>
+						<tr style="display:none;"><td class="label">Father Last Name :</td><td><input type="text" name="plname" id="plname-value" class="textField"/></td></tr>
 						<tr>
-							<td class="label-editpatient">Date of birth :</td>
-							<td>
-								<div class="textField">
-									<input type="text" name="dob" id="dob-value"/><i class="fa fa-calendar" aria-hidden="true"></i>
-								</div>
-							</td>
+							<td class="label">Date of birth :</td>
+							<td><input type="text" name="dob" id="dob-value"/><i class="fa fa-calendar" aria-hidden="true"></i></td>
 						</tr>
 						<tr>
-							<td class="label-editpatient">Phone :</td>
-							<td>
-								<div class="textField">
-									<input type="text" name="phone" id="phone-value"/>
-								</div>
-							</td>
+							<td class="label">Phone :</td>
+							<td><input type="text" name="phone" id="phone-value"/></td>
 						</tr>
 						<tr>
-							<td class="label-editpatient">Community :</td>
-							<td>
-								<select name="idcommunity" id="idcommunity-value" class="selectField">
-								</select>
-							</td>
+							<td class="label">Community :</td>
+							<td><select name="idcommunity" id="idcommunity-value"></select></td>
 						</tr>
 						<tr style="padding:5px;">
-							<td class="label-editpatient">Deceased :</td>
+							<td class="label">Deceased :</td>
 							<td>
-							<div id="radio-deceased" class="btn-group" data-toggle="buttons">
-								
-								<label for="deceased-yes-value" class="btn btn-primary">
-									<input type="radio" name="deceased" id="deceased-yes-value" value="1" class="radioField"/>Yes
-								</label>
-								
-								<label for="deceased-no-value" class="btn btn-primary">
-									<input type="radio" name="deceased" id="deceased-no-value" value="0" class="radioField"/>No
-								</label>
-							</div>
-						</td>
-					</tr>
-						<tr><td colspan="2">
-							<div id="deceased-section">
-								<table>
-									<tr>
-										<td class="label-editpatient">Date of death :</td>
-										<td>
-											<div class="textField">
-												<input type="text" name="dod" id="dod-value"/><i class="fa fa-calendar" aria-hidden="true"></i>
-											</div>	
-										</td>
-									</tr>
-									<tr>
-										<td class="label-editpatient">Date cause :</td>
-										<td>
-											<div class="textField">
-												<input type="text" name="dcause" id="dcause-value"/>
-											</div>
-										</td>
-									</tr>	
-								</table>
-							</div>
+								<div id="radio-deceased" class="btn-group" data-toggle="buttons">
+									<label for="deceased-yes-value" class="btn btn-primary"><input type="radio" name="deceased" id="deceased-yes-value" value="1" class="radioField"/>Yes</label>
+									<label for="deceased-no-value" class="btn btn-primary"><input type="radio" name="deceased" id="deceased-no-value" value="0" class="radioField"/>No</label>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div id="deceased-section">
+									<table>
+										<tr>
+											<td class="label">Date of death :</td>
+											<td><input type="text" name="dod" id="dod-value"/><i class="fa fa-calendar" aria-hidden="true"></i></td>
+										</tr>
+										<tr>
+											<td class="label">Date cause :</td>
+											<td><input type="text" name="dcause" id="dcause-value"/></td>
+										</tr>	
+									</table>
+								</div>
 							</td>
 						</tr>
 					</table>
 				</td>
 			</tr>
 			<tr>
-				<td colspan=2>
-					<table id="hcp-edit" width="100%" border=0>
+				<td colspan=2 style="background-color:#cdcdcd;padding:7px;">
+					<table width="100%" border=0>
 						<tr>
 							<td colspan=2 ><b>Patient`s Health Care Workers</b></td>
 							<td>PCCR</td>
 							<td>
-								<div class="textField">
-									<input type="text" name="chr" id="chr"/>
-								</div>
+								<input type="text" name="chr" id="chr"/>
 								<input type="hidden" name="chrid" id="chrid"/>
 							</td>
 							<td>MD</td>
 							<td>
-								<div class="textField">
-									<input type="text" name="md" id="md"/>
-								</div>
+								<input type="text" name="md" id="md"/>
 								<input type="hidden" name="mdid" id="mdid"/>
 							</td>
 						</tr>
 						<tr>
 							<td>Nurse</td>
 							<td>
-								<div class="textField">
-									<input type="text" name="nur" id="nur"/>
-								</div>
+								<input type="text" name="nur" id="nur"/>
 								<input type="hidden" name="nurid" id="nurid"/>
 							</td>
 							<td>Nutritionist</td>
 							<td>
-								<div class="textField">
-									<input type="text" name="nut" id="nut"/>
-								</div>
+								<input type="text" name="nut" id="nut"/>
 								<input type="hidden" name="nutid" id="nutid"/></td>
 						</tr>
 					</table>
@@ -224,10 +154,10 @@
 		</table>
 		
 		<div style="display:inline-block;width:48%;text-align:left;">
-			<div id="deletepatient-button" class="cisbutton">Delete Patient</div>
+			<div id="grvEditPatientDeleteButton" class="cdisCisButton">Delete Patient</div>
 		</div>
 		<div style="display:inline-block;width:48%;text-align:right;">
-			<div id='cancel-editpatient' class="cisbutton">Cancel</div> <div id="save-editpatient" class="cisbutton">Save</div>
+			<div id='grvEditPatientCancelButton' class="cdisCisButton">Cancel</div> <div id="grvEditPatientSaveButton" class="cdisCisButton">Save</div>
 		</div>
 	</form>
 	

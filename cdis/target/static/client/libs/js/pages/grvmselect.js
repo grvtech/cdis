@@ -15,7 +15,7 @@ function GRVMSelect(list,options){
 	var scontainer = $("<div>",{class:"grvmselect-container"}).appendTo(container);
 	var sbar = $("<div>",{class:"grvmselect-bar"}).appendTo(scontainer);
 	var sclick = $("<div>",{class:"grvmselect-click"}).append($("<i>",{class:"fa fa-caret-down"})).appendTo(scontainer);
-	var slist = $("<div>",{class:"grvmselect-list"}).appendTo($("#wraper"));
+	var slist = $("<div>",{class:"grvmselect-list"}).appendTo($("#grvWraper"));
 	
 	if(typeof(options.defaultSelected) != "undefined"){
 		addToBar(makeItemBar(list[options.defaultSelected]));
@@ -44,27 +44,31 @@ function GRVMSelect(list,options){
 	
 	
 	function addToBar(obj){
-		
-		var v = obj.find(".grvmselect-item-label").attr("grv-item-value");
-		var selected = sbar.find(".grvmselect-item-container");
-		if(selected.length < maxSelect){
-			var isSelected = false;
-			$.each(selected,function(j,k){
-				var l = $(k).find(".grvmselect-item-label");
-				if(l.attr("grv-item-value") == v){
-					isSelected = true;
+		if(typeof obj != "undefined"){
+			var v = obj.find(".grvmselect-item-label").attr("grv-item-value");
+			var selected = sbar.find(".grvmselect-item-container");
+			if(selected.length < maxSelect){
+				var isSelected = false;
+				$.each(selected,function(j,k){
+					var l = $(k).find(".grvmselect-item-label");
+					if(l.attr("grv-item-value") == v){
+						isSelected = true;
+					}
+				});
+				if(!isSelected){
+					sbar.find("span").remove();
+					sbar.append(obj);
+					selectedItems++;
+					selectedObjects.push(list[v]);
+					$(object).change();
 				}
-			});
-			if(!isSelected){
-				sbar.find("span").remove();
-				sbar.append(obj);
-				selectedItems++;
-				selectedObjects.push(list[v]);
-				$(object).change();
-			}
+			}else{
+				alert("Maximum items selected is 2");
+			}	
 		}else{
-			alert("Maximum items selected is 2");
+			sbar.empty();
 		}
+		
 	}
 	
 	function makeItemBar(itemObj){
@@ -85,6 +89,12 @@ function GRVMSelect(list,options){
 				});
 				selectedObjects.splice(indexDelItem,1);
 				selectedItems --;
+				let val = container.attr("value");
+				if(val.indexOf(value) >= 0){
+					if(val.indexOf("_"+value) >=0)val.replace("_"+value,"");
+					else val.replace(value,"");
+					$(container).attr("value",val);
+				}
 				$(object).change();
 				$(this).parent().remove();
 				var selected = sbar.find(".grvmselect-item-container");
@@ -117,10 +127,22 @@ function GRVMSelect(list,options){
 				if(i==0){
 					result = v.value;
 				}else{
-					result += "_"+v.value
+					if(result.indexOf(v.value) < 0)result += "_"+v.value
 				}
 			});
 			return result;
+		},
+		setValue : function(value){
+			addToBar();
+			container.attr("value","");
+			if(value.indexOf("_") >= 0){
+				//2 values
+				let parts = value.split("_");
+				addToBar(makeItemBar(list[parts[0]]));
+				addToBar(makeItemBar(list[parts[1]]));
+			}else{
+				addToBar(makeItemBar(list[value]));
+			}
 		}
 	}
 }

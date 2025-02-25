@@ -18,6 +18,7 @@ import java.io.FilenameFilter;
 public class FileFilterTool implements FilenameFilter {
 
 	private String filter;
+	private String prefix;
 	
 	public FileFilterTool() {
 		super();
@@ -25,15 +26,20 @@ public class FileFilterTool implements FilenameFilter {
 	
 	public FileFilterTool(String filter) {
 		this.filter = filter;
+		this.prefix="";
+	}
+	
+	public FileFilterTool(String filter, String prefix) {
+		this.filter = filter;
+		this.prefix = prefix;
 	}
 	
 	
-	
 	public boolean accept(File arg0, String arg1) {
-		if(this.filter == null)
+		if(this.filter == null && this.prefix==null)
 			return (arg1.endsWith(".txt"));
 		else
-			return (arg1.endsWith(filter));
+			return (arg1.endsWith(filter) && arg1.startsWith(prefix));
 	}
 
 

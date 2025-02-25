@@ -1,70 +1,104 @@
-<div class="reportsbody_custom">
-	<div id="creports">
-			
-		<div class="customCriterias">
-		<form name="customReportForm">
-			<div id="general-list">
-				<div class="custom-list-header">
-					<div id="reportType">
-						<span class="lab">Report Type</span>
-						<input type="radio" name="reporttype" value="list" id="reportTypeList"/><label for="reportTypeList">List</label>
-						<input type="radio" name="reporttype" value="graph" id="reportTypeGraph"/><label for="reportTypeGraph">Graph</label>
-					</div>
-					<div id="graphType">
-						<span class="lab">Graph Type</span>
-						<input type="radio" name="graphtype" value="line" id="graphTypeLine"/><label for="graphTypeLine">Line</label>
-						<input type="radio" name="graphtype" value="bar" id="graphTypeBar"/><label for="graphTypeBar">Bar</label>
-						<input type="radio" name="graphtype" value="pie" id="graphTypePie"/><label for="graphTypePie">Pie</label>
-					</div>
-					<div id="reportCriteria">
-						<span class="lab">Number of patients</span>
-						<input type="radio" name="reportcriteria" value="diabet" id="reportCriteriaDiabet"/><label for="reportCriteriaDiabet">per type of diabetes</label>
-						<input type="radio" name="reportcriteria" value="community" id="reportCriteriaCommunity"/><label for="reportCriteriaCommunity">per community</label>
-						<input type="radio" name="reportcriteria" value="gender" id="reportCriteriaGender"/><label for="reportCriteriaGender">per gender</label>
-					</div>
-					<div id="reportPeriod">
-						<span class="lab">Report Period</span>
-						<input type="radio" name="reportperiod" value="all" id="reportPeriodAll"/><label for="reportPeriodAll">All dates</label>
-						<input type="radio" name="reportperiod" value="last" id="reportPeriodLast"/><label for="reportPeriodLast">Last dates</label>
-						<input type="radio" name="reportperiod" value="between" id="reportPeriodBetween"/><label for="reportPeriodBetween">Between dates</label>
-					</div>
-					<div id="betweenPeriod">
-						<input type="text" name="betweenv1" id="betweenv1" value=""/>
-						<span class="lab">and</span>
-						<input type="text" name="betweenv2" id="betweenv2" value=""/>
-					</div>
-					<div id="reportFilterContainer">
-						<div id="reportFilter">
-							<span class="lab">Filter patients</span>
-							<input type="radio" name="reportfilter" value="all" id="reportFilterAll"/><label for="reportFilterAll">All patients</label>
-							<input type="radio" name="reportfilter" value="hcp" id="reportFilterHcp"/><label for="reportFilterHcp">By HCP</label>
+<div class="cdisCustomReports">
+	<div class="cdisCustomCriterias">
+		<div id="grvCustomReportType" type="grvwtabs" class="cdisCustomReportTypeTab">
+			<ul>
+				<li target="#grvTabList">Report type : List</li>
+	 			<li target="#grvTabGraph">Report type : Graph</li>
+			</ul>
+	 		<article>
+				<div id="grvTabList">
+					<div class="cdisConfigListPanel">
+						<h1>Report configuration</h1><span class="cdisCriteriaFilterErrorMessage"></span>
+						<div class="cdisReportPeriodListContainer config">
+							<label for="grvReportPeriodList">Report Period : </label>
+							<div id="grvReportPeriodList" type="grvwradio">
+								<div default value="last">Last collected dates for tests</div>
+								<div value="between">Between dates</div>
+							</div>
 						</div>
-						<div id="reportFilterSelect">
-							<select id="hcptype">
-								<option value="chr">PCCR</option>
-								<option value="md">MD</option>
-								<option value="nur">Nurse</option>
-								<option value="nut">Nutritionist</option>
-							</select>
-							<select id="hcpname"></select>
-							<input type="hidden" id="hcpid" name="hcpid" value="0"/>
+						<div class="cdisReportFilterListContainer config">
+							<label for="grvReportFilterList">Filter patients list by : </label>
+						    <div id="grvReportFilterList" type="grvwradio">
+								<div default value="allhcp">All patients <i>( no filter )</i></div>
+								<div value="hcpid">HCP or Team</div>
+							</div>
+						</div>
+					</div>					  
+				   	<div class="cdisReportListTool">
+				   		<div class="cdisReportListButtons">
+				   			<div class="cdisCisButton" id="grvAddReportListCriteria">Add Report Criteria or Column</div>
+				   			<div class="cdisCisButton" id="grvClearReportList">Clear Report</div>
+				   		</div>
+				   		<div class="cdisReportListToolbar">
+				   			<div class="cdisReportListToolbarHeader">Report criterias or display columns</div>
+				   			<div class="cdisReportListToolbarBody" idreport="0" typereport="list" periodreport="last" titlereport="Custom Report" filterreport="allhcp"></div>
+				   			<div class="cdisReportListToolbarFooter">
+				   				<div class="cdisReportNotes">
+				   					<label>Report notes:</label>
+				   					<textarea></textarea>
+				   				</div>
+				   				<div class="cdisReportListToolbarFooterButtons">
+				   					<!-- <div class="cdisCisButton" id="grvReportListExecuteButton">Execute Report</div> -->
+				   				</div>
+				   			</div>
+				   		</div>
+				   	</div>
+	  			</div><!-- end tabList -->
+						  
+				<div id="grvTabGraph">
+				   <div class="cdisConfigGraphPanel">
+						<h1>Report configuration</h1><span class="cdisCriteriaFilterErrorMessage"></span>
+						<div class="cdisReportGraphTypeContainer config">
+							<label for="grvReportGraphType">Graph type: </label>
+							<div id="grvReportGraphType" type="grvwradio">
+								<div default value="line">Line</div>
+								<div value="bar">Bar</div>
+								<div value="pie">Pie</div>
+							</div>
+						</div>
+						<div class="cdisReportGraphCriteriaContainer config">
+							<label for="grvReportGraphCriteria">Number of patients per: </label>
+							<div id="grvReportGraphCriteria" type="grvwradio">
+								<div default value="dtype">Type of diabetes</div>
+								<div value="idcommunity">Community</div>
+							</div>
+						</div>
+						<div class="cdisReportFilterGraphContainer config">
+							<label for="grvReportGraphFilter">Filter patients graph by: </label>
+						    <div id="grvReportGraphFilter" type="grvwradio">
+								<div default value="allhcp">All patients <i>( no filter )</i></div>
+								<div value="hcpid">HCP or Team</div>
+							</div>
 						</div>
 					</div>
+					<div class="cdisReportGraphTool">
+						<div class="cdisReportGraphButtons">
+							<div class="cdisCisButton" id="grvAddReportGraphCriteria">Add Report Criteria</div>
+							<div class="cdisCisButton" id="grvClearReportGraph">Clear Report</div>
+						</div>
+				   		
+				   		<div class="cdisReportGraphToolbar">
+				   			<div class="cdisReportGraphToolbarHeader">Report criteria</div>
+				   			<div class="cdisReportGraphToolbarBody" idreport="0" typereport="graph" periodreport="last" graphtype="line" titlereport="Custom Report" filterreport="allhcp"></div>
+				   			<div class="cdisReportGraphToolbarFooter">
+				   				<div class="cdisReportGraphNotes">
+				   					<label>Report notes:</label>
+				   					<textarea></textarea>
+				   				</div>
+				   				<div class="cdisReportGraphToolbarFooterButtons"></div>
+				   			</div>
+				   		</div>
+				   	</div>		
 				</div>
-				<div class="custom-list-body"></div>
-			</div>
-		</form>
+			</article>
 		</div>
-		
-		<div class="customResults">
-			<div id="custom-report-toolbar">
-				<div id="custom-report-execute-button" class="cisbutton">Generate Report</div>
-			</div>
-			<div id="criteria-summary-label">Report Criterias</div>
-			<div id="criteria-container">
-				<div id="criteria-summary"></div>
-			</div>
+	</div>
+	<div class="cdisCustomReportsHistory">
+		<div class="cdisCustomReportsHistoryHeader">
+			<span>History of executed custom reports</span>
+			<div class="cdisSortHistory">Date&darr;</div>
 		</div>
+		<div class="cdisCustomReportsHistoryBody"></div>
 	</div>
 </div>
 <script src="client/libs/js/pages/reports.custom.js?_20240520" type="text/javascript"></script>

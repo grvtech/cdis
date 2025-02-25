@@ -12,7 +12,7 @@ function loadAdminTemplate(){
 		if(sec != ""){
 				loadAdminSection(sec);
 		}
-		
+		initPage();
 	}else{
 		logoutUser(sid);
 	}

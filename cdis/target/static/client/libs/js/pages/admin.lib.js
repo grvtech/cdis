@@ -13,9 +13,9 @@ var hasPending=false;
 /*
  * MAIN Section 
  * */
-$(".cdisfooter-left").hover(function(){$(".leftfootermenu").toggle("fade");},function(){$(".leftfootermenu").toggle("fade");});
+
 refreshUserNotes(sid);
-$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});
+//$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});
 /*
  * EVENT definitions
  * 
@@ -37,14 +37,14 @@ function hasPendingUsers(ua){
 }
 
 function clearSections(){
-	$(".mainpage .main .page").empty();
+	$(".cdisPage").empty();
 }
 
 function loadAdminSection(section){
 	adminSection = section;
 	clearSections();
 	if(section == "users"){
-		$(".mainpage .main .page").load("/ncdis/client/templates/admin."+section+".html", function(){
+		$(".cdisPage").load("/ncdis/client/templates/admin."+section+".html", function(){
 			/*
 			 * MAIN
 			 * */
@@ -73,7 +73,7 @@ function loadAdminSection(section){
 			$("#save-edituser-button").on("click",saveEditAddUser);
 		});
 	}else if(section == "frontpage"){
-		$(".mainpage .main .page").load("/ncdis/client/templates/admin."+section+".html", function(){
+		$(".cdisPage").load("/ncdis/client/templates/admin."+section+".html", function(){
 			/*
 			 * MAIN
 			 * */
@@ -89,7 +89,7 @@ function loadAdminSection(section){
 			$("#clear-frontpage-button").on("click",clearFrontPageMessage);
 		});
 	}else if(section == "audit"){
-		$(".mainpage .main .page").load("/ncdis/client/templates/admin."+section+".html", function(){
+		$(".cdisPage").load("/ncdis/client/templates/admin."+section+".html", function(){
 			/*
 			 * MAIN
 			 * */
@@ -98,7 +98,7 @@ function loadAdminSection(section){
 			drawTop5UserActions(userActionsTop5Array);
 		});
 	}
-	initPage();
+	//initPage();
 }
 
 
@@ -225,9 +225,9 @@ function showEditUser(){
 	var lineid = $("#users-table tbody .selected").attr("id");
 	if(lineid != null){
 		var userid = lineid.substring(5);
-		$("#users-container").hide();
-		$("#users-toolbar").hide();
-		$("#users-form").fadeIn(350);
+		$(".cdisAdminUsersContainer").hide();
+		$(".cdisAdminUsersToolbar").hide();
+		$(".cdisAdminUsersEditUserForm").fadeIn(350);
 	}else{
 		var bconfig = {"width":"200","height":"200"};
 		var bbut = [{"text":"Close","action":"closeGRVPopup"}];
@@ -237,12 +237,12 @@ function showEditUser(){
 }
 
 function showAddUser(){
-	resetForm($("#users-form"));
+	resetForm($(".cdisAdminUsersEditUserForm"));
 	$("#iduser-id").val("0");
 	$("#users-table tbody tr").removeClass("selected");
-	$("#users-container").hide();
-	$("#users-toolbar").hide();
-	$("#users-form").fadeIn(350);
+	$(".cdisAdminUsersContainer").hide();
+	$(".cdisAdminUsersToolbar").hide();
+	$(".cdisAdminUsersEditUserForm").fadeIn(350);
 }
 
 function sendResetPassword(){
@@ -341,9 +341,9 @@ function sendConfirmEmail(){
 
 function cancelShowEditAddUser(){
 	$("#users-table tbody tr").removeClass("selected");
-	$("#users-form").hide();
-	$("#users-container").fadeIn(350);
-	$("#users-toolbar").fadeIn(350);
+	$(".cdisAdminUsersEditUserForm").hide();
+	$(".cdisAdminUsersContainer").fadeIn(350);
+	$(".cdisAdminUsersToolbar").fadeIn(350);
 }
 
 function saveEditAddUser(){
@@ -372,9 +372,9 @@ function saveEditAddUser(){
 				usersArray = json.objs;
 				drawUsers(usersArray);
 				$("#users-table tbody tr").removeClass("selected");
-				$("#users-form").hide();
-				$("#users-container").fadeIn(350);
-				$("#users-toolbar").fadeIn(350);
+				$(".cdisAdminUsersEditUserForm").hide();
+				$(".cdisAdminUsersContainer").fadeIn(350);
+				$(".cdisAdminUsersToolbar").fadeIn(350);
 			});
 			request.fail(function( jqXHR, textStatus ) {
 			  alert( "Request failed: " + textStatus );

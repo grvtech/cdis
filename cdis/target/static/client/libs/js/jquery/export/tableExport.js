@@ -55,7 +55,7 @@ THE SOFTWARE.*/
 						window.URL = window.webkitURL || window.URL;
 						if(options.mime == "image/png"){
 							var bb = contentStr;
-							var a = $("#report-export-"+options.type);
+							var a = $("<a>").appendTo($(".gbuttons"));
 							 a.attr("download",options.fileName);
 							 a.attr("href",bb);
 							 a.data("downloadurl",[options.mime, a.attr("download"), a.attr("href")].join(':'));
@@ -64,14 +64,16 @@ THE SOFTWARE.*/
 							  });
 						}else{
 							var bb = new Blob([contentStr], {type: options.mime});
-							var a = $("#report-export-"+options.type);
+							var a = $("<a>").appendTo($(".gbuttons"));
 							 a.attr("download",options.fileName);
 							 a.attr("href",window.URL.createObjectURL(bb));
 							 a.data("downloadurl",[options.mime, a.attr("download"), a.attr("href")].join(':'));
 							 a.click(function(e) {
 								  if ('disabled' in this.dataset) {return false;}
 							  });
+								 
 						}
+						$(".gbuttons a")[0].click();
 					};
 					
 					function b64toBlob(b64Data, contentType, sliceSize) {

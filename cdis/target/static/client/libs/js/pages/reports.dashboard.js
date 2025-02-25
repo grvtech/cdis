@@ -22,7 +22,7 @@ initLocalDashboardPage();
 function initLocalDashboardPage(){
 	reportsSection = "dashboard";
 	reportsObject = getDashboardReports(sid);
-	var list = $("#dashboard");
+	var list = $("#grvDashboard");
 	list.empty();
 	var predefinedReports = reportsObject.predefined;
 	if(predefinedReports.length > 0){
@@ -31,7 +31,7 @@ function initLocalDashboardPage(){
 			var raport = prepareDashboardReport(vObj.code);
 			reportObjectToExecute = loadDashboardReport(raport);
 			list.append(
-					$("<div>",{class:"dashboard-item-"+reportObjectToExecute.class+" uss",id:reportObjectToExecute.id})
+					$("<div>",{class:"cdisDashboardItem uss",id:reportObjectToExecute.id})
 						.append($("<div>",{class:"title"}))
 						.append($("<div>",{class:"form"}))
 						.append($("<div>",{class:"graph",id:"graph-"+reportObjectToExecute.id}).append($("<div>",{class:"loading-span"}).text("Loading ...")))
@@ -77,7 +77,6 @@ function loadDashboardReport(rObj){
 			obj["subdisplay"] = objInput.display;
 			obj["subsection"] = objInput.section;
 			report.subcriteria[ix] = obj;
-			var t = report.title;
 			reportObjectToExecute = report;
 		});
 	}

@@ -6,11 +6,7 @@
  * */
 
 var emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-name = $( "#nameUser" );
-email = $( "#emailUser" );
-message = $( "#messageUser" );
-admin = $("#adminUser");
-tips = $( ".validateTips" );
+tips = $(".cdisValidateTips");
 var imsg = "All form fields are required.";
 var validPassword = false;
 var validCPassword = false;
@@ -25,24 +21,26 @@ var confirmParam = getParameterByName("confirm");
  * 
  * */
 //submit on enter when focus on password field
-$("#pass").on("keyup",function(e){if(e.keyCode == 13){$("#loginbutton").click();}});
+$("#grvPass").on("keyup",function(e){if(e.keyCode == 13){$("#grvLoginButton").click();}});
 //submit on enter when focus on login button
-$('#loginbutton').on('keypress', function(e) {if(e.keyCode==13){$(this).click();}});
-$("#loginbutton").on("click",login);
-$("#passwordSub").on("focus",function() {$("#passwordmessage").css("display","block");});
-$("#passwordSub").on("blur",function() {$("#passwordmessage").css("display","none");});
-$("#cpasswordSub").on("focus",function() {$("#cpasswordmessage").css("display","block");});
-$("#cpasswordSub").on("blur",function() {$("#cpasswordmessage").css("display","none");});
-$("#passwordSub").on("keyup",validatePasswordSubscription);
-$("#cpasswordSub").on("keyup",validatePasswordConfirmSubscription);
-$("#passwordrRes").on("focus",function() {$("#passwordrmessage").css("display","block");});
-$("#passwordrRes").on("blur",function() {$("#passwordrmessage").css("display","none");});
-$("#cpasswordrRes").on("focus",function() {$("#cpasswordrmessage").css("display","block");});
-$("#cpasswordrRes").on("blur",function() {$("#cpasswordrmessage").css("display","none");})
-$("#passwordrRes").on("keyup",validatePasswordReset);
-$("#cpasswordrRes").on("keyup",validatePasswordConfirmReset);
-$(".forgotButton").on("click",function (){$("#dialog-forgot").dialog("open");});
-$(".subscribeButton").on("click",function (){$("#dialog-subscribe").dialog("open");});
+$('#grvLoginButton').on('keypress', function(e) {if(e.keyCode==13){$(this).click();}});
+$("#grvLoginButton").on("click",login);
+$("#grvPasswordSubscribe").on("focus",function() {$("#grvPasswordMessage").css("display","block");});
+$("#grvPasswordSubscribe").on("blur",function() {$("#grvPasswordMessage").css("display","none");});
+$("#grvPasswordSubscribe").on("keyup",validatePasswordSubscription);
+
+$("#grvPasswordSubscribeConfirm").on("focus",function() {$("#grvConfirmPasswordMessage").css("display","block");});
+$("#grvPasswordSubscribeConfirm").on("blur",function() {$("#grvConfirmPasswordMessage").css("display","none");});
+$("#grvPasswordSubscribeConfirm").on("keyup",validatePasswordConfirmSubscription);
+
+$("#grvPasswordrReset").on("focus",function() {$("#grvPasswordrMessage").css("display","block");});
+$("#grvPasswordrReset").on("blur",function() {$("#grvPasswordrMessage").css("display","none");});
+$("#grvPasswordrReset").on("keyup",validatePasswordReset);
+$("#grvConfirmPasswordrReset").on("focus",function() {$("#grvConfirmPasswordrMessage").css("display","block");});
+$("#grvConfirmPasswordrReset").on("blur",function() {$("#grvConfirmPasswordrMessage").css("display","none");})
+$("#grvConfirmPasswordrReset").on("keyup",validatePasswordConfirmReset);
+$(".cdisForgotButton").on("click",function (){$("#grvDialogForgot").dialog("open");});
+$(".cdisSubscribeButton").on("click",function (){$("#grvDialogSubscribe").dialog("open");});
 
 
 /*
@@ -54,35 +52,35 @@ $("#user").focus();
 /*
  * Define forgot dialog
  * */
-$("#dialog-forgot").dialog({autoOpen: false,resizable: false,height: 320,width: 500,modal: true,
+$("#grvDialogForgot").dialog({autoOpen: false,resizable: false,height: 420,width: 500,modal: true,
     buttons: {
     	Cancel: function() {$( this ).dialog( "close" );},
     	"Reset Password": function() {forgotPassword(formForgot[0]);}
     },
-    close: function() {formForgot[ 0 ].reset();$(".mf").removeClass( "ui-state-error" );tips.text(imsg);}
+    close: function() {formForgot[ 0 ].reset();tips.text(imsg);}
 });
-var formForgot = $("#dialog-forgot").find( "form" ).on( "submit", function( event ) {event.preventDefault();forgotPassword();});
+var formForgot = $("#grvDialogForgot").find( "form" ).on( "submit", function( event ) {event.preventDefault();forgotPassword();});
 
 /*
  * Define subscribe dialog
  * */
-$("#dialog-subscribe").dialog({autoOpen: false,resizable: false,height: 850,width: 420,modal: true,
+$("#grvDialogSubscribe").dialog({autoOpen: false,resizable: false,height: 900,width: 420,modal: true,
 	  buttons: {
 	    Cancel: function() {$( this ).dialog( "close" );},
 	    "Subscribe to CDIS": function() {subscribe();}
 	  },
-	  close: function() {$("#dialog-subscribe").find( "form" ).trigger("reset");resetFormStyles("subscribe");$(".mf").removeClass( "ui-state-error" );}
+	  close: function() {$("#grvDialogSubscribe").find( "form" ).trigger("reset");resetFormStyles("subscribe");}
 });
-var formSubscribe = $("#dialog-subscribe").find( "form" ).on( "submit", function( event ) {event.preventDefault();subscribe();});
+var formSubscribe = $("#grvDialogSubscribe").find( "form" ).on( "submit", function( event ) {event.preventDefault();subscribe();});
 
 /*
  * Define reset password dialog
  * */
-$("#dialog-reset").dialog({autoOpen: false,resizable: false,height: 650,width: 420,modal: true,
+$("#grvDialogReset").dialog({autoOpen: false,resizable: false,height: 650,width: 420,modal: true,
 	buttons: [{id:"resetButtonDialog",text:"Reset Password",click: function() {resetPassword();}}],
-	close: function() {$("#dialog-reset").find( "form" ).trigger("reset");resetFormStyles("reset");$(".mf").removeClass( "ui-state-error" );}
+	close: function() {$("#grvDialogReset").find( "form" ).trigger("reset");resetFormStyles("reset");}
 });
-var formReset = $("#dialog-reset").find( "form" ).on( "submit", function( event ) {event.preventDefault();resetPassword();});
+var formReset = $("#grvDialogReset").find( "form" ).on( "submit", function( event ) {event.preventDefault();resetPassword();});
 
 
 if(resetParam == "1"){
@@ -90,10 +88,9 @@ if(resetParam == "1"){
 	var u = getUser(iu);
 	
 	if(u.reset == "1"){
-		$("#dialog-reset").dialog("open");
-		$("#usernameRes").val(u.username);
-		$("#iduserRes").val(u.iduser);
-		
+		$("#grvDialogReset").dialog("open");
+		$("#grvUsernameReset").val(u.username);
+		$("#grvIdUserReset").val(u.iduser);
 	}else{
 		var bconfig = {"width":"300","height":"250"};
 		var bbut = [{"text":"Close","action":"closeGRVPopup"}];
@@ -146,84 +143,84 @@ function validatePasswordSubscription() {
 	  var vL = vC = vN = vLen = false;
 	  var lcLetters = new RegExp(/[a-z]/g);
 	  if(lcLetters.test($(this).val())){
-		  $("#passletter").removeClass("invalid");
-		  $("#passletter").addClass("valid");
+		  $("#grvPassLetter").removeClass("invalid");
+		  $("#grvPassLetter").addClass("valid");
 		  vL = true;
 	  }else{
-		  $("#passletter").removeClass("valid");
-		  $("#passletter").addClass("invalid");
+		  $("#grvPassLetter").removeClass("valid");
+		  $("#grvPassLetter").addClass("invalid");
 	  }
 	  
 	  // Validate capital letters
 	  var upperCaseLetters = new RegExp(/[A-Z]/g);
 	  if(upperCaseLetters.test($(this).val())) {
-		  $("#passcapital").removeClass("invalid");
-		  $("#passcapital").addClass("valid");
+		  $("#grvPassCapital").removeClass("invalid");
+		  $("#grvPassCapital").addClass("valid");
 		  vC = true;
 	  }else{
-		  $("#passcapital").removeClass("valid");
-		  $("#passcapital").addClass("invalid");
+		  $("#grvPassCapital").removeClass("valid");
+		  $("#grvPassCapital").addClass("invalid");
 	  }
 
 	  // Validate numbers
 	  var numbers = new RegExp(/[0-9]/g);
 	  if(numbers.test($(this).val())) {
-		  $("#passnumber").removeClass("invalid");
-		  $("#passnumber").addClass("valid");
+		  $("#grvPassNumber").removeClass("invalid");
+		  $("#grvPassNumber").addClass("valid");
 		  vN = true;
 	  }else{
-		  $("#passnumber").removeClass("valid");
-		  $("#passnumber").addClass("invalid");
+		  $("#grvPassNumber").removeClass("valid");
+		  $("#grvPassNumber").addClass("invalid");
 	  }
 
 	  // Validate length
 	  if($(this).val().length >= 8) {
-		  $("#passlength").removeClass("invalid");
-		  $("#passlength").addClass("valid");
+		  $("#grvPassLength").removeClass("invalid");
+		  $("#grvPassLength").addClass("valid");
 		  vLen = true;
 	  }else{
-		  $("#passlength").removeClass("valid");
-		  $("#passlength").addClass("invalid");
+		  $("#grvPassLength").removeClass("valid");
+		  $("#grvPassLength").addClass("invalid");
 	  }
 	  
 	  if(vL && vC && vN && vLen) validPassword = true;
 }
 
 function validatePasswordConfirmSubscription() {
-	if($(this).val() === $("#passwordSub").val() && $(this).val().length > 0){
-		$("#passconfirm").removeClass("invalid");
-		$("#passconfirm").addClass("valid");
+	if($(this).val() === $("#grvPasswordSubscribe").val() && $(this).val().length > 0){
+		$("#grvPassConfirm").removeClass("invalid");
+		$("#grvPassConfirm").addClass("valid");
 		validCPassword = true;
 	}else{
-		$("#passconfirm").removeClass("valid");
-		$("#passconfirm").addClass("invalid");
+		$("#grvPassConfirm").removeClass("valid");
+		$("#grvPassConfirm").addClass("invalid");
 		validCPassword = false;
 	}
 }
 
 function resetFormStyles(formName){
 	if(formName == "subscribe"){
-		$("#passletter").removeClass("valid");
-		$("#passletter").addClass("invalid");
-		$("#passcapital").removeClass("valid");
-		$("#passcapital").addClass("invalid");
-		$("#passnumber").removeClass("valid");
-		$("#passnumber").addClass("invalid");
-		$("#passlength").removeClass("valid");
-		$("#passlength").addClass("invalid");
-		$("#passconfirm").removeClass("valid");
-		$("#passconfirm").addClass("invalid");
+		$("#grvPassLetter").removeClass("valid");
+		$("#grvPassLetter").addClass("invalid");
+		$("#grvPassCapital").removeClass("valid");
+		$("#grvPassCapital").addClass("invalid");
+		$("#grvPassNumber").removeClass("valid");
+		$("#grvPassNumber").addClass("invalid");
+		$("#grvPassLength").removeClass("valid");
+		$("#grvPassLength").addClass("invalid");
+		$("#grvPassConfirm").removeClass("valid");
+		$("#grvPassConfirm").addClass("invalid");
 	}else if(formName == "reset"){
-		$("#passrletter").removeClass("valid");
-		$("#passrletter").addClass("invalid");
-		$("#passrcapital").removeClass("valid");
-		$("#passrcapital").addClass("invalid");
-		$("#passrnumber").removeClass("valid");
-		$("#passrnumber").addClass("invalid");
-		$("#passrlength").removeClass("valid");
-		$("#passrlength").addClass("invalid");
-		$("#passrconfirm").removeClass("valid");
-		$("#passrconfirm").addClass("invalid");
+		$("#grvPassrLetter").removeClass("valid");
+		$("#grvPassrLetter").addClass("invalid");
+		$("#grvPassrCapital").removeClass("valid");
+		$("#grvPassrCapital").addClass("invalid");
+		$("#grvPassrNumber").removeClass("valid");
+		$("#grvPassrNumber").addClass("invalid");
+		$("#grvPassrLength").removeClass("valid");
+		$("#grvPassrLength").addClass("invalid");
+		$("#grvPassrConfirm").removeClass("valid");
+		$("#grvPassrConfirm").addClass("invalid");
 	}
 }
 
@@ -232,45 +229,45 @@ function validatePasswordReset() {
 	  var vL = vC = vN = vLen = false;
 	  var lcLetters = new RegExp(/[a-z]/g);
 	  if(lcLetters.test($(this).val())){
-		  $("#passrletter").removeClass("invalid");
-		  $("#passrletter").addClass("valid");
+		  $("#grvPassrLetter").removeClass("invalid");
+		  $("#grvPassrLetter").addClass("valid");
 		  vL = true;
 	  }else{
-		  $("#passrletter").removeClass("valid");
-		  $("#passrletter").addClass("invalid");
+		  $("#grvPassrLetter").removeClass("valid");
+		  $("#grvPassrLetter").addClass("invalid");
 	  }
 	  
 	  
 	  // Validate capital letters
 	  var upperCaseLetters = new RegExp(/[A-Z]/g);
 	  if(upperCaseLetters.test($(this).val())) {
-		  $("#passrcapital").removeClass("invalid");
-		  $("#passrcapital").addClass("valid");
+		  $("#grvPassrCapital").removeClass("invalid");
+		  $("#grvPassrCapital").addClass("valid");
 		  vC = true;
 	  }else{
-		  $("#passrcapital").removeClass("valid");
-		  $("#passrcapital").addClass("invalid");
+		  $("#grvPassrCapital").removeClass("valid");
+		  $("#grvPassrCapital").addClass("invalid");
 	  }
 
 	  // Validate numbers
 	  var numbers = new RegExp(/[0-9]/g);
 	  if(numbers.test($(this).val())) {
-		  $("#passrnumber").removeClass("invalid");
-		  $("#passrnumber").addClass("valid");
+		  $("#grvPassrNumber").removeClass("invalid");
+		  $("#grvPassrNumber").addClass("valid");
 		  vN = true;
 	  }else{
-		  $("#passrnumber").removeClass("valid");
-		  $("#passrnumber").addClass("invalid");
+		  $("#grvPassrNumber").removeClass("valid");
+		  $("#grvPassrNumber").addClass("invalid");
 	  }
 
 	  // Validate length
 	  if($(this).val().length >= 8) {
-		  $("#passrlength").removeClass("invalid");
-		  $("#passrlength").addClass("valid");
+		  $("#grvPassrLength").removeClass("invalid");
+		  $("#grvPassrLength").addClass("valid");
 		  vLen = true;
 	  }else{
-		  $("#passrlength").removeClass("valid");
-		  $("#passrlength").addClass("invalid");
+		  $("#grvPassrLength").removeClass("valid");
+		  $("#grvPassrLength").addClass("invalid");
 	  }
 	  
 	  if(vL && vC && vN && vLen) validPasswordr = true;
@@ -278,29 +275,28 @@ function validatePasswordReset() {
 
 function validatePasswordConfirmReset() {
 	  if($(this).val() === $("#passwordrRes").val() && $(this).val().length > 0){
-		  $("#passrconfirm").removeClass("invalid");
-		  $("#passrconfirm").addClass("valid");
+		  $("#grvPassrConfirm").removeClass("invalid");
+		  $("#grvPassrConfirm").addClass("valid");
 		  validCPasswordr = true;
 	  }else{
-		  $("#passrconfirm").removeClass("valid");
-		  $("#passrconfirm").addClass("invalid");
+		  $("#grvPassrConfirm").removeClass("valid");
+		  $("#grvPassrConfirm").addClass("invalid");
 		  validCPasswordr = false;
 	  }
 }
 
 function forgotPassword() {
     var valid = true;
-    $(".mf").removeClass( "ui-state-error" );
     
-    if(!$("#fusername").prop("checked")){
-		valid = valid && checkLength(  $( "#usernameUser" ), "Username" );
+    if(!$("#grvForgotUsername").prop("checked")){
+		valid = valid && checkLength(  $( "#grvUsernameUser" ), "Username" );
 	}
-    valid = valid && checkLength(  $( "#emailUser" ), "Email" );
-    valid = valid && checkRegexp(  $( "#emailUser" ), emailRegex, "eg. name@domain.com" );
+    valid = valid && checkLength(  $( "#grvEmailUser" ), "Email" );
+    valid = valid && checkRegexp(  $( "#grvEmailUser" ), emailRegex, "eg. name@domain.com" );
 
 
     if ( valid ) {
-    	var data = "language=en"+"&usernameUser="+$("#usernameUser").val()+"&emailUser="+$("#emailUser").val()+"&fusername="+$("#fusername").prop("checked");
+    	var data = "language=en"+"&usernameUser="+$("#grvUsernameUser").val()+"&emailUser="+$("#grvEmailUser").val()+"&fusername="+$("#grvForgotUsername").prop("checked");
     	var mes = $.ajax({
     		  url: "/ncdis/service/action/forgotPassword",
     		  type: "POST",
@@ -312,16 +308,16 @@ function forgotPassword() {
     		mes.done(function( json ) {
     			if(json.status == "1"){
     				tips.html(json.message);
-    				$("#subform").hide();
+    				$("#grvSubscribeForm").hide();
     			}else{
     				tips.html(json.message);
     			}
-    			$( "#dialog-forgot" ).dialog( "option", "buttons", { "Return to CDIS Login Page": function() { gti(); } } );
+    			$( "#grvDialogForgot" ).dialog( "option", "buttons", { "Return to CDIS Login Page": function() { gti(); } } );
     		});
     		mes.fail(function( jqXHR, textStatus ) {
     		  alert( "Error sending message : " + textStatus );
     		  formForgot[ 0 ].reset();
-  			  $("#dialog-forgot").dialog( "close" );
+  			  $("#grvDialogForgot").dialog( "close" );
     		});	
 
     } 
@@ -330,18 +326,18 @@ function forgotPassword() {
 
 function subscribe() {
     var valid = true;
-    $(".mf").removeClass( "ui-state-error" );
-    valid = valid && checkLength(  $( "#firstnameSub" ), "First name" );
-    valid = valid && checkLength(  $( "#lastnameSub" ), "Last name" );
-    valid = valid && checkLength(  $( "#emailSub" ), "Email" );
-    valid = valid && checkLength(  $( "#idcommunitySub" ), "User Community" );
-    valid = valid && checkLength(  $( "#idprofesionSub" ), "Profession" );
-    valid = valid && checkRegexp(  $( "#emailSub" ), emailRegex, "Email format should be : eg. name@domain.com" );
+
+    valid = valid && checkLength(  $( "#grvFirstnameSubscribe" ), "First name" );
+    valid = valid && checkLength(  $( "#grvLastnameSubscribe" ), "Last name" );
+    valid = valid && checkLength(  $( "#grvEmailSubscribe" ), "Email" );
+    valid = valid && checkLength(  $( "#grvIdcommunitySubscribe" ), "User Community" );
+    valid = valid && checkLength(  $( "#grvIdprofesionSubscribe" ), "Profession" );
+    valid = valid && checkRegexp(  $( "#grvEmailSubscribe" ), emailRegex, "Email format should be : eg. name@domain.com" );
 
 
     if ( valid && validPassword && validCPassword) {
     	var mes = $.ajax({
-    		  url: "/ncdis/service/action/subscribe?language=en&firstnameSub="+$("#firstnameSub").val()+"&lastnameSub="+$("#lastnameSub").val()+"&idcommunitySub="+$("#idcommunitySub").val()+"&emailSub="+$("#emailSub").val()+"&idprofesionSub="+$("#idprofesionSub").val()+"&passwordSub="+btoa($("#passwordSub").val()),
+    		  url: "/ncdis/service/action/subscribe?language=en&firstnameSub="+$("#grvFirstnameSubscribe").val()+"&lastnameSub="+$("#grvLastnameSubscribe").val()+"&idcommunitySub="+$("#grvIdcommunitySubscribe").val()+"&emailSub="+$("#grvEmailSubscribe").val()+"&idprofesionSub="+$("#grvIdprofesionSubscribe").val()+"&passwordSub="+btoa($("#grvPasswordSubscribe").val()),
     		  type: "GET",
     		  async : false,
     		  cache : false,
@@ -350,8 +346,8 @@ function subscribe() {
     		mes.done(function( json ) {
     			if(json.status == "1"){
     				tips.html(json.message);
-    				$("#dialog-subscribe").find("fieldset").hide();
-    				$( "#dialog-subscribe" ).dialog( "option", "buttons", { "Return to CDIS Login Page": function() { gti(); } } );
+    				$("#grvDialogSubscribe").find("fieldset").hide();
+    				$( "#grvDialogSubscribe" ).dialog( "option", "buttons", { "Return to CDIS Login Page": function() { gti(); } } );
     			}else{
     				tips.html(json.message);
     			}
@@ -359,7 +355,7 @@ function subscribe() {
     		mes.fail(function( jqXHR, textStatus ) {
     		  alert( "Error sending message : " + textStatus );
     		  formSubscribe[ 0 ].reset();
-  			  $("#dialog-subscribe").dialog( "close" );
+  			  $("#grvDialogSubscribe").dialog( "close" );
     		});	
 
     }
@@ -406,19 +402,18 @@ function getFrontPageMessage(){
 		mes.done(function( json ) {
 			message = json.objs[0].message;
 			if(message != ""){
-				$("#frontpage").html(message); 
-				var contents = $("#frontpage").wrapInner('<div>').children(); // wrap a div around the contents
+				const container = $("#grvFrontpage");
+				container.html(message); 
+				var contents = container.wrapInner('<div>').children(); // wrap a div around the contents
 				var height = contents.outerHeight();
-				$("#frontpage").animate({ scrollTop: height }, 8000);
-				setTimeout(function() {$("#frontpage").animate({scrollTop:0}, 8000);},8000);
+				container.animate({ scrollTop: height }, 8000);
+				setTimeout(function() {container.animate({scrollTop:0}, 8000);},8000);
 				setInterval(function(){
-		     		$("#frontpage").animate({ scrollTop: height }, 8000);
-					setTimeout(function() {
-		   						$("#frontpage").animate({scrollTop:0}, 8000); 
-								},8000);
+		     		container.animate({ scrollTop: height }, 8000);
+					setTimeout(function() {container.animate({scrollTop:0}, 8000);},8000);
 				},16000);
 			}else{
-				$("#frontpage").hide();
+				container.hide();
 			}
 					
 		});
@@ -428,10 +423,10 @@ function getFrontPageMessage(){
 }
 
 function login() {
-	var user = $("#user").val();
-	var pass = $("#pass").val();
-	var validUser = Validate.now(Validate.Presence, $("#user").val());
-	var validPass = Validate.now(Validate.Presence, $("#pass").val());
+	var user = $("#grvUser").val();
+	var pass = $("#grvPass").val();
+	var validUser = Validate.now(Validate.Presence, user);
+	var validPass = Validate.now(Validate.Presence, pass);
 	if(validUser && validPass){
 		var request = $.ajax({
 		  url: "/ncdis/service/action/loginSession?username="+user+"&password="+btoa(pass)+"&language=en&reswidth="+$(window).width()+"&resheight="+$(window).height(),
@@ -441,7 +436,7 @@ function login() {
 		request.done(function( json ) {
 			
 		  if(json.status == "0"){
-			  $("#errortext").text("Wrong Username or Password");
+			  $("#grvErrorText").text("Wrong Username or Password");
 		  }else{
 			 userObj = json.objs[0];
 			 sid = getSession(userObj.iduser);
@@ -456,11 +451,11 @@ function login() {
 		  }
 		});
 		request.fail(function( jqXHR, textStatus ) {
-			$("#errortext").text("Wrong Username or Password");
+			$("#grvErrorText").text("Wrong Username or Password");
 		});
 		
 	}else{
-		$("#errortext").text("Wrong Username or Password");
+		$("#grvErrorText").text("Wrong Username or Password");
 		
 	}
 }

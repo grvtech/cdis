@@ -1,13 +1,29 @@
-.admin_users{background-color:#ededed;min-height:500px;min-width:900px;width:60%;margin:auto;}
-.admin_frontpage{background-color:#ededed;min-height:500px;min-width:900px;width:60%;margin:auto;padding:10px;}
-.admin_users h1{padding:10px;}
-#users-toolbar{position:relative;width:100%;height:30px;text-align:right;}
-#users-container{position:relative;width:100%;height:400px;margin-top:10px;}
-#users-form{position:relative;width:100%;height:400px;margin-top:10px; display:none;}
+
+
+h1{padding:20px;}
+.cdisAdminAudit{background-color:#ededed;min-height:500px;min-width:900px;width:60%;margin:20px auto 20px auto;padding:10px 20px 10px 20px;}
+.cdisAdminFrontpage{background-color:#ededed;min-height:500px;min-width:900px;width:60%;margin:20px auto 20px auto;padding:10px 20px 10px 20px;}
+.cdisAdminUsers{background-color:#ededed;min-height:500px;min-width:900px;width:60%;margin:20px auto 20px auto;padding:10px 20px 10px 20px;}
+.cdisAdminUsersToolbar{position:relative;width:100%;height:30px;text-align:right;}
+.cdisAdminUsersContainer{position:relative;width:100%;height:400px;margin-top:10px;}
+.cdisAdminUsersEditUserForm{position:relative;width:100%;height:500px;margin-top:10px; display:none;color:#4d4d4d;}
+
+
+
+
+
+
+
+
+
 #users-table{width:97%;height:100%;margin-left:10px;padding:0px;}
 
-#user-form table{width:97%;height:100%;margin-left:10px;padding:0px;}
-#user-form table tr{background-color:#ffffff;}
+.cdisAdminUsersEditUserForm table{width:97%;height:100%;margin-left:10px;padding:0px;font-size:140%;}
+.cdisAdminUsersEditUserForm .td-label{width:200px;}
+.cdisAdminUsersEditUserForm .text{margin:3px;padding:5px;border:none;font-weight:bold;background-color:#ffffff;}
+
+
+
 
 #users-table thead {width: calc( 100% - 1em );}
 #users-table thead td{font-size:130%;background-color:#cdcdcd;padding:5px;}
@@ -20,19 +36,10 @@
 #users-table tbody tr.selected{background-color: #4d90fe; color:#ffffff;font-weight:bold;}
 #users-table tbody td{overflow:hidden; padding:5px;cursor:pointer;}
 #users-table thead, tbody tr {display:table;width:100%;table-layout:fixed;}
-#user-form .td-label{width:200px;}
-#user-form .label-editpatient{font-family: roboto; font-size: 100%;color:#4d4d4d;}
-#user-form .diabet-editpatient{background-color:#cdcdcd;}
-#user-form input{font-family: roboto; font-size: 100%;color:#4d4d4d;}
-#user-form select{font-family: roboto; font-size: 100%;color:#4d4d4d;}
-#user-form .text{margin:3px;padding:5px;border:none;font-weight:bold;background-color:#ececec;}
-
-.side{display:none;}
 
 
 
-.admin_audit{background-color:#ededed;min-height:300px;min-width:900px;width:60%;margin:auto;padding:10px;}
-.admin_audit h1{padding:10px;}
+
 #audit-toolbar{position:relative;width:100%;height:30px;text-align:right;}
 #audit-graphs{
 	position:relative;height:200px;
@@ -53,8 +60,7 @@
 #filter-input{position:absolute;left:10px;width:650px;height:30px;text-align:left;}
 #filter-input input{padding:5px;font-size:100%;color:#4d4d4d;width:300px;}
 
-#user-form table{width:97%;margin-left:10px;padding:0px;}
-#user-form table tr{background-color:#ffffff;}
+
 
 #audit-table thead {width: calc( 100% - 1em );}
 #audit-table thead td{font-size:130%;background-color:#cdcdcd;padding:5px;}

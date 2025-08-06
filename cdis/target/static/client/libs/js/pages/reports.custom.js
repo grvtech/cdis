@@ -48,6 +48,16 @@ var generalCriteria = [{"name":"patient","type":"category","label":"Required col
                        {"name":"tchdl","type":"value","label":"TCHDL","status":"0","visible":"1","section":"6","report":"both","hasdate":"true","iddata":"26"},
                        {"name":"tchdlCollectedDate","type":"date","label":"TCHDL Collected date","status":"0","visible":"1","section":"6","report":"list","hasdate":"false","iddata":"26"}];
 
+var groupCriteria = [
+                       {"name":"sex","type":"select","label":"Gender","visible":"1","options":["Male","Female"],"operator":["equal"],"fields":["sex"]},
+                       {"name":"age","type":"select","label":"Groups of age","visible":"1","options":["0 to 19 years old","20 to 29 years old","30 to 39 years old","40 to 49 years old","50 to 59 years old","60 to 69 years old","70 years old or more","Custom"],"operator":["equal", "more than", "less than","between"],"fields":["dob"]},
+                       {"name":"a1c","type":"select","label":"A1C level","visible":"1","options":["less than 0.065","between 0.065 and 0.075","between 0.075 and 0.090","more than 0.090","Custom"],"operator":["equal", "more than", "less than","between"],"fields":["hba1c"]},
+                       {"name":"cdk","type":"select","label":"CDK Staging","visible":"1","options":["Normal renal function (no CDK or stage 1) or mild impairment (stage2)","Stage 3a (eGFR between 45 and 60) and ACRatio more than 3.0","Stage 3b (eGFR between 30 and 45) and ACRatio more than 3.0","Stage 4 (eGFR between 15 and 30) and ACRatio more than 3.0","Stage 5 (eGFR under 15) and ACRatio more than 3.0","Custom"],"operator":["equal", "more than", "less than","between"],"fields":["egfr","acratio"]},
+                       {"name":"ldl","type":"select","label":"Control of LDL","visible":"1","options":["less than 2.0","between 2.0 and 2.5","between 2.5 and 5.0","more than 5.0","Custom"],"operator":["equal", "more than", "less than","between"],"fields":["ldl"]},
+                       {"name":"protenuria","type":"select","label":"Level of protenuria","visible":"1","options":["Normal","Microalbuminuria / Moderate Protenuria","Overt Protenuria","Nephrotic range","Custom"],"operator":["equal", "more than", "less than","between"],"fields":["pcr","acratio"]}
+                       ];
+
+
 let historyReports = null;
 let historyReportToDelete = null;
 let globalGRVMSelect = null;
@@ -102,9 +112,59 @@ p2.on("change",{container:"cdisReportGraphCriteriaContainer",reportContainer:"cd
 let p3 = grvwradio("grvReportGraphFilter");
 p3.on("change",{container:"cdisReportFilterGraphContainer",reportContainer:"cdisReportGraphToolbarBody", object:p3},changeReportFilter);
 
+
+//comparator
+let compType = grvwradio("grvReportComparatorType");
+compType.on("change",{object:compType},changeReportComparatorType);
+let compGroups =  grvwradio("grvReportComparatorGroups");
+compGroups.on("change",{container:"cdisReportComparatorToolbarBody",object:compGroups},changeReportComparatorGroups);	
+let compDtype = grvwcheck("grvReportComparatorDtypes");
+compDtype.on("change",{object:compDtype},changeReportComparatorType);
+
+
+initReportComparatorGroups();
+
+
 /* 
  * FUNCTIONS
  * */
+ 
+function initReportComparatorGroups(nogroup=2){
+	let container = $(".cdisReportComparatorToolbarBody");
+	container.empty();
+	//2 groups initaly
+	$("<div>",{class:"cdisReportComparatorGroup",id:"group1"}).appendTo(container)
+		.append($("<div>",{class:"header"}).append($("<span>").text("Group 1")).append($("<div>").append($("<div>",{class:"cdisCisButton cdisAddCriteriaToGroup"}).text("Add Criteria to Group"))))
+		.append($("<div>",{class:"body"}));
+	$("<div>",{class:"cdisReportComparatorGroup",id:"group2"}).appendTo(container)
+		.append($("<div>",{class:"header"}).append($("<span>").text("Group 2")).append( $("<div>").append($("<div>",{class:"cdisCisButton cdisAddCriteriaToGroup"}).text("Add Criteria to Group"))))
+		.append($("<div>",{class:"body"}))
+	if(nogroup==3){
+		$("<div>",{class:"cdisReportComparatorGroup",id:"group3"}).appendTo(container)
+		.append($("<div>",{class:"header"}).append($("<span>").text("Group 3")).append($("<div>").append($("<div>",{class:"cdisCisButton cdisAddCriteriaToGroup"}).text("Add Criteria to Group"))))
+		.append($("<div>",{class:"body"}));
+		$(".cdisReportComparatorGroup").css("width","30%");
+	}else{
+		$(".cdisReportComparatorGroup").css("width","45%");
+	}
+	$(".cdisAddCriteriaToGroup").on("click", function(){
+		//alert($(this).parent().parent().parent().attr("id"));
+		let group = $(this).parent().parent().parent().attr("id");
+		addReportCriteriaGroup(group);
+	});
+}
+ 
+function changeReportComparatorGroups(event){
+	let op = event.data.object;
+	initReportComparatorGroups(op.getValue());
+}
+ 
+
+ 
+function changeReportComparatorType(event){
+	
+}
+ 
  
  function clearReportCriteria(event){
 	let type = event.data.type;
@@ -121,6 +181,7 @@ p3.on("change",{container:"cdisReportFilterGraphContainer",reportContainer:"cdis
 		let chartObj = {name:chartCriteriaObject.name,section:chartCriteriaObject.section, type:chartCriteriaObject.type,filter:"allvalues",operator:"equal",value:"0",hasdate:"",label:"Chart",iddata:"0"};
 		addToSummaryObject(chartObj);
 		$(".cdisReportNotes textarea").empty();
+		$(".cdisReportNotes textarea").val("");
 		$(".cdisButtonLastExecutionList").remove();
 	}else if(type == "graph"){
 		criteriaContainer = $(".cdisReportGraphToolbarBody");
@@ -132,6 +193,8 @@ p3.on("change",{container:"cdisReportFilterGraphContainer",reportContainer:"cdis
 		criteriaContainer.empty();
 		$(".cdisReportGraphNotes textarea").empty();
 		$(".cdisButtonLastExecutionGraph").remove();
+	}else if(type == "comparator"){
+		
 	}
 	criteriaContainer.attr("idreport","0");
 	criteriaContainer.attr("typereport",type);
@@ -310,6 +373,11 @@ function addReportCriteria(event){
 	
 }
 
+function addReportCriteriaGroup(group){
+	displayGroupCriteriasList(group);
+	$("#grvCriteriaGroupSelect").on("change",{name:"grvCriteriaGroupSelect",group:group},selectGroupCriteria);
+	
+}
 
 function displayCriteriasList(type){
 	var bconfig = {"width":"680","height":"430"};
@@ -318,6 +386,12 @@ function displayCriteriasList(type){
 	showGRVPopup("Choose Criteria",txt,bbut,bconfig);
 }
 
+function displayGroupCriteriasList(group){
+	var bconfig = {"width":"680","height":"430"};
+	var bbut = [{"text":"Close","action":"closeGRVPopup"},{"text":"Add Group Criteria","action":"addGroupCriteriaItem"}];
+	var txt = buildGroupCriteriaPopupForm(group);
+	showGRVPopup("Choose Group Criteria",txt,bbut,bconfig);
+}
 
 function addCriteriaItem(){
 	let csf = $(".cdisCriteriaSelectFilter");
@@ -412,7 +486,86 @@ function addCriteriaItem(){
 	} 
 }
 
-
+function addGroupCriteriaItem(){
+	let value = "";
+	
+	if(operator == "morethan")operator = "more than";
+	if(operator == "lessthan")operator = "less than";
+	
+	if($("#grvCriteriaFilterIncludeDate").length > 0 )checkIncludeDate = $("#grvCriteriaFilterIncludeDate").attr("value");
+	if(filterValue == "filtervalues"){
+		if(operator == "between"){
+			let v1, v2 = "";
+			if(csf.attr("type") == "date"){
+				v1 = $("#grvCriteriaFilter #grvCriteriaFilterValueDate1").val();
+				v2 = $("#grvCriteriaFilter #grvCriteriaFilterValueDate2").val();
+			}else{
+				v1 = $("#grvCriteriaFilter #grvCriteriaFilterValue1").val();
+				v2 = $("#grvCriteriaFilter #grvCriteriaFilterValue2").val();	
+			}
+			
+			if( v1 != "" && v2 != "")hasValue = true;
+			value = v1+"|"+v2 ;
+		}else{
+			if(csf.attr("type") == "date"){
+				value = $("#grvCriteriaFilter #grvCriteriaFilterValueDate").val();
+			}else{
+				value = $("#grvCriteriaFilter #grvCriteriaFilterValue").val();	
+			}
+			
+			if(value != "") hasValue=true;
+		}
+		
+		if(checkIncludeDate.indexOf("includeDate") >=0){
+			operatorDate = $("#grvCriteriaFilterDate #grvCriteriaFilterOperatorDate").val();
+			if(operatorDate != "0")hasOperatorDate = true;
+			if(operatorDate == "between"){
+				let v1Date = $("#grvCriteriaFilterDate #grvCriteriaFilterValueDate1").val();
+				let v2Date = $("#grvCriteriaFilterDate #grvCriteriaFilterValueDate2").val();
+				if( v1Date != "" && v2Date != "")hasValueDate = true;
+				valueDate = v1Date+"|"+v2Date ;
+			}else{
+				valueDate = $("#grvCriteriaFilterDate #grvCriteriaFilterValueDate").val();
+				if(valueDate != "") hasValueDate=true;
+			}
+			
+			if(hasOperator && hasValue && hasOperatorDate && hasValueDate){
+				let obj = {name:csf.attr("name"),section:csf.attr("section"), type:csf.attr("type"),filter:csf.attr("filter"),operator:operator,value:value,hasdate:$("#grvCriteriaFilterIncludeDate").attr("value"),label:csf.attr("label"),iddata:csf.attr("iddata")}
+				addToSummaryObject(obj);
+				let objCriteriaDate = getGeneralCriteriaObject(csf.attr("name")+"CollectedDate");
+				let objDate = {name:objCriteriaDate.name,section:objCriteriaDate.section, type:"date",filter:"filtervalues",operator:operatorDate,value:valueDate,hasdate:"false",label:objCriteriaDate.label,iddata:objCriteriaDate.iddata}
+				addToSummaryObject(objDate);
+				return true;	
+			}else{
+				$(".cdisCriteriaFilterErrorMessage").text("Please choose an operator and a correct value for criteria!")
+				return false;	
+			}
+			
+			
+		}else{
+			if(hasOperator && hasValue){
+				let obj = {name:csf.attr("name"),section:csf.attr("section"), type:csf.attr("type"),filter:csf.attr("filter"),operator:operator,value:value,hasdate:$("#grvCriteriaFilterIncludeDate").attr("value"),label:csf.attr("label"),iddata:csf.attr("iddata")}
+				addToSummaryObject(obj);
+				return true;	
+			}else{
+				$(".cdisCriteriaFilterErrorMessage").text("Please choose an operator and a correct value for criteria!")
+				return false;	
+			}
+		}
+	}else{
+		//all values
+		
+		let obj = {name:csf.attr("name"),section:csf.attr("section"), type:csf.attr("type"),filter:csf.attr("filter"),operator:"equal",value:"0",hasdate:$("#grvCriteriaFilterIncludeDate").attr("value"),label:csf.attr("label"),iddata:csf.attr("iddata")}
+		addToSummaryObject(obj);
+		
+		if(checkIncludeDate.indexOf("includeDate") >=0){
+			let objCriteriaDate = getGeneralCriteriaObject(csf.attr("name")+"CollectedDate");
+			let objDate = {name:objCriteriaDate.name,section:objCriteriaDate.section, type:"date",filter:"allvalues",operator:"equal",value:"0",hasdate:"false",label:objCriteriaDate.label,iddata:objCriteriaDate.iddata}
+			addToSummaryObject(objDate);
+		}
+		return true;	
+	} 
+}
 
 function addToSummaryObject(objItem){
 	let activeTab = rType.getActive();
@@ -435,7 +588,12 @@ function addToSummaryObject(objItem){
 	if(objItem.filter == "filtervalues"){
 		if(objItem.type == "select")value = eval("creport_"+objItem.name+"["+value+"]");
 		if(value.indexOf("|") >= 0)value = value.replace("|" , " and ");
-		filter = objItem.operator+" "+value;	
+		if(objItem.operator == "all"){
+			filter = "all patients";
+		}else{
+			filter = objItem.operator+" "+value;
+		}
+			
 	}else {
 		filter = "all values";	
 	}
@@ -466,7 +624,7 @@ function buildCriteriaPopupForm(type){
 		if(objItem.visible != "0" && (objItem.report==type || objItem.report=="both")){
 			var oName = objItem.name;
 			var isAdded = false;
-			$.each($("."+classContainer+" div"),function(k,v){
+			$.each($("#"+classContainer+" div"),function(k,v){
 				if($(v).attr("name") == oName){
 					isAdded=true;
 					return false;	
@@ -503,7 +661,34 @@ function buildCriteriaPopupForm(type){
 	
 }
 
-
+function buildGroupCriteriaPopupForm(group){
+	
+	var precontainer = $("<div>");
+	var container = $("<div>",{class:"cdisCriteriaPopupForm"}).appendTo(precontainer);
+	$("<p>").text("You can add a new group criteria to the report.").appendTo(container);		
+	$("<label>",{for:"grvCriteriaSelect"}).text("Select criteria : ").appendTo(container);
+	var criteriaSelect = $("<select>",{id:"grvCriteriaSelect"}).appendTo(container);
+	$("<option>",{value:0}).text("Select from list").appendTo(criteriaSelect);
+	$.each(groupCriteria, function(index, objItem){
+		if(objItem.visible != "0"){
+			var oName = objItem.name;
+			var isAdded = false;
+			$.each($("#"+group+" .body div"),function(k,v){
+				if($(v).attr("name") == oName){
+					isAdded=true;
+					return false;	
+				}
+			});
+			if(!isAdded){
+				$("<option>",{value:oName}).text(objItem.label).appendTo(criteriaSelect);
+			}
+			
+		}
+	});
+	$("<div>",{class:"cdisCriteriaSelectFilter"}).appendTo(container);
+	return $(precontainer).html();	
+	
+}
 
 
 function selectCriteria(event){
@@ -588,9 +773,11 @@ function buildFilterForm(event){
 			getOperatorForValue(cName+"CollectedDate",containerDate);
 			
 			if($("#grvReportPeriodList").attr("value") == "between"){
-				$("#grvCriteriaFilterOperatorDate").val("between").trigger("change");
-				$("#grvCriteriaFilterOperatorDate").prop('readonly', true);
-				
+				if(cName != "dtype"){
+					$("#grvCriteriaFilterOperatorDate").val("between");
+					$("#grvCriteriaFilterOperatorDate").prop('readonly', true);	
+				}
+				$("#grvCriteriaFilterOperatorDate").trigger("change");
 			}
 		}
 	}else{
@@ -611,10 +798,26 @@ function getOperatorForValue(name,container){
 	}else if(cObj.type == "date"){
 		
 		if($("#grvReportPeriodList").attr("value") == "between"){
-			result = $("<input>",{id:"grvCriteriaFilterOperatorDate",value:"between",readonly:"readonly"}).text("Between");
+			if(name == "dtypeCollectedDate"){
+				result = $("<select>",{id:"grvCriteriaFilterOperatorDate"});
+				//$("<option>",{value:"0"}).text("Select operator").appendTo(result);
+				$("<option>",{value:"all"}).text("All patients").appendTo(result);
+				$("<option>",{value:"before"}).text("Before").appendTo(result);
+				$("<option>",{value:"after"}).text("After").appendTo(result);
+				$("<option>",{value:"between"}).text("Between").appendTo(result);
+				$("<option>",{value:"equal"}).text("Equal").appendTo(result);
+				
+				result.on("change",function(){
+					let operatorValue = $(this).val();
+					getFieldForValue(name,container,operatorValue)
+				});
+			}else{
+				result = $("<input>",{id:"grvCriteriaFilterOperatorDate",value:"between",readonly:"readonly"}).text("Between");
+			}
 			result.appendTo(container.find(".operator"));
 			let operatorValue = result.val();
 			getFieldForValue(name,container,operatorValue)
+			
 		}else{
 			result = $("<select>",{id:"grvCriteriaFilterOperatorDate"});
 			$("<option>",{value:"0"}).text("Select operator").appendTo(result);
@@ -673,6 +876,7 @@ function getFieldForValue(name,container,operatorValue){
 		let optionsArray = eval("creport_"+name);
 		$.each(optionsArray,function(i,v){$("<option>",{value:i}).text(optionsArray[i]).appendTo(result);});
 	}else if(cObj.type == "date"){
+		
 		if(operatorValue == "between"){
 			let d = $("<div>");
 			d.appendTo(container.find(".value"));
@@ -688,6 +892,9 @@ function getFieldForValue(name,container,operatorValue){
 				let dp1 = new Datepicker("#"+valueName+"Date1",{onChange:changeFormatDatepicker});
 				let dp2 = new Datepicker("#"+valueName+"Date2",{onChange:changeFormatDatepicker});	
 			}
+		}else if(operatorValue == "all"){
+			result = $("<input>",{id:valueName+"Date", type:"hidden",value:"0"});
+			result.appendTo(container.find(".value"));
 		}else{
 			result = $("<input>",{id:valueName+"Date", type:"text"});
 			result.appendTo(container.find(".value"));
@@ -837,6 +1044,7 @@ function executeAsyncReport(reportObject){
 		    	let report = msg.objs[0];
 		    	reportObject["dataset"] = report.dataset;
 		    	reportObject["header"] = report.header;
+		    	reportObject["totals"] = report.totals;
 		    	if(reportObject.type == "graph"){
 					drawReportGraph(reportObject);
 				}
@@ -852,11 +1060,16 @@ function executeAsyncReport(reportObject){
 	}
 }
 
-function drawReportTable(report){
+function drawReportTable(report, percentage=false){
 	let dataset = report.dataset;
 	let header = report.header;
-	let containerList = $(".cdisReportListContainer"); 
+	let totals = report.totals;
+	//let header = report.criteria;
+	let containerList = $(".cdisReportListContainer");
+	containerList.empty(); 
+	console.log(totals);
 	let type = report.type;
+	if(type == "list")header = report.criteria;
 	//add div for header 
 	let divContainer = $("<div>",{class:"cdisReportListTableHeaderContainer"}).appendTo(containerList);
 	let table1 = $("<table>").appendTo(divContainer);
@@ -868,14 +1081,28 @@ function drawReportTable(report){
 	let tableB = $("<tbody>").appendTo(table);
 	let th = $("<tr>").appendTo(tableH);
 	
+	let cnt = 0;
 	$.each(header,function(i, value){
 		let c = "center";
-		if(value=="RAMQ" || value=="Chart")c = "";
+		if(value.name=="ramq" || value.name=="chart")c = "";
 		if(type == "graph" && i==0){
 			$("<th>",{class:c}).text("").appendTo(th);
 		}
-		$("<th>",{class:c}).text(value).appendTo(th);
-		$("<th>",{class:c}).text(value).appendTo(th1);
+		if(type=="list"){
+			$("<th>",{class:c,id:"grvTableHeader_"+value.name}).text(value.display).appendTo(th);
+			$("<th>",{class:c,id:"grvTableHeader1_"+value.name}).text(value.display).appendTo(th1);	
+		}else{
+			let dataName = report.criteria[0].name;
+			let dataValue = report.criteria[0].value;
+			if(dataName == "idcommunity" && dataValue.indexOf("_") >= 0 ){
+				let m = moment(value);
+				value = m.format("MMM YYYY");
+			}
+			$("<th>",{class:c,id:"grvTableHeader_"+value.name}).text(value).appendTo(th);
+			//$("<th>",{class:c,id:"grvTableHeader1_"+value.name}).text(value).appendTo(th1);
+		}
+		
+		cnt++;
 	});
 	$.each(dataset,function(index, arrLine){
 		let rline = $("<tr>").appendTo(tableB);
@@ -896,22 +1123,58 @@ function drawReportTable(report){
 			$("<td>",{class:c}).text(preLabel).appendTo(rline);	
 		}
 		
-		$.each(arrLine,function(ii, arrValue){
-			
-			if(header[ii]=="RAMQ" || header[ii]=="Chart")c = "";
-			if(isNaN(arrValue)){
-				$("<td>",{class:c}).text(arrValue).appendTo(rline);	
-			}else{
-				if(type=="list"){
-					if(header[ii] != "Chart"){
-						arrValue = Number(arrValue).toFixed(3);	
-					}	
+		$.each(header,function(ii, arrValue){
+			let n = "0";
+			if(type=="list"){
+				if(arrValue.name=="ramq" || arrValue.name=="chart")c = "";
+				if(isNaN(arrLine[arrValue.name])){
+					if(arrValue.name.indexOf("CollectedDate") >= 0){
+						let m1 = moment(arrLine[arrValue.name]);
+						$("<td>",{class:c}).text(m1.format('YYYY-MM-DD')).appendTo(rline);
+					}else{
+						$("<td>",{class:c}).text(arrLine[arrValue.name]).appendTo(rline);	
+					}
+						
 				}else{
-					arrValue = Number(arrValue).toFixed(0);
+					 
+					if(type=="list"){
+						if(arrValue.name != "chart" && arrValue.name != "sbp" && arrValue.name != "dbp"){
+							if(arrValue.name == "dtype"){
+								n = report_dtype[Number(arrLine[arrValue.name]).toFixed(0)];
+							}else{
+								n = Number(arrLine[arrValue.name]).toFixed(3);	
+							}
+						}else{
+							n = Number(arrLine[arrValue.name]).toFixed(0);
+						}	
+					}
+					$("<td>",{class:c}).text(n).appendTo(rline);
+				}	
+			}else{
+				let p="";
+				if(report.criteria[0].name == "idcommunity"){
+					let valueData = report.criteria[0].value;
+					if(valueData.indexOf("_") >=0){
+						let parts = valueData.split("_");
+						p = ii+"_"+parts[index];
+					}else{
+						p = ii;
+					}
+				}else{
+					p = ii;
 				}
-				$("<td>",{class:c}).text(arrValue).appendTo(rline);
+				
+				n = Number(arrLine[p]).toFixed(0);
+				
+				
+				if(percentage){
+					let total = getTotalValue(p,totals);
+					console.log(ii+"   ---   "+p+"   ----   "+n+"   --   "+total);
+					n = (100*(n/total)).toFixed(2) + "%";
+				} 
+				
+				$("<td>",{class:c}).text(n).appendTo(rline); 
 			}
-			
 		});
 	});
 	let hc = $(table).find("th");
@@ -926,14 +1189,41 @@ function drawReportTable(report){
 }
 
 
-function drawReportGraph(report){
+function getTotalValue(key,dataset){
+	let result = "0";
+	$.each(dataset, function(i, obj){
+		let keys = Object.keys(obj);
+		$.each(keys,function(ii,kk){
+			if(kk == key){
+				result = obj[kk];
+			}
+		});
+	});
+	return result;
+}
+
+
+
+function drawReportGraph(report,percentage=false){
 	const labels = report.header;
-	let data = {labels: labels,datasets:[]};
+	let totals = report.totals;
+	let labelsValues = Object.values(labels);
+	let valueData = report.criteria[0].value;
+	let nameData = report.criteria[0].name;
+	if(nameData == "idcommunity" && valueData.indexOf("_") >= 0){
+		let ls = [];
+		$.each(labelsValues,function(x,l){
+			let m = moment(l);
+			ls.push(m.format("MMM YYYY"));
+		});
+		labelsValues = ls;
+	}
+	let data = {labels: labelsValues,datasets:[]};
 	let colorSet = ["#36A2EB", "#36F2EC"];
 	$.each(report.dataset,function(i,v){
 		let preLabel = "Number of patients from ";
-		if(report.criteria[0].name == "idcommunity"){
-			let valueData = report.criteria[0].value;
+		if(percentage) preLabel = "Percentage of patients from ";
+		if(nameData == "idcommunity"){
 			if(valueData.indexOf("_") >=0){
 				let parts = valueData.split("_");
 				preLabel = preLabel+" "+tool_idcommunity[parts[i]];
@@ -942,9 +1232,30 @@ function drawReportGraph(report){
 			}
 		}else{
 				preLabel = "Number of patients";
+				if(percentage)preLabel = "Percentage of patients";
 		}
-		data['datasets'][data.datasets.length] = {label:preLabel,data:v,fill:false,borderColor: colorSet[i],tension: 0.5};
+		
+		//alert(Object.keys(labels));
+		//alert(Object.keys(v));
+		let vs = Object.keys(v);
+		let d = [];
+		
+		$.each(Object.keys(labels), function(idx,label){
+			let zk = vs[idx];
+			let z = zk.split("_")[1]
+			if(percentage){
+				let total = getTotalValue(label+"_"+z,totals);
+				let n = (100*(v[label+"_"+z]/total)).toFixed(2);
+				d.push(n);
+			}else{
+				d.push(v[label+"_"+z]);	
+			}
+			
+		});
+		data['datasets'][data.datasets.length] = {label:preLabel,data:d,fill:false,borderColor: colorSet[i],backgroundColor: colorSet[i],tension: 0.5};
 	});
+	
+	
 	/*
 	const data = {
 	  labels: labels,
@@ -967,7 +1278,17 @@ function drawReportGraph(report){
 	const config = {
 	  type: report.graphtype,
 	  data: data,
+	  plugins: {colors: {enabled: true}}
 	};
+	console.log("data");
+	console.log(data);
+	$("#grvReportGraphContainer").empty();
+	let chartStatus = Chart.getChart("grvReportGraphContainer"); // <canvas> id
+	if (chartStatus != undefined) {
+	  chartStatus.destroy();
+	}
+    //-- End of chart destroy  
+	
 	let ctx = document.getElementById("grvReportGraphContainer");
 	const mixedChart = new Chart(ctx, config);
 	/*
@@ -1019,10 +1340,33 @@ function buildAsyncReport(reportObject){
 		$("<div>",{class:"cdisReportGraphContainer"})
 		.appendTo(reportB)
 		.append($("<canvas>",{id:"grvReportGraphContainer"}));
+		
 	}
 	$("<div>",{class:"cdisReportListContainer"}).appendTo(reportB);
-	
+	if(reportObject.type == "graph"){
+		let configContainer = $("<div>",{class:"cdisReportGraphConfig"}).appendTo(reportB);
+		let rc = $("<div>",{id:"grvGraphConfigRadio",type:"grvwradio"}).appendTo(configContainer)
+				.append($("<div>",{default:true,value:"absolute"}).text("Graph with absolute values (number of patients)"))
+				.append($("<div>",{value:"relative"}).text("Graph with relative values (percentage)"))
+		let gcr = new grvwradio("grvGraphConfigRadio");
+		gcr.on("change",{report:reportObject, object:gcr},applyGraphConfig);
+	}
 }
+
+
+function applyGraphConfig(event){
+	let ob = event.data.object;
+	let obv = ob.getValue();
+	if(obv == "relative"){
+		drawReportTable(event.data.report,true);
+		drawReportGraph(event.data.report,true);
+	}else{
+		drawReportTable(event.data.report,false);
+		drawReportGraph(event.data.report,false);
+	}
+
+}
+
 
 
 function getUserReportHistory(iduser,sort){
@@ -1041,12 +1385,14 @@ function getUserReportHistory(iduser,sort){
 	    	container.empty();
 	    	$.each(reports,function(index, report){
 	    		let r = $("<div>",{class:"cdisReportsHistoryItem",id:report.id}).appendTo(container);
-	    		$("<p>",{class:"title"}).text(report.title).appendTo(r);
-	    		$("<p>",{class:"type"}).appendTo(r).append($("<i>").text("Type : ")).append($("<b>").text(report.type));
+	    		$("<p>",{class:"title"}).text(report.title+" - "+(report.type).toUpperCase()).appendTo(r);
+	    		//$("<p>",{class:"type"}).appendTo(r).append($("<i>").text("Type : ")).append($("<b>").text(report.type));
 	    		$("<p>",{class:"date"}).appendTo(r).append($("<i>").text("Generated : ")).append($("<b>").text(report.generated));
 	    		let n = report.note;
 	    		if(n!="") n = window.atob(n).substr(0,100);
-	    		$("<p>",{class:"note"}).appendTo(r).append($("<b>").text(n));
+	    		$("<p>",{class:"note"}).appendTo(r).append($("<i>").text("Note : ")).append($("<b>").text(n));
+	    		$("<p>",{class:"date"}).appendTo(r).append($("<i>").text("Description : ")).append($("<span>").html(getReportDescription(report)));
+	    		
 	    		r.on("click",function(){
 					loadReportCriteriaFromReport($(this).attr("id"));
 				});
@@ -1056,6 +1402,62 @@ function getUserReportHistory(iduser,sort){
 	    }
 	});
 	
+}
+
+function getReportDescription(report){
+	/**
+	this report has all values as text so if you wanna use array you have to eval
+	*/
+	let description = "";
+	if(report.type == "list") description = "List of patients";
+	else if(report.type == "graph") description = "Graph (<b>"+report.graphtype+"</b>) with number of patients"
+	else if(report.type == "comparator") description = "Comparator report"
+	
+	let criterias = eval(report.criteria);
+	let subcriterias = eval(report.subcriteria);
+	
+	if(report.type == "list"){
+		$.each(criterias, function(i,k){
+		/** report list does not have subcriterias*/
+			if(i == 0){description += " with the folowing criteria : <br>";}
+			if(k.value != "0"){
+				description += "<b> "+ k.display + " "; 
+				description += " "+k.operator+" ";
+				description += " "+renderValue(k)+" </b><br>";
+			}
+		
+		});
+	}else if(report.type == "graph"){
+		$.each(subcriterias, function(i,k){
+		/** report list does not have subcriterias*/
+			if(i == 0){description += " with the folowing criteria : <br>";}
+			if(k.value != "0"){
+				description += "<b> "+ k.display + " "; 
+				description += " "+k.operator+" ";
+				description += " "+renderValue(k)+" </b><br>";
+			}
+		});
+		$.each(criterias, function(i,k){
+			//if(i == 0){description += " per ";}
+			if(k.name == "idcommunity"){
+				//description += " "+ k.display + " "; 
+				if(k.value.indexOf("_") >= 0){
+					description += " in ";
+					let parts = k.value.split("_");
+					let c1 = "";
+					if(parts[0] == "0")c1="All Communities"; else c1= eval("creport_"+k.name+"["+parts[0]+"]")+" community";
+					if(parts[1] == "0")c2="All Communities"; else c2= eval("creport_"+k.name+"["+parts[1]+"]")+" community"; 
+					description += " "+c1 + " and " + c2;
+				}else{
+					if(k.value == "0") description += " in all communities";
+					else description += " in "+eval("creport_"+k.name+"["+k.value+"]")+ " community" ;
+				}
+			}else{
+				description += " per type of diabetes" ;
+			}
+		});
+	}
+	return description;
 }
 
 function deleteHistoryItemObject(){

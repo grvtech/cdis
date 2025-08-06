@@ -1146,53 +1146,6 @@ function getUserPatients(userId,hcpcat){
 }
 
 
-function resetPassword(){
-	var username = $("#usernameRes").val();
-	var password = $("#passwordrRes").val();
-	var passwordc = $("#cpasswordrRes").val();
-	var iduser = $("#iduserRes").val();
-	var validUser = Validate.now(Validate.Presence, username);
-	var validPass = Validate.now(Validate.Presence, password);
-	var validPassC = Validate.now(Validate.Presence, passwordc);
-	if(validUser && validPass && validPassC){
-		var data = "username="+username+"&passwordr="+btoa(password)+"&iduser="+iduser+"&language=en";
-		var request = $.ajax({
-		  url: "/ncdis/service/action/resetUserPassword",
-		  type: "POST",
-		  data: data,
-		  async : false,
-		  dataType: "json"
-		});
-		request.done(function( json ) {
-			
-		  if(json.status == "0"){
-			  $(".validateTipsReset").html(json.message);
-		  }else{
-			  $(".validateTipsReset").html(json.message);
-			  $("#dialog-reset").find("fieldset").hide();
-			  //$("#resetButtonDialog").text("Go to login page");
-			
-			  $("#dialog-reset").dialog( "option", "buttons", 
-			    [
-			      {
-			        text: "Go to login page",
-			        click: function() {
-			          gti();
-			        }
-			      }
-			    ]
-			  );
-		  }
-		});
-		request.fail(function( jqXHR, textStatus ) {
-			$("#errortext").text("Wrong Username or Password");
-		});
-		
-	}else{
-		$("#errortext").text("Wrong Username or Password");
-		
-	}	
-}
 
 
 function loadPatientObject(key,value){

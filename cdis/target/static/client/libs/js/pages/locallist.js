@@ -473,6 +473,7 @@ function drawStats(statsConfig, report){
 }
 
 function drawList(listid,listConfig,report){
+	
 	if($(".list-container").length){
 		$(".list-container").remove();
 	}
@@ -491,6 +492,7 @@ function drawList(listid,listConfig,report){
 	drawListHeader(dataContainer, listid);
 	var r = applyFilter(report,appFilter);
 	nowReport = getReport(r);
+	
 	drawListTableHeader(headerContainer,r,listid);
 	var stats = drawListTableBody(bodyContainer,r,listid);
 	refreshHeaderStats(stats);
@@ -653,12 +655,12 @@ function applyFilter(report,filter){
 		/*
 		 * temporar add 36 month 
 		 * */
-		
 		if(dpValue != "0"){
 			dpValue = dpValue;
 			var filterDate = moment().subtract(dpValue, 'months');
 			var reportDate = moment(obj.last_hba1c_collecteddate);
 			hasDate = moment(reportDate).isAfter(moment(filterDate));
+			
 			if(filter.list == "list102"){
 				hasDate = moment(reportDate).isBefore(moment(filterDate));
 			}
@@ -710,7 +712,7 @@ function applyFilter(report,filter){
 				if(obj.last_hba1c != ""){dsresult.push(obj);}
 			}
 		}else{
-
+			
 		}
 	});
 	
@@ -737,6 +739,7 @@ function compareHBA1cAsc(a,b) {if (a.last_hba1c > b.last_hba1c)return 1;if (a.la
 
 
 function drawListTableHeader(container, report, listid){
+	
 	container.empty();
 	var reportHeader = report.data.header;
 	var header = eval("listConfig."+listid+".header");
@@ -895,6 +898,7 @@ function getReportHeaderConfig(column, headerArray){
 	return result;
 }
 function drawListTableBody(container,report,listid){
+	
 	container.css("height",container.height()+"px");
 	container.empty();
 	var header = eval("listConfig."+listid+".header");
@@ -905,6 +909,7 @@ function drawListTableBody(container,report,listid){
 		hconfObj[column] = hconf;
 	});
 	var reportBody = report.data.datasets;
+	
 	var dataHeaderStats = {};
 	
 	var bc = document.getElementById("list-body");
@@ -1447,6 +1452,8 @@ function getReportTitle(filter, type){
 }
 
 function getReport(report){
+	
+	
 	var result = {};
 	result["data"] = {};
 	result["data"]["header"] = report.data.header;
@@ -1454,6 +1461,7 @@ function getReport(report){
 	$.each(report.data.datasets, function(i,row){
 		result["data"]["datasets"].push(row);
 	});
+	
 	return result;
 }
 

@@ -66,6 +66,7 @@ function GRVMSelect(list,options){
 				alert("Maximum items selected is 2");
 			}	
 		}else{
+			selectedObjects = [];
 			sbar.empty();
 		}
 		
@@ -102,6 +103,7 @@ function GRVMSelect(list,options){
 					sbar.append($("<span>",{class:"grvmselect-span"}).text("Select one or two communities"));
 				}
 			}
+			console.log(selectedObjects)
 		});
 		return itemContainer;
 	}

@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -64,9 +65,22 @@ public class CdisDBridge {
 	
 	
 	
-	public ArrayList<String> getAllCommunities(){
-		ArrayList<String> result = new ArrayList<String>();
-		String sql = "select name_en from ncdis.community where community_code != 'NONC' order by name_en asc";
+	public HashMap<String,String> getAllCommunities(){
+		HashMap<String,String> result = new HashMap();
+		String sql = "select idcommunity,name_en from ncdis.community where community_code != 'NONC' order by name_en asc";
+			
+		List<Map<String,Object>> rs = jdbcTemplate.queryForList(sql);
+	    for(int i=0;i<rs.size();i++) {
+	    	Map<String,Object> line = rs.get(i);
+	    	result.put(line.get("idcommunity").toString(),line.get("name_en").toString());
+	    }
+	    logger.log(Level.INFO, "Get all comunities :"+result.size() );
+		return result;
+	}
+	
+	public ArrayList<String> getAllCommunitiesList(){
+		ArrayList<String> result = new ArrayList();
+		String sql = "select idcommunity,name_en from ncdis.community where community_code != 'NONC' order by name_en asc";
 			
 		List<Map<String,Object>> rs = jdbcTemplate.queryForList(sql);
 	    for(int i=0;i<rs.size();i++) {
@@ -77,16 +91,16 @@ public class CdisDBridge {
 		return result;
 	}
 	
-	public ArrayList<String> getDiabetesTypes(String config){
-		ArrayList<String> result = new ArrayList<String>();
+	public HashMap<String,String> getDiabetesTypes(String config){
+		HashMap<String,String> result = new HashMap();
 		String limit = "4";
 		if(config.equals("extended"))limit = "5"; 
-		String sql = "select diabet_name from ncdis.cdis_diabet where iddiabet <= '"+limit+"' order by iddiabet asc";
+		String sql = "select iddiabet, diabet_name from ncdis.cdis_diabet where iddiabet <= '"+limit+"' order by iddiabet asc";
 			
 		List<Map<String,Object>> rs = jdbcTemplate.queryForList(sql);
 	    for(int i=0;i<rs.size();i++) {
 	    	Map<String,Object> line = rs.get(i);
-	    	result.add(line.get("diabet_name").toString());
+	    	result.put(line.get("iddiabet").toString(),line.get("diabet_name").toString());
 	    }
 	    logger.log(Level.INFO, "Get diabet Types :"+result.size() );
 		return result;
@@ -202,7 +216,7 @@ public class CdisDBridge {
 		    		+ "iscree='"+pat.getIscree()+"', "
 		    		+ "phone='"+pat.getPhone()+"' "
 		    		+ "where idpatient='"+pat.getIdpatient()+"'";
-		    
+		
 		jdbcTemplate.update(sql);
 			
 	    result.setStatus(0);
@@ -683,7 +697,661 @@ public String getIddata(String dataName){
 	return result;
 }
 	
+
+public ArrayList<HashMap<String,String>> executeReportCriteria(HashMap<String, Object> item){
+	ArrayList<HashMap<String,String>> result = new ArrayList<>();
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	boolean isDoubleData = false;
 	
+	String valValue = "";
+	String nomValue = "";
+	String opValue = "";
+	String valValueDate = "";
+	String nomValueDate = "";
+	String opValueDate = "";
+	ReportCriteria criteria = null;
+	ReportCriteria criteriaDate = null;
+	Set<String> keys = item.keySet();
+			
+	if(item.get("flag").equals("1")) {
+		//avem variabile cu date
+		isDoubleData = true;
+		for(String key : keys ) {
+			if(key.indexOf("CollectedDate") >= 0)criteriaDate = (ReportCriteria)item.get(key); 
+			if(key.indexOf("CollectedDate") < 0 && key.indexOf("flag") <0)criteria = (ReportCriteria)item.get(key);
+		}
+		valValue = criteria.getValue();
+		nomValue = criteria.getName();
+		opValue = renderer.renderOperator(criteria.getOperator());
+		valValueDate = criteriaDate.getValue();
+		nomValueDate = criteriaDate.getName();
+		opValueDate = renderer.renderOperator(criteriaDate.getOperator());
+	}else {
+		for(String key : keys ) {
+			if(key.indexOf("CollectedDate") < 0 && key.indexOf("flag") <0)criteria = (ReportCriteria)item.get(key);
+		}
+		valValue = criteria.getValue();
+		nomValue = criteria.getName();
+		opValue = renderer.renderOperator(criteria.getOperator());
+	}
+	
+	//String op = renderer.renderOperator(criteria.getOperator());
+			
+	if(criteria.getSection().equals("1")){
+			String criteriaStr = " and nn."+nomValue+" "+opValue+" '"+valValue+"' ";
+			if(opValue.equals("between")){
+				String[] parts = valValue.split("\\s*\\|+\\s*");
+				String part1 = parts[0].trim();
+				String part2 = parts[1].trim();
+				String between1 = "'"+part1+"'";
+				String between2 = "'"+part2+"'";
+				if(part1.indexOf("(") >= 0 && part1.indexOf(")") >= 0){between1 = part1;}
+				if(part2.indexOf("(") >= 0 && part2.indexOf(")") >= 0){between2 = part2;}
+				criteriaStr = " and nn."+nomValue+" "+opValue+" "+between1+" and "+ between2;
+			}
+				
+			if(valValue.equals("0")){criteriaStr = "";}
+			String vn = "nn."+nomValue;
+			String sql = "select nn.idpatient, "+vn+"  from ncdis.ncdis.patient nn  "
+					+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
+					+ " "+ criteriaStr+ " "
+					+ "order by nn.idpatient asc";
+			//System.out.println("=========================================");
+			//System.out.println("SQL : "+sql);
+			//System.out.println("=========================================");
+			
+			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+			
+		    int index=0;
+			for(Map row : rows) {
+		    	HashMap<String,String> line = new HashMap();
+		    	if(row.get(nomValue) == null || row.get(nomValue).toString().equals("null")) {
+		    		line.put("id",Integer.toString(index));
+		    		line.put("idpatient",row.get("idpatient").toString());
+		    	}else{
+		    		line.put("id",Integer.toString(index));
+		    		line.put("idpatient",row.get("idpatient").toString());
+		    		if(criteria.getName().equals("sex") || criteria.getName().equals("idcommunity") || criteria.getName().equals("dtype")){
+		    			line.put(criteria.getName(), renderer.renderName(nomValue+"."+row.get(nomValue).toString()));
+					}else{
+						line.put(nomValue,row.get(nomValue).toString());
+					}
+		    	}
+		    	result.add(line);
+		    	index++;
+			}
+			
+	}else{
+			String sql = "";
+			if(opValue.equals("between")){
+				String[] parts = valValue.split("\\s*\\|+\\s*");
+				String part1 = parts[0].trim();
+				String part2 = parts[1].trim();
+				String between1 = "'"+part1+"'";
+				String between2 = "'"+part2+"'";
+				if(part1.indexOf("(") >= 0 && part1.indexOf(")") >= 0){between1 = part1;}
+				if(part2.indexOf("(") >= 0 && part2.indexOf(")") >= 0){between2 = part2;}
+				valValue = between1+" and "+ between2;
+			}else {
+				valValue = "'"+valValue+"'";
+			}
+			
+			if(opValueDate.equals("between")){
+				String[] parts = valValueDate.split("\\s*\\|+\\s*");
+				String part1 = parts[0].trim();
+				String part2 = parts[1].trim();
+				String between1 = "'"+part1+"'";
+				String between2 = "'"+part2+"'";
+				if(part1.indexOf("(") >= 0 && part1.indexOf(")") >= 0){between1 = part1;}
+				if(part2.indexOf("(") >= 0 && part2.indexOf(")") >= 0){between2 = part2;}
+				valValueDate = between1+" and "+ between2;
+			}else {
+				valValueDate = "'"+valValueDate+"'";
+			}
+			
+			
+			String criteriaStr = " and cast(value as float) "+opValue+" "+valValue+" ";
+			
+			if(isDoubleData) {
+				criteriaStr += " and cast(datevalue as datetime) "+opValueDate+" "+valValueDate+" ";
+				
+			}
+			
+			System.out.println("=========================================");
+			System.out.println("Value Name : "+nomValue);
+			System.out.println("Value Value: "+valValue);
+			System.out.println("Value Name Date: "+nomValueDate);
+			System.out.println("Value Value Date: "+valValueDate);
+			System.out.println("=========================================");
+				
+			if(criteria.getValue().equals("0")){
+				criteriaStr = "";
+				
+			}	
+			
+			/*
+			sql = "select aa.idpatient,replace(convert(varchar,aa.datevalue,102),'.','-') as datevalue, aa.value "
+						+ " from ncdis.dbo.LastdateValue aa "
+						+ "where isnumeric(aa.value)=1  "
+						+ "and aa.iddata='"+criteria.getIddata()+"' "
+						+ " "+ criteriaStrSub+ " "
+						+ "order by aa.idpatient asc";
+				
+			sql = "select aa.idpatient,replace(convert(varchar,aa.datevalue,102),'.','-') as datevalue, aa.value "
+					+ " from ncdis.ncdis.cdis_value aa "
+					+ "where isnumeric(aa.value)=1  "
+					+ "and aa.iddata='"+criteria.getIddata()+"' "
+					+ " "+ criteriaStr+ " "
+					+ " group by idpatient, datevalue,value"
+					+ " having datevalue = max(datevalue)";
+			*/
+			sql = "select aa.idpatient,aa.datevalue,aa.value from "
+					+ " (select  idpatient, max(datevalue) as datevalue from ncdis.ncdis.cdis_value " 
+					+ " 	where isnumeric(value)=1 and iddata='"+criteria.getIddata()+"' "+ criteriaStr+ " group by idpatient) as bb "
+					+ "   	left join (select * from ncdis.ncdis.cdis_value where iddata='"+criteria.getIddata()+"' " 
+					+ "  "+ criteriaStr+ " ) as aa on bb.idpatient = aa.idpatient and bb.datevalue=aa.datevalue ";
+			
+			
+			
+			
+			//System.out.println("=========================================");
+			//System.out.println("SQL : "+sql);
+			//System.out.println("=========================================");
+			/**/
+			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		    int index=0;
+			for(Map row : rows) {
+				HashMap<String,String> line = new HashMap<>();
+		    	line.put("id",Integer.toString(index));
+	    		line.put("idpatient",row.get("idpatient").toString());
+	    		if(isDoubleData) {
+					line.put("datevalue",row.get("datevalue").toString());
+				}
+				line.put("value",row.get("value").toString());
+			
+	    		result.add(line);
+	    		index++;
+			}
+	}
+	
+	logger.log(Level.INFO, "Execute Report ");
+	return result;
+}
+
+
+public ArrayList<HashMap<String,String>> executeReportCriteriaGraphTotals(String filter, HashMap<String,String> header, ReportCriteria criteria ){
+	
+	ArrayList<HashMap<String,String>> result = new ArrayList<>();
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	
+	String hcpfilter = " ";
+	String hcpfilterCriteria = " ";
+	if(!filter.equals("allhcp")) {
+		hcpfilter = " left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient ";
+		hcpfilterCriteria = " and (ph.md='"+filter+"' or ph.nut='"+filter+"'or ph.nur='"+filter+"' or ph.chr='"+filter+"') ";
+	}
+	
+	Set<String> keysHeader = header.keySet();
+	for(String keyHeader : keysHeader) {
+		if(criteria.getName().equals("idcommunity")) {
+			if(criteria.getValue().equals("0")) {
+					String criteriaStr = " and nn.idcommunity='"+keyHeader+"' ";
+					String sql = "select nn.idpatient as idpatient from ncdis.ncdis.patient nn  "
+							+ hcpfilter
+							+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
+							+ criteriaStr
+							+ hcpfilterCriteria
+							+ " ";
+					System.out.println("=========================================");
+					System.out.println("SQL : "+sql);
+					System.out.println("=========================================");
+					
+					List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+					HashMap<String,String> m = new HashMap();
+					m.put(keyHeader,Integer.toString(rows.size()));
+					result.add(m);
+				}else if(criteria.getValue().indexOf("_") >= 0){
+					//dates 2 sets
+					String[] parts = criteria.getValue().split("_");
+					String keia1 = parts[0];
+					String keia2 = parts[1];
+					String keia1Criteria = " and nn.idcommunity = '"+keia1+"' ";
+					String keia2Criteria = " and nn.idcommunity = '"+keia2+"' ";
+					if(keia1.equals("0")) keia1Criteria = " ";
+					if(keia2.equals("0")) keia2Criteria = " ";
+					String sql1 = "select nn.idpatient as idpatient from ncdis.ncdis.patient nn  "
+							+ "		left join (select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd on nn.idpatient=dd.idpatient "
+							+ hcpfilter
+							+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
+							+" and dd.ddate <= '"+header.get(keyHeader)+"' "+keia1Criteria+" "
+							+ hcpfilterCriteria
+							+ " order by nn.idpatient asc";
+					String sql2 = "select nn.idpatient as idpatient from ncdis.ncdis.patient nn  "
+							+ "		left join (select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd on nn.idpatient=dd.idpatient "
+							+ hcpfilter
+							+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
+							+" and dd.ddate <= '"+header.get(keyHeader)+"' "+keia2Criteria+" "
+							+ hcpfilterCriteria
+							+ " ";
+					System.out.println("=========================================");
+					System.out.println("SQL : "+sql1);
+					System.out.println("SQL : "+sql2);
+					System.out.println("=========================================");
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql1);
+					List<Map<String, Object>> rows2 = jdbcTemplate.queryForList(sql2);
+					
+					HashMap<String,String> m = new HashMap();
+					m.put(keyHeader+"_"+keia1,Integer.toString(rows1.size()));
+					m.put(keyHeader+"_"+keia2,Integer.toString(rows2.size()));
+					result.add(m);
+					
+				}else {
+					//dates 1 set
+					String keia1 = criteria.getValue();
+					String sql1 = "select nn.idpatient as idpatient from ncdis.ncdis.patient nn  "
+							+ "		left join (select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd on nn.idpatient=dd.idpatient "
+							+ hcpfilter
+							+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
+							+" and dd.ddate <= '"+header.get(keyHeader)+"' and nn.idcommunity = '"+keia1+"'"
+							+ hcpfilterCriteria
+							+ " order by nn.idpatient asc";
+					System.out.println("=========================================");
+					System.out.println("SQL : "+sql1);
+					System.out.println("=========================================");
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql1);
+					HashMap<String,String> m = new HashMap();
+					m.put(keyHeader+"_"+keia1,Integer.toString(rows1.size()));
+					result.add(m);
+				}//end 
+			}else if(criteria.getName().equals("dtype")) {
+				String sql = "select distinct nn.idpatient as idpatient"
+						+ "	from "
+						+ "		ncdis.ncdis.patient nn "
+						+ "		inner join "
+						+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 and value='"+keyHeader+"' group by idpatient) as dd "
+						+ "			on nn.idpatient=dd.idpatient "
+						+ "	where  "
+						+ "	(nn.dod='1900-01-01' or dod is null) and nn.active='1' ";
+				System.out.println("=========================================");
+				System.out.println("SQL : "+sql);
+				System.out.println("=========================================");
+				
+				List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+				HashMap<String,String> m = new HashMap();
+				m.put(keyHeader,Integer.toString(rows.size()));
+				result.add(m);
+			}
+		}
+	
+	
+	logger.log(Level.INFO, "Execute Report Totals ");
+	return result;
+}
+
+
+public ArrayList<HashMap<String,ArrayList<String>>> executeReportCriteriaGraph(HashMap<String, Object> item, String filter, HashMap<String,String> header, ArrayList<HashMap<String,ArrayList<String>>> idpatientsWithCriteria,ReportCriteria criteria ){
+	ArrayList<HashMap<String,ArrayList<String>>> result = idpatientsWithCriteria;
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	
+	String valValue = "";
+	String nomValue = "";
+	String opValue = "";
+	
+	ReportCriteria subcriteria = null;
+	Set<String> keys = item.keySet();
+	for(String key : keys ) {
+		if(key.indexOf("CollectedDate") < 0 && key.indexOf("flag") <0)subcriteria = (ReportCriteria)item.get(key);
+	}
+	valValue = subcriteria.getValue();
+	nomValue = subcriteria.getName();
+	opValue = renderer.renderOperator(subcriteria.getOperator());
+	
+	String hcpfilter = " ";
+	String hcpfilterCriteria = " ";
+	if(!filter.equals("allhcp")) {
+		hcpfilter = " left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient ";
+		hcpfilterCriteria = " and (ph.md='"+filter+"' or ph.nut='"+filter+"'or ph.nur='"+filter+"' or ph.chr='"+filter+"') ";
+	}
+	
+	String subcriteriaStr = " and nn."+nomValue+" "+opValue+" '"+valValue+"' ";
+	if(opValue.equals("between")){
+		String[] parts = valValue.split("\\s*\\|+\\s*");
+		String part1 = parts[0].trim();
+		String part2 = parts[1].trim();
+		String between1 = "'"+part1+"'";
+		String between2 = "'"+part2+"'";
+		if(part1.indexOf("(") >= 0 && part1.indexOf(")") >= 0){between1 = part1;}
+		if(part2.indexOf("(") >= 0 && part2.indexOf(")") >= 0){between2 = part2;}
+		subcriteriaStr = " and nn."+nomValue+" "+opValue+" "+between1+" and "+ between2;
+	}
+	
+	
+	if(subcriteria.getSection().equals("1")){
+		Set<String> keysHeader = header.keySet();
+		
+		for(String keyHeader : keysHeader) {
+			
+			if(criteria.getName().equals("idcommunity")) {
+				
+				if(criteria.getValue().equals("0")) {
+					String criteriaStr = " and nn.idcommunity='"+keyHeader+"' ";
+					String sql = "select nn.idpatient as idpatient from ncdis.ncdis.patient nn  "
+							+ hcpfilter
+							+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
+							+ " "+ subcriteriaStr+ " " + criteriaStr
+							+ hcpfilterCriteria
+							+ " ";
+					System.out.println("=========================================");
+					System.out.println("SQL : "+sql);
+					System.out.println("=========================================");
+					
+					List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+					for(int i=0;i<result.size();i++) {
+						HashMap<String, ArrayList<String>> headerMap = result.get(i);
+						if(headerMap.keySet().contains(keyHeader)) {
+							ArrayList<String> list =  headerMap.get(keyHeader);
+							ArrayList<String> newlist =  new ArrayList<>();
+							for(Map row : rows) {
+								String p = row.get("idpatient").toString();
+								if(list.contains(p))newlist.add(p);
+							}
+							headerMap.put(keyHeader,newlist);
+							result.set(i,headerMap);
+							break;
+						}
+					}
+				}else if(criteria.getValue().indexOf("_") >= 0){
+					//dates 2 sets
+					String[] parts = criteria.getValue().split("_");
+					String keia1 = parts[0];
+					String keia2 = parts[1];
+					String keia1Criteria = " and nn.idcommunity = '"+keia1+"' ";
+					String keia2Criteria = " and nn.idcommunity = '"+keia2+"' ";
+					if(keia1.equals("0")) keia1Criteria = " ";
+					if(keia2.equals("0")) keia2Criteria = " ";
+					String sql1 = "select nn.idpatient as idpatient from ncdis.ncdis.patient nn  "
+							+ "		left join (select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd on nn.idpatient=dd.idpatient "
+							+ hcpfilter
+							+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
+							+ " "+ subcriteriaStr+ " "+" and dd.ddate <= '"+header.get(keyHeader)+"' "+keia1Criteria+" "
+							+ hcpfilterCriteria
+							+ " order by nn.idpatient asc";
+					String sql2 = "select nn.idpatient as idpatient from ncdis.ncdis.patient nn  "
+							+ "		left join (select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd on nn.idpatient=dd.idpatient "
+							+ hcpfilter
+							+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
+							+ " "+ subcriteriaStr+ " "+" and dd.ddate <= '"+header.get(keyHeader)+"' "+keia2Criteria+" "
+							+ hcpfilterCriteria
+							+ " ";
+					System.out.println("=========================================");
+					System.out.println("SQL : "+sql1);
+					System.out.println("SQL : "+sql2);
+					System.out.println("=========================================");
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql1);
+					List<Map<String, Object>> rows2 = jdbcTemplate.queryForList(sql2);
+					for(int i=0;i<result.size();i++) {
+						HashMap<String, ArrayList<String>> headerMap = result.get(i);
+						String k1 = keyHeader+"_"+keia1;
+						String k2 = keyHeader+"_"+keia2;
+						if(headerMap.keySet().contains(k1)  && headerMap.keySet().contains(k2)) {
+							ArrayList<String> list1 =  headerMap.get(k1);
+							ArrayList<String> list2 =  headerMap.get(k2);
+							ArrayList<String> newlist1 =  new ArrayList<>();
+							ArrayList<String> newlist2 =  new ArrayList<>();
+							for(Map row1 : rows1) {
+								String p = row1.get("idpatient").toString();
+								if(list1.contains(p))newlist1.add(p);
+							}
+							headerMap.put(k1,newlist1);
+							for(Map row2 : rows2) {
+								String p = row2.get("idpatient").toString();
+								if(list2.contains(p))newlist2.add(p);
+							}
+							headerMap.put(k2,newlist2);
+							result.set(i,headerMap);
+						}
+					}
+					
+				}else {
+					//dates 1 set
+					String keia1 = criteria.getValue();
+					String sql1 = "select nn.idpatient as idpatient from ncdis.ncdis.patient nn  "
+							+ "		left join (select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd on nn.idpatient=dd.idpatient "
+							+ hcpfilter
+							+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
+							+ " "+ subcriteriaStr+ " "+" and dd.ddate <= '"+header.get(keyHeader)+"' and nn.idcommunity = '"+keia1+"'"
+							+ hcpfilterCriteria
+							+ " order by nn.idpatient asc";
+					System.out.println("=========================================");
+					System.out.println("SQL : "+sql1);
+					System.out.println("=========================================");
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql1);
+					for(int i=0;i<result.size();i++) {
+						HashMap<String, ArrayList<String>> headerMap = result.get(i);
+						String k1 = keyHeader;
+						if(headerMap.keySet().contains(k1)) {
+							ArrayList<String> list1 =  headerMap.get(k1);
+							ArrayList<String> newlist1 =  new ArrayList<>();
+							for(Map row1 : rows1) {
+								String p = row1.get("idpatient").toString();
+								if(list1.contains(p))newlist1.add(p);
+							}
+							headerMap.put(k1,newlist1);
+							result.set(i,headerMap);
+						}
+					}
+				}//end 
+			}else if(criteria.getName().equals("dtype")) {
+				
+				String sql = "select distinct nn.idpatient as idpatient"
+						+ "	from "
+						+ "		ncdis.ncdis.patient nn "
+						+ "		left join "
+						+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
+						+ "			on nn.idpatient=dd.idpatient "
+						+ "		left join "
+						+ "			ncdis.ncdis.cdis_value cv on dd.idpatient = cv.idpatient and dd.ddate = cv.datevalue "
+						+ "	where cv.iddata=1 and cv.value = '"+keyHeader+"' "
+						+ "	and (nn.dod='1900-01-01' or dod is null) and nn.active='1' " + subcriteriaStr;
+				System.out.println("=========================================");
+				System.out.println("SQL : "+sql);
+				System.out.println("=========================================");
+				
+				List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+				for(int i=0;i<result.size();i++) {
+					HashMap<String, ArrayList<String>> headerMap = result.get(i);
+					if(headerMap.keySet().contains(keyHeader)) {
+						ArrayList<String> list =  headerMap.get(keyHeader);
+						ArrayList<String> newlist =  new ArrayList<>();
+						for(Map row : rows) {
+							String p = row.get("idpatient").toString();
+							if(list.contains(p))newlist.add(p);
+						}
+						headerMap.put(keyHeader,newlist);
+						result.set(i,headerMap);
+						break;
+					}
+				}
+			}
+						
+		}
+	}else{
+		//section is not 1
+		Set<String> keysHeader = header.keySet();
+		subcriteriaStr = " cast(value as float) "+opValue + "'"+valValue+"'";
+		for(String keyHeader : keysHeader) {
+			
+			if(criteria.getName().equals("idcommunity")) {
+				
+				if(criteria.getValue().equals("0")) {
+					//subcriteriaStr += " and nn.idcommunity='"+keyHeader+"' ";
+					String sql = "select nn.idpatient as idpatient from   "
+							+ " (select idpatient, max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata = '"+subcriteria.getIddata()+"' and "+subcriteriaStr+" group by idpatient) as nn "
+							+ " left join ncdis.ncdis.patient pp on nn.idpatient = pp.idpatient"
+							+ hcpfilter
+							+ " where pp.idpatient > 0 and pp.active=1 and (pp.dod is null or pp.dod = '1900-01-01') "
+							+ " and pp.idcommunity = '"+keyHeader+"' "
+							+ hcpfilterCriteria
+							+ " ";
+					System.out.println("=========================================");
+					System.out.println("SQL : "+sql);
+					System.out.println("=========================================");
+					
+					List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+					for(int i=0;i<result.size();i++) {
+						HashMap<String, ArrayList<String>> headerMap = result.get(i);
+						if(headerMap.keySet().contains(keyHeader)) {
+							ArrayList<String> list =  headerMap.get(keyHeader);
+							ArrayList<String> newlist =  new ArrayList<>();
+							for(Map row : rows) {
+								String p = row.get("idpatient").toString();
+								if(list.contains(p))newlist.add(p);
+							}
+							headerMap.put(keyHeader,newlist);
+							result.set(i,headerMap);
+							break;
+						}
+						
+					}
+				}else if(criteria.getValue().indexOf("_") >= 0){
+					//dates 2 sets
+					String[] parts = criteria.getValue().split("_");
+					String keia1 = parts[0];
+					String keia2 = parts[1];
+					String keia1Criteria = " and pp.idcommunity = '"+keia1+"' ";
+					String keia2Criteria = " and pp.idcommunity = '"+keia2+"' ";
+					if(keia1.equals("0")) keia1Criteria = " ";
+					if(keia2.equals("0")) keia2Criteria = " ";
+					String sql1 = "select nn.idpatient as idpatient from   "
+							+ " (select idpatient, max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata = '"+subcriteria.getIddata()+"' and "+subcriteriaStr+" group by idpatient) as nn "
+							+ " left join ncdis.ncdis.patient pp on nn.idpatient = pp.idpatient"
+							+ hcpfilter
+							+ " where pp.idpatient > 0 and pp.active=1 and (pp.dod is null or pp.dod = '1900-01-01') "
+							+ " and nn.ddate <= '"+header.get(keyHeader)+"' "+ keia1Criteria
+							+ hcpfilterCriteria
+							+ " ";
+					String sql2 = "select nn.idpatient as idpatient from  "
+							+ " (select idpatient, max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata = '"+subcriteria.getIddata()+"' and "+subcriteriaStr+" group by idpatient) as nn "
+							+ " left join ncdis.ncdis.patient pp on nn.idpatient = pp.idpatient"
+							+ hcpfilter
+							+ " where pp.idpatient > 0 and pp.active=1 and (pp.dod is null or pp.dod = '1900-01-01') "
+							+ " and nn.ddate <= '"+header.get(keyHeader)+"' "+keia2Criteria
+							+ hcpfilterCriteria
+							+ " ";
+					System.out.println("=========================================");
+					System.out.println("SQL1 : "+sql1);
+					System.out.println("SQL2 : "+sql2);
+					System.out.println("=========================================");
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql1);
+					List<Map<String, Object>> rows2 = jdbcTemplate.queryForList(sql2);
+					for(int i=0;i<result.size();i++) {
+						HashMap<String, ArrayList<String>> headerMap = result.get(i);
+						System.out.println("=========================================");
+						System.out.println("key set : "+headerMap.keySet());
+						System.out.println("key header : "+keyHeader);
+						System.out.println("=========================================");
+						String k1 = keyHeader+"_"+keia1;
+						String k2 = keyHeader+"_"+keia2;
+						if(headerMap.keySet().contains(k1)  && headerMap.keySet().contains(k2)) {
+							ArrayList<String> list1 =  headerMap.get(k1);
+							ArrayList<String> list2 =  headerMap.get(k2);
+							ArrayList<String> newlist1 =  new ArrayList<>();
+							ArrayList<String> newlist2 =  new ArrayList<>();
+							for(Map row1 : rows1) {
+								String p = row1.get("idpatient").toString();
+								if(list1.contains(p))newlist1.add(p);
+							}
+							headerMap.put(k1,newlist1);
+							for(Map row2 : rows2) {
+								String p = row2.get("idpatient").toString();
+								if(list2.contains(p))newlist2.add(p);
+							}
+							headerMap.put(k2,newlist2);
+							result.set(i,headerMap);
+						}
+					}
+					
+				}else {
+					//dates 1 set
+					String keia1 = criteria.getValue();
+					String sql1 = "select nn.idpatient as idpatient from "
+							+ " (select idpatient, max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata = '"+subcriteria.getIddata()+"' and "+subcriteriaStr+" group by idpatient) as nn "
+							+ " left join ncdis.ncdis.patient pp on nn.idpatient = pp.idpatient"
+							+ hcpfilter
+							+ " where pp.idpatient > 0 and pp.active=1 and (pp.dod is null or pp.dod = '1900-01-01') "
+							+ " and nn.ddate <= '"+header.get(keyHeader)+"' and pp.idcommunity = '"+keia1+"'"
+							+ hcpfilterCriteria
+							+ " ";
+					
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql1);
+					for(int i=0;i<result.size();i++) {
+						HashMap<String, ArrayList<String>> headerMap = result.get(i);
+						String k1 = keyHeader;
+						if(headerMap.keySet().contains(k1)) {
+							ArrayList<String> list1 =  headerMap.get(k1);
+							ArrayList<String> newlist1 =  new ArrayList<>();
+							for(Map row1 : rows1) {
+								String p = row1.get("idpatient").toString();
+								if(list1.contains(p))newlist1.add(p);
+							}
+							headerMap.put(k1,newlist1);
+							result.set(i,headerMap);
+						}
+					}
+				}//end 
+			}else if(criteria.getName().equals("dtype")) {
+				String sql = "select distinct nn.idpatient as idpatient from "
+						+ " (select idpatient, max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata = '"+subcriteria.getIddata()+"' and "+subcriteriaStr+" group by idpatient) as nn "
+						+ "	left join ncdis.ncdis.patient as pp  on nn.idpatient=pp.idpatient "
+						+ "	inner join (select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 and value='"+keyHeader+"' group by idpatient) as dd  on nn.idpatient=dd.idpatient "
+						+ hcpfilter
+						+ "	where pp.idpatient > 0 and pp.active='1' and (pp.dod='1900-01-01' or pp.dod is null) "
+						+ hcpfilterCriteria
+						+ "	" ;
+				System.out.println("=========================================");
+				System.out.println("SQL : "+sql);
+				System.out.println("=========================================");
+				
+				List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+				
+				System.out.println("=========================================");
+				System.out.println("result size : "+result.size());
+				System.out.println("=========================================");
+				
+				for(int i=0;i<result.size();i++) {
+					
+					
+					
+					HashMap<String, ArrayList<String>> headerMap = result.get(i);
+					
+					System.out.println("=========================================");
+					System.out.println("map : "+headerMap);
+					System.out.println("=========================================");
+					System.out.println("=========================================");
+					System.out.println("rows : "+rows.size());
+					System.out.println("=========================================");
+					if(headerMap.keySet().contains(keyHeader)) {
+						ArrayList<String> list =  headerMap.get(keyHeader);
+						ArrayList<String> newlist =  new ArrayList<>();
+						for(Map row : rows) {
+							String p = row.get("idpatient").toString();
+							if(list.contains(p))newlist.add(p);
+						}
+						headerMap.put(keyHeader,newlist);
+						result.set(i,headerMap);
+						break;
+					}
+				}
+			}
+						
+		}
+		
+	}
+	
+	logger.log(Level.INFO, "Execute Report ");
+	return result;
+}
+
 public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria){
 	ArrayList<ArrayList<String>> result = new ArrayList<>();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -712,9 +1380,9 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria){
 					+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
 					+ " "+ criteriaStr+ " "
 					+ "order by nn.idpatient asc";
-			System.out.println("=========================================");
-			System.out.println("SQL : "+sql);
-			System.out.println("=========================================");
+			//System.out.println("=========================================");
+			//System.out.println("SQL : "+sql);
+			//System.out.println("=========================================");
 			
 			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 			
@@ -818,8 +1486,8 @@ public ArrayList<ArrayList<String>> executeReport(ReportCriteria criteria){
 	}
 
 
-public ArrayList<ArrayList<String>> getSetGraphCustomReportPeriod(ReportCriteria criteria, ArrayList<String> header){
-	ArrayList<ArrayList<String>> result = new ArrayList<>();
+public ArrayList<HashMap<String,String>> getSetGraphCustomReportPeriod(ReportCriteria criteria, HashMap<String,String> header){
+	ArrayList<HashMap<String,String>> result = new ArrayList<>();
 	String section = criteria.getSection();
 	String val = criteria.getValue();
 	String nom = criteria.getName();
@@ -848,12 +1516,12 @@ public ArrayList<ArrayList<String>> getSetGraphCustomReportPeriod(ReportCriteria
 		
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		// for each column in th header we add the same list of id patients - special for section 1
-		ArrayList<String> column= new ArrayList<>();
+		HashMap<String,String> column= new HashMap();
 		for(Map row:rows) {
-			column.add(row.get("idpatient").toString());
+			column.put("idpatient",row.get("idpatient").toString());
 		}
 		for(int i=0;i<header.size();i++) {
-			result.add(column);
+			//result.add(column);
 		}
 	}else {
 		if(op.equals("between")){
@@ -891,7 +1559,7 @@ public ArrayList<ArrayList<String>> getSetGraphCustomReportPeriod(ReportCriteria
 			for(Map row:rows) {
 				column.add(row.get("idpatient").toString());
 			}
-			result.add(column);
+			//result.add(column);
 		}
 	}
 	return result;
@@ -1497,71 +2165,264 @@ public ArrayList<String> getIdPatients(){
 	return result;
 }
 
-public ArrayList<HashMap<String, String>> getIdPatientsForCustomReportGraph(ReportCriteria criteria, String hcpid){
-	ArrayList<HashMap<String,String>> result = new ArrayList<>();
+public ArrayList<HashMap<String, ArrayList<String>>> getIdPatientsForCustomReportGraph(ReportCriteria criteria, String hcpid,HashMap<String,String> header){
+	
+	// this should have the format 
+	// if dtype = [{"type 1","list of idpatients"},{"type 2","list of idpatients"}, {"GDM","list of idpatients"}, {"predm","list of idpatients"}]
+	// if idcommunnity
+		//if idcommunity = 0  [{"Chisasibi","list of idpatient"},{"Mistisini","list of idpatient"}...]
+		//if Idcommunity != 0 [{"period1","list of idpatients"},{"period2","list of idpatients"}... ]
+		// if idcommunity _ 2 comunities [{"period1_part1":"list of idpatients","period1_part2":"list of idpatients"},{"period2_part1":"list of idpatients","period2_part2":"list of idpatients"}... ]
+	
+	
+	ArrayList<HashMap<String, ArrayList<String>>> result = new ArrayList<>();
 	String sql = "";
 	if(hcpid.equals("allhcp")) {
 		if(criteria.getName().equals("idcommunity")) {
-			sql = "select distinct nn.idpatient as idpatient,c.name_en as criteria from ncdis.ncdis.patient nn "
-					+ " left join ncdis.ncdis.community as c on nn.idcommunity = c.idcommunity  "
-					+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1'";
-			if(!criteria.getValue().equals("0")) {
-				sql = "select distinct nn.idpatient as idpatient,c.name_en as criteria from ncdis.ncdis.patient nn "
-						+ " left join ncdis.ncdis.community as c on nn.idcommunity = c.idcommunity  "
-						+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1' and nn.idcommunity = '"+criteria.getValue()+"'";
+			if(criteria.getValue().equals("0")) {
+				//all communities
+				Set<String> keys = header.keySet();
+				for(String key:keys) {
+					sql = "select distinct nn.idpatient as idpatient from ncdis.ncdis.patient nn "
+							+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1' and nn.idcommunity = '"+key+"'" ;
+					
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql);
+					HashMap<String, ArrayList<String>> column = new HashMap<>();
+					ArrayList<String> lista1 = new ArrayList<>();
+					for(Map row1 : rows1) {
+						String p = row1.get("idpatient").toString();
+						lista1.add(p);
+					}
+					column.put(key, lista1);
+					result.add(column);
+				}
+			
+				
+				
+			}else if(criteria.getValue().indexOf("_") >= 0) {
+				String[] parts = criteria.getValue().split("_");
+				String keia1 = parts[0];
+				String keia2 = parts[1];
+				String keia1Criteria = " and nn.idcommunity = '"+keia1+"' ";
+				String keia2Criteria = " and nn.idcommunity = '"+keia2+"' ";
+				if(keia1.equals("0")) keia1Criteria = "";
+				if(keia2.equals("0")) keia2Criteria = "";
+				//get list of patients for each header
+				//bazat pe data din header si data diagnozei
+				Set<String> keys = header.keySet();
+				for(String key:keys) {
+					String sql1 = "select distinct nn.idpatient as idpatient from ncdis.ncdis.patient nn "
+							+ "		left join "
+							+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
+							+ "			on nn.idpatient=dd.idpatient "
+							+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1' "+keia1Criteria+" and  dd.ddate <= '"+header.get(key)+"'";
+					
+					String sql2 = "select distinct nn.idpatient as idpatient from ncdis.ncdis.patient nn "
+							+ "		left join "
+							+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
+							+ "			on nn.idpatient=dd.idpatient "
+							+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1'  "+keia2Criteria+" and  dd.ddate <= '"+header.get(key)+"'";
+					
+					
+					
+					
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql1);
+					List<Map<String, Object>> rows2 = jdbcTemplate.queryForList(sql2);
+					HashMap<String, ArrayList<String>> column = new HashMap<>();
+					ArrayList<String> lista1 = new ArrayList<>();
+					ArrayList<String> lista2 = new ArrayList<>();
+					for(Map row1 : rows1) {
+						String p = row1.get("idpatient").toString();
+						lista1.add(p);
+					}
+					for(Map row2 : rows2) {
+						String p = row2.get("idpatient").toString();
+						lista2.add(p);
+					}
+					column.put(key+"_"+keia1, lista1);
+					column.put(key+"_"+keia2, lista2);
+					System.out.println("=====================================");
+					System.out.println(key+"_"+keia1+"    "+lista1.size());
+					System.out.println(key+"_"+keia2+"    "+lista2.size());
+					System.out.println("=====================================");
+					result.add(column);
+					
+				}
+				
+			}else {
+				String keia1 = criteria.getValue();
+
+				//get list of patients for each header
+				//bazat pe data din header si data diagnozei
+				Set<String> keys = header.keySet();
+				for(String key:keys) {
+					String sql1 = "select distinct nn.idpatient as idpatient from ncdis.ncdis.patient nn "
+							+ "		left join "
+							+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
+							+ "			on nn.idpatient=dd.idpatient "
+							+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1' and nn.idcommunity = '"+keia1+"' and  dd.ddate <= '"+header.get(key)+"'";
+					
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql1);
+					HashMap<String, ArrayList<String>> column = new HashMap<>();
+					ArrayList<String> lista1 = new ArrayList<>();
+					for(Map row1 : rows1) {
+						String p = row1.get("idpatient").toString();
+						lista1.add(p);
+					}
+					column.put(key, lista1);
+					result.add(column);
+				}
 			}
 		}else if(criteria.getName().equals("dtype")) {
-			sql = "select distinct nn.idpatient as idpatient, d.diabet_name as criteria"
-					+ "	from "
-					+ "		ncdis.ncdis.patient nn "
-					+ "		left join "
-					+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
-					+ "			on nn.idpatient=dd.idpatient "
-					+ "		left join "
-					+ "			ncdis.ncdis.cdis_value cv on dd.idpatient = cv.idpatient and dd.ddate = cv.datevalue "
-					+ "		left join  "
-					+ "			ncdis.ncdis.cdis_diabet d on cv.value = d.iddiabet "
-					+ "	where cv.iddata=1 "
-					+ "	and (nn.dod='1900-01-01' or dod is null) and nn.active='1'";
+			Set<String> keys = header.keySet();
+			for(String key:keys) {
+				sql = "select distinct nn.idpatient as idpatient"
+						+ "	from "
+						+ "		ncdis.ncdis.patient nn "
+						+ "		left join "
+						+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
+						+ "			on nn.idpatient=dd.idpatient "
+						+ "		left join "
+						+ "			ncdis.ncdis.cdis_value cv on dd.idpatient = cv.idpatient and dd.ddate = cv.datevalue "
+						+ "		left join  "
+						+ "			ncdis.ncdis.cdis_diabet d on cv.value = '"+key+"' "
+						+ "	where cv.iddata=1 "
+						+ "	and (nn.dod='1900-01-01' or dod is null) and nn.active='1'";
+				
+				List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql);
+				HashMap<String, ArrayList<String>> column = new HashMap<>();
+				ArrayList<String> lista1 = new ArrayList<>();
+				for(Map row1 : rows1) {
+					String p = row1.get("idpatient").toString();
+					lista1.add(p);
+				}
+				column.put(key, lista1);
+				result.add(column);
+			}
 		}
 	}else {
+		//we have filter
 		if(criteria.getName().equals("idcommunity")) {
-			sql = "select distinct nn.idpatient as idpatient,c.name_en as criteria from ncdis.ncdis.patient nn "
-					+ " left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient "
-					+ " left join ncdis.ncdis.community as c on nn.idcommunity = c.idcommunity "
-					+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active='1' "
-					+ " and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
-			if(!criteria.getValue().equals("0")) {
-				sql = "select distinct nn.idpatient as idpatient,c.name_en as criteria from ncdis.ncdis.patient nn "
-						+ " left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient "
-						+ " left join ncdis.ncdis.community as c on nn.idcommunity = c.idcommunity "
-						+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active='1' and nn.idcommunity='"+criteria.getValue()+"' "
-						+ " and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
+			if(criteria.getValue().equals("0")) {
+				//all communities
+				Set<String> keys = header.keySet();
+				for(String key:keys) {
+					sql = "select distinct nn.idpatient as idpatient from ncdis.ncdis.patient nn "
+							+ " left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient "
+							+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1' and nn.idcommunity = '"+key+"'" 
+							+ " and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
+					
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql);
+					HashMap<String, ArrayList<String>> column = new HashMap<>();
+					ArrayList<String> lista1 = new ArrayList<>();
+					for(Map row1 : rows1) {
+						String p = row1.get("idpatient").toString();
+						lista1.add(p);
+					}
+					column.put(key, lista1);
+					result.add(column);
+				}
+			
+				
+				
+			}else if(criteria.getValue().indexOf("_") >= 0) {
+				String[] parts = criteria.getValue().split("_");
+				String keia1 = parts[0];
+				String keia2 = parts[1];
+				//get list of patients for each header
+				//bazat pe data din header si data diagnozei
+				Set<String> keys = header.keySet();
+				for(String key:keys) {
+					String sql1 = "select distinct nn.idpatient as idpatient from ncdis.ncdis.patient nn "
+							+ " left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient "
+							+ "		left join "
+							+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
+							+ "			on nn.idpatient=dd.idpatient "
+							+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1' and nn.idcommunity = '"+keia1+"' and  dd.ddate <= '"+header.get(key)+"'"
+							+ " and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
+					
+					String sql2 = "select distinct nn.idpatient as idpatient from ncdis.ncdis.patient nn "
+							+ " left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient "
+							+ "		left join "
+							+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
+							+ "			on nn.idpatient=dd.idpatient "
+							+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1' and nn.idcommunity = '"+keia2+"' and  dd.ddate <= '"+header.get(key)+"'"
+							+ " and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
+					
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql1);
+					List<Map<String, Object>> rows2 = jdbcTemplate.queryForList(sql2);
+					HashMap<String, ArrayList<String>> column = new HashMap<>();
+					ArrayList<String> lista1 = new ArrayList<>();
+					ArrayList<String> lista2 = new ArrayList<>();
+					for(Map row1 : rows1) {
+						String p = row1.get("idpatient").toString();
+						lista1.add(p);
+					}
+					for(Map row2 : rows2) {
+						String p = row2.get("idpatient").toString();
+						lista2.add(p);
+					}
+					column.put(key+"_"+keia1, lista1);
+					column.put(key+"_"+keia2, lista2);
+					result.add(column);
+					
+				}
+				
+			}else {
+				String keia1 = criteria.getValue();
+
+				//get list of patients for each header
+				//bazat pe data din header si data diagnozei
+				Set<String> keys = header.keySet();
+				for(String key:keys) {
+					String sql1 = "select distinct nn.idpatient as idpatient from ncdis.ncdis.patient nn "
+							+ " left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient "
+							+ "		left join "
+							+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
+							+ "			on nn.idpatient=dd.idpatient "
+							+ " where (nn.dod is null or nn.dod = '1900-01-01') and nn.active = '1' and nn.idcommunity = '"+keia1+"' and  dd.ddate <= '"+header.get(key)+"'"
+							+ " and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
+					
+					List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql1);
+					HashMap<String, ArrayList<String>> column = new HashMap<>();
+					ArrayList<String> lista1 = new ArrayList<>();
+					for(Map row1 : rows1) {
+						String p = row1.get("idpatient").toString();
+						lista1.add(p);
+					}
+					column.put(key, lista1);
+					result.add(column);
+				}
 			}
 		}else if(criteria.getName().equals("dtype")) {
-			sql = "select distinct nn.idpatient as idpatient, d.diabet_name as criteria"
-					+ "	from "
-					+ "		ncdis.ncdis.patient nn "
-					+ "		left join "
-					+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
-					+ "			on nn.idpatient=dd.idpatient "
-					+ "     left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient "
-					+ "		left join "
-					+ "			ncdis.ncdis.cdis_value cv on dd.idpatient = cv.idpatient and dd.ddate = cv.datevalue "
-					+ "		left join  "
-					+ "			ncdis.ncdis.cdis_diabet d on cv.value = d.iddiabet "
-					+ "	where cv.iddata=1 "
-					+ "	and (nn.dod='1900-01-01' or dod is null) and nn.active='1' "
-					+ " and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
+			Set<String> keys = header.keySet();
+			for(String key:keys) {
+				sql = "select distinct nn.idpatient as idpatient"
+						+ "	from "
+						+ "		ncdis.ncdis.patient nn "
+						+ " left join ncdis.ncdis.patient_hcp ph on nn.idpatient = ph.idpatient "
+						+ "		left join "
+						+ "			(select idpatient,max(datevalue) as ddate from ncdis.ncdis.cdis_value where iddata=1 group by idpatient) as dd "
+						+ "			on nn.idpatient=dd.idpatient "
+						+ "		left join "
+						+ "			ncdis.ncdis.cdis_value cv on dd.idpatient = cv.idpatient and dd.ddate = cv.datevalue "
+						+ "		left join  "
+						+ "			ncdis.ncdis.cdis_diabet d on cv.value = '"+key+"' "
+						+ "	where cv.iddata=1 "
+						+ "	and (nn.dod='1900-01-01' or dod is null) and nn.active='1'"
+						+ " and (ph.md='"+hcpid+"' or ph.nut='"+hcpid+"'or ph.nur='"+hcpid+"' or ph.chr='"+hcpid+"')";
+				
+				List<Map<String, Object>> rows1 = jdbcTemplate.queryForList(sql);
+				HashMap<String, ArrayList<String>> column = new HashMap<>();
+				ArrayList<String> lista1 = new ArrayList<>();
+				for(Map row1 : rows1) {
+					String p = row1.get("idpatient").toString();
+					lista1.add(p);
+				}
+				column.put(key, lista1);
+				result.add(column);
+			}
 		}
-	}
-	
-	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-	for(Map row : rows) {
-		HashMap<String, String> l = new HashMap<>();
-		l.put("idpatient", row.get("idpatient").toString());
-		l.put("criteria", row.get("criteria").toString());
-		result.add(l);
 	}
 	return result;
 }

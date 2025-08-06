@@ -274,7 +274,7 @@ function validatePasswordReset() {
 }
 
 function validatePasswordConfirmReset() {
-	  if($(this).val() === $("#passwordrRes").val() && $(this).val().length > 0){
+	  if($(this).val() === $("#grvPasswordrReset").val() && $(this).val().length > 0){
 		  $("#grvPassrConfirm").removeClass("invalid");
 		  $("#grvPassrConfirm").addClass("valid");
 		  validCPasswordr = true;
@@ -286,6 +286,7 @@ function validatePasswordConfirmReset() {
 }
 
 function forgotPassword() {
+	
     var valid = true;
     
     if(!$("#grvForgotUsername").prop("checked")){
@@ -294,7 +295,7 @@ function forgotPassword() {
     valid = valid && checkLength(  $( "#grvEmailUser" ), "Email" );
     valid = valid && checkRegexp(  $( "#grvEmailUser" ), emailRegex, "eg. name@domain.com" );
 
-
+	
     if ( valid ) {
     	var data = "language=en"+"&usernameUser="+$("#grvUsernameUser").val()+"&emailUser="+$("#grvEmailUser").val()+"&fusername="+$("#grvForgotUsername").prop("checked");
     	var mes = $.ajax({
@@ -458,4 +459,55 @@ function login() {
 		$("#grvErrorText").text("Wrong Username or Password");
 		
 	}
+}
+
+
+
+
+function resetPassword(){
+	var username = $("#grvUsernameReset").val();
+	var password = $("#grvPasswordrReset").val();
+	var passwordc = $("#grvConfirmPasswordrReset").val();
+	var iduser = $("#grvIdUserReset").val();
+	var validUser = Validate.now(Validate.Presence, username);
+	var validPass = Validate.now(Validate.Presence, password);
+	var validPassC = Validate.now(Validate.Presence, passwordc);
+	if(validUser && validPass && validPassC){
+		var data = "username="+username+"&passwordr="+btoa(password)+"&iduser="+iduser+"&language=en";
+		var request = $.ajax({
+		  url: "/ncdis/service/action/resetUserPassword",
+		  type: "POST",
+		  data: data,
+		  async : false,
+		  dataType: "json"
+		});
+		request.done(function( json ) {
+		  if(json.status == "0"){
+			  $(".cdisValidateTips").html(json.message);
+		  }else{
+			
+			  $(".cdisValidateTips").html(json.message);
+			  $("#grvDialogReset").find("fieldset").hide();
+			  //$("#resetButtonDialog").text("Go to login page");
+			
+			  $("#grvDialogReset").dialog( "option", "buttons", 
+			    [
+			      {
+			        text: "Go to login page",
+			        click: function() {
+			          gti();
+			        }
+			      }
+			    ]
+			  );
+		  }
+		});
+		request.fail(function( jqXHR, textStatus ) {
+			$("#errortext").text("Wrong Username or Password");
+		});
+		
+	}else{
+		$("#errortext").text("Wrong Username or Password");
+		
+	}	
 }

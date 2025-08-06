@@ -1,0 +1,13 @@
+2025-08-06 06:58:46,349 WARN c.z.h.p.HikariPool$HouseKeeper [HikariPool-1 housekeeper] HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=14h53m15s706ms227µs900ns).
+2025-08-06 08:18:53,657 INFO c.g.c.d.ChbDBridge [https-jsse-nio-444-exec-1] is Valid user by email and username : iduser:0  session:
+2025-08-06 08:18:53,662 INFO c.g.c.d.ChbDBridge [https-jsse-nio-444-exec-1] Set User :4782
+2025-08-06 08:18:53,733 INFO c.g.c.c.ActionProcessor [https-jsse-nio-444-exec-1] save user profile for user 4782
+2025-08-06 08:19:07,339 INFO c.g.c.d.ChbDBridge [https-jsse-nio-444-exec-3] Get User by ID:aaa  radu@grvtech.ca  iduser : 4782
+2025-08-06 08:20:00,688 INFO c.g.c.d.ChbDBridge [https-jsse-nio-444-exec-8] Get User by ID:aaa  radu@grvtech.ca  iduser : 4782
+2025-08-06 08:22:10,701 INFO c.g.c.d.ChbDBridge [https-jsse-nio-444-exec-9] is Valid user by email and username : iduser:0  session:
+2025-08-06 08:22:10,704 INFO c.g.c.d.ChbDBridge [https-jsse-nio-444-exec-9] Set User :4783
+2025-08-06 08:22:10,721 INFO c.g.c.c.ActionProcessor [https-jsse-nio-444-exec-9] save user profile for user 4783
+2025-08-06 08:22:54,667 INFO c.g.c.d.ChbDBridge [https-jsse-nio-444-exec-10] Get User by ID:aaa  radu@grvtech.ca  iduser : 4783
+2025-08-06 08:27:44,854 INFO c.g.c.d.ChbDBridge [https-jsse-nio-444-exec-7] is Valid user by email and username : iduser:0  session:
+2025-08-06 08:27:44,858 INFO c.g.c.d.ChbDBridge [https-jsse-nio-444-exec-7] Set User :4784
+2025-08-06 08:27:44,903 INFO c.g.c.c.ActionProcessor [https-jsse-nio-444-exec-7] save user profile for user 4784

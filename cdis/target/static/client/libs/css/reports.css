@@ -28,7 +28,9 @@ REPORTS PAGE CSS
 
 #grvReportsTabs{width:100%;height:100%;}
 
-
+/*
+.cdisMainTabs{display:grid;grid-template-rows:10% 90%;}
+*/
 #grvDashboard{
 	display: grid;  
 	grid-template-rows:33% 33% 33%;
@@ -83,7 +85,7 @@ REPORTS PAGE CSS
 #grvTabGraph .cdisReportGraphButtons{display:grid;grid-template-columns:auto auto;}
 #grvTabGraph .cdisReportGraphButtons #grvAddReportGraphCriteria{justify-self:left;}
 #grvTabGraph .cdisReportGraphButtons #grvClearReportGraph{justify-self:right;}
-.cdisReportGraphContainer{width:900px;height:550px;display:block;}
+.cdisReportGraphContainer{width:950px;height:550px;display:block;}
 
 .cdisReportGraphToolbar{border:1px solid black;min-height:400px;margin-top:20px;position:relative;}
 .cdisReportGraphToolbarHeader{height:30px; background-color:#4b3b3b; color:#efefef; font-weight:bold; line-height:30px; padding-left:10px;}
@@ -153,6 +155,30 @@ REPORTS PAGE CSS
 .cdisReportListContainer table tr:nth-child(even) {background-color: #bbbbbb;}
 .cdisReportListTableHeaderContainer{position:fixed;height:30px;width:100%;display:none;}
 
+
+
+
+.cdisReportComparatorContainer{width:950px;height:550px;display:block;}
+.cdisReportComparatorCriteriaContainer.config{display:grid;grid-template-columns:170px auto;align-items: center;}
+.cdisReportComparatorCriteriaContainer.config2{display:grid;grid-template-columns:400px auto;align-items: center;}
+.cdisReportComparatorCriteriaContainer.config2 > div{display:grid;grid-template-columns:170px auto;align-items: center;}
+.cdisReportComparatorCriteriaContainer select{padding:7px;font-size:110%;width:auto;}
+.cdisReportComparatorNotes{padding:5px;}
+.cdisReportComparatorNotes label{margin-left:5px;line-height:40px;}
+.cdisReportComparatorNotes textarea{height:30px;width:800px;resize: none;align-self: center;vertical-align: middle;}
+.cdisReportComparatorToolbar{border:1px solid black;min-height:400px;margin-top:20px;position:relative;}
+.cdisReportComparatorToolbarHeader{height:30px; background-color:#4b3b3b; color:#efefef; font-weight:bold; line-height:30px; padding-left:10px;}
+.cdisReportComparatorToolbarFooter{position:absolute;top:100%;margin-top:-60px;height:60px;width:100%; background-color:#cdcdcd;display:grid;grid-template-columns:auto auto;align-items:center;}
+
+.cdisReportComparatorToolbarBody{display: flex;flex-direction: row;justify-content: center;align-items: center;}
+.cdisReportComparatorTool{
+	
+}
+.cdisReportComparatorGroup{width:400px;height:320px;border:1px solid #cdcdcd;display:grid;grid-template-rows:30px 350px;margin:10px;}
+.cdisReportComparatorGroup .header{display:grid;grid-template-columns:150px auto;background-color:#ededed;}
+.cdisReportComparatorGroup .header span{font-weight:bold;line-height: 30px;padding:2px 0px 2px 5px;}
+.cdisReportComparatorGroup .header > div{text-align:right;padding-top:3px;}
+.cdisReportComparatorGroup .body{display:flex;flex-direction: row;justify-content: center;align-items: center;}
 
 
 

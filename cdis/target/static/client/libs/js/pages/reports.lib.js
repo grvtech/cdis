@@ -19,13 +19,6 @@ var exportImage = null;
 var isSurveillance = false;
 var isPvalidation = false;
 var showPopupFlag = true;
-var pvalidationPopupTitle = "Patient Validation";
-var pvalidationText = "<p>Patient Validation is a tool that allows CDIS users to screen for patients whose information may require updating (e.g. change of diagnosis, patient deceased, permanently moved from region).</p>"
-						+"<ul><li>No data in last 5 years (unless GDM)</li>"
-						+"<li>Age > 95</li>"
-						+"<li>Duplicate name</li>"
-						+"<li>Predm and value > 0.065 X 2 : if reclassifying as diabetic first verify that patient is aware of diagnosis</li></ul>"
-						+"<span>Corrections can be done by CDIS users. For deletions, an email explaining the problem must be sent to support@grvtech.ca</span>";
 
 
 
@@ -89,13 +82,33 @@ $("#grvReportsTabs").tabs({
 
 if(userProfileObj.role.code!= "ROOT" && userProfileObj.role.code!= "ADMIN"){
 	$("#admintab").remove();
-	$("#tabs").tabs("refresh");
+	$("#grvTabs").tabs("refresh");
 }
 
+
 if(getParameterByName("reportid") == "surveillance"){
-	$( "#tabs" ).tabs("option", "active", 2 );
+	grvtabs.setActive(2);
 }else if(getParameterByName("reportid") == "pvalidation"){
-	$( "#tabs" ).tabs("option", "active", 3 );
+	if(isDemo){
+		alert("This function si not available in demo mode");
+	}else{
+		setTimeout(setEvent,100,"PATV");
+		grvtabs.setActive(3);
+		if(showPopupFlag){
+			var bconfig = {"width":"500","height":"350"};
+		var bbut = [{"text":"Close","action":"closeGRVPopup"}];
+			var pvalidationPopupTitle = "Patient Validation";
+			var pvalidationText = "<p>Patient Validation is a tool that allows CDIS users to screen for patients whose information may require updating (e.g. change of diagnosis, patient deceased, permanently moved from region).</p>"
+						+"<ul><li>No data in last 5 years (unless GDM)</li>"
+						+"<li>Age > 95</li>"
+						+"<li>Duplicate name</li>"
+						+"<li>Predm and value > 0.065 X 2 : if reclassifying as diabetic first verify that patient is aware of diagnosis</li></ul>"
+						+"<span>Corrections can be done by CDIS users. For deletions, an email explaining the problem must be sent to support@grvtech.ca</span>";
+			showGRVPopup(pvalidationPopupTitle,pvalidationText,bbut,bconfig);
+			//showPopupMessage(pvalidationPopupTitle,pvalidationText);
+			showPopupFlag = false;
+		}
+	}
 }
 
 

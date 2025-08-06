@@ -4,6 +4,7 @@
 			<ul>
 				<li target="#grvTabList">Report type : List</li>
 	 			<li target="#grvTabGraph">Report type : Graph</li>
+	 			<li target="#grvTabComparator">Report type : Comparator</li>
 			</ul>
 	 		<article>
 				<div id="grvTabList">
@@ -89,7 +90,88 @@
 				   			</div>
 				   		</div>
 				   	</div>		
-				</div>
+				</div><!-- end tab graph -->
+				
+				
+				<div id="grvTabComparator">
+				   <div class="cdisConfigComparatorPanel">
+						<h1>Comparator Report configuration</h1>
+						<span class="cdisCriteriaFilterErrorMessage"></span>
+						<div class="cdisReportComparatorCriteriaContainer config">
+							<label for="grvReportComparatorType">Graph type: </label>
+							<div id="grvReportComparatorType" type="grvwradio">
+								<div default value="bar">Bar</div>
+								<div value="line">Line</div>
+								<div value="pie">Pie</div>
+							</div>
+						</div>
+						<div class="cdisReportComparatorCriteriaContainer config2">
+							<div>
+								<label for="grvReportComparatorCommunity">Community : </label>
+								<div>
+									<select id="grvReportComparatorCommunity">
+										<option value="0" default>All Communities</option>
+										<option value="1">Chisasibi</option>
+										<option value="2">Eastmain</option>
+										<option value="3">Mistissini</option>
+										<option value="4">Nemaska</option>
+										<option value="5">Oujebougoumou</option>
+										<option value="6">Waskaganish</option>
+										<option value="7">Waswanipi</option>
+										<option value="8">Wemindji</option>
+										<option value="9">Whapmagoostui</option>
+									</select>
+								</div>
+							</div>
+							<div>
+								<label for="grvReportComparatorPeriod">Period : </label>
+								<div>
+									<select id="grvReportComparatorPeriod">
+										<option value="6" default>last 6 months</option>
+										<option value="12">last 12 months</option>
+										<option value="24">last 24 months</option>
+										<option value="1">last year</option>
+										<option value="2">last 2 years</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="cdisReportComparatorCriteriaContainer config">
+							<label for="grvReportComparatorGroups">Groups : </label>
+							<div id="grvReportComparatorGroups" type="grvwradio">
+								<div value="2" default>2 Comparative Groups</div>
+								<div value="3">3 Comparative Groups</div>
+							</div>
+						</div>
+						<div class="cdisReportComparatorCriteriaContainer config">
+							<label for="grvReportComparatorDtypes">Type of diabetes : </label>
+							<div id="grvReportComparatorDtypes" type="grvwcheck">
+								<div value="1" >Type 1 DM</div>
+								<div value="2" default>Type 2 DM</div>
+								<div value="3">Pre DM</div>
+								<div value="4">GDM</div>
+							</div>
+						</div>
+					</div>
+					<div class="cdisReportComparatorTool">
+						<div class="cdisReportComparatorButtons">
+							<div class="cdisCisButton" id="grvClearReportComparator">Clear Report Comparator</div>
+						</div>
+				   		<div class="cdisReportComparatorToolbar">
+				   			<div class="cdisReportComparatorToolbarBody" idreport="0" typereport="comparator" graphtype="bar" titlereport="Comparator Report" groups="2" idcommunity="0">
+				   				
+				   			</div>
+				   			<div class="cdisReportComparatorToolbarFooter">
+				   				<div class="cdisReportComparatorNotes">
+									<label>Notes : </label><textarea></textarea>
+								</div>
+				   				<div class="cdisReportComparatorToolbarFooterButtons"></div>
+				   			</div>
+				   		</div>
+				   	</div>		
+				</div><!-- end tab comparator -->
+				
+				
 			</article>
 		</div>
 	</div>

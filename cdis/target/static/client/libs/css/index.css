@@ -21,6 +21,7 @@ input[type=email]:focus, input[type=number]:focus, input[type=password]:focus, i
 .cdisValidateTips{font-size:80%;color:red;}
 
 
+
 #grvDialogSubscribe  input, textarea, select{margin-bottom:12px; width:95%; display: block;font-size: 80%;color: #4d4d4d;}
 #grvDialogSubscribe  fieldset { padding:0; border:0; margin-top:25px; border:none;}
 #grvDialogSubscribe label{margin-top:5px;margin-bottom:5px;display: block;font-size: 100%;color: #000000;}

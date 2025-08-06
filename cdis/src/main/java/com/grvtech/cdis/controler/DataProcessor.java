@@ -503,7 +503,7 @@ public String diabetByCommunity(final HttpServletRequest request){
 	ArrayList<Object> series = chbdb.getDiabetByCommunity(graphtype);
 	obs.add(series);
 	if(graphtype.equals("pyramid")){
-		ArrayList<String> coms = Community.getAllCommunities();
+		ArrayList<String> coms = cdisdb.getAllCommunitiesList();
 		obs.add(coms);
 	}
 	

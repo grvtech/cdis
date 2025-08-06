@@ -1,4 +1,4 @@
-.grvwtabs{margin:20px;padding:0px;height:100%;display:block;background-color:#ededed;}
+.grvwtabs{margin:20px;padding:0px;height:100%;display:grid;grid-template-rows:50px 95%;background-color:#ededed;}
 .grvwtabs > ul{list-style-type: none;margin: 0;padding: 20px 0px 10px 5px;display: block;background-color:#cdcdcd;}
 .grvwtabs > ul li{display:inline;border:1px solid  #cdcdcd;padding:10px;border-top-left-radius: 10px;border-top-right-radius: 10px;background-color:#afafaf;cursor: default;}
 .grvwtabs > ul li:hover{background-color:#576793;color:#efefef;font-weight:bold;}

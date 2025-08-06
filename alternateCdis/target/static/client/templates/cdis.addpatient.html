@@ -1,0 +1,230 @@
+
+	<div class="cdisPanelSectionAddPatient uss">
+		<div class="cdisPanelSectionHeader">
+			<h1>Add New Patient</h1>
+		</div>
+		
+		<div id="grvErrorTextAddPatient" class="cdisErrorMessageForm"></div>
+		
+		
+		<form id="grvAddPatientForm">
+			<table border="0" width="100%">
+			<tr>
+				<td valign="top">
+					<table border="0">
+						<tr>
+							<td class="label">RAMQ Number :</td>
+							<td><input type="text" name="ramq" id="ramq-value" style='text-transform:uppercase' autocomplete="off"/></td>
+						</tr>
+						<tr>
+							<td class="label">IPM :</td>
+							<td><input type="text" name="giu" id="ipm-value" autocomplete="off"/></td>
+						</tr>
+						<tr>
+							<td class="label">Chart Number :</td>
+							<td><input type="text" name="chart" id="chart-value" autocomplete="off"/></td>
+						</tr>
+						<tr style="display:none;">
+							<td class="label">JBQBN :</td>
+							<td><input type="text" name="jbnqa" id="jbnqa-value" autocomplete="off"/></td>
+						</tr>
+						<tr>
+							<td class="label">Band :</td>
+							<td><input type="text" name="band" id="band-value" style='text-transform:uppercase' autocomplete="off"/></td>
+						</tr>
+						<tr>
+							<td colspan="2" style="padding:5px;">
+								<div id="radio-sex" class="btn-group" data-toggle="buttons">
+									<label for="male-value" class="btn btn-primary"><input type="radio" name="sex-radio" id="male-value" value="1" class="radioField"/>Male</label>
+									<label for="female-value" class="btn btn-primary"><input type="radio" name="sex-radio" id="female-value" value="2" class="radioField"/>Female</label>
+									<input type="hidden" name="sex" id="sex-value" />
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" style="padding:5px;">
+								<div id="radio-iscree" class="btn-group" data-toggle="buttons">
+									<label for="cree-value" class="btn btn-primary"><input type="radio" name="iscree" id="cree-value" value="1" class="radioField"/>Cree</label>
+									<label for="noncree-value" class="btn btn-primary"><input type="radio" name="iscree" id="noncree-value" value="0" class="radioField"/>Non Cree</label>
+								</div>
+							</td>
+						</tr>
+						<tr><td colspan="2" style="height:20px;"></td></tr>
+						<tr>
+							<td colspan="2" style="padding:5px;">
+								<table cellspacing="0" cellpadding="0" >
+									<tr>
+										<td class="label">Type of diabetes :</td>
+										<td ><select name="dtype" id="dtype-value" class="selectField"></select></td>
+									</tr>
+									<tr>
+										<td class="label">Date of diagnosis:</td>
+										<td >
+											<input type="text" name="ddate" id="ddate-value" autocomplete="off"><i class="fa fa-calendar" aria-hidden="true"></i>
+											<input type="hidden" name="diabetcode" id="diabetcode-value" value="DTYPE"/>
+											<input type="hidden" name="diabetidvalue" id="diabetidvalue-value"/>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr><td colspan="2" style="height:20px;"></td></tr>
+					</table>
+					
+				</td>
+				<td valign="top">
+					<table border="0">
+						<tr>
+							<td class="label">First Name :</td>
+							<td><input type="text" name="fname" id="fname-value"/></td>
+						</tr>
+						<tr>
+							<td class="label">Last Name :</td>
+							<td><input type="text" name="lname" id="lname-value"/></td>
+						</tr>
+						<tr style="display:none;"><td class="label">Mother First Name :</td><td><input type="text" name="mfname" id="mfname-value" class="textField"/></td></tr>
+						<tr style="display:none;"><td class="label">Mother Last Name :</td><td><input type="text" name="mlname" id="mlname-value" class="textField"/></td></tr>
+						<tr style="display:none;"><td class="label">Father First Name :</td><td><input type="text" name="pfname" id="pfname-value" class="textField"/></td></tr>
+						<tr style="display:none;"><td class="label">Father Last Name :</td><td><input type="text" name="plname" id="plname-value" class="textField"/></td></tr>
+						<tr>
+							<td class="label">Date of birth :</td>
+							<td><input type="text" name="dob" id="dob-value" autocomplete="off"/><i class="fa fa-calendar" aria-hidden="true"></i></td>
+						</tr>
+						<tr>
+							<td class="label">Phone :</td>
+							<td><input type="text" name="phone" id="phone-value"/></td>
+						</tr>
+						<tr>
+							<td class="label">Community :</td>
+							<td><select name="idcommunity" id="idcommunity-value"></select></td>
+						</tr>
+						<tr style="padding:5px;">
+							<td class="label">Deceased :</td>
+							<td>
+								<div id="radio-deceased" class="btn-group" data-toggle="buttons">
+									<label for="deceased-yes-value" class="btn btn-primary"><input type="radio" name="deceased" id="deceased-yes-value" value="1" class="radioField"/>Yes</label>
+									<label for="deceased-no-value" class="btn btn-primary"><input type="radio" name="deceased" id="deceased-no-value" value="0" class="radioField"/>No</label>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div id="deceased-section">
+									<table>
+										<tr>
+											<td class="label">Date of death :</td>
+											<td><input type="text" name="dod" id="dod-value" autocomplete="off"/><i class="fa fa-calendar" aria-hidden="true"></i></td>
+										</tr>
+										<tr>
+											<td class="label">Date cause :</td>
+											<td><input type="text" name="dcause" id="dcause-value" autocomplete="off"/></div></td>
+										</tr>	
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan=2 style="background-color:#cdcdcd;padding:7px;">
+					<table width="100%" border=0 >
+						<tr>
+							<td colspan=2 ><b>Patient`s Health Care Workers</b></td>
+							<td>PCCR</td>
+							<td>
+								<input type="text" name="hcp-chr" id="chr"/>
+								<input type="hidden" name="chrid" id="chrid"/>
+							</td>
+							<td>MD</td>
+							<td>
+								<input type="text" name="hcp-md" id="md"/>
+								<input type="hidden" name="mdid" id="mdid"/>
+							</td>
+						</tr>
+						<tr>
+							<td>Nurse</td>
+							<td>
+								<input type="text" name="hcp-nur" id="nur"/>
+								<input type="hidden" name="nurid" id="nurid"/>
+							</td>
+							<td>Nutritionist</td>
+							<td>
+								<input type="text" name="hcp-nut" id="nut"/>
+								<input type="hidden" name="nutid" id="nutid"/>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<div style="text-align:right;">
+			<div id='grvAddPatientCancelButton' class="cdisCisButton">Cancel</div> <div id="grvAddPatientSaveButton" class="cdisCisButton">Save</div>
+		</div>
+		</form>
+	</div>
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Confirm adding new patient</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        	<div class="row">
+       			<div class="col-md-6 mb-label" >First Name</div><div class="col-md-6 mb-value mbvalue-fname"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >Last Name</div><div class="col-md-6 mb-value mbvalue-lname"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >Ramq</div><div class="col-md-6 mb-value mbvalue-ramq"></div>
+       		</div>
+       		<div class="row">	
+       			<div class="col-md-6 mb-label" >Chart</div><div class="col-md-6 mb-value mbvalue-chart"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >IPM</div><div class="col-md-6 mb-value mbvalue-ipm"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >Band</div><div class="col-md-6 mb-value mbvalue-band"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >Community</div><div class="col-md-6 mb-value mbvalue-idcommunity"></div>
+       		</div>
+        	<div class="row">
+       			<div class="col-md-6 mb-label" >Genre</div><div class="col-md-6 mb-value mbvalue-sex"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >Date of birth</div><div class="col-md-6 mb-value mbvalue-dob"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >Diabete type</div><div class="col-md-6 mb-value mbvalue-dtype"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >Date of diagnosis</div><div class="col-md-6 mb-value mbvalue-ddate"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >PCCR</div><div class="col-md-6 mb-value mbvalue-chr"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >MD</div><div class="col-md-6 mb-value mbvalue-md"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >Nurse</div><div class="col-md-6 mb-value mbvalue-nur"></div>
+       		</div>
+       		<div class="row">
+       			<div class="col-md-6 mb-label" >Nutritionist</div><div class="col-md-6 mb-value mbvalue-nut"></div>
+       		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="add-patient">Confirm Add New Patient</button>
+      </div>
+    </div>
+  </div>
+</div>

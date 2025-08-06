@@ -1,0 +1,172 @@
+
+#surveillance{
+	min-height:700px;
+	background-color:#ffffff;
+}
+
+.reportsbody-surveillance{
+	height: 100%;
+}
+
+.surveillance-wraper{
+	flex: 1;
+	height:100%;
+	background-color:red;
+	display:grid;
+	grid-template-columns:auto 300px;
+}
+
+.surveillance-stats{
+	position:relative;
+	display:grid;
+	grid-template-columns:65% 35%;
+	background-color:#ffffff;
+	padding:10px;
+}
+.stats-layout{
+	height: 100%;
+	display:grid;
+	grid-template-rows:33% 33% 33%;
+	row-gap:5px;
+}
+.s-container{
+	
+}
+.s-container .tp-graph{
+	height:250px;
+}
+.s-container .title{
+	font-size:14px;
+	font-weight:700;
+}
+
+.surveillance-stats-epidemiology{position:relative;width:100%;background:#ffffff;display:grid;grid-template-rows:auto auto;row-gap:10px;font-family:Sans-Serif;font-size:13px;text-align:left;}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-exist{padding:0px 15px 0px 25px;}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-new{padding:0px 15px 0px 25px;}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-exist p{padding:3px;margin:2px;font-size:15px;}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-exist b{font-size:17px;padding:3px;background-color:#4d4d4d;color:#ffffff;}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-exist span{font-weight:bold;}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-exist li{line-height:25px;}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-exist .pepi-text-g1-cases, .pepi-text-g2-cases, .pepi-text-g3-cases {
+	padding:3px;background-color:#5c6c9d;color:#ffffff;
+}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-exist .pepi-text-g1-pr-group, .pepi-text-g2-pr-group, .pepi-text-g3-pr-group, .pepi-text-g1-pr-total, .pepi-text-g2-pr-total, .pepi-text-g3-pr-total {
+	padding:3px;background-color:#566925;color:#ffffff;margin:3px;
+}
+
+
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-new p{padding:3px;margin:2px;font-size:15px;}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-new b{font-size:17px;padding:3px;background-color:#4d4d4d;color:#ffffff;}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-new span{font-weight:bold;}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-new li{line-height:25px;}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-new .epi-text-g1-cases, .epi-text-g2-cases, .epi-text-g3-cases {
+	padding:3px;background-color:#5c6c9d;color:#ffffff;
+}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-new .epi-text-g1-pr-group, .epi-text-g2-pr-group, .epi-text-g3-pr-group, .epi-text-g1-pr-total, .epi-text-g2-pr-total, .epi-text-g3-pr-total {
+	padding:3px;background-color:#566925;color:#ffffff;margin:3px;
+}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-new .epi-text-g1-pr-lastd, .epi-text-g2-pr-lastd, .epi-text-g3-pr-lastd{
+	padding:3px;background-color:#3ee137;color:#ffffff;margin:3px;
+}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-new .epi-text-g1-pr-lasti, .epi-text-g2-pr-lasti, .epi-text-g3-pr-lasti{
+	padding:3px;background-color:#fb5540;color:#ffffff;margin:3px;
+}
+.surveillance-stats-epidemiology .surveillance-stats-epidemiology-new .epi-text-g1-pr-lasts, .epi-text-g2-pr-lasts, .epi-text-g3-pr-lasts{
+	padding:3px;background-color:#fae33e;color:#000000;margin:3px;
+}
+
+
+.surveillance-filters{background:#ffffff;display:grid;grid-template-rows:60px auto;row-gap:10px;font-weight:bold;font-family:Sans-Serif;}
+/*.surveillance-filters .gr-buttons{display:grid;grid-template-columns:auto 25px;}*/
+.surveillance-filters .gr-buttons{display:grid;grid-template-columns:auto;}
+.surveillance-filters .gr-buttons .cisbutton{background:#ffff14;font-size:120%;font-weight:bold;color:#4d4d4d;padding:15px 15px 15px 15px;margin:10px;}
+.surveillance-filters .gr-buttons .cisbutton:hover{background:#db4437;color:#ffffff;}
+.surveillance-filters .gr-buttons .settings{color:#4d4d4d;font-size:25px;line-height:70px;cursor:pointer;}
+
+
+.surveillance-filters .gr-filters{color:#4d4d4d;margin:0px 10px 0px 10px;background-color:#5c6c9d;border-radius:5px;box-shadow: 0 0 3px rgba(0,0,0,.22),0 3px 4px rgba(0,0,0,.34);font-size:14px;}
+.surveillance-filters .gr-filters .label-filter{color:#fefefe;font-size:16px;font-weight:bold;}
+.surveillance-filters .gr-filters .label-filter span{color:#fefefe;font-size:10px;}
+.surveillance-filters .gr-filters select{background:#cdcdcd;padding:5px;border:1px solid #4d4d4d;font-weight:bold;color:#4d4d4d;}
+
+
+.surveillance-filters .gr-filters .group{margin:10px 0px 10px 0px;text-align:left; padding:2px 5px 2px 5px;font-weight:100;}
+.surveillance-filters .gr-filters .gr-comm{margin-bottom:20px;}
+.surveillance-filters .gr-filters .gr-gen{margin-bottom:20px;}
+.surveillance-filters .gr-filters .gr-dp{margin-bottom:20px;}
+
+.surveillance-filters .gr-filters .gr-dtype-checkbox{display:grid;grid-template-columns:auto auto auto;font-weight:bold;}
+
+.surveillance-filters .gr-filters .gr-age-radio{display:grid;grid-template-columns:auto auto auto;font-weight:bold;}
+.surveillance-filters .gr-filters .gr-age-custom{display:grid;grid-template-columns:auto auto auto auto;line-height:25px;visibility:hidden;margin-top:5px;}
+.surveillance-filters .gr-filters .gr-age-custom label{font-size:16px;color:#ffffff;font-weight:bold;}
+.surveillance-filters .gr-filters .gr-age-custom input{width:40px;padding:2px 2px 2px 2px; border:1px solid #4d4d4d;text-align:center;}
+
+.surveillance-filters .gr-filters .gr-radio{border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-left:1px solid #4d4d4d;padding:1px;line-height:27px;color:#4d4d4d;background:#cdcdcd;text-align:center;cursor:pointer;}
+.surveillance-filters .gr-filters .gr-radio:hover{background:#adadad;}
+.surveillance-filters .gr-filters .gr-radio.last{border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;}
+.surveillance-filters .gr-filters .gr-radio.selected{background-color:#4b3b3b;color:#ffffff;}
+
+.surveillance-filters .gr-filters .gr-a1c-radio{display:grid;grid-template-columns:auto auto auto;font-weight:bold;}
+.surveillance-filters .gr-filters .gr-a1c-custom{display:grid;grid-template-columns:auto auto auto auto;line-height:25px;visibility:hidden;margin-top:5px;}
+.surveillance-filters .gr-filters .gr-a1c-custom label{font-size:16px;color:#ffffff;font-weight:bold;}
+.surveillance-filters .gr-filters .gr-a1c-custom input{width:40px;padding:2px 2px 2px 2px; border:1px solid #4d4d4d;text-align:center;}
+
+.surveillance-filters .gr-buttons .cisbutton{background:#ffff14;font-size:120%;font-weight:bold;color:#4d4d4d;padding:15px 15px 15px 15px;}
+.surveillance-filters .gr-buttons .cisbutton:hover{background:#db4437;color:#ffffff;}
+
+
+
+
+.settings-fullscreen-modal{font-size:13px;position:absolute;background-color:rgba(209, 208, 205, 0.5);width:100%;height:100%;top:0px;left:0px;z-index:100001;display: flex;justify-content: center;align-items: center;font-family:Arial,Helvetica,sans-serif;}
+.settings-window{width:500px;height:700px;background-color:#5c6c9d;display:grid;grid-template-rows:25px auto;}
+.settings-window-header{background-color:#4b3b3b;display:grid;grid-template-columns:auto 25px;}
+.settings-window-header-title{padding-left:10px;color:#ffffff;line-height:25px;font-weight:bold;}
+.settings-window-header-close{color:#ffffff;background-color:#db4437;line-height:25px;text-align:center;cursor:pointer;}
+.settings-window-body{display:grid;grid-template-rows:auto 50px;color:#ffffff;}
+.settings-window-body-body-data{overflow-y:auto;height:490px;}
+.settings-window-body-footer{display:grid;grid-template-columns:auto 80px 80px;justify-items:center;align-items: center;font-size:20px;}
+.settings-window-body-line{padding:10px;}
+.settings-window-body-te{display:grid;grid-template-columns:auto auto;}
+.settings-window-body-label{}
+.settings-window-body-value-switch{display:grid;grid-template-columns:auto auto 25px;}
+.settings-window-body-te-item{cursor:pointer;background-color:#cdcdcd;font-size:13px;color:#4d4d4d;text-align:center;line-height:25px;border-left:1px solid #4d4d4d;border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;}
+.settings-window-body-te-item.last{border-right:1px solid #4d4d4d;}
+.settings-window-body-te-item.selected{background-color:#4b3b3b;color:#ffffff;}
+
+.settings-window-body-idc{display:grid;grid-template-columns:auto auto;}
+.settings-window-body-comunity{width:130px; font-size:15px;text-align:center;line-height:60px;}
+.settings-window-body-value{display:grid;grid-template-rows:20px 20px 20px;}
+.settings-window-body-value-g{display:grid;grid-template-columns:auto 50px 50px 25px;cursor:pointer;}
+.settings-window-body-value-g:hover > *{visibility:visible;}
+.settings-fullscreen-modal .value-label{line-height:20px;cursor:pointer;}
+.settings-fullscreen-modal .input-value-ro{border:none;text-align:center;font-weight:bold;background:transparent; }
+.settings-fullscreen-modal .input-value-w{visibility:hidden;border:none;text-align:center;font-weight:bold;}
+.settings-fullscreen-modal .input-value-w.visible{visibility:visible;}
+.settings-fullscreen-modal .value-edit{text-align:center; line-height:20px;}
+.settings-fullscreen-modal .value-edit > *{visibility:hidden;}
+.settings-fullscreen-modal .value-edit:hover > *{visibility:visible;}
+.settings-fullscreen-modal .value-edit.selected > *{visibility:visible;}
+.settings-fullscreen-modal .value-edit.selected{background-color:#db4437;}
+/*
+
+.surveillance-filters .gr-filters .gr .gr-custom{visibility:hidden;}
+.surveillance-filters .gr-filters .gr .gr-custom label{padding: 0px 3px 0px 3px;line-height:27px;}
+.surveillance-filters .gr-filters .gr .gr-custom input[type=text]{width:40px;padding:2px 2px 2px 2px; border:1px solid #4d4d4d; margin:0px 2px 0px 2px;text-align:center;}
+
+
+
+.surveillance-filters .gr-filters .gr-a1c-radio{display:grid;grid-template-columns:170px;}
+.surveillance-filters .fs-filters .gr-2col1{display:grid;grid-template-columns:auto auto auto auto auto;padding:3px 2px;grid-column-gap:5px;padding:5px;}
+.surveillance-filters .fs-filters .gr-2col2{display:grid;grid-template-columns:auto auto auto 150px 150px;padding:3px 2px;grid-column-gap:5px;padding:5px;}
+.surveillance-filters .fs-filters .gr-2col2 .cisbutton{background:#ffff14;font-size:120%;font-weight:bold;color:#4d4d4d;}
+.surveillance-filters .fs-filters .gr-2col2 .cisbutton:hover{background:#db4437;color:#ffffff;}
+*/
+
+
+.jqplot-highlight{
+	font-size:11px;
+	background-color:#cdcdcd;
+	color:#4d4d4d;
+	padding:5px;
+}

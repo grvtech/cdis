@@ -1,0 +1,54 @@
+
+<div id="grvDialogSubscribe" title="Subscribe to CDIS" >
+  <p class="cdisValidateTips">All form fields are required.</p>
+  <div id="grvSubscribeForm">
+   <form name="subscribe">
+    <fieldset>
+      <label for="firstnameSub">First name</label><input type="text" name="firstnameSub" id="grvFirstnameSubscribe" value="" class="cdisLoginText">
+      <label for="lastnameSub">Last name</label>
+      <input type="text" name="lastnameSub" id="grvLastnameSubscribe" value="" class="cdisLoginText">
+      <label for="emailSub">Email</label>
+      <input type="text" name="emailSub" id="grvEmailSubscribe" value="" class="cdisLoginText">
+ 	  <label for="idcommunitySub">User works in community:</label>
+      <select name="idcommunitySub" id="grvIdcommunitySubscribe" class="cdisLoginText">
+      	<option value="0">Please Choose ...</option>
+      	<option value="1">Chisasibi</option>
+      	<option value="2">Estmain</option>
+      	<option value="3">Mistissini</option>
+      	<option value="4">Nemaska</option>
+		<option value="5">Oujebougoumou</option>
+		<option value="6">Waskaganish</option>
+		<option value="7">Waswanipi</option>
+		<option value="8">Wemindji</option>
+		<option value="9">Whapmagoostui</option>
+      </select>
+      <label for="idprofesionSub">User profession:</label>
+      <select name="idprofesionSub" id="grvIdprofesionSubscribe" class="cdisLoginText">
+      	<option value="0">Please Choose ...</option>
+      	<option value="1">PCCR</option>
+      	<option value="2">MD</option>
+      	<option value="3">Nurse</option>
+      	<option value="4">Nutritionist</option>
+      </select>
+      <label for="passwordSub">Password:</label>
+      <input type="password" name="passwordSub" id="grvPasswordSubscribe" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+      
+      <label for="cpasswordSub">Confirm Password:</label>
+      <input type="password" name="cpasswordSub" id="grvPasswordSubscribeConfirm" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+      
+      <div id="grvPasswordMessage">
+  		<b>Password must contain the following:</b>
+  		<p id="grvPassLetter" class="invalid">A <b>lowercase</b> letter</p>
+  		<p id="grvPassCapital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+  		<p id="grvPassNumber" class="invalid">A <b>number</b></p>
+  		<p id="grvPassLength" class="invalid">Minimum <b>8 characters</b></p>
+	</div>
+	<div id="grvConfirmPasswordMessage">
+  		<p id="grvPassConfirm" class="invalid">Password <b>is confirmed</b></p>
+	</div>
+      <!-- Allow form submission with keyboard without duplicating the dialog button -->
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+  </form>
+  </div>
+</div>

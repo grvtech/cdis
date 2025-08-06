@@ -1,0 +1,1281 @@
+.bodyclass {
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	background: #5c6c9d;
+	overflow: auto;
+}
+
+.bodyclass_index {
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	background: #FFFFFF;
+}
+
+.banner {
+	position: relative;
+	margin-top: 10px;
+	width: 100%;
+	height: 100px;
+}
+
+.banner table {
+	background: #4b3b3b;
+}
+
+.banner .banner_logo {
+	height: 100px;
+	width: 100px;
+	background: url(../../images/cree_logo.jpg) no-repeat center center;
+}
+
+.banner_title {
+	font-family: Trebuchet MS, Arial;
+	font-size: 40px;
+	color: #FFFFFF;
+	font-weight: bold;
+	text-align: right;
+	padding-right: 20px;
+}
+
+.banner_title1 {
+	font-family: Trebuchet MS, Arial;
+	font-size: 30px;
+	color: #FFFFFF;
+	font-weight: bold;
+	text-align: right;
+	padding-right: 20px;
+}
+
+.index_blue {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 100%;
+	width: 600px;
+	background: #5c6c9d;
+}
+
+.index_blue_photo {
+	position: absolute;
+	top: 350px;
+	left: 0px;
+	height: 471px;
+	width: 600px;
+	/*border:1px solid #000000;*/
+	background: #5c6c9d url(../../images/photo.jpg) no-repeat left bottom;
+}
+
+.index_message {
+	position: absolute;
+	top: 350px;
+	left: 600px;
+	height: 200px;
+	width: 350px;
+	background: #FFFFFF;
+	/*border:1px solid #000000;*/
+	font-family: Verdana, Arial;
+	font-size: 14px;
+	color: #FF0000;
+	font-weight: bold;
+	padding: 10;
+}
+
+.index_banner {
+	position: absolute;
+	top: 10px;
+	left: 20px;
+	height: 150px;
+	width: 550px;
+	/*border:1px solid #000000;*/
+}
+
+.index_banner_logo {
+	height: 130px;
+	width: 130px;
+	background: url(../../images/cree_logo_index.jpg) no-repeat left top;
+}
+
+.index_banner_title {
+	font-family: Trebuchet MS, Arial;
+	font-size: 40px;
+	color: #FFFFFF;
+	font-weight: bold;
+	text-align: right;
+}
+
+.index_brown {
+	position: absolute;
+	top: 170px;
+	left: 0px;
+	height: 180px;
+	width: 100%;
+	background: #4b3b3b;
+}
+
+.index_login {
+	position: absolute;
+	top: 0px;
+	left: 50px;
+	height: 150px;
+	width: 300px;
+	/*border:1px solid #000000;*/
+}
+
+.mainpage_title {
+	position: relative;
+	margin-top: 30px;
+	height: 30px;
+	width: 100%;
+	/*border:1px solid #000000;*/
+}
+
+.mainpage_find {
+	position: relative;
+	margin-top: 10px;
+	width: 100%;
+	/*border:1px solid #000000;*/
+}
+
+.mainpage_find .find_table {
+	margin-left: 100px;
+}
+
+.mainpage_buttons {
+	position: relative;
+	margin-top: 50px;
+	width: 100%;
+	/*border:1px solid #000000;*/
+}
+
+* html .mainpage_buttons {
+	margin-top: 30px;
+}
+
+.mainpage_buttons table {
+	margin-left: 370px;
+}
+
+.detailpage_menu {
+	position: relative;
+	margin-top: 0px;
+	width: 100%;
+	height: auto;
+	/*border:1px solid #000000;*/
+}
+
+.detailpage_menu table {
+	background: #c0c0c0;
+}
+
+.detailpage {
+	position: relative;
+	margin-top: 0px;
+	width: 100%;
+	height: 380px;
+	/*border:1px solid #000000;*/
+	text-align: center;
+}
+
+.options_menu {
+	position: relative;
+	margin-top: 10px;
+	width: 100%;
+	height: auto;
+	/*border:1px solid #000000;*/
+}
+
+.options_menu table {
+	background: #c0c0c0;
+}
+
+.options_page {
+	position: relative;
+	margin-top: 0px;
+	width: 100%;
+	height: 380px;
+	/*border:1px solid #000000;*/
+}
+
+.options_form {
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+.options_print {
+	position: relative;
+	margin-top: 5px;
+	width: 100%;
+	height: 25px;
+	/*border:1px solid #000000;*/
+}
+
+.reports_menu {
+	position: relative;
+	margin-top: 10px;
+	width: 100%;
+	height: auto;
+	/*border:1px solid #000000;*/
+}
+
+.reports_menu table {
+	background: #c0c0c0;
+}
+
+.reports_page {
+	position: relative;
+	margin-top: 0px;
+	width: 100%;
+	height: 380px;
+	/*border:1px solid #000000;*/
+}
+
+.reports_form {
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+.reports_print {
+	position: relative;
+	margin-top: 5px;
+	width: 100%;
+	height: 25px;
+	/*border:1px solid #000000;*/
+}
+
+.detailpage_print {
+	position: relative;
+	margin-top: 5px;
+	width: 100%;
+	height: 25px;
+	/*border:1px solid #000000;*/
+}
+
+.detailpage_form {
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+#content_cell {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	background: #c0c0c0;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+	border-right: 1px solid #000000;
+	/*padding:10px 10px 10px 10px;*/
+}
+
+#tablebody {
+	height: 240px;
+	overflow: auto;
+	width: 100%;
+	border: 1px solid #000000;
+}
+
+#grafic_panel {
+	position: absolute;
+	width: 450px;
+	height: 330px;
+	left: 100%;
+	top: 10px;
+	margin-left: -460px;
+	background: #FFFFFF;
+	/*border:1px solid #000000;*/
+}
+
+#grafic_menu {
+	position: relative;
+	width: 100%;
+	height: 30px;
+	background: #FF00FF;
+}
+
+.grafic_canvas {
+	position: relative;
+	width: 450px;
+	height: 300px;
+	background: #FFFFFF;
+	border-left: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-top: 1px solid #000000;
+}
+
+#patientinfo {
+	position: absolute;
+	width: 280px;
+	height: 90px;
+	left: 30px;
+	top: 5px;
+	/*border:1px solid #ff0000;*/
+}
+
+#patientinfo .label {
+	font-family: Verdana, Arial;
+	font-size: 13px;
+	color: #ed7602;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+#patientinfo .value {
+	font-family: Verdana, Arial;
+	font-size: 13px;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+
+#patient_patient_record_div {
+	position: absolute;
+	width: 340px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+	/*border:1px solid #000000;*/
+}
+
+#patient_patient_diabet_div {
+	position: absolute;
+	width: 370px;
+	height: 360px;
+	left: 360px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+#patient_patient_went_div {
+	position: absolute;
+	width: 210px;
+	height: 360px;
+	left: 750px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+#patient_complications__div {
+	position: absolute;
+	width: 450px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.patient_complications__table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	/*background:#c0c0c0;*/
+	background: #FFFFFF;
+}
+
+#patient_meds__div {
+	position: absolute;
+	width: 330px;
+	height: 300px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.patient_meds__table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 150px;
+	/*background:#c0c0c0;*/
+	background: #FFFFFF;
+}
+
+#patient_miscellaneous__div {
+	position: absolute;
+	width: 800px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.patient_miscellaneous__table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#patient_mdvisits__div {
+	position: absolute;
+	width: 98%;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.patient_mdvisits__table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#patient_renal__div {
+	position: absolute;
+	width: 500px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.patient_renal__table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+	overflow: auto;
+}
+
+#patient_lab__div {
+	position: absolute;
+	width: 500px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.patient_lab__table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#patient_lipid__div {
+	position: absolute;
+	width: 500px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.patient_lipid__table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+.patient_patient_record_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+.patient_patient_went_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+.patient_patient_diabet_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#options_account_div {
+	position: absolute;
+	width: 500px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.options_account_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#options_message_div {
+	position: absolute;
+	width: 500px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.options_message_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#options_config_div {
+	position: absolute;
+	width: 500px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.options_config_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#options_statistics_div {
+	position: absolute;
+	width: 970px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+	border:1px solid #000000;
+}
+
+.options_statistics_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+
+
+#options_users_div {
+	position: absolute;
+	width: 900px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.options_users_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#options_evaluator_div {
+	position: absolute;
+	width: 600px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.options_evaluator_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+.options_users_properties_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#reports_predefined_div {
+	position: absolute;
+	width: 600px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.reports_predefined_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#reports_custom_div {
+	position: absolute;
+	width: 650px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.reports_custom_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#reports_legend_div {
+	position: absolute;
+	width: 650px;
+	height: 360px;
+	left: 10px;
+	top: 10px;
+	background: #c0c0c0;
+}
+
+.reports_legend_table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 330px;
+	background: #FFFFFF;
+}
+
+#reportNameDiv {
+	position: absolute;
+	width: 250px;
+	height: 30px;
+	left: 670px;
+	top: 320px;
+	background: #c0c0c0;
+	border: 1px solid #000000;
+}
+
+.scroller_wrapper {
+	height: 270px;
+	width: 100%;
+	overflow: auto;
+}
+
+.patientRecord_table td {
+	padding-left: 10px;
+}
+
+.patientRecord_tablebuttons {
+	width: 100%;
+}
+
+.patientDiabet_tablebuttons {
+	width: 100%;
+}
+
+/***********************************
+*  COMMON CLASSES
+************************************/
+.error_message {
+	font-family: Verdana, Arial;
+	font-size: 12px;
+	color: #FF0000;
+}
+
+.title {
+	font-family: Verdana, Arial;
+	font-size: 24px;
+	color: #FFFFFF;
+	text-align: left;
+	font-weight: bold;
+}
+
+.text1 {
+	font-family: Verdana, Arial;
+	font-size: 12px;
+	color: #FFFFFF;
+	font-weight: bold;
+	text-align: left;
+}
+
+.text2 {
+	font-family: Verdana, Arial;
+	font-size: 11px;
+	color: #000000;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.link1 {
+	font-family: Verdana, Arial;
+	font-size: 11px;
+	color: #000000;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.link1:hover {
+	color: #ed7602;
+	text-decoration: underline;
+}
+
+#newpatient_div {
+	position: realtive;
+	margin-left: 30px;
+}
+
+#newpatient_table {
+	border: 1px solid #000000;
+	background: #FFFFFF;
+	padding: 10;
+}
+
+#newpatient_div .text2 {
+	width: 150px;
+	padding: 5;
+}
+
+.text3 {
+	font-family: Verdana, Arial;
+	font-size: 11px;
+	color: #ed7602;
+	font-weight: bold;
+}
+
+.text_control1 {
+	font-family: Verdana, Arial;
+	font-size: 10px;
+	color: #000000;
+	background: #FFFFFF;
+	border: 1px solid #000000;
+}
+
+.textarea_control1 {
+	font-family: Verdana, Arial;
+	font-size: 10px;
+	color: #000000;
+	background: #FFFFFF;
+	border: 1px solid #000000;
+	height: 300px;
+}
+
+.select_control1 {
+	font-family: Verdana, Arial;
+	font-size: 10px;
+	color: #000000;
+	background: #FFFFFF;
+}
+
+.button {
+	text-decoration: none;
+}
+
+.button1 {
+	text-decoration: none;
+	margin: 0px 0px 0px 5px;
+}
+
+.button .span_button1 {
+	padding: 5px 13px 5px 13px;
+	border: 1px solid #000000;
+	color: #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #c0c0c0;
+}
+
+* html .button .span_button1 {
+	line-height: 2.2;
+}
+
+.button:hover .span_button1 {
+	padding: 5px 13px 5px 13px;
+	border: 1px solid #000000;
+	color: #FFFFFF;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #ed7602;
+}
+
+.button .span_button2 {
+	padding: 3px 10px 4px 10px;
+	border: 1px solid #000000;
+	color: #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 20px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #c0c0c0;
+}
+
+* html .button .span_button2 {
+	line-height: 1.8;
+}
+
+.button:hover .span_button2 {
+	padding: 3px 10px 4px 10px;
+	border: 1px solid #000000;
+	color: #FFFFFF;
+	font-family: Trebuchet MS, Arial;
+	font-size: 20px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #ed7602;
+}
+
+.button .span_button3 {
+	padding: 2px 13px 4px 13px;
+	color: #FFFFFF;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #606060;
+}
+
+* html .button .span_button3 {
+	line-height: 1.8;
+}
+
+.button:hover .span_button3 {
+	padding: 2px 13px 4px 13px;
+	color: #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #ed7602;
+}
+
+.button1 .span_button4 {
+	padding: 2px 13px 4px 13px;
+	color: #FFFFFF;
+	font-family: Trebuchet MS, Arial;
+	font-size: 11px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #606060;
+}
+
+* html .button1 .span_button4 {
+	line-height: 1.3;
+}
+
+.button1:hover .span_button4 {
+	padding: 2px 13px 4px 13px;
+	color: #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 11px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #ed7602;
+}
+
+.button1 .span_button3 {
+	padding: 2px 13px 2px 13px;
+	color: #FFFFFF;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #606060;
+	border: 1px solid #000000;
+}
+
+* html .button1 .span_button3 {
+	line-height: 1.8;
+}
+
+.button1:hover .span_button3 {
+	padding: 2px 13px 2px 13px;
+	color: #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #ed7602;
+	border: 1px solid #000000;
+}
+
+.buttonmenugrafic {
+	text-decoration: none;
+	padding: 5px 10px 5px 10px;
+	border: 1px solid #000000;
+	color: #FFFFFF;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #606060;
+	text-align: center;
+	cursor: hand;
+	cursor: pointer;
+}
+
+.buttonmenugrafic_over {
+	color: #000000;
+	background: #ed7602;
+	text-decoration: none;
+	padding: 5px 10px 5px 10px;
+	border: 1px solid #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+	cursor: hand;
+	cursor: pointer;
+}
+
+.buttonmenugrafic_selected {
+	color: #000000;
+	background: #FFFFFF;
+	text-decoration: none;
+	padding: 5px 10px 5px 10px;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+	border-right: 1px solid #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+	cursor: hand;
+	cursor: pointer;
+}
+
+.buttonmenu {
+	text-decoration: none;
+	padding: 5px 10px 5px 10px;
+	border: 1px solid #000000;
+	color: #FFFFFF;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #606060;
+	text-align: center;
+	cursor: hand;
+	cursor: pointer;
+}
+
+.buttonmenu_over {
+	color: #000000;
+	background: #ed7602;
+	text-decoration: none;
+	padding: 5px 10px 5px 10px;
+	border: 1px solid #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+	cursor: hand;
+	cursor: pointer;
+}
+
+.buttonmenu_selected {
+	color: #000000;
+	background: #c0c0c0;
+	text-decoration: none;
+	padding: 5px 10px 5px 10px;
+	border-top: 1px solid #000000;
+	border-left: 1px solid #000000;
+	border-right: 1px solid #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+	cursor: hand;
+	cursor: pointer;
+}
+
+.tableheader1 {
+	padding: 5px 10px 5px 10px;
+	color: #FFFFFF;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	/*background:#606060;*/
+	text-align: left;
+}
+
+.tableheader2 {
+	padding: 5px 5px 5px 5px;
+	color: #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 12px;
+	text-transform: uppercase;
+	border-bottom: 1px solid #ed7602;
+	font-weight: bold;
+	text-align: center;
+	height: 25px;
+}
+
+.tableheader3 {
+	padding: 5px 5px 5px 5px;
+	color: #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 12px;
+	text-transform: uppercase;
+	border-bottom: 1px solid #ed7602;
+	font-weight: bold;
+	text-align: center;
+	height: 25px;
+	visibility: hidden;
+}
+
+.sectionHeader {
+	padding: 5px 5px 5px 5px;
+	color: #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 12px;
+	text-transform: uppercase;
+	border-bottom: 1px solid #ed7602;
+	border-top: 1px solid #ed7602;
+	font-weight: bold;
+	text-align: center;
+	height: 25px;
+	background: #CDCDCD;
+}
+
+.tableline1 {
+	color: #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 10px;
+	text-transform: uppercase;
+	text-align: center;
+	height: 25px;
+	cursor: default;
+	padding: 0;
+}
+
+.tableline1 td {
+	border-bottom: 1px solid #cdcdcd;
+}
+
+.tableline1_over {
+	color: #ed7602;
+	font-family: Trebuchet MS, Arial;
+	font-size: 10px;
+	text-transform: uppercase;
+	text-align: center;
+	background: #c0c0c0;
+	height: 25px;
+	cursor: default;
+}
+
+.tableline1_selected {
+	color: #FFFFFF;
+	font-family: Trebuchet MS, Arial;
+	font-size: 10px;
+	/*font-weight:bold;*/
+	text-transform: uppercase;
+	text-align: center;
+	background: #606060;
+	height: 25px;
+	cursor: default;
+	padding: 0;
+}
+
+/***************************************/
+#autosuggest-medic {
+	display: none;
+	background: #FFFFFF;
+	width: 200px;
+	border: 1px outset #000000;
+	background: #c0c0c0;
+}
+#autosuggest-nurse {
+	display: none;
+	background: #FFFFFF;
+	width: 200px;
+	border: 1px outset #000000;
+	background: #c0c0c0;
+}
+
+#autosuggest-nutritionist {
+	display: none;
+	background: #FFFFFF;
+	width: 200px;
+	border: 1px outset #000000;
+	background: #c0c0c0;
+}
+
+#autosuggest-medic table {
+	width: 100%;
+}
+#autosuggest-nurse table {
+	width: 100%;
+}
+#autosuggest-nutitionist table {
+	width: 100%;
+}
+#autosuggest_scroll-hcp{
+	position: relative;
+	width: 100%;
+}
+
+#autosuggest {
+	display: none;
+	background: #FFFFFF;
+	width: 415px;
+	border: 1px outset #000000;
+	height: 300px;
+	background: #c0c0c0;
+}
+
+#autosuggest table {
+	width: 100%;
+}
+
+#autosuggest td {
+	text-align: center;
+}
+
+#autosuggest th {
+	font-family: Trebuchet MS, Arial;
+	font-size: 12px;
+	font-weight: bold;
+	text-transform: uppercase;
+	background: #4b3b3b;
+	color: #FFFFFF;
+}
+
+#autosuggest_scroll {
+	position: relative;
+	width: 100%;
+	height: 280px;
+	overflow: auto;
+}
+
+.selected {
+	font-family: Trebuchet MS, Arial;
+	font-size: 12px;
+	text-transform: uppercase;
+	background: #ed7602;
+	color: #FFFFFF;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.not_selected {
+	font-family: Trebuchet MS, Arial;
+	font-size: 12px;
+	text-transform: uppercase;
+	background: #c0c0c0;
+	color: #000000;
+}
+
+#report_html thead td {
+	font-family: Trebuchet MS, Arial;
+	font-size: 12px;
+	text-transform: uppercase;
+	background: #c0c0c0;
+	color: #000000;
+	font-weight: bold;
+	border-bottom: 1px solid #ed7602;
+	padding: 5px;
+}
+
+#report_html tbody td {
+	font-family: Trebuchet MS, Arial;
+	font-size: 12px;
+	background: #FFFFFF;
+	color: #000000;
+	border-bottom: 1px solid #c0c0c0;
+	padding: 5px;
+}
+
+/**notice classes*/
+.notice {
+	position: absolute;
+	min-width: 150px;
+	min-height: 75px;
+	border: 1px outset #000000;
+	background: #C0C0C0;
+	top: 50%;
+	left: 50%;
+}
+
+* html .notice {
+	width: 200px;
+}
+
+.noticeHeader {
+	position: relative;
+	width: 100%;
+	background: #4B3B3B;
+	height: 22px;
+}
+
+.noticeBody {
+	position: relative;
+	background: #C0C0C0;
+	padding: 5px 5px 5px 5px;
+}
+
+.tdHEader {
+	color: #ED7602;
+	font-family: Trebuchet MS, Arial;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.tdLabel {
+	color: #000000;
+	font-family: Trebuchet MS, Arial;
+	font-size: 14px;
+	font-weight: bold;
+	padding: 2px 3px 2px 10px;
+}
+
+#keysHelpMenu{
+	background:#C0C0C0;
+}
+#mainpageHelp #title{
+	position:relative;
+	width:80px;
+	padding:3px;
+	font-family:verdana;
+	font-size:11px;
+	font-weight:bold;
+	text-transform:capitalize;
+	background:#5C6C9D;
+	border-bottom:1px solid #5C6C9D;
+	border-right:1px solid #5C6C9D;
+}
+#mainpageHelp{
+	/*background: #ed7602;*/
+}
+
+#mainpageHelp #container .helpItem{
+	position:relative;
+	width:auto;
+	float:left;
+	padding-left:7px;
+	padding-top:3px;
+	font-family:verdana;
+	font-size:11px;
+	font-weight:normal;
+	/*border:1px solid #000000;*/
+}
+#mainpageHelp #container .helpItem span{
+	float:left;
+	padding-left:7px;
+	font-family:verdana;
+	font-size:11px;
+	font-weight:bold;
+}
+
+#container .returnDiv{
+	clear:both;
+}

@@ -1,0 +1,12 @@
+.cdisOptionsPersonalInfo {background-color:#ededed;display:block; width:60%; min-width:900px;margin:auto;}
+h1{padding:20px;}
+.cdisOptionsPersonalInfo label{font-size:140%; color:#4d4d4d;}
+.cdisOptionsPersonalInfo form{margin:10px 0px 30px 20px;}
+.cdisOptionsPersonalInfo table{width:90%;}
+.cdisOptionsPersonalInfo table .td-label{width:200px;}
+.cdisOptionsPersonalInfo .password-space{margin-top:10px; border:1px solid #cdcdcd;background:#fefefe;padding:10px;font-size:1.3em;}
+.cdisOptionsPersonalInfo .text{font-size:140%; border:1px solid #ffffff; background-color:#ffffff;padding:5px;}
+.cdisOptionsPersonalInfo .text-label{padding:2px;}
+.cdisOptionsPersonalInfo .text:disabled{background-color:#cdcdcd;}
+.cdisOptionsPersonalInfo .password-text{font-size:140%;border:1px solid #ffffff; background-color:#efefef;padding:5px;}
+.cdisOptionsPersonalInfo .password-text:focus{background-color:#cdcdcd;}

@@ -1,0 +1,33 @@
+.grvwcheck{
+    margin:10px;
+    padding:2px;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+
+.grvwcheck div{
+    margin:3px;
+    padding:5px;
+    border:outset;
+    border-width: 0.1em;
+    background-color: #efefef;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.grvwcheck div > i{margin-left:5px;}
+.grvwcheck div > span{margin-left:10px;}
+
+.grvwcheck div:hover{
+    background-color:  #cdcdcd;
+}
+
+
+.grvwcheck div.selected{
+    background-color: #4d4d4d;
+    color:#efefef;
+    border:inset;
+    border-width: 0.1em;
+}

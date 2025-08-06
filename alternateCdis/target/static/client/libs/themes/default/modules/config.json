@@ -1,0 +1,12 @@
+{
+	"path":"/ncdis/client/libs/themes/default/modules/",
+	"includes":[
+		{
+			"module":"grvpopup",
+			"libs":[
+				{"alias":"ailib","file":"/ncdis/client/libs/themes/default/sections/index/apilib.js"},
+				{"alias":"ilib","file":"/ncdis/client/libs/themes/default/sections/index/lib.js"}
+			]
+		}
+	]
+}

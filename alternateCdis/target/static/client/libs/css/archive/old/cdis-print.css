@@ -1,0 +1,12 @@
+/**
+CDIS PAGE CSS
+*/
+
+/*user shadow style used in all boxes*/
+.uss{-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);}
+/*user button style used in all buttons  - round with shadow*/
+.ubs{border-radius: 50%;box-shadow: 0 0 3px rgba(0,0,0,.22),0 3px 4px rgba(0,0,0,.34);-webkit-transform: translateX(-12px);transform: translateX(-12px);-webkit-transition: -webkit-transform 150ms,cubic-bezier(.4,0,.2,1),background-color,150ms,cubic-bezier(.4,0,.2,1);transition: transform 150ms,cubic-bezier(.4,0,.2,1),background-color,150ms,cubic-bezier(.4,0,.2,1);}
+.logo{position:absolute;left:5px;height:45px;width:300px;background:no-repeat url(/ncdis/client/images/logo-front.png) left center;font-family:roboto;font-size:35px;color:#4d4d4d;vertical-align:middle;line-height:45px;padding:0px 0px 0px 40px;}
+
+.cdis-print-header{position:relative;border-bottom:3px solid #4d4d4d;height:50px;}
+.cdis-print-body{position:relative;height:auto;}

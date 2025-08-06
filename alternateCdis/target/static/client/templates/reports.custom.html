@@ -1,0 +1,187 @@
+<div class="cdisCustomReports">
+	<div class="cdisCustomCriterias">
+		<div id="grvCustomReportType" type="grvwtabs" class="cdisCustomReportTypeTab">
+			<ul>
+				<li target="#grvTabList">Report type : List</li>
+	 			<li target="#grvTabGraph">Report type : Graph</li>
+	 			<li target="#grvTabComparator">Report type : Comparator</li>
+			</ul>
+	 		<article>
+				<div id="grvTabList">
+					<div class="cdisConfigListPanel">
+						<h1>Report configuration</h1><span class="cdisCriteriaFilterErrorMessage"></span>
+						<div class="cdisReportPeriodListContainer config">
+							<label for="grvReportPeriodList">Report Period : </label>
+							<div id="grvReportPeriodList" type="grvwradio">
+								<div default value="last">Last collected dates for tests</div>
+								<div value="between">Between dates</div>
+							</div>
+						</div>
+						<div class="cdisReportFilterListContainer config">
+							<label for="grvReportFilterList">Filter patients list by : </label>
+						    <div id="grvReportFilterList" type="grvwradio">
+								<div default value="allhcp">All patients <i>( no filter )</i></div>
+								<div value="hcpid">HCP or Team</div>
+							</div>
+						</div>
+					</div>					  
+				   	<div class="cdisReportListTool">
+				   		<div class="cdisReportListButtons">
+				   			<div class="cdisCisButton" id="grvAddReportListCriteria">Add Report Criteria or Column</div>
+				   			<div class="cdisCisButton" id="grvClearReportList">Clear Report</div>
+				   		</div>
+				   		<div class="cdisReportListToolbar">
+				   			<div class="cdisReportListToolbarHeader">Report criterias or display columns</div>
+				   			<div class="cdisReportListToolbarBody" idreport="0" typereport="list" periodreport="last" titlereport="Custom Report" filterreport="allhcp"></div>
+				   			<div class="cdisReportListToolbarFooter">
+				   				<div class="cdisReportNotes">
+				   					<label>Report notes:</label>
+				   					<textarea></textarea>
+				   				</div>
+				   				<div class="cdisReportListToolbarFooterButtons">
+				   					<!-- <div class="cdisCisButton" id="grvReportListExecuteButton">Execute Report</div> -->
+				   				</div>
+				   			</div>
+				   		</div>
+				   	</div>
+	  			</div><!-- end tabList -->
+						  
+				<div id="grvTabGraph">
+				   <div class="cdisConfigGraphPanel">
+						<h1>Report configuration</h1><span class="cdisCriteriaFilterErrorMessage"></span>
+						<div class="cdisReportGraphTypeContainer config">
+							<label for="grvReportGraphType">Graph type: </label>
+							<div id="grvReportGraphType" type="grvwradio">
+								<div default value="line">Line</div>
+								<div value="bar">Bar</div>
+								<div value="pie">Pie</div>
+							</div>
+						</div>
+						<div class="cdisReportGraphCriteriaContainer config">
+							<label for="grvReportGraphCriteria">Number of patients per: </label>
+							<div id="grvReportGraphCriteria" type="grvwradio">
+								<div default value="dtype">Type of diabetes</div>
+								<div value="idcommunity">Community</div>
+							</div>
+						</div>
+						<div class="cdisReportFilterGraphContainer config">
+							<label for="grvReportGraphFilter">Filter patients graph by: </label>
+						    <div id="grvReportGraphFilter" type="grvwradio">
+								<div default value="allhcp">All patients <i>( no filter )</i></div>
+								<div value="hcpid">HCP or Team</div>
+							</div>
+						</div>
+					</div>
+					<div class="cdisReportGraphTool">
+						<div class="cdisReportGraphButtons">
+							<div class="cdisCisButton" id="grvAddReportGraphCriteria">Add Report Criteria</div>
+							<div class="cdisCisButton" id="grvClearReportGraph">Clear Report</div>
+						</div>
+				   		
+				   		<div class="cdisReportGraphToolbar">
+				   			<div class="cdisReportGraphToolbarHeader">Report criteria</div>
+				   			<div class="cdisReportGraphToolbarBody" idreport="0" typereport="graph" periodreport="last" graphtype="line" titlereport="Custom Report" filterreport="allhcp"></div>
+				   			<div class="cdisReportGraphToolbarFooter">
+				   				<div class="cdisReportGraphNotes">
+				   					<label>Report notes:</label>
+				   					<textarea></textarea>
+				   				</div>
+				   				<div class="cdisReportGraphToolbarFooterButtons"></div>
+				   			</div>
+				   		</div>
+				   	</div>		
+				</div><!-- end tab graph -->
+				
+				
+				<div id="grvTabComparator">
+				   <div class="cdisConfigComparatorPanel">
+						<h1>Comparator Report configuration</h1>
+						<span class="cdisCriteriaFilterErrorMessage"></span>
+						<div class="cdisReportComparatorCriteriaContainer config">
+							<label for="grvReportComparatorType">Graph type: </label>
+							<div id="grvReportComparatorType" type="grvwradio">
+								<div default value="bar">Bar</div>
+								<div value="line">Line</div>
+								<div value="pie">Pie</div>
+							</div>
+						</div>
+						<div class="cdisReportComparatorCriteriaContainer config2">
+							<div>
+								<label for="grvReportComparatorCommunity">Community : </label>
+								<div>
+									<select id="grvReportComparatorCommunity">
+										<option value="0" default>All Communities</option>
+										<option value="1">Chisasibi</option>
+										<option value="2">Eastmain</option>
+										<option value="3">Mistissini</option>
+										<option value="4">Nemaska</option>
+										<option value="5">Oujebougoumou</option>
+										<option value="6">Waskaganish</option>
+										<option value="7">Waswanipi</option>
+										<option value="8">Wemindji</option>
+										<option value="9">Whapmagoostui</option>
+									</select>
+								</div>
+							</div>
+							<div>
+								<label for="grvReportComparatorPeriod">Period : </label>
+								<div>
+									<select id="grvReportComparatorPeriod">
+										<option value="6" default>last 6 months</option>
+										<option value="12">last 12 months</option>
+										<option value="24">last 24 months</option>
+										<option value="1">last year</option>
+										<option value="2">last 2 years</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="cdisReportComparatorCriteriaContainer config">
+							<label for="grvReportComparatorGroups">Groups : </label>
+							<div id="grvReportComparatorGroups" type="grvwradio">
+								<div value="2" default>2 Comparative Groups</div>
+								<div value="3">3 Comparative Groups</div>
+							</div>
+						</div>
+						<div class="cdisReportComparatorCriteriaContainer config">
+							<label for="grvReportComparatorDtypes">Type of diabetes : </label>
+							<div id="grvReportComparatorDtypes" type="grvwcheck">
+								<div value="1" >Type 1 DM</div>
+								<div value="2" default>Type 2 DM</div>
+								<div value="3">Pre DM</div>
+								<div value="4">GDM</div>
+							</div>
+						</div>
+					</div>
+					<div class="cdisReportComparatorTool">
+						<div class="cdisReportComparatorButtons">
+							<div class="cdisCisButton" id="grvClearReportComparator">Clear Report Comparator</div>
+						</div>
+				   		<div class="cdisReportComparatorToolbar">
+				   			<div class="cdisReportComparatorToolbarBody" idreport="0" typereport="comparator" graphtype="bar" titlereport="Comparator Report" groups="2" idcommunity="0">
+				   				
+				   			</div>
+				   			<div class="cdisReportComparatorToolbarFooter">
+				   				<div class="cdisReportComparatorNotes">
+									<label>Notes : </label><textarea></textarea>
+								</div>
+				   				<div class="cdisReportComparatorToolbarFooterButtons"></div>
+				   			</div>
+				   		</div>
+				   	</div>		
+				</div><!-- end tab comparator -->
+				
+				
+			</article>
+		</div>
+	</div>
+	<div class="cdisCustomReportsHistory">
+		<div class="cdisCustomReportsHistoryHeader">
+			<span>History of executed custom reports</span>
+			<div class="cdisSortHistory">Date&darr;</div>
+		</div>
+		<div class="cdisCustomReportsHistoryBody"></div>
+	</div>
+</div>
+<script src="client/libs/js/pages/reports.custom.js?_20240520" type="text/javascript"></script>
+

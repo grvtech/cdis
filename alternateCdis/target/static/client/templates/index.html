@@ -1,0 +1,136 @@
+<div></div><!-- header filler -->
+<div class="cdisPage">
+	<div id="grvFrontpage"></div>
+		
+	<div class="cdisLoginContainer">
+		<div class="cdisText">Cree Diabetes Information System</div>
+		<form id="grvLoginForm" class="cdisLogin">
+			<div class="cdisAvatar"></div>
+			<div id="grvErrorText" class="cdisErrorMessage"></div>
+			<div class="cdisUsername">
+				<input type="text" name="user" id="grvUser" class="cdisLoginText" placeholder="Username" tabindex="1"/>
+			</div>
+			<div class="cdisPassword">
+				<input type="password" id="grvPass" name="pass" class="cdisLoginText" placeholder="Password" tabindex="2"/>
+			</div>
+			<div id="grvLoginButton" class="cdisCisButton" tabindex="3">Login</div>
+			<div class="cdisForgotButton">Forgot password?</div>
+			<div class="cdisCisButton cdisSubscribeButton">Add new CDIS user</div>
+		</form>
+	</div>
+</div>
+<div></div><!-- footer filler -->
+
+
+
+
+<div id="grvDialogForgot" title="Forgot Password ? Enter info to reset password." >
+  <p class="cdisValidateTips">All form fields are required.</p>
+   <form>
+    <fieldset>
+      <div class="cdisDialogForgotUsername">
+      	<label for="usernameUser">Username</label>
+      	<div class="cdisFusername">
+      		<span>Forgot Username ?</span>
+      		<input type="checkbox" id="grvForgotUsername" value="1">
+      	</div>
+      </div>
+      <input type="text" name="usernameUser" id="grvUsernameUser" value="" class="cdisLoginText">
+      <label for="emailUser">Email</label>
+      <input type="text" name="emailUser" id="grvEmailUser" value="" class="cdisLoginText">
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+  </form>
+</div>
+
+
+<div id="grvDialogSubscribe" title="Subscribe to CDIS" >
+  <p class="cdisValidateTips">All form fields are required.</p>
+  <div id="grvSubscribeForm">
+   <form name="subscribe">
+    <fieldset>
+      <label for="firstnameSub">First name</label><input type="text" name="firstnameSub" id="grvFirstnameSubscribe" value="" class="cdisLoginText">
+      <label for="lastnameSub">Last name</label>
+      <input type="text" name="lastnameSub" id="grvLastnameSubscribe" value="" class="cdisLoginText">
+      <label for="emailSub">Email</label>
+      <input type="text" name="emailSub" id="grvEmailSubscribe" value="" class="cdisLoginText">
+ 	  <label for="idcommunitySub">User works in community:</label>
+      <select name="idcommunitySub" id="grvIdcommunitySubscribe" class="cdisLoginText">
+      	<option value="0">Please Choose ...</option>
+      	<option value="1">Chisasibi</option>
+      	<option value="2">Estmain</option>
+      	<option value="3">Mistissini</option>
+      	<option value="4">Nemaska</option>
+		<option value="5">Oujebougoumou</option>
+		<option value="6">Waskaganish</option>
+		<option value="7">Waswanipi</option>
+		<option value="8">Wemindji</option>
+		<option value="9">Whapmagoostui</option>
+      </select>
+      <label for="idprofesionSub">User profession:</label>
+      <select name="idprofesionSub" id="grvIdprofesionSubscribe" class="cdisLoginText">
+      	<option value="0">Please Choose ...</option>
+      	<option value="1">PCCR</option>
+      	<option value="2">MD</option>
+      	<option value="3">Nurse</option>
+      	<option value="4">Nutritionist</option>
+      </select>
+      <label for="passwordSub">Password:</label>
+      <input type="password" name="passwordSub" id="grvPasswordSubscribe" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+      
+      <label for="cpasswordSub">Confirm Password:</label>
+      <input type="password" name="cpasswordSub" id="grvPasswordSubscribeConfirm" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+      
+      <div id="grvPasswordMessage">
+  		<b>Password must contain the following:</b>
+  		<p id="grvPassLetter" class="invalid">A <b>lowercase</b> letter</p>
+  		<p id="grvPassCapital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+  		<p id="grvPassNumber" class="invalid">A <b>number</b></p>
+  		<p id="grvPassLength" class="invalid">Minimum <b>8 characters</b></p>
+	</div>
+	<div id="grvConfirmPasswordMessage">
+  		<p id="grvPassConfirm" class="invalid">Password <b>is confirmed</b></p>
+	</div>
+      <!-- Allow form submission with keyboard without duplicating the dialog button -->
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+  </form>
+  </div>
+</div>
+
+
+
+<div id="grvDialogReset" title="Reset password to CDIS" >
+  <p class="cdisValidateTips">All form fields are required.</p>
+
+  <div>
+   <form name="reset">
+    <fieldset>
+      <label for="usernameRes">Username</label>
+      <input type="text" name="usernameRes" id="grvUsernameReset" value="" class="cdisLoginText" disabled>
+      <input type="hidden" name="iduserRes" id="grvIdUserReset" value="">
+      <label for="passwordrRes">New Password:</label>
+      <input type="password" name="passwordrRes" id="grvPasswordrReset" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+      
+      <label for="cpasswordrRes">Confirm Password:</label>
+      <input type="password" name="cpasswordrRes" id="grvConfirmPasswordrReset" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+      
+      <div id="grvPasswordrMessage">
+  		<b>Password must contain the following:</b>
+  		<p id="grvPassrLetter" class="invalid">A <b>lowercase</b> letter</p>
+  		<p id="grvPassrCapital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+  		<p id="grvPassrNumber" class="invalid">A <b>number</b></p>
+  		<p id="grvPassrLength" class="invalid">Minimum <b>8 characters</b></p>
+	</div>
+	<div id="grvConfirmPasswordrMessage">
+  		<p id="grvPassrConfirm" class="invalid">Password <b>is confirmed</b></p>
+	</div>
+      <!-- Allow form submission with keyboard without duplicating the dialog button -->
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+  </form>
+  </div>
+</div>
+<!-- 
+<script src="client/libs/js/pages/index.lib.js" type="text/javascript"></script>
+ -->

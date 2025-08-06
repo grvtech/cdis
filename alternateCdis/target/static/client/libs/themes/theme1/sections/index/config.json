@@ -1,0 +1,23 @@
+{
+	"name":"index",
+	"path":"client/sections/index/",
+	"page":"client/sections/index/ui/index.html",
+	"container":"grvWraper",
+	"ressources":[
+					{
+						"type":"css",
+						"elements":[
+								{"name":"style","file":"/ncdis/client/libs/themes/default/sections/index/styles.css","initload":true}
+						]
+					},
+					{
+						"type":"ui",
+						"elements":[
+								{"name":"main","file": "/ncdis/client/libs/themes/default/sections/index/template.main.html","initload":true},
+								{"name":"forgot","file": "/ncdis/client/libs/themes/default/sections/index/template.forgot.html","initload":false},
+								{"name":"reset","file": "/ncdis/client/libs/themes/default/sections/index/template.reset.html","initload":false},
+								{"name":"subscribe","file": "/ncdis/client/libs/themes/default/sections/index/template.subscribe.html","initload":false}
+						]
+					}
+	]
+}

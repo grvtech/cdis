@@ -1,0 +1,92 @@
+
+
+<div id="grvHeader" class="uss">
+	<div class="cdisLogo"></div>
+	<div class="cdisName">CDIS</div>
+	<div class="cdisTitle">Search Patient</div>
+	<div class="">&nbsp;</div>
+	<ul class="cdisHeaderMenu">
+		<li class="messages ubs" data-toggle="tooltip" data-placement="left" title="Patient Messages"><i class="fa fa-envelope"></i></li>
+		<li class="personalinfo ubs" data-toggle="tooltip" data-placement="left" title="Personal Info"><i class="fa fa-user"></i></li>
+		<li class="users ubs" data-toggle="tooltip" data-placement="left" title="Users Administration"><i class="fa fa-users"></i></li>
+		<li class="frontpage ubs" data-toggle="tooltip" data-placement="left" title="Front page message"><i class="fa fa-comment"></i></li>
+		<li class="audit ubs" data-toggle="tooltip" data-placement="left" title="Users action log"><i class="fa fa-list"></i></li>	</ul>
+</div>
+
+
+<div class="cdisPage">
+
+		<div class="cdisPanelFull">
+			<div class="cdisSearchMessage">
+				<div style="text-align:center;padding:5px;">
+					<span style="font-family:Trebuchet MS; font-size:130%; line-height:1.4em;text-align:center;">
+						All CDIS users can <b>add new patients</b> by choosing the <span class="cisbutton ubs" style="margin:13px;"><i class="fa fa-bars" aria-hidden="true"></i></span> button on the bottom right part of the screen.
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="cdisPanelFull">
+			<form>
+				<div class="search">
+					<div id="radios" class="scriteria btn-group-vertical" data-toggle="buttons">
+					    <label for="chart" class="btn btn-default active"><input type="radio" id="chart" name="criteria" checked="checked">CHART</label>
+					    <label for="ipm" class="btn btn-default"><input type="radio" id="ipm" name="criteria">IPM</label>
+					    <label for="ramq" class="btn btn-default"><input type="radio" id="ramq" name="criteria">RAMQ</label>
+					    <label for="fnamelname" class="btn btn-default"><input type="radio" id="fnamelname" name="criteria">NAME</label>
+				  	</div>
+				  	<div class="ssearch">
+				  		<div class="label">
+				  			Find patient
+				  		</div>
+				  		<div class="input">
+				  			<input type="text" name="search" id="search" class="searchtext" tabindex="1"/>
+				  		</div>
+				  	</div>
+				</div>
+			</form>
+		</div>
+				
+				
+			<div class="cdisPanelFull">
+				<div class="cdisDashboardMenu">
+					<div class="cdisCisButton"  id="grvPatientValidationButton" data-toggle="tooltip" title="Open patient validation tool">Patient Validation Tool</div>
+					<div class="cdisCisButton"  id="grvSurveillanceButton" data-toggle="tooltip" title="Open reports surveillance page">Indicators and Outcomes</div>
+					<div class="cdisCisButton"  id="grvLocallistButton" data-toggle="tooltip" title="Open local patient list">Local Patient List</div>
+					<div class="cdisCisButton"  id="reports-button" data-toggle="tooltip" title="Execute reports">Reports</div> 
+					<div class="cdisCisButton"  id="addpatient-button" data-toggle="tooltip" title="Add new patient">Add Patient</div> 
+					<div class="cdisCisButton"  id="frontpage-button" data-toggle="tooltip" title="Manage fronpage message">Front Page Message</div>
+				</div>
+			</div>
+			
+			<div class="cdisPanelFull"><div class="cdisDashboardUser uss"></div></div>
+			<div class="cdisPanelFull"><div class="cdisNotesAlert uss"></div></div>
+			<div class="cdisPanelFull">
+				<div class="cdisPersonalPatients uss">
+					<div class="cdisPersonalPatientsHeader">
+						<p>Patients linked to <span id="grvPersonalPatientsUserFullname"></span></p>
+						<div class="cdisCisButton" id="grvLinkedPatientsButton" data-toggle="tooltip" title="Open list of patients linked to user">Open Patient List</div>
+					</div>
+					<table cellpadding="0" cellspacing="0">
+						<thead><tr><td>patient full name</td><td>chart</td><td>ramq</td><td>community</td><td>Next Visit Date</td></tr></thead>
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+</div>	<!-- end cdisPage -->
+
+ 
+
+
+<div id="grvFooter">
+	<div class="cdisFooterRight">
+		<ul class="cdisExpandMenu">
+			<li class="cdisFlogout ubs" data-toggle="tooltip" data-placement="left" title="Logout from CDIS"><span></span></li>
+			<li class="cdisFreports ubs" data-toggle="tooltip" data-placement="left" title="Load CDIS reports"><span></span></li>
+			<li class="cdisFnew ubs" data-toggle="tooltip" data-placement="left" title="Add new patient to CDIS"><span></span></li>
+		</ul>
+		<div class="cdisRootMenu ubs"><i class="fa fa-bars" aria-hidden="true"></i></div>
+	</div>
+</div>
+<script src="client/libs/js/pages/search.lib.js?_20240520" type="text/javascript"></script>
+	

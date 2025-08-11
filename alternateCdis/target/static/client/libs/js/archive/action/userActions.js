@@ -1,47 +1,8 @@
-function logoutUser(sid){
-	var request = $.ajax({
-		  url: "/ncdis/service/data/logoutSession?sid="+sid+"&language=en&ts="+moment(),
-		  type: "GET",
-		  async : false,
-		  dataType: "json"
-		});
-		request.done(function( json ) {
-			/*
-			var r = getParameterByName("ramq");
-			if ((r != null) && (r != "")){
-				$.cookie('ramq',r);
-			}
-			*/
-		});
-		request.fail(function( jqXHR, textStatus ) {
-		  alert( "Request failed: " + textStatus );
-		});
-	//window.location = "index.html";
-		gti();
-}
 
 
 
-function getSession(iduser){
-	var sid = "";
-	var request = $.ajax({
-		  url: "/ncdis/service/data/getUserSession?iduser="+iduser+"&language=en&ts="+moment(),
-		  type: "GET",
-		  async : false,
-		  dataType: "json"
-		});
-		request.done(function( json ) {
-			var sObj = json.objs[0];
-			
-			sid = sObj.idsession;
-		});
 
-		request.fail(function( jqXHR, textStatus ) {
-		  alert( "Request failed: " + textStatus );
-		});
-		//alert("SID IN GEt SESSION :"+sid);
-	return sid;
-}
+
 
 function setEvent(eventcode){
 	var request = $.ajax({
@@ -106,41 +67,9 @@ function getPatientInfo(idpatient){
 
 
 
-function getUserProfile(iduser,idsystem){
-	var uObj = null;
-	var request = $.ajax({
-		  url: "/ncdis/service/data/getUserProfile?iduser="+iduser+"&idsystem="+idsystem+"&language=en",
-		  type: "GET",
-		  async: false,
-		  cache: false,
-		  dataType: "json"
-		});
-		request.done(function( json ) {
-			uObj = json.objs[0];
-		});
-		request.fail(function( jqXHR, textStatus ) {
-		  alert( "Request failed: " + textStatus );
-		});
-	return uObj;
-}
 
-function getUserBySession(sessionId){
-	var uObjArray = null;
-	var request = $.ajax({
-		  url: "/ncdis/service/data/getUserBySession?sid="+sessionId+"&language=en",
-		  type: "GET",
-		  async : false,
-		  dataType: "json"
-		});
-		request.done(function( json ) {
-			uObjArray = json.objs;
-		});
 
-		request.fail(function( jqXHR, textStatus ) {
-		  alert( "Request failed:  error  " + textStatus );
-		});
-	return uObjArray;
-}
+
 
 function getUserMessages(userId){
 	var mObjArray = null;
@@ -161,35 +90,7 @@ function getUserMessages(userId){
 }
 
 
-function isUserLoged(sessionId){
-	var result = false;
-	//alert(sessionId);
-	var request = $.ajax({
-		  url: "/ncdis/service/data/isValidSession?sid="+sessionId+"&language=en",
-		  type: "GET",
-		  async : false,
-		  cache : false,
-		  dataType: "json"
-		});
-		request.done(function( json ) {
-			var sObj = json.objs[0];
-			if(sObj != null){
-				if((sObj.idsession != null) && (sObj.idsession != "") &&  (sObj.idsession != "0")){
-					userObj = getUserBySession(sObj.idsession);
-					if(userObj[0].username=="demo")isDemo=true;
-					userProfileObj = getUserProfile(sObj.iduser, 1);
-					result = true;
-				}else{
-					result = false;
-				}
-			}
-		});
 
-		request.fail(function( jqXHR, textStatus ) {
-		  alert( "Request failed: " + textStatus );
-		});
-	return result;
-}
 
 
 function getUsers(){

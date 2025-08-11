@@ -3,27 +3,27 @@
 	"routes":[
 		{
 			"name":"index",
-			"path":"client/libs/themes/{theme}/sections/index/index.html"
+			"path":"/ncdis/client/libs/themes/{theme}/sections/index/index.html"
 		},
 		{
 			"name":"search",
-			"path":"client/libs/themes/{theme}/sections/search/index.html"
+			"path":"/ncdis/client/libs/themes/{theme}/sections/search/index.html"
 		},
 		{
 			"name":"cdis",
-			"path":"client/libs/themes/{theme}/sections/cdis/index.html"
+			"path":"/ncdis/client/libs/themes/{theme}/sections/cdis/index.html"
 		},
 		{
 			"name":"reports",
-			"path":"client/libs/themes/{theme}/sections/reports/index.html"
+			"path":"/ncdis/client/libs/themes/{theme}/sections/reports/index.html"
 		},
 		{
 			"name":"options",
-			"path":"client/libs/themes/{theme}/sections/options/index.html"
+			"path":"/ncdis/client/libs/themes/{theme}/sections/options/index.html"
 		},
 		{
 			"name":"admin",
-			"path":"client/libs/themes/{theme}/sections/admin/index.html"
+			"path":"/ncdis/client/libs/themes/{theme}/sections/admin/index.html"
 		}
 	]
 }

@@ -56,8 +56,10 @@ export class grvpopup{
 	}
 	
 	changeButtons(bottonsconfig){
+		console.log(bottonsconfig);
 		$(grvpopup.footer).empty(); 
 		let autos = "";
+		const self = this;
 		$.each(bottonsconfig,function(x,y){autos = "auto "+autos;});
 		$(grvpopup.footer).css("grid-template-columns",autos);
 		$.each(bottonsconfig, function(i,button){

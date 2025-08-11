@@ -4,27 +4,36 @@
   <div>
    <form name="reset">
     <fieldset>
-      <label for="usernameRes">Username</label>
-      <input type="text" name="usernameRes" id="grvUsernameReset" value="" class="cdisLoginText" disabled>
-      <input type="hidden" name="iduserRes" id="grvIdUserReset" value="">
-      <label for="passwordrRes">New Password:</label>
-      <input type="password" name="passwordrRes" id="grvPasswordrReset" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
-      
-      <label for="cpasswordrRes">Confirm Password:</label>
-      <input type="password" name="cpasswordrRes" id="grvConfirmPasswordrReset" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
-      
-      <div id="grvPasswordrMessage">
-  		<b>Password must contain the following:</b>
-  		<p id="grvPassrLetter" class="invalid">A <b>lowercase</b> letter</p>
-  		<p id="grvPassrCapital" class="invalid">A <b>capital (uppercase)</b> letter</p>
-  		<p id="grvPassrNumber" class="invalid">A <b>number</b></p>
-  		<p id="grvPassrLength" class="invalid">Minimum <b>8 characters</b></p>
-	</div>
-	<div id="grvConfirmPasswordrMessage">
-  		<p id="grvPassrConfirm" class="invalid">Password <b>is confirmed</b></p>
-	</div>
-      <!-- Allow form submission with keyboard without duplicating the dialog button -->
-      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    	<div class="cdisFormRow">
+      		<label for="usernameRes">Username</label>
+      		<input type="text" name="usernameRes" id="grvUsernameReset" value=""  disabled>
+      		<input type="hidden" name="iduserRes" id="grvIdUserReset" value="">
+      	</div>
+      	<div class="cdisFormRow">
+      		<label for="passwordrRes">New Password:</label>
+      		<input type="password" name="passwordrRes" id="grvPasswordrReset" value=""  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+      	</div>
+      	<div class="cdisFormRow">
+      		<label for="cpasswordrRes">Confirm Password:</label>
+      		<input type="password" name="cpasswordrRes" id="grvConfirmPasswordrReset" value="" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+      	</div>
+      	
+      	<div class="cdisFormRow">
+      		<div id="grvPasswordrMessage">
+		  		<b>Password must contain the following:</b><br/>
+		  		<span id="grvPassrLetter" class="invalid">A <b>lowercase</b> letter</span>&nbsp;&nbsp;
+		  		<span id="grvPassrCapital" class="invalid">A <b>capital (uppercase)</b> letter</span><br/>
+		  		<span id="grvPassrNumber" class="invalid">A <b>number</b></span>&nbsp;&nbsp;
+		  		<span id="grvPassrLength" class="invalid">Minimum <b>8 characters</b></span>
+			</div>
+		</div>
+		<div class="cdisFormRow">	
+			<div id="grvConfirmPasswordrMessage">
+		  		<p id="grvPassrConfirm" class="invalid">Password <b>is confirmed</b></p>
+			</div>
+		</div>
+      	<!-- Allow form submission with keyboard without duplicating the dialog button -->
+      	<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
     </fieldset>
   </form>
   </div>

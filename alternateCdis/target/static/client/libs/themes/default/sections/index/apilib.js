@@ -1,5 +1,8 @@
 import sectionconfig from './config.json' with { type: 'json' };
+import * as router from './../../../../js/router.js';
+import * as userlib from './../../../../js/userlib.js';
 import {shareData} from './define.js'; //define global variables
+import {appDefine} from './../../../../js/define.js';
 import {grvvalidation} from './../../modules/grvvalidation.js';
 /**
  * All functions that communicates with backend - uses ajax
@@ -55,7 +58,8 @@ export function subscribeUser() {
     		});
     		mes.done(function( json ) {
     			if(json.status == "1"){
-    				val.updateTips(json.message);
+    				val.updateTips(json.message)
+					$(".cdisValidateTips").css("font-size","1.2vw");
     				$("#grvDialogSubscribe").find("fieldset").hide();
 					let bc=[{"text":"Return to CDIS Login Page","action":"closeGRVPopup","alias":"this"}];
 					shareData.pagepopup.changeButtons(bc);
@@ -63,6 +67,7 @@ export function subscribeUser() {
     			}else{
     				//tips.html(json.message);
 					val.updateTips(json.message);
+					$(".cdisValidateTips").css("font-size","1.2vw");
 					$("#grvDialogSubscribe").find("fieldset").hide();
 					valid = false;
     			}
@@ -82,15 +87,18 @@ export function subscribeUser() {
  
 
  export function resetPasswordUser(){
- 	var username = $("#grvUsernameReset").val();
- 	var password = $("#grvPasswordrReset").val();
- 	var passwordc = $("#grvConfirmPasswordrReset").val();
+ 	var username = $("#grvUsernameReset");
+ 	var password = $("#grvPasswordrReset");
+ 	var passwordc = $("#grvConfirmPasswordrReset");
  	var iduser = $("#grvIdUserReset").val();
- 	var validUser = Validate.now(Validate.Presence, username);
- 	var validPass = Validate.now(Validate.Presence, password);
- 	var validPassC = Validate.now(Validate.Presence, passwordc);
+	
+	const val = new grvvalidation();
+	let valid = true;
+ 	var validUser = val.checkEmpty(username,"Username must not be empty");
+ 	var validPass = val.checkPassword(password, 8);
+ 	var validPassC = val.checkPasswordConfirm(passwordc, password.val());
  	if(validUser && validPass && validPassC){
- 		var data = "username="+username+"&passwordr="+btoa(password)+"&iduser="+iduser+"&language=en";
+ 		var data = "username="+username.val()+"&passwordr="+btoa(password.val())+"&iduser="+iduser+"&language="+appDefine.appLanguage;
  		var request = $.ajax({
  		  url: "/ncdis/service/action/resetUserPassword",
  		  type: "POST",
@@ -101,71 +109,56 @@ export function subscribeUser() {
  		request.done(function( json ) {
  		  if(json.status == "0"){
  			  $(".cdisValidateTips").html(json.message);
+			  $(".cdisValidateTips").css("font-size","1.2vw");
  		  }else{
- 			
  			  $(".cdisValidateTips").html(json.message);
+			  $(".cdisValidateTips").css("font-size","1.2vw");
  			  $("#grvDialogReset").find("fieldset").hide();
- 			  //$("#resetButtonDialog").text("Go to login page");
- 			
- 			  $("#grvDialogReset").dialog( "option", "buttons", 
- 			    [
- 			      {
- 			        text: "Go to login page",
- 			        click: function() {
- 			          gti();
- 			        }
- 			      }
- 			    ]
- 			  );
  		  }
+		  let bc=[{"text":"Return to CDIS Login Page","action":"closeGRVPopup","alias":"this"}];
+		  shareData.pagepopup.changeButtons(bc);
+		  valid = false;
  		});
  		request.fail(function( jqXHR, textStatus ) {
- 			$("#errortext").text("Wrong Username or Password");
+ 			$(".cdisValidateTips").html("Wrong Username or Password");
  		});
  		
  	}else{
- 		$("#errortext").text("Wrong Username or Password");
+ 		$(".cdisValidateTips").html("Wrong Username or Password");
  		
- 	}	
+ 	}
+	return valid;	
  }
  
  
 
  export function loginUser() {
- 	var user = $("#grvUser").val();
- 	var pass = $("#grvPass").val();
- 	var validUser = Validate.now(Validate.Presence, user);
- 	var validPass = Validate.now(Validate.Presence, pass);
+	const val = new grvvalidation();
+ 	var user = $("#grvUser");
+ 	var pass = $("#grvPass");
+ 	var validUser = val.checkEmpty(user,appDefine.errorCodes.E03);
+ 	var validPass = val.checkEmpty(pass, appDefine.errorCodes.E04);
  	if(validUser && validPass){
  		var request = $.ajax({
- 		  url: "/ncdis/service/action/loginSession?username="+user+"&password="+btoa(pass)+"&language=en&reswidth="+$(window).width()+"&resheight="+$(window).height(),
+ 		  url: "/ncdis/service/action/loginSession?username="+user.val()+"&password="+btoa(pass.val())+"&language="+appDefine.appLanguage+"&reswidth="+$(window).width()+"&resheight="+$(window).height(),
  		  type: "GET",
  		  dataType: "json"
  		});
  		request.done(function( json ) {
- 			
  		  if(json.status == "0"){
- 			  $("#grvErrorText").text("Wrong Username or Password");
+ 			  $(".cdisValidateTips").text(appDefine.errorCodes.E02);
  		  }else{
- 			 userObj = json.objs[0];
- 			 sid = getSession(userObj.iduser);
- 			 //var ramq = $.cookie('ramq');
- 			 var ramq = null;
- 			 if((ramq != null) && (ramq != "")){
- 				 gtc(sid,"en",ramq,"patient");
- 			 }else{
- 				 gts(sid,"en");
- 			 }
- 			 /**/
+			appDefine.userObject = json.objs[0];
+			appDefine.sid = userlib.getSession(appDefine.userObject.iduser);
+ 			router.gts(appDefine.sid,"en");
  		  }
  		});
  		request.fail(function( jqXHR, textStatus ) {
- 			$("#grvErrorText").text("Wrong Username or Password");
+ 			$(".cdisValidateTips").text(appDefine.errorCodes.E01);
  		});
  		
  	}else{
- 		$("#grvErrorText").text("Wrong Username or Password");
- 		
+ 		$(".cdisValidateTips").text(appDefine.errorCodes.E02);
  	}
  }
  
@@ -193,18 +186,21 @@ export function subscribeUser() {
      		mes.done(function( json ) {
      			if(json.status == "1"){
      				$(".cdisValidateTips").html(json.message);
+					$(".cdisValidateTips").css("font-size","1.2vw");
      				$("#grvDialogForgot form").hide();
      			}else{
      				$(".cdisValidateTips").html(json.message);
+					$(".cdisValidateTips").css("font-size","1.2vw");
      			}
 				let bc=[{"text":"Return to CDIS Login Page","action":"closeGRVPopup","alias":"this"}];
      			shareData.pagepopup.changeButtons(bc);
+				valid = false;
 				//$( "#grvDialogForgot" ).dialog( "option", "buttons", { "Return to CDIS Login Page": function() { gti(); } } );
      		});
      		mes.fail(function( jqXHR, textStatus ) {
      		  alert( "Error sending message : " + textStatus );
      		  formForgot[ 0 ].reset();
-   			  $("#grvDialogForgot").dialog( "close" );
+			  valid = false;
      		});	
 
      } 
@@ -214,8 +210,9 @@ export function subscribeUser() {
  
  export function confirmUserEmail(iduser){
 	let  result = false;
+	let data = "language="+appDefine.appLanguage+"&iduser="+iduser;
 	$.ajax({
-	  url: "/ncdis/service/action/confirmUserEmail?language=en&iduser="+iduser,
+	  url: "/ncdis/service/action/confirmUserEmail",
 	  type: "POST",
 	  async : false,
 	  cache : false,
@@ -224,12 +221,6 @@ export function subscribeUser() {
 	}).done(function( json ) {
 		if(json.status == "1"){
 			result = true;
-			/*
-			var bconfig = {"width":"300","height":"250"};
-			var bbut = [{"text":"Close","action":"gti"}];
-			var txt = "<p><center><span style='color:yellow;font-size:35px;'><i class='fa fa-exclamation-triangle'></i></span><br><b>Email confirmed with succes.</b></center></p>";
-			showGRVPopup("CDIS Email Confirm",txt,bbut,bconfig);
-			*/
 		}
 	}).fail(function( jqXHR, textStatus ) {
 	  alert( "Error sending message : " + textStatus );

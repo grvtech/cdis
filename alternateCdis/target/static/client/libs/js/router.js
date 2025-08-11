@@ -7,9 +7,9 @@ import appconfig from './config.json' with { type: 'json' };
 
 
 export function route(section="index",theme="default"){
-	let url = "/"+appconfig.context+"/"+getRoute("index"); //default theme and index page
+	let url = getRoute("index"); //default theme and index page
 	if(section!==null){
-		url = "/"+appconfig.context+"/"+getRoute(section,theme); 		
+		url = getRoute(section,theme); 		
 	}
 	window.location = url+location.search;
 }
@@ -57,11 +57,11 @@ export	function getTheme() {
 }		
 
 
-export	function gti(){window.location = "index.html";}/*go to index*/
+export	function gti(){window.location = getRoute("index",getTheme());}/*go to index*/
 
 /*go to search*/
 export	function gts(s,l,plus){
-		var p = window.btoa("sid="+sid+"&language="+l+"&ts="+Math.floor(Date.now() / 1000)+plus);
+		var p = window.btoa("sid="+s+"&language="+l+"&ts="+Math.floor(Date.now() / 1000)+plus);
 		window.location = getRoute("search",getTheme())+"?"+p;
 	}
 /*	
@@ -71,28 +71,28 @@ export	function gtsplus(s,l,plus){
 	}
 */
 export	function gtc(s,l,r,sec){
-		var p = window.btoa("sid="+sid+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+Math.floor(Date.now() / 1000));
+		var p = window.btoa("sid="+s+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+Math.floor(Date.now() / 1000));
 		window.location = "cdis.html?"+p;
 	}/*go to cdis*/
 export	function gtcplus(s,l,r,sec,plus){
-		var pp = "sid="+sid+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+Math.floor(Date.now() / 1000)+plus;
+		var pp = "sid="+s+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+Math.floor(Date.now() / 1000)+plus;
 		var p = window.btoa("sid="+sid+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+Math.floor(Date.now() / 1000)+plus);
 		window.location = "cdis.html?"+p;
 	}/*go to cdis*/
 export	function gtr(s,l,rid){
-		var p = window.btoa("sid="+sid+"&language="+l+"&reportid="+rid+"&ts="+Math.floor(Date.now() / 1000));
+		var p = window.btoa("sid="+s+"&language="+l+"&reportid="+rid+"&ts="+Math.floor(Date.now() / 1000));
 		window.location = "reports.html?"+p;
 	}/*go to reports*/
 export	function gto(s,l,sec){
-		var p = window.btoa("sid="+sid+"&language="+l+"&section="+sec+"&ts="+Math.floor(Date.now() / 1000));
+		var p = window.btoa("sid="+s+"&language="+l+"&section="+sec+"&ts="+Math.floor(Date.now() / 1000));
 		window.location = "options.html?"+p;
 	}/*go to options*/
 export	function gta(s,l,sec){
-		var p = window.btoa("sid="+sid+"&language="+l+"&section="+sec+"&ts="+Math.floor(Date.now() / 1000));
+		var p = window.btoa("sid="+s+"&language="+l+"&section="+sec+"&ts="+Math.floor(Date.now() / 1000));
 		window.location = "admin.html?"+p;
 	}/*go to admin*/
 export	function gtn(s,l,r,idn){
-		var p = window.btoa("sid="+sid+"&language="+l+"&section=notes&ramq="+r+"&idnote="+idn+"&ts="+Math.floor(Date.now() / 1000));
+		var p = window.btoa("sid="+s+"&language="+l+"&section=notes&ramq="+r+"&idnote="+idn+"&ts="+Math.floor(Date.now() / 1000));
 		window.location = "cdis.html?"+p;
 	}/*go to admin*/
 

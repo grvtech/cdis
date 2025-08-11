@@ -1,0 +1,20 @@
+{
+	"name":"search",
+	"path":"client/sections/search/",
+	"page":"client/sections/search/index.html",
+	"container":"grvWraper",
+	"ressources":[
+					{
+						"type":"css",
+						"elements":[
+								{"name":"style","file":"/ncdis/client/libs/themes/default/sections/search/styles.css","initload":true}
+						]
+					},
+					{
+						"type":"ui",
+						"elements":[
+								{"name":"main","file": "/ncdis/client/libs/themes/default/sections/search/template.main.html","initload":true}
+						]
+					}
+	]
+}

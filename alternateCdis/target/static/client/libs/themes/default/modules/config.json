@@ -5,7 +5,8 @@
 			"module":"grvpopup",
 			"libs":[
 				{"alias":"ailib","file":"/ncdis/client/libs/themes/default/sections/index/apilib.js"},
-				{"alias":"ilib","file":"/ncdis/client/libs/themes/default/sections/index/lib.js"}
+				{"alias":"ilib","file":"/ncdis/client/libs/themes/default/sections/index/lib.js"},
+				{"alias":"router","file":"/ncdis/client/libs/js/router.js"}
 			]
 		}
 	]

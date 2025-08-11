@@ -1,0 +1,13 @@
+.grvlist-container{width:100%;height:100%;cursor:pointer;}
+.grvlist-container .grvlist-group-h{list-style:none;margin:0px;padding:0px;}
+.grvlist-container .grvlist-group-h .grvlist-group-item{padding:5px;text-align:center;border:1px solid #000000;display:inline-block;}
+.grvlist-container .grvlist-group-h .grvlist-group-item.active{background-color:#556c79;color:#ffffff;}
+.grvlist-container .grvlist-group-h .grvlist-group-item:hover{background-color:#db4437;color:#ffffff;}
+
+
+.grvlist-container .grvlist-group-v{list-style:none;margin:0px;padding:0px;}
+.grvlist-container .grvlist-group-v .grvlist-group-item{padding:5px;background-color:#efefef;text-align:center;display:block;}
+.grvlist-container .grvlist-group-v .grvlist-group-item.active{background-color:#556c79;color:#ffffff;}
+.grvlist-container .grvlist-group-v .grvlist-group-item:hover{background-color:#db4437;color:#ffffff;}
+
+.grvlist-container .grvlist-active-item{padding:5px;text-align:center;display:grid;grid-template-columns:auto 25px;border:1px solid #000000;}

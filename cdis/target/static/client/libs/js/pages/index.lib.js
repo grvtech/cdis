@@ -402,8 +402,8 @@ function getFrontPageMessage(){
 		});
 		mes.done(function( json ) {
 			message = json.objs[0].message;
+			const container = $("#grvFrontpage");
 			if(message != ""){
-				const container = $("#grvFrontpage");
 				container.html(message); 
 				var contents = container.wrapInner('<div>').children(); // wrap a div around the contents
 				var height = contents.outerHeight();

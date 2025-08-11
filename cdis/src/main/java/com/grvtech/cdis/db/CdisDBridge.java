@@ -148,9 +148,9 @@ public class CdisDBridge {
 		
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		
-		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
-		System.out.println(sql);
-		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		//System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		//System.out.println(sql);
+		//System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		
 		if(rows.size() > 0 ) {
 			Map<String, Object> row = rows.get(0);
@@ -213,7 +213,7 @@ public class CdisDBridge {
 		    		+ "dod='"+pat.getDod()+"', "
 		    		+ "death_cause='"+pat.getDcause()+"', "
 		    		+ "idcommunity='"+pat.getIdcommunity()+"', "
-		    		+ "iscree='"+pat.getIscree()+"', "
+		    		+ "iscree='"+((pat.getIscree() == -1)?1:pat.getIscree())+"', "
 		    		+ "phone='"+pat.getPhone()+"' "
 		    		+ "where idpatient='"+pat.getIdpatient()+"'";
 		
@@ -567,7 +567,7 @@ public boolean editPatient(Patient patient){
 				+ " idprovince = "+patient.getIdprovince()+", "
 				+ " postalcode = '"+patient.getPostalcode()+"', "
 				+ " consent = "+patient.getConsent()+", "
-				+ " iscree = "+patient.getIscree()+", "
+				+ " iscree = "+((patient.getIscree() == -1)?1:patient.getIscree())+", "
 				+ " dod = '"+((patient.getDod() == null)?"":patient.getDod())+"', "
 				+ " death_cause = '"+patient.getDcause()+"', "
 				+ " idcommunity = "+patient.getIdcommunity()+" "

@@ -716,17 +716,28 @@ public String subscribe(final HttpServletRequest request){
 			u.setConfirmmail("1");
 			int idPendingUser = chbdb.addUser(u);
 			
+			 System.out.println("==================================");
+	            System.out.println("Save user profile");
+	            System.out.println("==================================");
 			
 			if(chbdb.saveUserProfile(idPendingUser, 1, 2)){
 				//MailTool.sendMailText("CDIS New User Subscribe", , "support@grvtech.ca");
 				
 				String messagEmail = "<b><p>Hello CDIS Administrator</p></b><p>New user is subscribed to CDIS.<br>The user should confirm the email in order to finish subscription.<br>Login to CDIS and go to Users section to view users pending. <br>The administrator can confirm users email in order to activate subscription.<br><b>User Info:</b><br><b>Name :</b> "+u.getFirstname()+" "+u.getLastname()+"<br><b>Username :</b> "+u.getUsername()+"<br><b>User Email :</b> "+u.getEmail()+"<br><br><b>An email will be sent to the user to confirm email and activate subscription.</b></p>";
-				mt.sendMailInHtml("CDIS New User Subscribe", messagEmail, "admins@grvtech.ca");
+				mt.sendMailInHtml("CDIS New User Subscribe", messagEmail, "radu@grvtech.ca");
+				
+				 System.out.println("==================================");
+		            System.out.println("send email to admins");
+		            System.out.println("==================================");
 				
 				String params = "confirm=1&iduser="+idPendingUser; 
 				String url = "https://"+server+":"+port+"/ncdis/index.html?"+Base64.encodeBase64String(params.getBytes());
 				String messagEmailUser = "<p><b>Welcome to CDIS</b></p><p><b>Name :</b> "+u.getFirstname()+" "+u.getLastname()+"<br><b>Username :</b> "+u.getUsername()+"<br><b>User Email :</b> "+u.getEmail()+"<br></p><p>In order to activate your CDIS subscription you should confirm the email.<br><br><b>Click on the button below to confirm your email and activate the subscription</b><br><br><a href='"+url+"'>Confirm Email</a></p>";
 				mt.sendMailInHtml("CDIS Subscribe", messagEmailUser, u.getEmail());
+				
+				 System.out.println("==================================");
+	            System.out.println("send email to user");
+	            System.out.println("==================================");
 				
 				String message = "Subscribe to CDIS.\nYou will receive an email with a button to confirm email and activate the subscription. ";
 				ArrayList<Object> obs = new ArrayList<Object>();

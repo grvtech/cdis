@@ -164,6 +164,9 @@ public class MailTool {
            String recipient_mail_id = to;   //change to recipient email id
            String mail_subject = subject;
             
+           //System.out.println("==================================");
+           //System.out.println("Set mail props");
+           //System.out.println("==================================");
             
            //Set mail properties
             Properties props = System.getProperties();
@@ -172,6 +175,13 @@ public class MailTool {
             props.put("mail.smtp.port", ft.getEmailProperty("smtp.port"));
             props.put("mail.smtp.socketFactory.port", "25");
             props.put("mail.smtp.socketFactory.fallback", "false");
+            props.put("mail.smtp.startssl.enable", "true");
+            
+            
+            //System.out.println("==================================");
+            //System.out.println(" props "+ft.getEmailProperty("smtp.host"));
+            //System.out.println("==================================");
+            
             
             if(ft.getEmailProperty("smtp.tls").equals("true")){
             	props.put("mail.smtp.starttls.enable", "true");
@@ -181,10 +191,11 @@ public class MailTool {
             	props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             	props.put("mail.smtp.ssl.trust", ft.getEmailProperty("smtp.host"));
             }
-            if(ft.getEmailProperty("smtp.debug").equals("true")){
-	            props.put("mail.debug", "true");
-            }
             
+            if(ft.getEmailProperty("smtp.debug").equals("true")){
+            	props.put("mail.debug", "true");
+            }
+            //System.out.println("================================== props debug true");
 	        /*    
 	        Session session = Session.getInstance(props,
 	                new javax.mail.Authenticator() {
@@ -193,9 +204,10 @@ public class MailTool {
                 }
             });
 	        */
-            
+            //System.out.println("=================================session start=");
             Session session = null;
             if(ft.getEmailProperty("smtp.auth").equals("true")){
+            	//System.out.println("================================== with auth ");
             	session = Session.getInstance(props,
     	                new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
@@ -203,16 +215,24 @@ public class MailTool {
                     }
                 });
             }else {
+            	//System.out.println("==================================  no auth");
             	session = Session.getInstance(props,null);
             }
-	        
+            //System.out.println("================================== session debug");
             if(ft.getEmailProperty("smtp.debug").equals("true")){
             	session.setDebug(true); // Enable the debug mode
             }
-	        
-	        
+            
+            //System.out.println("================================== message start");
 	        MimeMessage message = new MimeMessage(session);
 	            //Set email data 
+	        //System.out.println("==================================");
+	           //System.out.println("Set mail data : ");
+	           //System.out.println("from  : "+ ft.getEmailProperty("smtp.from"));
+	           //System.out.println("recipient  : "+ recipient_mail_id);
+	           //System.out.println("recipient cc : "+ ft.getEmailProperty("admin.cc"));
+	           
+	           //System.out.println("==================================");
 	            message.setFrom(new InternetAddress(ft.getEmailProperty("smtp.from")));
 	            message.addRecipient(Message.RecipientType.TO,new InternetAddress(recipient_mail_id));
 	            message.addRecipient(Message.RecipientType.CC,new InternetAddress(ft.getEmailProperty("admin.cc")));
@@ -240,6 +260,12 @@ public class MailTool {
 	            String template = templatePath + System.getProperty("file.separator")+ "mail.template.html";
 	            String logo = templatePath + System.getProperty("file.separator")+ "logo-front.png";
 	            String htmlText = readEmailFromHtml(template,input);
+	            //System.out.println("==================================");
+	            //System.out.println("======="+template);
+	            //System.out.println("======="+logo);
+	            //System.out.println("======"+htmlText);
+	            //System.out.println("==================================");
+	            
 	            messageBodyPart.setContent(htmlText, "text/html");
 	            multipart.addBodyPart(messageBodyPart);
 	            
@@ -254,13 +280,23 @@ public class MailTool {
 	            multipart.addBodyPart(messageBodyPart1); 
 	            message.setContent(multipart);
 	 
+	            //System.out.println("==================================");
+	            //System.out.println("Prepare tu send mail");
+	            //System.out.println("==================================");
+	            /**/
 	            //Conect to smtp server and send Email
 	            Transport transport = session.getTransport("smtp");            
-	            transport.connect(ft.getEmailProperty("smtp.host"), Email_Id, password);
+	            //transport.connect(ft.getEmailProperty("smtp.host"), Email_Id, password);
+	            transport.connect();
 	            transport.sendMessage(message, message.getAllRecipients());
 	            transport.close();
-	         
-	         
+	         	
+	            
+	            //Transport.send(message);
+	            //System.out.println("==================================");
+	            //System.out.println("Mail successfully sent..");
+	            //System.out.println("==================================");
+	            
 	   }catch (MessagingException ex) {
            //Logger.getLogger(MailTool.class.getName()).log(Level.SEVERE, null, ex);
 		   ex.printStackTrace();

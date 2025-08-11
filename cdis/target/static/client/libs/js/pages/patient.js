@@ -647,7 +647,7 @@ function drawAreaGraph(container, dataObject){
             var h = elem.outerHeight();
             var w = elem.outerWidth();
             var parentOffset = $(elem).parent().offset();
-            var ww = $("#wraper").outerWidth();
+            var ww = $("#grvwraper").outerWidth();
             var left = ev.pageX - parentOffset.left;
             if(ev.pageX + w > ww){
             	left = ev.pageX - parentOffset.left - w;
@@ -762,7 +762,7 @@ function drawDoubleLineGraph(container, series, ticks, colors, labels){
             var h = elem.outerHeight();
             var w = elem.outerWidth();
             var parentOffset = $(elem).parent().offset();
-            var ww = $("#wraper").outerWidth();
+            var ww = $("#grvwraper").outerWidth();
             var left = ev.pageX - parentOffset.left;
             if(ev.pageX + w > ww){
             	left = ev.pageX - parentOffset.left - w;
@@ -970,7 +970,7 @@ function drawLineGraphReport(container, dataObject){
             var h = elem.outerHeight();
             var w = elem.outerWidth();
             var parentOffset = $(elem).parent().offset();
-            var ww = $("#wraper").outerWidth();
+            var ww = $("#grvwraper").outerWidth();
             var left = ev.pageX - parentOffset.left;
             if(ev.pageX + w > ww){
             	left = ev.pageX - parentOffset.left - w;
@@ -1123,7 +1123,7 @@ function drawLineGraphSimple(container, dataObject, options){
             var h = elem.outerHeight();
             var w = elem.outerWidth();
             var parentOffset = $(elem).parent().offset();
-            var ww = $("#wraper").outerWidth();
+            var ww = $("#grvwraper").outerWidth();
             var left = ev.pageX - parentOffset.left;
             if(ev.pageX + w > ww){
             	left = ev.pageX - parentOffset.left - w;
@@ -1271,7 +1271,7 @@ function drawAreaStackedGraph(container, dataObject){
             var h = elem.outerHeight();
             var w = elem.outerWidth();
             var parentOffset = $(elem).parent().offset();
-            var ww = $("#wraper").outerWidth();
+            var ww = $("#grvwraper").outerWidth();
             var left = ev.pageX - parentOffset.left;
             if(ev.pageX + w > ww){
             	left = ev.pageX - parentOffset.left - w;
@@ -1516,7 +1516,7 @@ function drawDoubleLinePrevalenceGraph(container, series, ticks, colors, labels)
             var h = elem.outerHeight();
             var w = elem.outerWidth();
             var parentOffset = $(elem).parent().offset();
-            var ww = $("#wraper").outerWidth();
+            var ww = $("#grvwraper").outerWidth();
             var left = ev.pageX - parentOffset.left;
             if(ev.pageX + w > ww){
             	left = ev.pageX - parentOffset.left - w;
@@ -1712,7 +1712,7 @@ function drawDoubleLineIncidenceGraph(container, series, ticks, colors, labels){
             var h = elem.outerHeight();
             var w = elem.outerWidth();
             var parentOffset = $(elem).parent().offset();
-            var ww = $("#wraper").outerWidth();
+            var ww = $("#grvwraper").outerWidth();
             var left = ev.pageX - parentOffset.left;
             if(ev.pageX + w > ww){
             	left = ev.pageX - parentOffset.left - w;

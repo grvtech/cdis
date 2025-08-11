@@ -531,7 +531,7 @@ function plotGraphHistory(valueName, valueArray, valueLimitsObj){
 	$w.css("overflow","hidden");
 	var wmdHeader = $("<div>", {id:"fullscreen-header",class:"widget-fullscreen-header"}).html('<i class="fa fa-times"></i>').appendTo(wmd);
 	var wmdTool = $("<div>", {id:"fullscreen-tool",class:"widget-fullscreen-tool"});
-	wmdTool.append($("<div>",{class:"cisbutton"}).text("Close").click(function(){$("#fullscreen").remove();$("#wraper").css("overflow","auto");}));
+	wmdTool.append($("<div>",{class:"cisbutton"}).text("Close").click(function(){$("#fullscreen").remove();$("#grvwraper").css("overflow","auto");}));
 	wmdTool.append($("<div>",{class:"cisbutton",id:"fullscreen-graph-zoomreset"}).text("Reset Zoom"));
 	wmdTool.append($("<div>",{class:"cisbutton",id:"fullscreen-graph-print"}).text("Print Graph").click(function(){
 		printHistoryGraph("Print all data history graph for "+label);
@@ -590,13 +590,13 @@ function plotGraphHistory(valueName, valueArray, valueLimitsObj){
 	
 	$("#fullscreen-header .fa-times").click(function(){
 		$("#fullscreen").remove();
-		$("#wraper").css("overflow","auto");
+		$("#grvwraper").css("overflow","auto");
 	});
 }
 
 function plotGraphHistoryForPrint(valueName, valueArray, valueLimitsObj){
 	var label = eval("label_"+valueName);
-	var $w = $("#wraper");
+	var $w = $("#grvwraper");
 	$("#fullscreen-print").remove();
 	var wmd = $("<div>", {id:"fullscreen-print",class:"uss widget-fullscreen-print"});
 	$w.scrollTop();

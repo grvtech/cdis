@@ -164,7 +164,7 @@ $("#search").autocomplete({
 	
 
 if(fll == '1'){
-	$('#locallist-button').trigger("click");
+	$('#grvLocallistButton').trigger("click");
 }
 
 /*

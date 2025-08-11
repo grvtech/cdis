@@ -1,0 +1,11 @@
+admin.1=radu@grvtech.ca
+admin.cc=support@grvtech.ca
+smtp.host=ssss-gouv-qc-ca.mail.protection.outlook.com
+smtp.port=25
+smtp.tls=false
+smtp.ssl=false
+smtp.user=gabrad01
+smtp.pass=canada01
+smtp.from=18TCR.No.Reply@ssss.gouv.qc.ca
+smtp.debug=false
+smtp.auth=false

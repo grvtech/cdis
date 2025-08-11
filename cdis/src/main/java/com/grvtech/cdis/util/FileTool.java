@@ -110,7 +110,7 @@ public class FileTool {
 	  InitialContext ic;
 	  InputStream input = null;
 		try {
-			ic = new InitialContext();
+			//ic = new InitialContext();
 			//String rf = (String) ic.lookup("root-folder");
 			File emailConfig = new File(filesFolder+System.getProperty("file.separator")+"email.config");
 			if(!emailConfig.exists()){
@@ -124,9 +124,7 @@ public class FileTool {
 			result = prop.getProperty(propertyName);
 			
 
-		} catch (NamingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		}catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			if (input != null) {

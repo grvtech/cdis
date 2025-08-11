@@ -1852,7 +1852,7 @@ function createValueAdd(section, valueName, valueObj){
 
 function fullScreenHistory(section, valueName, valueLimitsObj){
 	
-	var $w = $("#wraper");
+	var $w = $("#grvwraper");
 	var wmd = $("<div>", {id:"fullscreen"});
 	$w.scrollTop()
 	$w.css("overflow","hidden");
@@ -1887,7 +1887,7 @@ function fullScreenHistory(section, valueName, valueLimitsObj){
 	wmdTool.css("height","60px");
 	wmdTool.css("padding","5px");
 	wmdTool.css("background-color","#efefef");
-	wmdTool.append($("<div>",{class:"cisbutton"}).text("Close").click(function(){$("#fullscreen").remove();$("#wraper").css("overflow","auto");}));
+	wmdTool.append($("<div>",{class:"cisbutton"}).text("Close").click(function(){$("#fullscreen").remove();$("#grvwraper").css("overflow","auto");}));
 	wmdTool.append($("<div>",{class:"cisbutton",id:"fullscreen-graph-zoomreset"}).text("Reset Zoom"));
 	wmdTool.append($("<div>",{class:"cisbutton",id:"fullscreen-graph-print"}).text("Print Graph").click(function(){
 		printHistoryGraph("Print all data history graph for "+valueName);
@@ -1931,7 +1931,7 @@ function fullScreenHistory(section, valueName, valueLimitsObj){
 
 	$("#fullscreen-header .fa-times").click(function(){
 		$("#fullscreen").remove();
-		$("#wraper").css("overflow","auto");
+		$("#grvwraper").css("overflow","auto");
 		
 	});
 }

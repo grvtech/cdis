@@ -124,10 +124,13 @@ function initPandiFilters(){
 
 
 function openPandiManageData(){
+	
 	var id = "pandiManageData";
 	var mid = $("#fullscreen_"+id);
-	if(mid.length == 0){
-		var modal = $('<div>',{id:"fullscreen_"+id,class:"fullscreen-modal"}).appendTo($("#wraper"));
+	
+	if(mid.length === 0){
+		var modal = $('<div>',{id:"fullscreen_"+id,class:"fullscreen-modal"}).appendTo($("body"));
+		console.log(modal)
 	}
 	//modal header
 	var header = $("<div>",{class:"fullscreen-modal-header"}).appendTo(modal);

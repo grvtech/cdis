@@ -6,6 +6,8 @@ var cdisSection = "patient";
 var optionSelected = false;
 var c = getParameterByName("criteria");
 var fll = getParameterByName("fll");
+var fpv = getParameterByName("fpv");
+var fpredm = getParameterByName("fpredm");
 var diabetObj = [];
 var fllstr = "";
 
@@ -14,6 +16,7 @@ var fllstr = "";
  * */
 refreshUserNotes(sid);
 
+
 if(fll=='1'){
 	//show back to local list button
 	var fllramq =  getParameterByName("fll_ramq");
@@ -21,12 +24,39 @@ if(fll=='1'){
 	if(localramq == fllramq){
 		$(".cdisfooter-fll").show();
 		fllstr = "&fll=1&fll_ramq="+getParameterByName("fll_ramq")+"&fll_age="+getParameterByName("fll_age")+"&fll_dp="+getParameterByName("fll_dp")+"&fll_dtype="+getParameterByName("fll_dtype")+"&fll_hba1c="+getParameterByName("fll_hba1c")+"&fll_idcommunity="+getParameterByName("fll_idcommunity")+"&fll_list="+getParameterByName("fll_list")+"&fll_sex="+getParameterByName("fll_sex")+"&fll_users="+getParameterByName("fll_users");
-		console.log(fllstr);
 		$(".cdisfooter-fll").click(function(){
 			gts(sid,"en",fllstr);
 		});
 	}
 }
+
+if(fpv=='1'){
+	//show back to patient validation 
+	var fpvramq =  getParameterByName("fpv_ramq");
+	var localramq =  getParameterByName("ramq");
+	if(localramq == fpvramq){
+		$(".cdisfooter-fpv").show();
+		fpvstr = "pvalidation&fpv=1&fpv_list="+getParameterByName("fpv_list")+"&fpv_pcomm="+getParameterByName("fpv_pcomm");
+		$(".cdisfooter-fpv").click(function(){
+			gtr(sid,"en",fpvstr);
+		});
+	}
+}
+
+
+if(fpredm=='1'){
+	//show back to patient validation 
+	var fpredmramq =  getParameterByName("fpredm_ramq");
+	var localramq =  getParameterByName("ramq");
+	if(localramq == fpredmramq){
+		$(".cdisfooter-fpredm").show();
+		fpredmstr = "predm2dm&fpredm=1&fpredm_period="+getParameterByName("fpredm_period")+"&fpredm_idcommunity="+getParameterByName("fpredm_idcommunity")+"&fpredm_sex="+getParameterByName("fpredm_sex");
+		$(".cdisfooter-fpredm").click(function(){
+			gtr(sid,"en",fpredmstr);
+		});
+	}
+}
+
 if(isDemo){$("#search").attr("type","password");}
 
 if(c != ""){
@@ -129,6 +159,65 @@ $("#criteria").on("click",function(e){if(cdisSection != "dashboard"){$("#radios"
 /*
  * FUNCTIONS
  * */
+
+function flagPatient(){
+	$.get("/ncdis/client/templates/popup.flagpatient.html", function(data) {
+		const bconfig = {"width":"500","height":"400"};
+		const bbut = [{"text":"Close","action":"closeGRVPopup"},{"text":"Flag Patient Data","action":"sendFlagPatient"}];
+		const po = patientObjArray[0];
+		let txt = data.replace("{FNAME}",po.fname).replace("{LNAME}",po.lname).replace("{RAMQ}",po.ramq);
+		showGRVPopup("Flag Patient  Data",txt,bbut,bconfig);    
+		$("#grvFlagPatientReport").attr("iduser",userObj[0].iduser);
+		$("#grvFlagPatientReport").attr("ramq",po.ramq);
+		
+	}, 'text');
+}
+
+function sendFlagPatient(){
+	let ramq = $("#grvFlagPatientReport").attr("ramq");
+	let iduser = $("#grvFlagPatientReport").attr("iduser");
+	let message = window.btoa($("#grvFlagPatientReport").val());
+	let data = "ramq="+ramq+"&iduser="+iduser+"&message="+message;
+	
+	var request = $.ajax({
+		  url: "/ncdis/service/action/setFlagPatient?sid="+sid+"&language=en&ts="+moment(),
+		  type: "POST",
+		  data: data,
+		  dataType: "json"
+		});
+		request.done(function( json ) {
+			var sObj = json.objs[0];
+			$("#grvPatientFlagButton").css("display","none");
+		});
+		request.fail(function( jqXHR, textStatus ) {
+		  alert( "Request failed: " + textStatus );
+		});
+	return true;
+}
+
+
+function isPatientFlagged(){
+	var localramq =  getParameterByName("ramq");
+	let data = "ramq="+localramq;
+	var request = $.ajax({
+		  url: "/ncdis/service/action/isPatientFlagged?sid="+sid+"&language=en&ts="+moment(),
+		  type: "POST",
+		  data: data,
+		  dataType: "json"
+		});
+		request.done(function( json ) {
+			var sObj = json.objs[0];
+			if(sObj.flag){
+				$("#grvPatientFlagButton").css("display","none");
+			}
+		});
+		request.fail(function( jqXHR, textStatus ) {
+		  alert( "Request failed: " + textStatus );
+		});
+	return true;
+}
+
+
 
 function clearSections(){
 	$(".cdisPage").empty();
@@ -440,6 +529,9 @@ function drawPatientRecord(pObj){
 			gtc(sid,"en",patientObj.ramq,"editpatient");
 		}
 	});
+	
+	$("#grvPatientFlagButton").off("click").on("click",flagPatient);
+	isPatientFlagged();
 }
 
 function drawPatientRecordOptions(pObj){

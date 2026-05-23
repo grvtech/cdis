@@ -756,9 +756,9 @@ public ArrayList<HashMap<String,String>> executeReportCriteria(HashMap<String, O
 					+ " where nn.idpatient > 0 and nn.active=1 and (nn.dod is null or nn.dod = '1900-01-01') "
 					+ " "+ criteriaStr+ " "
 					+ "order by nn.idpatient asc";
-			//System.out.println("=========================================");
-			//System.out.println("SQL : "+sql);
-			//System.out.println("=========================================");
+			System.out.println("=========================================");
+			System.out.println("SQL : "+sql);
+			System.out.println("=========================================");
 			
 			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 			
@@ -810,14 +810,13 @@ public ArrayList<HashMap<String,String>> executeReportCriteria(HashMap<String, O
 			}
 			
 			
+			//String criteriaStrLast = " and cast(value as float) "+opValue+" "+valValue+" ";
+			String criteriaStrLast = " ";
 			String criteriaStr = " and cast(value as float) "+opValue+" "+valValue+" ";
 			
-			if(isDoubleData) {
-				criteriaStr += " and cast(datevalue as datetime) "+opValueDate+" "+valValueDate+" ";
-				
-			}
 			
 			System.out.println("=========================================");
+			System.out.println("Double data : "+isDoubleData);
 			System.out.println("Value Name : "+nomValue);
 			System.out.println("Value Value: "+valValue);
 			System.out.println("Value Name Date: "+nomValueDate);
@@ -825,9 +824,18 @@ public ArrayList<HashMap<String,String>> executeReportCriteria(HashMap<String, O
 			System.out.println("=========================================");
 				
 			if(criteria.getValue().equals("0")){
+				//that means all values of this criteria
 				criteriaStr = "";
+				criteriaStrLast = "";
 				
 			}	
+			
+			if(isDoubleData) {
+				if(!criteriaDate.getValue().equals("0")) {
+					criteriaStr += " and cast(datevalue as datetime) "+opValueDate+" "+valValueDate+" ";
+				}
+			}
+			
 			
 			/*
 			sql = "select aa.idpatient,replace(convert(varchar,aa.datevalue,102),'.','-') as datevalue, aa.value "
@@ -847,16 +855,17 @@ public ArrayList<HashMap<String,String>> executeReportCriteria(HashMap<String, O
 			*/
 			sql = "select aa.idpatient,aa.datevalue,aa.value from "
 					+ " (select  idpatient, max(datevalue) as datevalue from ncdis.ncdis.cdis_value " 
-					+ " 	where isnumeric(value)=1 and iddata='"+criteria.getIddata()+"' "+ criteriaStr+ " group by idpatient) as bb "
+					+ " 	where isnumeric(value)=1 and iddata='"+criteria.getIddata()+"' "+ criteriaStrLast+ " group by idpatient) as bb "
 					+ "   	left join (select * from ncdis.ncdis.cdis_value where iddata='"+criteria.getIddata()+"' " 
-					+ "  "+ criteriaStr+ " ) as aa on bb.idpatient = aa.idpatient and bb.datevalue=aa.datevalue ";
+					+ "  "+ criteriaStr+ " ) as aa on bb.idpatient = aa.idpatient and bb.datevalue=aa.datevalue "
+					+ " left join (select idpatient from ncdis.ncdis.patient where active=1 and (dod is null or dod='1900-01-01') ) as p on bb.idpatient = p.idpatient where aa.idpatient IS NOT NULL";
 			
 			
+			 
 			
-			
-			//System.out.println("=========================================");
-			//System.out.println("SQL : "+sql);
-			//System.out.println("=========================================");
+			System.out.println("=========================================");
+			System.out.println("SQL : "+sql);
+			System.out.println("=========================================");
 			/**/
 			List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		    int index=0;
@@ -3776,6 +3785,7 @@ public  Hashtable<String, ArrayList<Object>> getPValidationData(String idlist) {
 					+ " where pat.idpatient not in (select cd.idpatient from ncdis.ncdis.cdis_value cd where cd.iddata=1)"
 					+ " ";
 	    	
+	    	System.out.println(sql);
 		}
 	    
 	   
@@ -3795,8 +3805,57 @@ public  Hashtable<String, ArrayList<Object>> getPValidationData(String idlist) {
 	return result;
 }
 
-public  Hashtable<String, ArrayList<Object>> getPrevalenceNow(String idcommunity, String sex, String dtype, String age) {
 
+public  Hashtable<String, ArrayList<Object>> getPredm2dmData() {
+	Hashtable<String, ArrayList<Object>> result = new Hashtable();
+	
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	Date now = new Date();
+	Calendar calStart = Calendar.getInstance();
+	calStart.setTime(now);
+	try {
+		calStart.setTime(sdf.parse(Integer.toString(calStart.get(Calendar.YEAR))+"-01-01"));
+	} catch (ParseException e) {
+		e.printStackTrace();
+	} 
+	    
+	ArrayList<Object> series = new ArrayList<>();
+		
+		
+		String sql = "select p.idpatient, p.ramq, p.fname, p.lname, p.sex, p.idcommunity, c.name_en as community, p.active, d.predm_datevalue, d.dm_datevalue  \r\n"
+				+ "	from \r\n"
+				+ "		(select a1.datevalue as predm_datevalue, a2.datevalue as dm_datevalue, a1.idpatient \r\n"
+				+ "			from \r\n"
+				+ "				(select max(t1.datevalue) as datevalue, t1.idpatient from ncdis.ncdis.cdis_value as t1 where t1.iddata=1 and t1.value=3 group by t1.idpatient) as a1\r\n"
+				+ "			left join\r\n"
+				+ "				(select max(t1.datevalue) as datevalue, t1.idpatient from ncdis.ncdis.cdis_value as t1 where t1.iddata=1 and t1.value=2 group by t1.idpatient) as a2 \r\n"
+				+ "			on a1.idpatient = a2.idpatient\r\n"
+				+ "			where\r\n"
+				+ "				a2.datevalue is not null) as d\r\n"
+				+ "	left join\r\n"
+				+ "		ncdis.ncdis.patient as p\r\n"
+				+ "	on d.idpatient = p.idpatient\r\n"
+				+ "	left join ncdis.ncdis.community as c on p.idcommunity = c.idcommunity\r\n"
+				+ "	where d.predm_datevalue >= DATEFROMPARTS(YEAR(GETDATE()) - 5, 1, 1)  and p.active=1\r\n"
+				+ "	order by d.predm_datevalue asc";
+		
+		
+		List<Map<String,Object>> rs = jdbcTemplate.queryForList(sql);
+
+		
+		for(int i=0;i<rs.size();i++) {
+			Map<String,Object> line = rs.get(i);
+			series.add(line);
+	    }
+
+	result.put("series", series);
+	logger.log(Level.INFO, "Execute Predm 2 DM ");
+	return result;
+}
+
+
+
+public  Hashtable<String, ArrayList<Object>> getPrevalenceNow(String idcommunity, String sex, String dtype, String age) {
 	Hashtable<String, ArrayList<Object>> result = new Hashtable();
 	
 	String cStr = " and pp.idcommunity > 0 ";

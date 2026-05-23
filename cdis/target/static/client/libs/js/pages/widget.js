@@ -99,9 +99,6 @@ function createGraphWidget(values,arrays,container){
 
 function createTableWidget(values,arrays,container){
 	//build 
-	console.log(values)
-	console.log(arrays)
-	
 	if (values.length == 1){
 		value = values[0];
 		labelLabelValue = eval('label_'+value);

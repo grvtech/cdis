@@ -1,5 +1,4 @@
 // verify session and load user info 
-//alert("SID IS : "+sid);
 
 /*default user template*/
 var userTemplate = "dashboard";

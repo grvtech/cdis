@@ -10,7 +10,7 @@ function loadAdminTemplate(){
 	if(isUserLoged(sid)){
 		var sec = getParameterByName("section");
 		if(sec != ""){
-				loadAdminSection(sec);
+			loadAdminSection(sec);
 		}
 		initPage();
 	}else{

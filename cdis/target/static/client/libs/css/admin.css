@@ -9,13 +9,6 @@ h1{padding:20px;}
 .cdisAdminUsersEditUserForm{position:relative;width:100%;height:500px;margin-top:10px; display:none;color:#4d4d4d;}
 
 
-
-
-
-
-
-
-
 #users-table{width:97%;height:100%;margin-left:10px;padding:0px;}
 
 .cdisAdminUsersEditUserForm table{width:97%;height:100%;margin-left:10px;padding:0px;font-size:140%;}
@@ -36,7 +29,6 @@ h1{padding:20px;}
 #users-table tbody tr.selected{background-color: #4d90fe; color:#ffffff;font-weight:bold;}
 #users-table tbody td{overflow:hidden; padding:5px;cursor:pointer;}
 #users-table thead, tbody tr {display:table;width:100%;table-layout:fixed;}
-
 
 
 
@@ -64,7 +56,6 @@ h1{padding:20px;}
 
 #audit-table thead {width: calc( 100% - 1em );}
 #audit-table thead td{font-size:130%;background-color:#cdcdcd;padding:5px;}
-
 #audit-table tbody{display:block;height:365px;overflow:auto;}
 #audit-table tbody td{font-size:90%;}
 #audit-table tbody tr:nth-child(even) {background-color: #f2f2f2;}
@@ -73,8 +64,41 @@ h1{padding:20px;}
 #audit-table tbody td{overflow:hidden; padding:5px;cursor:pointer;}
 #audit-table thead, tbody tr {display:table;width:100%;table-layout:fixed;}
 
-.validateTips{
-	padding-left:10px;
-	font-size:80%;
-	color:red;
-}
+.validateTips{padding-left:10px;font-size:80%;color:red;}
+
+.cdisAdminFlag{background-color:#ededed;min-height:500px;min-width:900px;width:60%;margin:20px auto 20px auto;padding:10px 20px 10px 20px;}
+#grvFlagContainer{position:relative;width:98%;height:400px;margin:10px 0px 0px 10px;}
+#grvFlagTable{width:97%;margin:auto;padding:0px;}
+#grvFlagTable thead {width: calc( 100% - 1em );}
+#grvFlagTable thead td{font-size:130%;background-color:#cdcdcd;padding:5px;}
+#grvFlagTable tbody{display:block;height:365px;overflow:auto;}
+#grvFlagTable tbody td{font-size:90%;}
+#grvFlagTable tbody tr:nth-child(even) {background-color: #f2f2f2;}
+#grvFlagTable tbody tr:hover {background-color:#db4437;color:#ffffff;}
+#grvFlagTable tbody tr.selected{background-color: #4d90fe; color:#ffffff;font-weight:bold;}
+#grvFlagTable tbody td{overflow:hidden; padding:5px;cursor:pointer;}
+#grvFlagTable thead, tbody tr {display:table;width:100%;table-layout:fixed;}
+
+#grvFlagTable  .iduser{width:100px;}
+#grvFlagTable  .ramq{width:150px;}
+#grvFlagTable  .message{width:300px;}
+#grvFlagTable  .timestamp{width:150px;}
+#grvFlagTable  .status{width:100px;}
+#grvFlagTable  .button{width:80px;}
+
+#grvFlagTableA{width:97%;margin:auto;padding:0px;}
+#grvFlagTableA thead {width: calc( 100% - 1em );}
+#grvFlagTableA thead td{font-size:130%;background-color:#cdcdcd;padding:5px;}
+#grvFlagTableA tbody{display:block;height:365px;overflow:auto;}
+#grvFlagTableA tbody td{font-size:90%;}
+#grvFlagTableA tbody tr:nth-child(even) {background-color: #f2f2f2;}
+#grvFlagTableA tbody tr:hover {background-color:#db4437;color:#ffffff;}
+#grvFlagTableA tbody tr.selected{background-color: #4d90fe; color:#ffffff;font-weight:bold;}
+#grvFlagTableA tbody td{overflow:hidden; padding:5px;cursor:pointer;}
+#grvFlagTableA thead, tbody tr {display:table;width:100%;table-layout:fixed;}
+
+#grvFlagTableA  .iduser{width:100px;}
+#grvFlagTableA  .ramq{width:150px;}
+#grvFlagTableA  .message{width:350px;}
+#grvFlagTableA  .timestamp{width:150px;}
+#grvFlagTableA  .status{width:100px;}

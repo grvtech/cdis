@@ -6,7 +6,7 @@
  * */
 
 var emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-tips = $(".cdisValidateTips");
+var tips = $(".cdisValidateTips");
 var imsg = "All form fields are required.";
 var validPassword = false;
 var validCPassword = false;
@@ -39,8 +39,10 @@ $("#grvPasswordrReset").on("keyup",validatePasswordReset);
 $("#grvConfirmPasswordrReset").on("focus",function() {$("#grvConfirmPasswordrMessage").css("display","block");});
 $("#grvConfirmPasswordrReset").on("blur",function() {$("#grvConfirmPasswordrMessage").css("display","none");})
 $("#grvConfirmPasswordrReset").on("keyup",validatePasswordConfirmReset);
-$(".cdisForgotButton").on("click",function (){$("#grvDialogForgot").dialog("open");});
-$(".cdisSubscribeButton").on("click",function (){$("#grvDialogSubscribe").dialog("open");});
+
+//$(".cdisForgotButton").on("click",function (){$("#grvDialogForgot").dialog("open");});
+
+//$(".cdisSubscribeButton").on("click",function (){$("#grvDialogSubscribe").dialog("open");});
 
 
 /*
@@ -48,6 +50,26 @@ $(".cdisSubscribeButton").on("click",function (){$("#grvDialogSubscribe").dialog
  * */
 getFrontPageMessage();
 $("#user").focus();
+
+let fpOption = {
+	title:"CDIS Forgot Password",
+	width:450,
+	height:320,
+	content:$("#grvDialogForgot").detach(), 
+	buttons:[{text:"Close",action:"closegrvwpopup"},{text:"Reset Password",action:"forgotPassword"}]
+};
+$(".cdisForgotButton").on("click",function (){grvwpopup(fpOption);});
+
+let subOption = {
+	title:"CDIS Subscribe New User",
+	width:450,
+	height:830,
+	content:$("#grvDialogSubscribe").detach(), 
+	buttons:[{text:"Close",action:"closegrvwpopup"},{text:"Subscribe to CDIS",action:"subscribe"}]
+};
+$(".cdisSubscribeButton").on("click",function (){grvwpopup(subOption);});
+
+/**/
 
 /*
  * Define forgot dialog
@@ -286,11 +308,9 @@ function validatePasswordConfirmReset() {
 }
 
 function forgotPassword() {
-	
     var valid = true;
-    
     if(!$("#grvForgotUsername").prop("checked")){
-		valid = valid && checkLength(  $( "#grvUsernameUser" ), "Username" );
+		valid = valid && checkLength(  $("#grvUsernameUser"), "Username" );
 	}
     valid = valid && checkLength(  $( "#grvEmailUser" ), "Email" );
     valid = valid && checkRegexp(  $( "#grvEmailUser" ), emailRegex, "eg. name@domain.com" );
@@ -308,21 +328,25 @@ function forgotPassword() {
     		});
     		mes.done(function( json ) {
     			if(json.status == "1"){
-    				tips.html(json.message);
-    				$("#grvSubscribeForm").hide();
+    				$(".cdisValidateTips").html(json.message);
+    				$("#grvForgotForm").hide();
+					$('div .cisbutton').filter(function() {
+					    return $(this).text() === "Reset Password";
+					}).css('display', 'none');
     			}else{
-    				tips.html(json.message);
+    				$(".cdisValidateTips").html(json.message);
+					$("#grvForgotForm").trigger('reset');
     			}
-    			$( "#grvDialogForgot" ).dialog( "option", "buttons", { "Return to CDIS Login Page": function() { gti(); } } );
+    			//$( "#grvDialogForgot" ).dialog( "option", "buttons", { "Return to CDIS Login Page": function() { gti(); } } );
     		});
     		mes.fail(function( jqXHR, textStatus ) {
     		  alert( "Error sending message : " + textStatus );
-    		  formForgot[ 0 ].reset();
-  			  $("#grvDialogForgot").dialog( "close" );
+    		  $("#grvForgotForm").trigger('reset');
+  			  //$("#grvDialogForgot").dialog( "close" );
     		});	
 
     } 
-    return valid;
+    return false;
 }
 
 function subscribe() {
@@ -346,11 +370,11 @@ function subscribe() {
     		});
     		mes.done(function( json ) {
     			if(json.status == "1"){
-    				tips.html(json.message);
+    				$(".cdisValidateTips").html(json.message);
     				$("#grvDialogSubscribe").find("fieldset").hide();
     				$( "#grvDialogSubscribe" ).dialog( "option", "buttons", { "Return to CDIS Login Page": function() { gti(); } } );
     			}else{
-    				tips.html(json.message);
+    				$(".cdisValidateTips").html(json.message);
     			}
     		});
     		mes.fail(function( jqXHR, textStatus ) {
@@ -364,7 +388,7 @@ function subscribe() {
  }
 
 function updateTips( t ) {
-    tips
+    $(".cdisValidateTips")
       .text( t )
       .addClass( "ui-state-highlight" );
     setTimeout(function() {

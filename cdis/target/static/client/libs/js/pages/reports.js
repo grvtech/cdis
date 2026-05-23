@@ -934,8 +934,6 @@ function getCriterias(cObject){
 			}
 			
 			crit["name"] = idname;
-			//alert(id.substring(0,id.indexOf("-summary")));
-			
 			crit["section"] = $(item).attr("section");
 			if(typeof $(item).attr("section") == "undefined"){
 				if(idname == "dtype"){

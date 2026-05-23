@@ -238,10 +238,6 @@ THE SOFTWARE.*/
 					jsonExportArray.push({header:jsonHeaderArray,data:jsonArray});
 					
 					//Return as JSON
-					//console.log(JSON.stringify(jsonExportArray));
-					
-					//Return as Array
-					//console.log(jsonExportArray);
 					if(defaults.consoleLog == 'true'){
 						console.log(JSON.stringify(jsonExportArray));
 					}

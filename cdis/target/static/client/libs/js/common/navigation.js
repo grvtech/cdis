@@ -4,16 +4,21 @@ function initNavigation() {
 	
 	$(".cdisFback").click(function() {gts(sid,applanguage);	});
 	$("#addpatient-button").click(function() {
-		//alert("add patient");
-			gtc(sid,applanguage,null,"addpatient");
-			//window.location = "cdis.html?section=addpatient&sid="+sid+"&language=en";
-		});
+		gtc(sid,applanguage,null,"addpatient");
+	});
 		
 		$("#frontpage-button").click(function() {
 			//gtc(sid,applanguage,null,"addpatient");
 			//window.location = "cdis.html?section=frontpage&sid="+sid+"&language=en";
 			gta(sid,applanguage,"frontpage");
 		});
+		if(userProfileObj.role.code != "ROOT"){
+			$(".flag").css("display","none");
+		}else{
+			$(".flag").click(function() {
+				gta(sid,applanguage,"flag");
+			});	
+		}
 		$(".frontpage").click(function() {
 			gta(sid,applanguage,"frontpage");
 			//window.location = "cdis.html?section=frontpage&sid="+sid+"&language=en";

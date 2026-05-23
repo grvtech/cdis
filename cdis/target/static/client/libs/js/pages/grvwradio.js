@@ -11,10 +11,12 @@ function grvwradio(name) {
             value = $('#'+name+' div[default]').attr('value');
             $(obj).attr("value",value);
             $('#'+name+' div').each(function(i,v){
-                $(v).on("click",{object:this},selectItem);
+                $(v).off("click").on("click",{object:this},selectItem);
             });
-            
-            $(obj).on("change",preventSelfcallCallback);
+            if($("#"+name+"-element").length == 0){
+				$("<input>",{type:"hidden",value:value,id:name+"-element"}).appendTo($(obj));
+			}
+            $("#"+name+"-element").off('change').on("change",preventSelfcallCallback);
         }
 
 	function selectItem(event){
@@ -24,14 +26,18 @@ function grvwradio(name) {
         let v = $(ob).attr('value');
         value = v;
         $(obj).attr("value",value);
-        $(obj).trigger("change");
+		$("#"+name+"-element").val(value);
+        $("#"+name+"-element").trigger("change");
 	}
     
      
     function setValue(newvalue){
         value = newvalue;
         $(obj).attr("value",value);
-        $(this.obj).find("div [value='"+newvalue+"']").trigger("click");
+		$("#"+name+"-element").val(value);
+        $("#"+name).find("div[value='"+newvalue+"']").each(function(k,v){
+			$(this).trigger("click");
+		})
     }  
 
 	function preventSelfcallCallback (event) {
@@ -40,13 +46,16 @@ function grvwradio(name) {
     
     function getValue(){
         //return $(input).val();
-        return value;
+        return $("#"+name+"-element").val();;
     }  
 
 	return {
 		name:name,
+		off: function(eventName){
+			$("#"+name+"-element").off(eventName);
+		},
 		on: function(eventName,params,handler){
-			$(obj).on(eventName,params,handler);
+			$("#"+name+"-element").off(eventName).on(eventName,params,handler);
 		},
 		setValue : function(v){
 			setValue(v);

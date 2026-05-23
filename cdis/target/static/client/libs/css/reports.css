@@ -7,9 +7,6 @@ REPORTS PAGE CSS
 .umbra{-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);}
 /*user button style used in all buttons  - round with shadow*/
 .ubs{border-radius: 50%;box-shadow: 0 0 3px rgba(0,0,0,.22),0 3px 4px rgba(0,0,0,.34);-webkit-transform: translateX(-12px);transform: translateX(-12px);-webkit-transition: -webkit-transform 150ms,cubic-bezier(.4,0,.2,1),background-color,150ms,cubic-bezier(.4,0,.2,1);transition: transform 150ms,cubic-bezier(.4,0,.2,1),background-color,150ms,cubic-bezier(.4,0,.2,1);}
-/*
-.label{position:absolute;top:45px;height:20px;width:auto;padding: 3px 5px 0px 5px;background-color:#4D4D4D;color:#ffffff;font-family:Tahoma;font-size:12px;margin: 5px 0px 0px 0px;display:none;}
-*/
 
 .reportsheader{position:fixed;left:0px;top:0px;min-height:50px;width:100%;background-color:#4b3b3b;z-index: 100;}
 .reportsheader .lmenu{position:absolute;top:50%;left:5px;width:35px;height:35px;margin:-17px 10px 0px 0px;border-radius: 50%;background:no-repeat url(../../images/work/menu_on.png) center center;background-color:#4b3b3b;display:none;}
@@ -17,29 +14,9 @@ REPORTS PAGE CSS
 .reportsheader .lmenu:hover{background:no-repeat url(../../images/work/menu_on.png) #3479EB center center;}
 .reportsheader .logo{position:absolute;left:15px;top:50%;height:40px;width:700px;margin-top:-20px;background:no-repeat url(../images/cdis-logo50.png) #4b3b3b left center;background-size: 30px 42px;font-family:Trebuchet MS;font-size:170%;color:#ffffff;vertical-align:middle;padding:0px 0px 0px 35px;}
 .reportsheader #criteria-summary-label{display:none;position:absolute;left:50%;margin-left:-650px;top:10px;height:40px;width:150px;font-family:Trebuchet MS;font-size:18px;color:#ffffff;}
-
-
-
-
-/*#reportsPage .reportsbody{position:relative;left:50%;min-left:200px;top:105px;height:auto;width:1000px;padding: 0px 0px 10px 0px;margin: 0px 0px 0px -500px;z-index: 1;}*/
-
 .cdisReportsPage{margin: 10px;padding:0px;}
-
-
 #grvReportsTabs{width:100%;height:100%;}
-
-/*
-.cdisMainTabs{display:grid;grid-template-rows:10% 90%;}
-*/
-#grvDashboard{
-	display: grid;  
-	grid-template-rows:33% 33% 33%;
-	grid-template-columns:49% 49%; 
-	column-gap:20px;
-	row-gap:10px;
-	
-	height:100%;
-}
+#grvDashboard{display: grid;grid-template-rows:33% 33% 33%;grid-template-columns:49% 49%;column-gap:10px;row-gap:7px;background-color:#efefef;height:100%;}
 
 .cdisDashboardItem{width:100%;border:1px solid #cdcdcd;}
 .cdisDashboardItem .title{display:block;width:100%;height:30px;line-height:30px;font-weight:bold;background:#cdcdcd;}
@@ -62,56 +39,84 @@ REPORTS PAGE CSS
 .cdisCustomReportsHistoryBody .cdisReportsHistoryItem:hover .title{background-color:#db4437;color:#fefefe;}
 .cdisCustomReportsHistoryBody .cdisReportsHistoryItem:hover{background-color:#cdcdcd;}
 .cdisDeleteHistoryItem{position:absolute;top:0px;right:2px;width:25px;height:25px;color:#efefef;font-size:110%;text-align:center;line-height:25px;}
-.cdisCustomReportTypeTab{margin:5px !important;height: 100vh;}
+.cdisCustomReportTypeTab{margin:5px !important;height: 100%;}
 .cdisCustomReportTypeTab article{background-color:#ffffff !important;}
-.cdisReportListToolbarFooterButtons{text-align:right;}
-
 
 
 #grvTabList {display:none;height:100%;}
-#grvTabList .cdisConfigListPanel{margin:10px;}
-#grvTabList .cdisConfigListPanel .config{display:grid;grid-template-columns:170px 400px auto;align-items: center;}
+#grvTabList .cdisTabListContainer{display:grid;grid-template-columns:auto 500px;align-items: left;height:100%;padding:5px;}
+#grvTabList .cdisCriteriaReportListContainer{display:grid;grid-template-columns:250px 45px 35px auto;align-items: left;}
+#grvTabList .cdisCriteriaReportListContainer.header{padding:3px;background-color:#4b3b3b;color:#efefef;}
+#grvTabList .cdisCriteriaReportListContainer.line:nth-child(odd) {background-color:#efefef; }
+#grvTabList .cdisCriteriaReportListContainer.selected{background-color:#8de3fc;}
+#grvTabList .cdisCriteriaFilterContainer{display:grid;grid-template-columns:150px auto;align-items: center;}
+#grvTabList .cdisCriteriaFilterContainer select{padding:2px;font-weight:bold;}
+#grvTabList .cdisCriteriaFilterContainer label{font-weight:bold;line-height:30px;}
+#grvTabList .cdisCriteriaFilterContainer input{padding:2px;width:80px;text-align:center;font-weight:bold;}
+#grvTabList .cdisCriteriaFilterContainer input.between{width:80px;}
+#grvTabList .cdisConfigListPanel{overflow-y: auto;padding:5px;}
+#grvTabList .cdisConfigListPanel h1{padding:2px;font-size:1.3em;}
+#grvTabList .cdisConfigListPanel h2{padding:1px;padding:3px;font-size:1.1em;background-color: #cdcdcd;}
+#grvTabList .cdisConfigListPanel .cdisReportPeriodListContainer{display:grid;grid-template-columns:170px auto;align-items: center;}
+#grvTabList .cdisConfigListPanel .cdisReportPeriodBetweenContainer{height:30px;text-align:center;line-height:30px;}
+#grvTabList .cdisConfigListPanel .cdisReportPeriodBetweenContainer input{padding:2px;width:80px;text-align:center;}
+#grvTabList .cdisConfigListPanel .cdisReportFilterListContainer{display:grid;grid-template-columns:170px auto;align-items: center;}
+#grvTabList .cdisConfigListPanel .cdisReportFilterListSelectContainer{height:30px;text-align:center;line-height:30px;}
+#grvTabList .cdisConfigListPanel .cdisReportFilterListSelectContainer select{padding:2px;}
 #grvTabList .cdisConfigListPanel label{align-self: center;}
-#grvTabList .cdisReportListTool{margin:10px;}
-#grvTabList .cdisReportListButtons{display:grid;grid-template-columns:auto auto;}
+#grvTabList .cdisReportListTool{display:grid;grid-template-rows:50px auto 50px 50px;padding:5px;}
+#grvTabList .cdisReportListButtons{display:grid;grid-template-columns:350px auto;}
 #grvTabList .cdisReportListButtons #grvAddReportListCriteria{justify-self:left;}
 #grvTabList .cdisReportListButtons #grvClearReportList{justify-self:right;}
+#grvTabList .cdisReportListToolbarFooterButtons{text-align:right;padding:7px;}
+#grvTabList .cdisReportListToolbarFooterButtons .cdisCisButton{margin-left:10px;}
+#grvTabList .cdisReportListToolbarBody{height:100%;overflow-y: auto;}
+#grvTabList .cdisReportListToolbar{border:1px solid black;position:relative;}
+#grvTabList .cdisReportListToolbarHeader{height:30px; background-color:#4b3b3b; color:#efefef; font-weight:bold; line-height:30px; padding-left:10px;}
+#grvTabList .cdisReportListToolbarFooter{position:absolute;top:100%;margin-top:-60px;height:60px;width:100%; background-color:#cdcdcd;display:grid;grid-template-columns:auto auto;align-items:center;}
+#grvTabList .cdisReportNotes{display:grid;grid-template-columns:120px auto;grid-gap:10px;background-color:#cdcdcd;padding-right:15px;}
+#grvTabList .cdisReportNotes label{margin-left:5px;line-height:50px;font-weight:bold;}
+#grvTabList .cdisReportNotes textarea{height:30px;width:100%;resize: none;align-self: center;vertical-align: middle;}
 
-#grvTabGraph{display:none;}
-#grvTabGraph .cdisConfigGraphPanel{margin:10px;}
-#grvTabGraph .cdisConfigGraphPanel .config{display:grid;grid-template-columns:170px 300px auto;align-items: center;}
+#grvTabGraph{display:none;height:100%;}
+#grvTabGraph .cdisTabGraphContainer{display:grid;grid-template-columns:auto 500px;align-items: left;height:100%;padding:5px;}
+#grvTabGraph .cdisCriteriaReportGraphContainer{display:grid;grid-template-columns:250px 45px 35px auto;align-items: left;}
+#grvTabGraph .cdisCriteriaReportGraphContainer.header{padding:3px;background-color:#4b3b3b;color:#efefef;}
+#grvTabGraph .cdisCriteriaReportGraphContainer.line:nth-child(odd) {background-color:#efefef; }
+#grvTabGraph .cdisCriteriaReportGraphContainer.selected{background-color:#8de3fc;}
+#grvTabGraph .cdisConfigGraphPanel{overflow-y: auto;padding:5px;}
+#grvTabGraph .cdisConfigGraphPanel h1{margin:2px;font-size:1.3em;}
+#grvTabGraph .cdisConfigGraphPanel h2{margin:1px;padding:3px;font-size:1.1em;background-color: #cdcdcd;}
+#grvTabGraph .cdisConfigGraphPanel .config{display:grid;grid-template-columns:170px 310px auto;align-items: center;}
+#grvTabGraph .cdisConfigGraphPanel .cdisReportGraphTypeContainer{display:grid;grid-template-columns:170px auto;align-items: center;}
+#grvTabGraph .cdisConfigGraphPanel .cdisReportGraphCriteriaContainer{display:grid;grid-template-columns:170px auto;align-items: center;}
+#grvTabGraph .cdisConfigGraphPanel .cdisReportFilterGraphContainer{display:grid;grid-template-columns:170px auto;align-items: center;margin-bottom:5px;}
+#grvTabGraph .cdisConfigGraphPanel .cdisMSIdcommunity{display:inline-block;}
+#grvTabGraph .cdisConfigGraphPanel .cdisReportGraphCriteriaSelectContainer{display:grid; grid-template-columns:auto auto;}
+#grvTabGraph .cdisConfigGraphPanel .cdisReportGraphCriteriaPeriodContainer{display:inline-block;height:40px;}
+#grvTabGraph .cdisConfigGraphPanel .cdisReportGraphCriteriaPeriodContainer select{padding:10px;margin-left:5px;}
+#grvTabGraph .cdisCriteriaFilterContainer{display:grid;grid-template-columns:150px auto;align-items: center;}
+#grvTabGraph .cdisCriteriaFilterContainer select{padding:2px;font-weight:bold;}
+#grvTabGraph .cdisCriteriaFilterContainer label{font-weight:bold;line-height:30px;}
+#grvTabGraph .cdisCriteriaFilterContainer input{padding:2px;width:80px;text-align:center;font-weight:bold;}
+#grvTabGraph .cdisCriteriaFilterContainer input.between{width:80px;}
+
 #grvTabGraph .cdisConfigGraphPanel label{align-self: center;}
-#grvTabGraph .cdisReportGraphTool{margin:10px;}
-#grvTabGraph .cdisReportGraphButtons{display:grid;grid-template-columns:auto auto;}
+#grvTabGraph .cdisReportGraphTool{display:grid;grid-template-rows:50px auto 50px 50px;padding:5px;}
+#grvTabGraph .cdisReportGraphButtons{display:grid;grid-template-columns:350px auto;}
 #grvTabGraph .cdisReportGraphButtons #grvAddReportGraphCriteria{justify-self:left;}
 #grvTabGraph .cdisReportGraphButtons #grvClearReportGraph{justify-self:right;}
 .cdisReportGraphContainer{width:950px;height:550px;display:block;}
 
-.cdisReportGraphToolbar{border:1px solid black;min-height:400px;margin-top:20px;position:relative;}
-.cdisReportGraphToolbarHeader{height:30px; background-color:#4b3b3b; color:#efefef; font-weight:bold; line-height:30px; padding-left:10px;}
-.cdisReportGraphToolbarFooter{position:absolute;top:100%;margin-top:-60px;height:60px;width:100%; background-color:#cdcdcd;display:grid;grid-template-columns:auto auto;align-items:center;}
-.cdisReportGraphToolbarFooterButtons{text-align:right;}
-/*
-.cdisReportCriteriaSummary{position:relative;border: 1px solid #cdcdcd;border-style: outset; border-radius:10px; display:inline-block;height:60px;padding:5px;margin:3px;background-color:#efefef;}
-.cdisReportCriteriaSummary p{margin:0px;padding:0px;line-height:27px;text-align:center;}
-.cdisReportCriteriaSummaryClose{position:absolute;right:0px;top:50px;width:20px;height:20px;display:none;color:#4d4d4d;text-align:center;border-bottom-right-radius:10px; }
-.cdisReportCriteriaSummary:hover .cdisReportCriteriaSummaryClose{display:block;}
-*/
-.cdisReportGraphNotes{padding:5px;display:grid;grid-template-columns:120px 1fr;}
-.cdisReportGraphNotes label{margin-left:5px;line-height:40px;}
-.cdisReportGraphNotes textarea{height:30px;width:100%;resize: none;align-self: center;vertical-align: middle;}
-.cdisMSIdcommunity{display:inline-block;width:350px;}
-.cdisReportGraphCriteriaSelectContainer{display:grid; grid-template-columns:350px auto;}
-.cdisReportGraphCriteriaPeriodContainer{display:inline-block;width:200px;margin-left:5px;height:40px;}
-.cdisReportGraphCriteriaPeriodContainer select{padding:9px;font-size:100%;width:100%;}
+#grvTabGraph .cdisReportGraphNotes{display:grid;grid-template-columns:120px auto;grid-gap:10px;background-color:#cdcdcd;padding-right:15px;}
+#grvTabGraph .cdisReportGraphNotes label{margin-left:5px;line-height:50px;font-weight:bold;}
+#grvTabGraph .cdisReportGraphNotes textarea{height:30px;width:100%;resize: none;align-self: center;vertical-align: middle;}
+#grvTabGraph .cdisReportGraphToolbar{border:1px solid black;position:relative;}
+#grvTabGraph .cdisReportGraphToolbarHeader{height:30px; background-color:#4b3b3b; color:#efefef; font-weight:bold; line-height:30px; padding-left:10px;}
+#grvTabGraph .cdisReportGraphToolbarFooterButtons{text-align:right;padding:7px;}
 
 
-
-
-.cdisReportFilterGraphContainer{display: grid;grid-template-columns: 170px 350px auto;} 
-.cdisReportPeriodBetweenContainer input{padding:2px; font-size:0.9vw;margin-left:5px;margin-right:5px;width:110px;text-align:center;}
-.cdisReportFilterListSelectContainer select{padding:2px; font-size:0.9vw;margin-left:5px;margin-right:5px;}
-.cdisReportFilterGraphSelectContainer select{padding:2px; font-size:0.9vw;margin-left:5px;margin-right:5px;}
+.cdisReportFilterGraphSelectContainer select{padding:2px;}
 .cdisCriteriaFilter{display:grid;grid-template-columns:200px 160px auto;margin-top:5px;}
 .cdisCriteriaFilter .label{font-weight:bold;line-height:30px; text-align:center;}
 .cdisCriteriaFilterErrorMessage{height:30px;line-height:30px;color:#db4437;}
@@ -123,17 +128,13 @@ REPORTS PAGE CSS
 .cdisCriteriaPopupForm input{font-size:110%;padding:2px;width:100px;}
 .cdisCriteriaPopupForm input.between{width:100px;margin-left:5px;margin-right:5px;}
 
-.cdisReportListToolbar{border:1px solid black;min-height:400px;margin-top:20px;position:relative;}
-.cdisReportListToolbarHeader{height:30px; background-color:#4b3b3b; color:#efefef; font-weight:bold; line-height:30px; padding-left:10px;}
-.cdisReportListToolbarFooter{position:absolute;top:100%;margin-top:-60px;height:60px;width:100%; background-color:#cdcdcd;display:grid;grid-template-columns:auto auto;align-items:center;}
-.cdisReportCriteriaSummary{position:relative;border: 1px solid #cdcdcd;border-style: outset; border-radius:10px; display:inline-block;height:60px;padding:5px;margin:3px;background-color:#efefef;}
+.cdisReportCriteriaSummary{position:relative;border: 2px solid #cdcdcd;border-style: outset; border-radius:10px; display:inline-block;height:60px;padding:5px;margin:3px;background-color:#efefef;}
 .cdisReportCriteriaSummary p{margin:0px;padding:0px;line-height:27px;text-align:center;}
-.cdisReportCriteriaSummaryClose{position:absolute;right:0px;top:50px;width:20px;height:20px;display:none;color:#4d4d4d;text-align:center;border-bottom-right-radius:10px; }
+.cdisReportCriteriaSummary span{margin:auto;padding:5px;line-height:27px;text-align:center;background-color:#4d4d4d;color:#efefef;}
+.cdisReportCriteriaSummaryClose{position:absolute;right:0px;top:50px;width:20px;height:20px;display:none;color:#db4437;text-align:center;border-bottom-right-radius:10px; }
 .cdisReportCriteriaSummary:hover .cdisReportCriteriaSummaryClose{display:block;}
 
-.cdisReportNotes{padding:5px;display:grid;grid-template-columns:120px 1fr;}
-.cdisReportNotes label{margin-left:5px;line-height:40px;}
-.cdisReportNotes textarea{height:30px;width:100%;resize: none;align-self: center;vertical-align: middle;}
+
 
 
 .cdisReportContainer{position:absolute;top:0px;left:0px;width:100%;height:100%;background-color:#efefef;display:grid;grid-template-rows:30px 50px auto;}
@@ -148,6 +149,7 @@ REPORTS PAGE CSS
 .cdisReportContainerToolbar .gfilter span i{font-style:normal;font-weight:bold;}
 .cdisReportContainerToolbar .gfilter span u{font-style:italic;text-decoration: none;}
 .cdisReportContainerToolbar .gbuttons{text-align:right;padding:10px 2px 10px 2px;}
+.cdisReportContainerToolbar .gbuttons .cdisCisButton{margin-left:10px;}
 .cdisReportContainerBody{overflow-y: hidden;display: flex;flex-direction: column;justify-content: center;align-items: center;}
 .cdisReportListContainer{height:100%;overflow-y:auto;}
 .cdisReportListContainer table{padding:5px;border-spacing:0px;}
@@ -156,8 +158,6 @@ REPORTS PAGE CSS
 .cdisReportListContainer table td.center{text-align:center;}
 .cdisReportListContainer table tr:nth-child(even) {background-color: #bbbbbb;}
 .cdisReportListTableHeaderContainer{position:fixed;height:30px;width:100%;display:none;}
-
-
 
 
 .cdisReportComparatorContainer{width:950px;height:550px;display:block;}

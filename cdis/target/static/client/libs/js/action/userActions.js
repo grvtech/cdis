@@ -39,7 +39,6 @@ function getSession(iduser){
 		request.fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );
 		});
-		//alert("SID IN GEt SESSION :"+sid);
 	return sid;
 }
 
@@ -163,7 +162,6 @@ function getUserMessages(userId){
 
 function isUserLoged(sessionId){
 	var result = false;
-	//alert(sessionId);
 	var request = $.ajax({
 		  url: "/ncdis/service/data/isValidSession?sid="+sessionId+"&language=en",
 		  type: "GET",
@@ -387,7 +385,6 @@ function populateForm($form, data){
                 switch($ctrl.attr("type")) {
                     case "text":
                     case "hidden":
-                    	//alert(key+"   "+value)
                     	$ctrl.val(value);
                     	$ctrlHidden.val(value);
                         break;
@@ -398,7 +395,6 @@ function populateForm($form, data){
                             $ctrl.prop('checked', false);
                         break;
                     case "radio":
-                    	//alert($ctrl.filter("[value='"+value+"']").attr('id'));
                     	$ctrl.filter("[value='"+value+"']").prop('checked', true);
                     	$ctrl.filter("[value='"+value+"']").parent().button("toggle");
                     	break;
@@ -410,9 +406,7 @@ function populateForm($form, data){
 }
 
 function validateRamq(ramqValue){
-	//alert("ramq value : "+ramqValue);
 	var flagRamq =  Validate.now(Validate.Presence, ramqValue);
-	//alert("ramq presence : "+flagRamq);
     var flagRamqDep =  Validate.now(Validate.Custom, ramqValue, { against: function(value , args){
     		var dfr = value.substring(4,10);
     		var year = dfr.substring(0,2);
@@ -436,7 +430,6 @@ function validateRamq(ramqValue){
     		*/
     		return true;
     	}, args: {sexValue: $("input[name='sex']").val(), dobValue: $("#dob-value").val()} });
-    //alert("ramq dob : "+flagRamqDep);
     var flagRamqName =  Validate.now(Validate.Custom, ramqValue, { against: function(value , args){
 		var nume3L = value.substring(0,3).toLowerCase();
 		var prenume1L = value.substring(3,4).toLowerCase();
@@ -566,7 +559,6 @@ function validateCommunity(idcommunityValue){
 
 function validateDeceased(dodValue,dcauseValue){
 	var dValue = $("input[name='deceased']:checked").val();
-	//alert("deceased : "+dValue);
 	if(dValue == 1){
 		var flagDod =  Validate.now(Validate.Presence, dodValue);
 		var flagDcause =  Validate.now(Validate.Presence, dcauseValue);
@@ -1160,7 +1152,6 @@ function loadPatientObject(key,value){
 			patientObjArray = json.objs;
 			if(isDemo){patientObjArray = demoData(patientObjArray,"patient");}
 			patientObj = patientObjArray[0];
-			console.log(patientObjArray)
 		});
 		patient.fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );

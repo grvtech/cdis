@@ -70,11 +70,16 @@ input:focus,select:focus,textarea:focus,button:focus {outline: none;}
 #grvFooter .cdisfooter-fll .b{padding:5px;cursor:pointer;height:50px;text-align:center;background-color:#db4437;font-size:0.7vw;line-height:40px;color:#ffffff;-moz-border-radius: 7px;-webkit-border-radius: 7px;border-radius: 7px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);}
 #grvFooter .cdisfooter-fll .b:hover{background-color:#4b3b3b;}
 
+#grvFooter .cdisfooter-fpv{position:fixed;right:80px;bottom:10px;width:200px;margin-top:-65px;z-index:20;display:none;}
+#grvFooter .cdisfooter-fpv .b{padding:5px;cursor:pointer;height:50px;text-align:center;background-color:#db4437;font-size:0.7vw;line-height:40px;color:#ffffff;-moz-border-radius: 7px;-webkit-border-radius: 7px;border-radius: 7px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);}
+#grvFooter .cdisfooter-fpv .b:hover{background-color:#4b3b3b;}
+
+#grvFooter .cdisfooter-fpredm{position:fixed;right:80px;bottom:10px;width:250px;margin-top:-65px;z-index:20;display:none;}
+#grvFooter .cdisfooter-fpredm .b{padding:5px;cursor:pointer;height:50px;text-align:center;background-color:#db4437;font-size:0.7vw;line-height:40px;color:#ffffff;-moz-border-radius: 7px;-webkit-border-radius: 7px;border-radius: 7px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);}
+#grvFooter .cdisfooter-fpredm .b:hover{background-color:#4b3b3b;}
 
 
-
-
-.cdisCisButton{border:none;margin-right:10px;font-family: Sans-Serif;font-size:90%;display:inline-block;text-align:center;vertical-align:middle;color:#ffffff;padding:3px 10px 3px 10px;background-color:#4b3b3b;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);cursor: pointer;text-decoration:none;}
+.cdisCisButton{border:none;margin:auto;font-family: Sans-Serif;line-height:30px;font-size:90%;display:inline-block;text-align:center;vertical-align:middle;color:#ffffff;padding:3px 10px 3px 10px;background-color:#4b3b3b;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);cursor: pointer;text-decoration:none;}
 .cdisCisButton:hover{background-color:#db4437;color:#000000;-moz-box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);}
 .cdisCisButton_selected{font-family: roboto-bold;color:#ffffff;background-color:#db4437;}
 .cdisCisButton-grey{border:none;margin-right:10px;font-family: Sans-Serif;font-size: 100%;display:inline-block;text-align:center;vertical-align:middle;color:#ffffff;padding:3px 10px 3px 10px;background-color:#cdcdcd;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);cursor: default;}

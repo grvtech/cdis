@@ -8,45 +8,148 @@
 			</ul>
 	 		<article>
 				<div id="grvTabList">
-					<div class="cdisConfigListPanel">
-						<h1>Report configuration</h1><span class="cdisCriteriaFilterErrorMessage"></span>
-						<div class="cdisReportPeriodListContainer config">
-							<label for="grvReportPeriodList">Report Period : </label>
-							<div id="grvReportPeriodList" type="grvwradio">
-								<div default value="last">Last collected dates for tests</div>
-								<div value="between">Between dates</div>
+					<div class="cdisTabListContainer">
+						<div class="cdisConfigListPanel">
+							<h1>Report configuration</h1><span class="cdisCriteriaFilterErrorMessage"></span>
+							<div class="cdisReportPeriodListContainer config">
+								<label for="grvReportPeriodList">Report Period : </label>
+								<div id="grvReportPeriodList" type="grvwradio">
+									<div default value="last">Last collected dates</div>
+									<div value="between">Between dates</div>
+								</div>
 							</div>
-						</div>
-						<div class="cdisReportFilterListContainer config">
-							<label for="grvReportFilterList">Filter patients list by : </label>
-						    <div id="grvReportFilterList" type="grvwradio">
-								<div default value="allhcp">All patients <i>( no filter )</i></div>
-								<div value="hcpid">HCP or Team</div>
+							<div class="cdisReportFilterListContainer config">
+								<label for="grvReportFilterList">Filter patients list by : </label>
+							    <div id="grvReportFilterList" type="grvwradio">
+									<div default value="allhcp">All patients</div>
+									<div value="hcpid">HCP or Team</div>
+								</div>
 							</div>
-						</div>
-					</div>					  
-				   	<div class="cdisReportListTool">
-				   		<div class="cdisReportListButtons">
-				   			<div class="cdisCisButton" id="grvAddReportListCriteria">Add Report Criteria or Column</div>
-				   			<div class="cdisCisButton" id="grvClearReportList">Clear Report</div>
-				   		</div>
-				   		<div class="cdisReportListToolbar">
-				   			<div class="cdisReportListToolbarHeader">Report criterias or display columns</div>
-				   			<div class="cdisReportListToolbarBody" idreport="0" typereport="list" periodreport="last" titlereport="Custom Report" filterreport="allhcp"></div>
-				   			<div class="cdisReportListToolbarFooter">
-				   				<div class="cdisReportNotes">
-				   					<label>Report notes:</label>
-				   					<textarea></textarea>
-				   				</div>
-				   				<div class="cdisReportListToolbarFooterButtons">
-				   					<!-- <div class="cdisCisButton" id="grvReportListExecuteButton">Execute Report</div> -->
-				   				</div>
-				   			</div>
-				   		</div>
-				   	</div>
+							
+							<h2>Patient demographic data</h2>
+							<div class="cdisCriteriaReportListContainer header">
+								<div style="padding-left:10px">Criteria</div><div>Filter</div><div>Date</div><div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-dtype-list">
+								<div id="grvCriteriaReportList-dtype" type="grvwcheck"><div value="1"><i class='fa'></i><span>Type of diabetes</span></div></div>
+							    <div id="grvCriteriaReportList-dtype-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-dtype-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-idcommunity-list">
+								<div id="grvCriteriaReportList-idcommunity" type="grvwcheck"><div value="1"><i class='fa'></i> <span>Community</span></div></div>
+							    <div id="grvCriteriaReportList-idcommunity-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-dob-list">
+								<div id="grvCriteriaReportList-dob" type="grvwcheck"><div value="1"><i class='fa'></i> <span>Date of birth </span></div></div>
+							    <div id="grvCriteriaReportList-dob-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-sbp-list">
+								<div id="grvCriteriaReportList-sbp" type="grvwcheck"><div value="1"><i class='fa'></i> <span>Systolic blood presure </span></div></div>
+							    <div id="grvCriteriaReportList-sbp-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-sbp-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-dbp-list">
+								<div id="grvCriteriaReportList-dbp" type="grvwcheck"><div value="1"><i class='fa'></i> <span>Diastolic blood presure </span></div></div>
+							    <div id="grvCriteriaReportList-dbp-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-dbp-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<h2>Glucose control tests laboratory data</h2>
+							<div class="cdisCriteriaReportListContainer header">
+								<div style="padding-left:10px">Criteria</div><div>Filter</div><div>Date</div><div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-hba1c-list">
+								<div id="grvCriteriaReportList-hba1c" type="grvwcheck"><div value="1"><i class='fa'></i><span>HbA1c</span></div></div>
+							    <div id="grvCriteriaReportList-hba1c-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-hba1c-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-acglu-list">
+								<div id="grvCriteriaReportList-acglu" type="grvwcheck"><div value="1"><i class='fa'></i><span>Plasma glucose</span></div></div>
+							    <div id="grvCriteriaReportList-acglu-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-acglu-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<h2>Renal tests laboratory data</h2>
+							<div class="cdisCriteriaReportListContainer header">
+								<div style="padding-left:10px">Criteria</div><div>Filter</div><div>Date</div><div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-acratio-list">
+								<div id="grvCriteriaReportList-acratio" type="grvwcheck"><div value="1"><i class='fa'></i><span>AC Ratio</span></div></div>
+							    <div id="grvCriteriaReportList-acratio-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-acratio-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-crea-list">
+								<div id="grvCriteriaReportList-crea" type="grvwcheck"><div value="1"><i class='fa'></i><span>Serum Creatinine</span></div></div>
+							    <div id="grvCriteriaReportList-crea-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-crea-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-crcl-list">
+								<div id="grvCriteriaReportList-crcl" type="grvwcheck"><div value="1"><i class='fa'></i><span>Creatinine Cleareance</span></div></div>
+							    <div id="grvCriteriaReportList-crcl-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-crcl-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-pcr-list">
+								<div id="grvCriteriaReportList-pcr" type="grvwcheck"><div value="1"><i class='fa'></i><span>Protein Creatinine Ratio</span></div></div>
+							    <div id="grvCriteriaReportList-pcr-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-pcr-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-egfr-list">
+								<div id="grvCriteriaReportList-egfr" type="grvwcheck"><div value="1"><i class='fa'></i><span>EGFR</span></div></div>
+							    <div id="grvCriteriaReportList-egfr-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-egfr-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<h2>Lipid tests laboratory data</h2>
+							<div class="cdisCriteriaReportListContainer header">
+								<div style="padding-left:10px">Criteria</div><div>Filter</div><div>Date</div><div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-tchol-list">
+								<div id="grvCriteriaReportList-tchol" type="grvwcheck"><div value="1"><i class='fa'></i><span>Total colesterol</span></div></div>
+							    <div id="grvCriteriaReportList-tchol-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-tchol-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-tglycer-list">
+								<div id="grvCriteriaReportList-tglycer" type="grvwcheck"><div value="1"><i class='fa'></i><span>Tryglicerides</span></div></div>
+							    <div id="grvCriteriaReportList-tglycer-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-tglycer-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-hdl-list">
+								<div id="grvCriteriaReportList-hdl" type="grvwcheck"><div value="1"><i class='fa'></i><span>HDL</span></div></div>
+							    <div id="grvCriteriaReportList-hdl-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-hdl-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-ldl-list">
+								<div id="grvCriteriaReportList-ldl" type="grvwcheck"><div value="1"><i class='fa'></i><span>LDL</span></div></div>
+							    <div id="grvCriteriaReportList-ldl-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-ldl-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div>
+							<div class="cdisCriteriaReportListContainer line" id="grvCriteria-tchdl-list">
+								<div id="grvCriteriaReportList-tchdl" type="grvwcheck"><div value="1"><i class='fa'></i><span>TCHDL</span></div></div>
+							    <div id="grvCriteriaReportList-tchdl-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+							    <div id="grvCriteriaReportList-tchdl-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+							</div><!-- -->
+						</div><!-- end List Config -->					  
+					   	<div class="cdisReportListTool">
+					   		<div class="cdisReportListButtons">
+					   			<div></div>
+					   			<div class="cdisCisButton" id="grvClearReportList">Clear Report</div>
+					   		</div>
+					   		<div class="cdisReportListToolbar">
+					   			<div class="cdisReportListToolbarHeader">Report criterias or display columns</div>
+					   			<div class="cdisReportListToolbarBody" idreport="0" typereport="list" periodreport="last" titlereport="Custom Report" filterreport="allhcp"></div>
+					   		</div>
+			   				<div class="cdisReportNotes">
+			   					<label>Report notes:</label>
+			   					<textarea></textarea>
+			   				</div>
+				   			<div class="cdisReportListToolbarFooterButtons">
+			   					<!-- <div class="cdisCisButton" id="grvReportListExecuteButton">Execute Report</div> -->
+			   				</div>
+					   	</div> <!-- end ListTool -->
+					</div><!-- end tabList container-->
 	  			</div><!-- end tabList -->
 						  
 				<div id="grvTabGraph">
+				<div class="cdisTabGraphContainer">
 				   <div class="cdisConfigGraphPanel">
 						<h1>Report configuration</h1><span class="cdisCriteriaFilterErrorMessage"></span>
 						<div class="cdisReportGraphTypeContainer config">
@@ -71,25 +174,128 @@
 								<div value="hcpid">HCP or Team</div>
 							</div>
 						</div>
+						
+						
+						<h2>Patient demographic data</h2>
+						<div class="cdisCriteriaReportGraphContainer header">
+							<div style="padding-left:10px">Criteria</div><div>Filter</div><div>Date</div><div></div>
+						</div>
+						<!-- 
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-dtype-graph">
+							<div id="grvCriteriaReportGraph-dtype" type="grvwcheck"><div value="1"><i class='fa'></i><span>Type of diabetes</span></div></div>
+						    <div id="grvCriteriaReportGraph-dtype-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-dtype-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-idcommunity-graph">
+							<div id="grvCriteriaReportGraph-idcommunity" type="grvwcheck"><div value="1"><i class='fa'></i> <span>Community</span></div></div>
+						    <div id="grvCriteriaReportGraph-idcommunity-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div></div>
+						</div>
+						 -->
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-dob-graph">
+							<div id="grvCriteriaReportGraph-dob" type="grvwcheck"><div value="1"><i class='fa'></i> <span>Date of birth </span></div></div>
+						    <div id="grvCriteriaReportGraph-dob-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-sbp-graph">
+							<div id="grvCriteriaReportGraph-sbp" type="grvwcheck"><div value="1"><i class='fa'></i> <span>Systolic blood presure </span></div></div>
+						    <div id="grvCriteriaReportGraph-sbp-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-sbp-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-dbp-graph">
+							<div id="grvCriteriaReportGraph-dbp" type="grvwcheck"><div value="1"><i class='fa'></i> <span>Diastolic blood presure </span></div></div>
+						    <div id="grvCriteriaReportGraph-dbp-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-dbp-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<h2>Glucose control tests laboratory data</h2>
+						<div class="cdisCriteriaReportGraphContainer header">
+							<div style="padding-left:10px">Criteria</div><div>Filter</div><div>Date</div><div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-hba1c-graph">
+							<div id="grvCriteriaReportGraph-hba1c" type="grvwcheck"><div value="1"><i class='fa'></i><span>HbA1c</span></div></div>
+						    <div id="grvCriteriaReportGraph-hba1c-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-hba1c-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-acglu-graph">
+							<div id="grvCriteriaReportGraph-acglu" type="grvwcheck"><div value="1"><i class='fa'></i><span>Plasma glucose</span></div></div>
+						    <div id="grvCriteriaReportGraph-acglu-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-acglu-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<h2>Renal tests laboratory data</h2>
+						<div class="cdisCriteriaReportGraphContainer header">
+							<div style="padding-left:10px">Criteria</div><div>Filter</div><div>Date</div><div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-acratio-graph">
+							<div id="grvCriteriaReportGraph-acratio" type="grvwcheck"><div value="1"><i class='fa'></i><span>AC Ratio</span></div></div>
+						    <div id="grvCriteriaReportGraph-acratio-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-acratio-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-crea-graph">
+							<div id="grvCriteriaReportGraph-crea" type="grvwcheck"><div value="1"><i class='fa'></i><span>Serum Creatinine</span></div></div>
+						    <div id="grvCriteriaReportGraph-crea-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-crea-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-crcl-graph">
+							<div id="grvCriteriaReportGraph-crcl" type="grvwcheck"><div value="1"><i class='fa'></i><span>Creatinine Cleareance</span></div></div>
+						    <div id="grvCriteriaReportGraph-crcl-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-crcl-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-pcr-graph">
+							<div id="grvCriteriaReportGraph-pcr" type="grvwcheck"><div value="1"><i class='fa'></i><span>Protein Creatinine Ratio</span></div></div>
+						    <div id="grvCriteriaReportGraph-pcr-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-pcr-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-egfr-graph">
+							<div id="grvCriteriaReportGraph-egfr" type="grvwcheck"><div value="1"><i class='fa'></i><span>EGFR</span></div></div>
+						    <div id="grvCriteriaReportGraph-egfr-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-egfr-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<h2>Lipid tests laboratory data</h2>
+						<div class="cdisCriteriaReportGraphContainer header">
+							<div style="padding-left:10px">Criteria</div><div>Filter</div><div>Date</div><div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-tchol-graph">
+							<div id="grvCriteriaReportGraph-tchol" type="grvwcheck"><div value="1"><i class='fa'></i><span>Total colesterol</span></div></div>
+						    <div id="grvCriteriaReportGraph-tchol-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-tchol-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-tglycer-graph">
+							<div id="grvCriteriaReportGraph-tglycer" type="grvwcheck"><div value="1"><i class='fa'></i><span>Tryglicerides</span></div></div>
+						    <div id="grvCriteriaReportGraph-tglycer-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-tglycer-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-hdl-graph">
+							<div id="grvCriteriaReportGraph-hdl" type="grvwcheck"><div value="1"><i class='fa'></i><span>HDL</span></div></div>
+						    <div id="grvCriteriaReportGraph-hdl-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-hdl-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-ldl-graph">
+							<div id="grvCriteriaReportGraph-ldl" type="grvwcheck"><div value="1"><i class='fa'></i><span>LDL</span></div></div>
+						    <div id="grvCriteriaReportGraph-ldl-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-ldl-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div>
+						<div class="cdisCriteriaReportGraphContainer line" id="grvCriteria-tchdl-graph">
+							<div id="grvCriteriaReportGraph-tchdl" type="grvwcheck"><div value="1"><i class='fa'></i><span>TCHDL</span></div></div>
+						    <div id="grvCriteriaReportGraph-tchdl-filter" type="grvwcheck"><div value="filter"><i class='fa'></i></div></div>
+						    <div id="grvCriteriaReportGraph-tchdl-date" type="grvwcheck"><div value="date"><i class='fa'></i></div></div>
+						</div><!-- -->
+						
+						
 					</div>
 					<div class="cdisReportGraphTool">
 						<div class="cdisReportGraphButtons">
-							<div class="cdisCisButton" id="grvAddReportGraphCriteria">Add Report Criteria</div>
+							<div></div>
 							<div class="cdisCisButton" id="grvClearReportGraph">Clear Report</div>
 						</div>
 				   		
 				   		<div class="cdisReportGraphToolbar">
 				   			<div class="cdisReportGraphToolbarHeader">Report criteria</div>
-				   			<div class="cdisReportGraphToolbarBody" idreport="0" typereport="graph" periodreport="last" graphtype="line" titlereport="Custom Report" filterreport="allhcp"></div>
-				   			<div class="cdisReportGraphToolbarFooter">
-				   				<div class="cdisReportGraphNotes">
-				   					<label>Report notes:</label>
-				   					<textarea></textarea>
-				   				</div>
-				   				<div class="cdisReportGraphToolbarFooterButtons"></div>
-				   			</div>
+				   			<div class="cdisReportGraphToolbarBody" idreport="0" typereport="graph" periodreport="last" graphtype="line" titlereport="Custom Report" filterreport="allhcp" criteria="dtype" criteriavalue="all"></div>
 				   		</div>
-				   	</div>		
+				   		<div class="cdisReportGraphNotes"><label>Report notes:</label><textarea></textarea></div>
+			   			<div class="cdisReportGraphToolbarFooterButtons"></div>
+				   	</div>	
+				  </div>	<!-- end tab graph container-->
 				</div><!-- end tab graph -->
 				
 				<!-- 

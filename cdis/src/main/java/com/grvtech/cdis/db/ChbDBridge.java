@@ -687,7 +687,7 @@ public HashMap<String, String> getRole(int idrole){
 	
 public ArrayList<ArrayList<String>> getUserActions(){
 	ArrayList<ArrayList<String>> result = new ArrayList<>();
-	String sql = "select top 1000 uu.lname, uu.fname, aa.action_name, ee.data, ee.created 	from ncdis.ncdis.events ee 	left join ncdis.ncdis.users uu on ee.iduser = uu.iduser left join ncdis.ncdis.action aa on ee.idaction = aa.idaction where uu.lname is not null order by ee.created desc";
+	String sql = "select top 1000 uu.lname, uu.fname, aa.action_name, ee.data, ee.created 	from ncdis.ncdis.events ee 	left join ncdis.ncdis.users uu on ee.iduser = uu.iduser left join ncdis.ncdis.action aa on ee.idaction = aa.idaction where ee.idaction is not null and  uu.lname is not null order by ee.created desc";
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 	for(Map row : rows) {
     	ArrayList<String> line = new ArrayList<>();
@@ -810,6 +810,7 @@ public ArrayList<Object> getUserPatients(String iduser, String hcpcat){
 		    + " left join ncdis.ncdis.community cc on pp.idcommunity = cc.idcommunity"
 		    + " left join ncdis.ncdis.patient_hcp ph on pp.idpatient = ph.idpatient "
 		    + " where pp.active=1 and (pp.dod is null or pp.dod='1900-01-01') and ph."+hcpcat+" = '"+iduser+"'";
+    //System.out.println(sql);
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 	for(Map row : rows) {
     	HashMap<String, String> obj = new HashMap<>();

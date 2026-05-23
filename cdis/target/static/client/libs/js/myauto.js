@@ -1,15 +1,11 @@
 var optionSelected = false;
 var searchObj = $("#search").autocomplete({
 			source: function( request, response ) {
-				//alert(request.term);
 		      $.ajax({
 		          dataType: "json",
 		          type : 'GET',
 		          url: '/tools/json/search.json',
 		          success: function(data) {
-		        	  //$('#search').removeClass('ui-autocomplete-loading');  // hide loading image
-			          //alert(data.objects.length);
-			          //console.log( data ); 
 		        	  var array = data.error ? [] : $.map(data.objects, function(m) {
 							return {
 								fname: m.fname,
@@ -21,7 +17,6 @@ var searchObj = $("#search").autocomplete({
 						response(array);
 		          },
 		        error: function(data) {
-		        	//alert('qqqqq');
 		            //$('#search').removeClass('ui-autocomplete-loading');  
 		        }
 		      });
@@ -31,7 +26,6 @@ var searchObj = $("#search").autocomplete({
 		    	$(".cdisuser").fadeTo( "fast", 0.23 );
 		    },
 		    close: function() {
-		    	//alert('3');
 		    	if(!optionSelected){
 		    		$(".cdisuser").fadeTo( "fast", 1 );
 		    		this.value = "";
@@ -44,12 +38,9 @@ var searchObj = $("#search").autocomplete({
 		    	//change the interface to patient 
 		    	$(".cdisuser").hide();
 		    	optionSelected = true;
-		    	//alert(this.value +"   "+ ui.item.fname);
-		    	//console.log(ui);
 		    },
 		    search: function( event, ui ) {
 		    	//detect if not alpha numeric and return error
-		    	//alert("222"+this.value);
 		    	if (this.value == "a") {
 		    		return false;
                 }

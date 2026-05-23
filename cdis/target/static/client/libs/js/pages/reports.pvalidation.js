@@ -4,7 +4,7 @@
 
 const pvalidationConfig = {
 		"container":"pvalidation-list",
-		"initFilter":{"pidcommunity":"0","idlist":"1"},
+		"initFilter":{"idcommunity":"0","idlist":"1"},
 		"lists":[
 		         {"id":"1","name":"No data in last 5 years (unless GDM) "},
 		         {"id":"2","name":"Age > 95"},
@@ -21,7 +21,7 @@ var list3Object = null;
 var list4Object = null;
 var list5Object = null;
 var listLoadedFlag = false;
-
+let fpv = getParameterByName("fpv");
 
 /*
  * MAIN Section 
@@ -43,13 +43,24 @@ function initPvalidation(){
 	drawPToolbarFilters($(".pvalidation-filters"));
 	buildPListFrame();
 	refreshPStats();
-	var atab = $("#tabs").tabs("option","active");
-	
+	let atab = grvtabs.getActive();
 	if(showPopupFlag && atab == 3){
-		showPopupMessage(pvalidationPopupTitle,pvalidationText);
+		//showPopupMessage(pvalidationPopupTitle,pvalidationText);
+		if(fpv == null){
+			var bconfig = {"width":"500","height":"350"};
+			var bbut = [{"text":"Close","action":"closeGRVPopup"}];
+			var pvalidationPopupTitle = "Patient Validation";
+			var pvalidationText = "<p>Patient Validation is a tool that allows CDIS users to screen for patients whose information may require updating (e.g. change of diagnosis, patient deceased, permanently moved from region).</p>"
+						+"<ul><li>No data in last 5 years (unless GDM)</li>"
+						+"<li>Age > 95</li>"
+						+"<li>Duplicate name</li>"
+						+"<li>Predm and value > 0.065 X 2 : if reclassifying as diabetic first verify that patient is aware of diagnosis</li></ul>"
+						+"<span>Corrections can be done by CDIS users. For deletions, an email explaining the problem must be sent to support@grvtech.ca</span>";
+			showGRVPopup(pvalidationPopupTitle,pvalidationText,bbut,bconfig);	
+		}
+		
 		showPopupFlag = false;
 	}
-	
 }
 
 function buildPListFrame(){
@@ -59,20 +70,17 @@ function buildPListFrame(){
 	$("<div>",{class:"pvalidation-list-header"}).appendTo(container);
 	$("<div>",{class:"pvalidation-list-body"}).appendTo(container);
 	
-	setTimeout(showProgress,10,$(".pvalidation-list"));
+	//setTimeout(showProgress,10,$(".pvalidation-list"));
 }
 
 function drawPToolbarFilters(container){
 	container.empty();
 	//container
-
-	
 	var grfilter = $("<div>",{class:"gr-filters"}).appendTo(container);
 	var grbut = $("<div>",{class:"gr-buttons"}).appendTo(container);
-	
-	var genBtn = $("<button>",{class:"cisbutton"}).text("Apply filter").appendTo(grbut);
+	var genBtn = $("<button>",{class:"cisbutton",id:"grvPatientValidationButton"}).text("Apply filter").appendTo(grbut);
 	genBtn.click(function(){
-		setTimeout(showProgress,10,$(".pvalidation-list"));
+		//setTimeout(showProgress,10,$(".pvalidation-list"));
 		buildPListFrame();
 		refreshPStats();
 	});
@@ -85,9 +93,10 @@ function drawPToolbarFilters(container){
 	$.each(tool_idcommunity, function(j,com){
 		$("<option>",{"value":j}).text(com).appendTo(grCommS);
 	});
+	$("#pcomm-filter").val(pappFilter.idcommunity);
 	grCommS.on("change",function(){
 		var v = $(this).val();
-		if(v!=pappFilter.pidcommunity){pappFilter["pidcommunity"]=v;}
+		if(v!=pappFilter.idcommunity){pappFilter["idcommunity"]=v;}
 	});
 
 	
@@ -122,6 +131,13 @@ function removePStatsProgress(){
 
 function getListSeries(){
 	var data = {};
+	if(fpv == "1"){
+		pappFilter.idlist = getParameterByName("fpv_list");
+		pappFilter.idcommunity = getParameterByName("fpv_pcomm");
+		drawPToolbarFilters($(".pvalidation-filters"));
+		fpv="0";
+	}
+	/**/
 	data["idlist"] = pappFilter.idlist;
 	data["idcommunity"] = pappFilter.idcommunity;
 	var lo = null;
@@ -132,6 +148,7 @@ function getListSeries(){
 	if(pappFilter.idlist == "4") lo = list4Object;
 	if(pappFilter.idlist == "5") lo = list5Object;
 	var flag = false;
+	
 	if(lo != null){
 		flag = true;
 	}
@@ -142,10 +159,10 @@ function getListSeries(){
 		$.ajax({
 			  url: "/ncdis/service/data/getPvalidationData?sid="+sid+"&language=en",
 			  data : data,
+			  async:false,
 			  dataType: "json"
 			}).done(function( json ) {
 				var sd = json.objs[0];
-				
 				if(pappFilter.idlist == "1") list1Object = sd; 
 				if(pappFilter.idlist == "2") list2Object = sd;
 				if(pappFilter.idlist == "3") list3Object = sd;
@@ -163,14 +180,10 @@ function getListSeries(){
 function applyPFilter(listObject){
 	var result = {"header":[],"data":[]};
 	result["header"] = listObject.header;
-	
-	
-	
 	$.each(listObject.data, function(i, row){
-		
-		if(pappFilter.pidcommunity == row.idcommunity ){
+		if(pappFilter.idcommunity == row.idcommunity ){
 			result["data"].push(row);
-		}else if(pappFilter.pidcommunity == "0"){
+		}else if(pappFilter.idcommunity == "0"){
 			result["data"].push(row);
 		}
 	});
@@ -219,7 +232,8 @@ function drawPValidationListBody(listObject){
 				$("<div>" ,{class:"cisbutton"}).text("view patient details").appendTo($(this).find(".fullname")).click(function(){
 					var pid = $(this).parent().parent().attr("id");
 					var parts = pid.split("_");
-					gtc(sid,"en",parts[1],"patient");
+					//gtc(sid,"en",parts[1],"patient");
+					gtc(sid,"en",parts[1],"patient","&fpv=1&fpv_ramq="+parts[1]+"&fpv_pcomm="+$("#pcomm-filter").val()+"&fpv_list="+$("#lists-filter").val());
 				})
 			}
 		});

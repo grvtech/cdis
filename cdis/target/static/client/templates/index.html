@@ -15,29 +15,27 @@
 			</div>
 			<div id="grvLoginButton" class="cdisCisButton" tabindex="3">Login</div>
 			<div class="cdisForgotButton">Forgot password?</div>
-			<div class="cdisCisButton cdisSubscribeButton">Add new CDIS user</div>
+			<!-- <div class="cdisCisButton cdisSubscribeButton">Add new CDIS user</div>  -->
 		</form>
 	</div>
 </div>
 <div></div><!-- footer filler -->
 
 
-
-
 <div id="grvDialogForgot" title="Forgot Password ? Enter info to reset password." >
   <p class="cdisValidateTips">All form fields are required.</p>
-   <form>
+   <form id="grvForgotForm">
     <fieldset>
       <div class="cdisDialogForgotUsername">
-      	<label for="usernameUser">Username</label>
+      	<label for="grvForgotUsername">Username</label>
       	<div class="cdisFusername">
       		<span>Forgot Username ?</span>
       		<input type="checkbox" id="grvForgotUsername" value="1">
       	</div>
       </div>
-      <input type="text" name="usernameUser" id="grvUsernameUser" value="" class="cdisLoginText">
-      <label for="emailUser">Email</label>
-      <input type="text" name="emailUser" id="grvEmailUser" value="" class="cdisLoginText">
+      <input type="text" name="usernameUser" id="grvUsernameUser" value="" class="cdisLoginText" autocomplete="off">
+      <label for="grvEmailUser">Email</label>
+      <input type="text" name="emailUser" id="grvEmailUser" value="" class="cdisLoginText" autocomplete="off">
       <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
     </fieldset>
   </form>
@@ -49,12 +47,12 @@
   <div id="grvSubscribeForm">
    <form name="subscribe">
     <fieldset>
-      <label for="firstnameSub">First name</label><input type="text" name="firstnameSub" id="grvFirstnameSubscribe" value="" class="cdisLoginText">
-      <label for="lastnameSub">Last name</label>
+      <label for="grvFirstnameSubscribe">First name</label><input type="text" name="firstnameSub" id="grvFirstnameSubscribe" value="" class="cdisLoginText">
+      <label for="grvLastnameSubscribe">Last name</label>
       <input type="text" name="lastnameSub" id="grvLastnameSubscribe" value="" class="cdisLoginText">
-      <label for="emailSub">Email</label>
+      <label for="grvEmailSubscribe">Email</label>
       <input type="text" name="emailSub" id="grvEmailSubscribe" value="" class="cdisLoginText">
- 	  <label for="idcommunitySub">User works in community:</label>
+ 	  <label for="grvIdcommunitySubscribe">User works in community:</label>
       <select name="idcommunitySub" id="grvIdcommunitySubscribe" class="cdisLoginText">
       	<option value="0">Please Choose ...</option>
       	<option value="1">Chisasibi</option>
@@ -67,7 +65,7 @@
 		<option value="8">Wemindji</option>
 		<option value="9">Whapmagoostui</option>
       </select>
-      <label for="idprofesionSub">User profession:</label>
+      <label for="grvIdprofesionSubscribe">User profession:</label>
       <select name="idprofesionSub" id="grvIdprofesionSubscribe" class="cdisLoginText">
       	<option value="0">Please Choose ...</option>
       	<option value="1">PCCR</option>
@@ -75,10 +73,10 @@
       	<option value="3">Nurse</option>
       	<option value="4">Nutritionist</option>
       </select>
-      <label for="passwordSub">Password:</label>
+      <label for="grvPasswordSubscribe">Password:</label>
       <input type="password" name="passwordSub" id="grvPasswordSubscribe" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
       
-      <label for="cpasswordSub">Confirm Password:</label>
+      <label for="grvPasswordSubscribeConfirm">Confirm Password:</label>
       <input type="password" name="cpasswordSub" id="grvPasswordSubscribeConfirm" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
       
       <div id="grvPasswordMessage">
@@ -106,13 +104,13 @@
   <div>
    <form name="reset">
     <fieldset>
-      <label for="usernameRes">Username</label>
+      <label for="grvUsernameReset">Username</label>
       <input type="text" name="usernameRes" id="grvUsernameReset" value="" class="cdisLoginText" disabled>
       <input type="hidden" name="iduserRes" id="grvIdUserReset" value="">
-      <label for="passwordrRes">New Password:</label>
+      <label for="grvPasswordrReset">New Password:</label>
       <input type="password" name="passwordrRes" id="grvPasswordrReset" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
       
-      <label for="cpasswordrRes">Confirm Password:</label>
+      <label for="grvConfirmPasswordrReset">Confirm Password:</label>
       <input type="password" name="cpasswordrRes" id="grvConfirmPasswordrReset" value="" class="cdisLoginText" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
       
       <div id="grvPasswordrMessage">

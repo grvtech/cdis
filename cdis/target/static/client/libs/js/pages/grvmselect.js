@@ -103,7 +103,6 @@ function GRVMSelect(list,options){
 					sbar.append($("<span>",{class:"grvmselect-span"}).text("Select one or two communities"));
 				}
 			}
-			console.log(selectedObjects)
 		});
 		return itemContainer;
 	}

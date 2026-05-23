@@ -236,12 +236,9 @@
             // somehow in here, for divs within divs, the width of the inner div should be used instead of the canvas.
             /**/
             if ((tagname == 'div' || tagname == 'span') && !$(el).hasClass('jqplot-highlighter-tooltip')) {
-            	//console.log('aaaaa'+tagname +" left : "+left +"    top:"+top+"    width :"+w);
             	if($(el).hasClass('jqplot-data-label') || $(el).hasClass('jqplot-xaxis-tick') ||  $(el).hasClass('jqplot-point-label')){
             		left = left - 400;
             	} 
-            	
-            	console.log($(el).children());
             	
             	$(el).children().each(function() {
                     //_jqpToImage(this, left, top);

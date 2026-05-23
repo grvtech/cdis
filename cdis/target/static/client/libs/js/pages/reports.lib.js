@@ -21,8 +21,6 @@ var isPvalidation = false;
 var showPopupFlag = true;
 
 
-
-
 /*
  * EVENT definitions
  * 
@@ -33,7 +31,8 @@ $("#fullscreen-button").on("click",toggleFullScreen);
  * MAIN Section 
  * */
 
-let grvtabs = grvwtabs("grvTabs");
+var grvtabs = grvwtabs("grvTabs");
+
 /*
 $("#grvReportsTabs").tabs({
 	create: function(event, ui){
@@ -82,7 +81,7 @@ $("#grvReportsTabs").tabs({
 
 if(userProfileObj.role.code!= "ROOT" && userProfileObj.role.code!= "ADMIN"){
 	$("#admintab").remove();
-	$("#grvTabs").tabs("refresh");
+	//$("#grvTabs").tabs("refresh");
 }
 
 
@@ -94,21 +93,49 @@ if(getParameterByName("reportid") == "surveillance"){
 	}else{
 		setTimeout(setEvent,100,"PATV");
 		grvtabs.setActive(3);
-		if(showPopupFlag){
-			var bconfig = {"width":"500","height":"350"};
-		var bbut = [{"text":"Close","action":"closeGRVPopup"}];
-			var pvalidationPopupTitle = "Patient Validation";
-			var pvalidationText = "<p>Patient Validation is a tool that allows CDIS users to screen for patients whose information may require updating (e.g. change of diagnosis, patient deceased, permanently moved from region).</p>"
-						+"<ul><li>No data in last 5 years (unless GDM)</li>"
-						+"<li>Age > 95</li>"
-						+"<li>Duplicate name</li>"
-						+"<li>Predm and value > 0.065 X 2 : if reclassifying as diabetic first verify that patient is aware of diagnosis</li></ul>"
-						+"<span>Corrections can be done by CDIS users. For deletions, an email explaining the problem must be sent to support@grvtech.ca</span>";
-			showGRVPopup(pvalidationPopupTitle,pvalidationText,bbut,bconfig);
-			//showPopupMessage(pvalidationPopupTitle,pvalidationText);
-			showPopupFlag = false;
+		let fpv = getParameterByName("fpv");
+		if(fpv == "1"){
+			/*
+			pappFilter.idlist = getParameterByName("fpv_list");
+			pappFilter.idcommunity = getParameterByName("fpv_pcomm");
+			$("#grvPatientValidationButton").trigger("click");
+			*/
+		}else{
+			if(showPopupFlag){
+				var bconfig = {"width":"500","height":"350"};
+				var bbut = [{"text":"Close","action":"closeGRVPopup"}];
+				var pvalidationPopupTitle = "Patient Validation";
+				var pvalidationText = "<p>Patient Validation is a tool that allows CDIS users to screen for patients whose information may require updating (e.g. change of diagnosis, patient deceased, permanently moved from region).</p>"
+							+"<ul><li>No data in last 5 years (unless GDM)</li>"
+							+"<li>Age > 95</li>"
+							+"<li>Duplicate name</li>"
+							+"<li>Predm and value > 0.065 X 2 : if reclassifying as diabetic first verify that patient is aware of diagnosis</li></ul>"
+							+"<span>Corrections can be done by CDIS users. For deletions, an email explaining the problem must be sent to support@grvtech.ca</span>";
+				showGRVPopup(pvalidationPopupTitle,pvalidationText,bbut,bconfig);
+				//showPopupMessage(pvalidationPopupTitle,pvalidationText);
+				showPopupFlag = false;
+			}	
 		}
+		
 	}
+}else if(getParameterByName("reportid") == "predm2dm"){
+	if(isDemo){
+		alert("This function si not available in demo mode");
+	}else{
+		setTimeout(setEvent,100,"PREDM2DM");
+			grvtabs.setActive(5);
+			let fpredm = getParameterByName("fpredm");
+			if(fpredm == "1"){
+				/*
+				pappFilter.idlist = getParameterByName("fpredm_period");
+				pappFilter.idcommunity = getParameterByName("fpv_pcomm");
+				$("#grvPatientValidationButton").trigger("click");
+				*/
+			}else{
+				
+			}
+			
+		}
 }
 
 
@@ -158,8 +185,9 @@ function drawg(){
 	}
 }
 
+
 function initLocalPage(){
-	
+	/*
 	if(isSurveillance){
 		reportsSection = "surveillance";
 		isSurveilance = false;
@@ -173,10 +201,11 @@ function initLocalPage(){
 			$("#tabs").tabs({"active":3});
 		}
 	}
-	
+	*/
 	initPage();
 }
 
 function resetTabs(){
 	$(".contentTab").empty();
 }
+/**/

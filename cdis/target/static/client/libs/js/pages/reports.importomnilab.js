@@ -61,7 +61,7 @@ function loadImportFiles(period){
 				$.getJSON("/ncdis/client/reports/import/import_"+fdate+".json", function(data){
 					dayObj["data"] = data;
 		        }).fail(function(){
-		            console.log("An error has occurred.");
+		            alert("An error has occurred.");
 		        });
 				dataImport.push(dayObj);
 			});

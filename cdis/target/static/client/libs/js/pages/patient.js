@@ -635,7 +635,6 @@ function drawAreaGraph(container, dataObject){
     // capture the highlighters highlight event and show a custom tooltip.
     $(container).bind('jqplotHighlighterHighlight', 
         function (ev, seriesIndex, pointIndex, data, plot) {
-    		//alert(ev.pageX+"   "+ev.pageY);
             // create some content for the tooltip.  Here we want the label of the tick,
             // which is not supplied to the highlighters standard tooltip.
             var content = '<span>HBA1c Trend : <b>'+plot.series[seriesIndex].label + '</b></span><br><span>Date: <b>' + plot.series[seriesIndex]._xaxis.ticks[pointIndex][1] + '</b></span><br><span>Percentage: <b>' + data[1]+'%</b>';
@@ -750,7 +749,6 @@ function drawDoubleLineGraph(container, series, ticks, colors, labels){
 	// capture the highlighters highlight event and show a custom tooltip.
     $(container).bind('jqplotHighlighterHighlight', 
         function (ev, seriesIndex, pointIndex, data, plot) {
-    		//alert(ev.pageX+"   "+ev.pageY);
             // create some content for the tooltip.  Here we want the label of the tick,
             // which is not supplied to the highlighters standard tooltip.
             var content = '<span><b>'+plot.series[seriesIndex].label + '</b></span><br><span>Date: <b>' + plot.series[seriesIndex]._xaxis.ticks[pointIndex] + '</b></span><br><span>Percentage: <b>' + data[1]+'%</b> ';
@@ -957,7 +955,6 @@ function drawLineGraphReport(container, dataObject){
 	 // capture the highlighters highlight event and show a custom tooltip.
     $(container).bind('jqplotHighlighterHighlight', 
         function (ev, seriesIndex, pointIndex, data, plot) {
-    		//alert(ev.pageX+"   "+ev.pageY);
             // create some content for the tooltip.  Here we want the label of the tick,
             // which is not supplied to the highlighters standard tooltip.
     		
@@ -1111,7 +1108,6 @@ function drawLineGraphSimple(container, dataObject, options){
 	 // capture the highlighters highlight event and show a custom tooltip.
     $(container).bind('jqplotHighlighterHighlight', 
         function (ev, seriesIndex, pointIndex, data, plot) {
-    		//alert(ev.pageX+"   "+ev.pageY);
             // create some content for the tooltip.  Here we want the label of the tick,
             // which is not supplied to the highlighters standard tooltip.
             var content = '<span>'+plot.series[seriesIndex].label+'</span><br><span>Date: <b>' + plot.series[seriesIndex]._xaxis.ticks[pointIndex] + '</b></span><br><span>Value: <b>' + data[1]+'%</b>';
@@ -1259,7 +1255,6 @@ function drawAreaStackedGraph(container, dataObject){
 	 // capture the highlighters highlight event and show a custom tooltip.
     $(container).bind('jqplotHighlighterHighlight', 
         function (ev, seriesIndex, pointIndex, data, plot) {
-    		//alert(ev.pageX+"   "+ev.pageY);
             // create some content for the tooltip.  Here we want the label of the tick,
             // which is not supplied to the highlighters standard tooltip.
             var content = '<span>'+plot.series[seriesIndex].label+'</span><br><span>Date: <b>' + plot.series[seriesIndex]._xaxis.ticks[pointIndex] + '</b></span><br><span>Value: <b>' + data[1]+'%</b>';
@@ -1504,7 +1499,6 @@ function drawDoubleLinePrevalenceGraph(container, series, ticks, colors, labels)
 	// capture the highlighters highlight event and show a custom tooltip.
     $(container).bind('jqplotHighlighterHighlight', 
         function (ev, seriesIndex, pointIndex, data, plot) {
-    		//alert(ev.pageX+"   "+ev.pageY);
             // create some content for the tooltip.  Here we want the label of the tick,
             // which is not supplied to the highlighters standard tooltip.
             var content = '<span><b>'+plot.series[seriesIndex].label + '</b></span><br><span>Date: <b>' + plot.series[seriesIndex]._xaxis.ticks[pointIndex] + '</b></span><br><span>Value: <b>' + data[1]+'</b> ';
@@ -1700,7 +1694,6 @@ function drawDoubleLineIncidenceGraph(container, series, ticks, colors, labels){
 	// capture the highlighters highlight event and show a custom tooltip.
     $(container).bind('jqplotHighlighterHighlight', 
         function (ev, seriesIndex, pointIndex, data, plot) {
-    		//alert(ev.pageX+"   "+ev.pageY);
             // create some content for the tooltip.  Here we want the label of the tick,
             // which is not supplied to the highlighters standard tooltip.
             var content = '<span><b>'+plot.series[seriesIndex].label + '</b></span><br><span>Date: <b>' + plot.series[seriesIndex]._xaxis.ticks[pointIndex] + '</b></span><br><span>Value: <b>' + data[1]+'</b> ';

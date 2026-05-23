@@ -84,8 +84,6 @@ function getPopulation(year,filter){
 	if(filter == null)filter = pandiFilter;
 	var result = 0;
 	var pyear = eval("populationEI.year_"+year);
-	console.log(year);
-	console.log(filter);
 		$.each(pyear, function(i,com){
 			if (filter.pandiidcommunity == "0"){
 				$.each(com.groups, function(j,kobj){
@@ -149,9 +147,6 @@ function getPandiNow(){
 	data["age"] = pandiFilter.pandiage;
 	data["idcommunity"] = pandiFilter.pandiidcommunity;
 	data["sex"] = pandiFilter.pandisex;
-	console.log(data);
-	console.log(sid);
-	
 	$.ajax({
 		  url: "/ncdis/service/data/getPandiNow?sid="+sid+"&language=en",
 		  data : data,
@@ -161,17 +156,14 @@ function getPandiNow(){
 			prevalenceObject["pcases"] = Math.round( ( (100*Number(json.objs[0].series[0])/getPopulation(moment().format("YYYY"))) + Number.EPSILON ) * 100 ) / 100;
 			prevalenceObject["delta"] = json.objs[0].series[0] - json.objs[2].series[0];
 			prevalenceObject["pdelta"] = Math.round( ( (100*(Number(json.objs[0].series[0]) - Number(json.objs[2].series[0]))/Number(json.objs[2].series[0])) + Number.EPSILON ) * 100 ) / 100;
-			console.log(prevalenceObject);
 			incidenceObject["cases"] = Number(json.objs[1].series[0]);
 			incidenceObject["pcases"] = Math.round( ( (100*Number(json.objs[1].series[0])/getPopulation(moment().format("YYYY"))) + Number.EPSILON ) * 100 ) / 100;
 			incidenceObject["delta"] = Number(json.objs[1].series[0]) - Number(json.objs[3].series[0]);
 			incidenceObject["pdelta"] = Math.round( ( (100*(Number(json.objs[1].series[0]) - Number(json.objs[3].series[0]))/Number(json.objs[3].series[0])) + Number.EPSILON ) * 100 ) / 100;			
-			console.log(incidenceObject);
 			drawPandiNow(prevalenceObject, incidenceObject);
 			
 		}).fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );
-		  //console.log(this.url);
 		});	
 	
 }
@@ -190,15 +182,12 @@ function getPandiHistory(){
 			  data : data,
 			  dataType: "json"
 			}).done(function( json ) {
-				//console.log("pandi history");
-				//console.log(json.objs);
 				pandiObjects = json.objs;
 				ispandiLoaded = true;
 				drawExistingHistory(pandiObjects);
 				drawNewHistory(pandiObjects);
 			}).fail(function( jqXHR, textStatus ) {
 			  alert( "Request failed: " + textStatus );
-			  //console.log(this.url);
 			});	
 		
 	}
@@ -297,9 +286,6 @@ function drawExisting(pObject){
 
 function drawNew(iObject){
 $("#pandiNowNew").empty();
-	
-	//console.log(iObject.cases);
-	
 	var title = "<p>Period :<b>"+moment().startOf('year').format('MMMM Do YYYY')+" to "+moment().format('MMMM Do YYYY')+"</b><br>" +
 				"Community : <b>"+pandiRenderValues(pandiFilter.pandiidcommunity,"community")+"</b><br>" +
 				"<b>"+pandiRenderValues(pandiFilter.pandidtype,"dtype")+"</b> <span>"+pandiRenderValues(pandiFilter.pandiage,"age")+"</span> <span>"+pandiRenderValues(pandiFilter.pandisex,"gender")+"</span></p>";
@@ -338,18 +324,8 @@ function drawExistingHistory(pandiHistory){
 		var x =  Math.round( ( (k / getPopulation(tcs[j],nofilter)) + Number.EPSILON ) * 10000 ) / 100; 
 		prevNoFilterArray.push(x);
 	});
-	//console.log("filter prevalence");
-	//console.log(prevFilterArray);
-	
-	//console.log("nofilter prevalence");
-	//console.log(prevNoFilterArray);
-	
 	var valueStatsData = {"series":[pandiHistory[0].series,pandiHistory[2].series,prevFilterArray,prevNoFilterArray], "ticks":[pandiHistory[0].ticks,pandiHistory[2].ticks],"labels":[getPandiGraphTitle("e"),getPandiGraphTitle("enf"),getPandiGraphTitle("p"),getPandiGraphTitle("pnf")]};
 	paramObject3 = {"container":$("#pandiHistoryEx"),"data":valueStatsData,"filter":pandiFilter};
-
-	//console.log("drawExistingHistory");
-	//console.log(paramObject3);
-	
 	drawPrevalenceLL(paramObject3);
 }
 
@@ -370,18 +346,8 @@ function drawNewHistory(pandiHistory){
 		var x =  Math.round( ( (k / getPopulation(tcs[j],nofilter)) + Number.EPSILON ) * 10000 ) / 100; 
 		incNoFilterArray.push(x);
 	});
-	//console.log("filter incidence");
-	//console.log(incFilterArray);
-	
-	//console.log("nofilter incidence");
-	//console.log(incNoFilterArray);
-	
 	var valueStatsData = {"series":[pandiHistory[1].series,pandiHistory[3].series,incFilterArray,incNoFilterArray], "ticks":[pandiHistory[1].ticks,pandiHistory[3].ticks],"labels":[getPandiGraphTitle("n"),getPandiGraphTitle("nnf"),getPandiGraphTitle("i"),getPandiGraphTitle("inf")]};
 	paramObject3 = {"container":$("#pandiHistoryNew"),"data":valueStatsData,"filter":pandiFilter};
-
-	//console.log("drawNewHistory");
-	//console.log(paramObject3);
-	
 	drawIncidenceLL(paramObject3);
 }
 

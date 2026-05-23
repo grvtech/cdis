@@ -80,7 +80,7 @@ public class MessageResponse {
 			this.message = "";
 		}else{
 			this.status = 0;
-			this.message = "error"; 
+			this.message = messageCode; 
 		}
 	}
 	

@@ -83,9 +83,6 @@ function getIncidence(){
 	$.each(ds,function(i,v){
 		var reportDate = moment(v.ddate);
 		if(v.age < 10 ){
-			//console.log("age less 10");
-			//console.log(v);
-			
 			if(moment(reportDate).isAfter(moment(filterDate))){
 				ncg1++;
 			}
@@ -94,8 +91,6 @@ function getIncidence(){
 			}
 			
 		}else if(v.age >=10 && v.age < 30 ){
-			//console.log("age less 30");
-			//console.log(v);
 			if(moment(reportDate).isAfter(moment(filterDate))){
 				ncg2++;
 			}
@@ -103,8 +98,6 @@ function getIncidence(){
 				ocg2++;
 			}
 		}else if(v.age >= 30){
-			//console.log("age more 30");
-			//console.log(v);
 			if(moment(reportDate).isAfter(moment(filterDate))){
 				ncg3++;
 			}
@@ -195,17 +188,10 @@ function getPrevalance(){
 	$.each(ds,function(i,v){
 		var reportDate = moment(v.ddate);
 		if(v.age < 10 ){
-			//console.log("age less 10");
-			//console.log(v);
 			ecg1++;
-			
 		}else if(v.age >=10 && v.age < 30 ){
-			//console.log("age less 30");
-			//console.log(v);
 			ecg2++;
 		}else if(v.age >= 30){
-			//console.log("age more 30");
-			//console.log(v);
 			ecg3++;
 		}
 	});
@@ -280,9 +266,7 @@ function applyFilter(){
 		
 		if(hasCommunity && hasDate && hasDtype && hasHBA1c  && hasSex ){
 			result.push(obj)
-		}else{
-			//console.log(obj);
-		}
+		}else{ }
 	});
 	
 	return result;
@@ -415,9 +399,6 @@ function buildStatsFrame(){
 	
 	
 	showProgress($(".surveillance-stats"));
-	//var p = $("#surveillance");
-	//$(p).height($(".reportsbody_dashboard").height() - $("#tabs ul").outerHeight() - 200);
-	//alert($(".reportsbody_dashboard").height()+"   "+$("#tabs ul").outerHeight()+"  "+$(p).height()+"   "+$(".reportsbody_dashboard").width());
 }
 
 
@@ -628,25 +609,10 @@ function drawToolbarFilters(container){
 
 
 function refreshStatsOutcomes(p){
-	
 	setToolbar(appFilter);
-	
-	//setTimeout(getTrendSeries, 100,p);
 	setTimeout(getNewTrendSeries, 100,p);
-	//setTimeout(getPeriodSeries, 100,p);
 	setTimeout(getNewPeriodSeries, 100,p);
-	
-	//setTimeout(getValueSeries, 100,p);
 	setTimeout(getNewValueSeries, 100,p);
-	/*
-	//incidenceData = getIncidence();
-	//prevalanceData = getPrevalance();
-	if(appSettings.flag == "true"){
-		setTimeout(drawExisting,1000);
-		setTimeout(drawNew,1000);
-	}
-	*/
-	//console.log("p is :"+p)
 	if(p!=null){
 		removeStatsProgress();
 	}
@@ -660,7 +626,6 @@ function removeStatsProgress(){
 		periodStatsDataFlag = false;
 		valueStatsDataFlag = false;
 	}else{
-		//console.log("retry");
 		setTimeout(removeStatsProgress,500);
 	}
 }
@@ -715,10 +680,8 @@ function getNumberOfPatients(){
 		  dataType: "json"
 		}).done(function( json ) {
 			totalPatientsObject = json.objs[0];
-			//console.log(totalPatientsObject);
 		}).fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );
-		  //console.log(this.url);
 		});	
 }
 
@@ -739,13 +702,10 @@ function getTrendSeries(p){
 		  data : data,
 		  dataType: "json"
 		}).done(function( json ) {
-			//console.log(json.objs);
 			var sd = json.objs;
-			//drawStatsTrendSeries($("#s1"), trendStatsData);
 			$("#trend-graph").css("background","#ffffff");
 			trendStatsData = sd;
 			trendStatsDataFlag = true;
-			
 			if(p!=null){
 				paramObject = {"container":$("#trend-graph"),"data":trendStatsData};
 				drawAG(paramObject);
@@ -753,7 +713,6 @@ function getTrendSeries(p){
 			
 		}).fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );
-		  //console.log(this.url);
 		});	
 }
 
@@ -1030,7 +989,6 @@ function getNewPeriodSeries(p){
 		var serie = getNewPeriodSerie(appFilter.idcommunity,appFilter.dtype, appFilter.age, appFilter.sex, appFilter.dp);
 		periodsStatsData.push(serie);
 	}
-	//console.log(periodsStatsData)
 	periodsStatsData = reverseSerie(periodsStatsData);
 	periodStatsDataFlag = true;
 	paramObject = {"container":$("#period-graph"),"data":periodsStatsData};
@@ -1043,7 +1001,6 @@ function getNewValueSerie(idcommunity,dtype,age,sex,period,hba1c){
 	result["series"] = [];
 	result["ticks"] = [];
 	result["labels"] = [];
-	//Math.round( ( (100*(Number(json.objs[0].series[0]) - Number(json.objs[2].series[0]))/Number(json.objs[2].series[0])) + Number.EPSILON ) * 100 ) / 100;
 	var file = "p";
 	var isTotals = false;
 	var iterations = period;
@@ -1315,8 +1272,6 @@ function getPeriodSeries(p){
 		  dataType: "json"
 		}).done(function( json ) {
 			periodStatsData = json.objs;
-			console.log("period data");
-			console.log(periodStatsData);
 			periodStatsDataFlag = true;
 			$("#period-graph").css("background","#ffffff");
 			if(p != null){
@@ -1325,7 +1280,6 @@ function getPeriodSeries(p){
 			}
 		}).fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );
-		  //console.log(this.url);
 		});	
 }
 function getValueSeries(p){

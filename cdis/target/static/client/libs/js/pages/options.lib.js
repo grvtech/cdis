@@ -4,7 +4,6 @@
 var optionsSection="personalinfo";
 var ob = userObj[0];
 
-console.log(ob)
 /*
  * MAIN Section 
  * */

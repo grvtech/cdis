@@ -130,7 +130,6 @@ function openPandiManageData(){
 	
 	if(mid.length === 0){
 		var modal = $('<div>',{id:"fullscreen_"+id,class:"fullscreen-modal"}).appendTo($("body"));
-		console.log(modal)
 	}
 	//modal header
 	var header = $("<div>",{class:"fullscreen-modal-header"}).appendTo(modal);

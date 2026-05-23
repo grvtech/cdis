@@ -528,7 +528,6 @@ function loadGraphABC(divStr, values, labels, title, value){
 		        cursor:{show: true}
 				});
 			 $.jqplot.postDrawHooks.push(function() {
-				 	//	alert($('.jqplot-overlayCanvas-canvas').length + "    "+ $('.jqplot-series-canvas').length);
 				 	for(var i=0;i<$('.jqplot-overlayCanvas-canvas').length;i++){
 				 		var overlayCanvas = $($('.jqplot-overlayCanvas-canvas')[i]);
 					    var seriesCanvas = $($('.jqplot-series-canvas')[i]);

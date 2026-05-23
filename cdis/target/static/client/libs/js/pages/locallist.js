@@ -201,10 +201,26 @@ function drawToolbarFilters(container){
 	$("<div>",{"for":"usr-filter",class:"label-filter"}).text("Health Care Workers").appendTo(grUsr);
 	var grUsrS = $("<select>",{"id":"usr-filter",class:""}).appendTo(grUsr);
 	$("<option>",{"value":0}).text("All users").appendTo(grUsrS);
+	
+	let teams = $("<optgroup>",{"label":"Teams"}).appendTo(grUsrS);
+	let chr = $("<optgroup>",{"label":"CHR"}).appendTo(grUsrS);
+	let md = $("<optgroup>",{"label":"MD"}).appendTo(grUsrS);
+	let nur = $("<optgroup>",{"label":"Nur"}).appendTo(grUsrS);
+	let nut = $("<optgroup>",{"label":"Nut"}).appendTo(grUsrS);
+	
 	if(linkedUsers.length > 0 ){
 		$.each(linkedUsers,function(iii,vvv){
 			if(vvv != null){
-				$("#usr-filter").append($("<option>",{"value":vvv.iduser}).text(capitalizeFirstLetter(vvv.firstname)+" "+capitalizeFirstLetter(vvv.lastname)));
+				//ids of teams
+				if(vvv.iduser == "129" || vvv.iduser == "4824" || vvv.iduser == "5897" || vvv.iduser == "4643"){
+					teams.append($("<option>",{"value":vvv.iduser}).text(capitalizeFirstLetter(vvv.firstname)+" "+capitalizeFirstLetter(vvv.lastname)));
+				}else{
+					if(vvv.idprofesion == "1")md.append($("<option>",{"value":vvv.iduser}).text(capitalizeFirstLetter(vvv.firstname)+" "+capitalizeFirstLetter(vvv.lastname)));
+					if(vvv.idprofesion == "2")nur.append($("<option>",{"value":vvv.iduser}).text(capitalizeFirstLetter(vvv.firstname)+" "+capitalizeFirstLetter(vvv.lastname)));
+					if(vvv.idprofesion == "3")nut.append($("<option>",{"value":vvv.iduser}).text(capitalizeFirstLetter(vvv.firstname)+" "+capitalizeFirstLetter(vvv.lastname)));
+					if(vvv.idprofesion == "4")chr.append($("<option>",{"value":vvv.iduser}).text(capitalizeFirstLetter(vvv.firstname)+" "+capitalizeFirstLetter(vvv.lastname)));
+					//$("#usr-filter").append($("<option>",{"value":vvv.iduser}).text(capitalizeFirstLetter(vvv.firstname)+" "+capitalizeFirstLetter(vvv.lastname)));
+				}
 			}
 		});
 	}
@@ -230,6 +246,24 @@ function drawToolbarFilters(container){
 	//dtype
 	var grDtype = $("<div>",{"id":"toolbarFilterDtype",class:"gr-dtype"}).appendTo(gr2col);
 	$("<div>",{class:"label-filter"}).text("Type of diabetes").appendTo(grDtype);
+	
+	
+	var grDtypeC = $("<select>",{"id":"dtype-filter"}).appendTo(grDtype);
+	$("<option>",{"value":"1"}).text("Type 1").appendTo(grDtypeC);
+	$("<option>",{"value":"2"}).text("Type 2").appendTo(grDtypeC);
+	$("<option>",{"value":"3"}).text("Pre DM").appendTo(grDtypeC);
+	$("<option>",{"value":"4"}).text("GDM").appendTo(grDtypeC);
+	$("<option>",{"value":"1_2","selected":true}).text("Type 1 & Type 2").appendTo(grDtypeC);
+	$("<option>",{"value":"2_3"}).text("Type 2 & Pre DM").appendTo(grDtypeC);
+	$("<option>",{"value":"1_2_3"}).text("Type 1 & Type 2 & Pre DM").appendTo(grDtypeC);
+	$("<option>",{"value":"1_2_3_4"}).text("Type 1 & Type 2 & Pre DM & GDM").appendTo(grDtypeC);
+	appFilter["dtype"]= "1_2";
+	grDtypeC.on("change",function(){
+		var v = $(this).val();
+		if(v!=appFilter.dtype){appFilter["dtype"]=v;}
+	});
+	
+/*	
 	var grDtypeC = $("<div>",{class:"gr-dtype-checkbox"}).appendTo(grDtype);
 	$("<div>",{"id":"dtype-filter-1",class:"gr-radio","grv-data":"1_2"}).appendTo(grDtypeC).text("Type1 and Type 2");
 	$("<div>",{"id":"dtype-filter-2",class:"gr-radio last","grv-data":"3"}).appendTo(grDtypeC).text("Pre DM");
@@ -244,6 +278,9 @@ function drawToolbarFilters(container){
 		}
 		appFilter['dtype'] = dValue;
 	});
+*/	
+	
+	
 	//age
 	var grAge = $("<div>",{"id":"toolbarFilterAge",class:"gr-age"}).appendTo(gr2col1);
 	$("<div>",{class:"label-filter"}).text("Age").appendTo(grAge);
@@ -664,7 +701,6 @@ function applyFilter(report,filter){
 			if(filter.list == "list102"){
 				hasDate = moment(reportDate).isBefore(moment(filterDate));
 			}
-			//alert(moment(reportDate).format("YYYY-MM-DD")+"     "+moment(filterDate).format("YYYY-MM-DD") + "    "+ hasDate);
 		}else{
 			//no data period filter = all time
 			hasDate = true;

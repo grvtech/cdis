@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -94,6 +95,9 @@ public class ActionProcessor {
 	
 	@Value("${reports}")
 	private String reportsFolder;
+	
+	@Value("${homefolder}")
+	private String homefolder;
 	
 	
 @RequestMapping(value = {"/service/action/loginSession"}, method = RequestMethod.GET)
@@ -303,16 +307,36 @@ public String executeReport(final HttpServletRequest request){
 	    for(int i=0;i<lcs.size();i++){ 
 	    	HashMap<String, Object> item = lcs.get(i);
 	    	Set<String> s = item.keySet();
+	    	System.out.println("---------------------------");
+			System.out.println("-"+item);
+			System.out.println("---------------------------");
     		for(String k : s) {
     			if(k.indexOf("CollectedDate") >= 0 ) {
     				ReportCriteria rcDate =  (ReportCriteria)item.get(k);
-    				if(item.get("flag").equals("1"))header.put(rcDate.getName(),rcDate.getDisplay());
+    				if(item.get("flag").equals("1")) {
+    					header.put(rcDate.getName(),rcDate.getDisplay());
+    				
+	    				System.out.println("---------------------------");
+	    				System.out.println("-"+k);
+	            		System.out.println("-"+rcDate.getName());
+	            		System.out.println("-"+item);
+	            		System.out.println("---------------------------");
+    				}
     			}
-    			if(k.indexOf("CollectedDate") < 0 && k.indexOf("flag") < 0) {
+    			if(k.indexOf("CollectedDate") < 0 && k.indexOf("flag") < 0 ) {
     				ReportCriteria rc = (ReportCriteria)item.get(k);
     				header.put(rc.getName(),rc.getDisplay());
+    				
+    				System.out.println("---------------------------");
+            		System.out.println("-"+rc.getName());
+            		System.out.println("---------------------------");
     			}
+    			
+    			
     		}
+    		
+    		
+    		
     		ArrayList<HashMap<String,String>> criteriaSet = cdisdb.executeReportCriteria(item);
 		    report.put(item, criteriaSet);
 		    
@@ -324,7 +348,12 @@ public String executeReport(final HttpServletRequest request){
 	    			criteriaPatients.add(idp);
 	    		}
 	    	}
-		    	
+		    
+	    	System.out.println("---------------------------");
+    		System.out.println("- number of patients in set"+criteriaPatients.size());
+    		System.out.println("---------------------------");
+	    	
+	    	
 	    	//remove patients from idpatients if are not in criteria set
 	    	
 		    ArrayList<String> toRemove = new ArrayList<>();
@@ -334,8 +363,32 @@ public String executeReport(final HttpServletRequest request){
 	    			if(!toRemove.contains(idpatientP)){toRemove.add(idpatientP);}
 		    	}
 		    }
-		    idpatients.removeAll(toRemove);
 		    
+		    
+	    	boolean remove = false;
+	    	
+    		for(String k : s) {
+    			if(k.equals("chart") || k.equals("ramq")) {
+    				remove = true;
+    			}else {
+    				if(k.indexOf("CollectedDate") >= 0 ) {
+        				ReportCriteria rcDate =  (ReportCriteria)item.get(k);
+    					if(rcDate!=null && rcDate.getValue() != null && !rcDate.getValue().equals("0")) {remove = true;}
+        			}
+        			if(k.indexOf("CollectedDate") < 0 && k.indexOf("flag") < 0 ) {
+        				ReportCriteria rc = (ReportCriteria)item.get(k);
+        				if(rc!=null && !rc.getValue().equals("0")) {remove=true;}
+        			}
+    			}
+    		}
+    		if(remove) {
+    			idpatients.removeAll(toRemove);
+    		}
+		    
+    		
+    		System.out.println("---------------------------");
+    		System.out.println("- number of patients left in set "+idpatients.size());
+    		System.out.println("---------------------------");
 	    }	
 	    
 	    for(int x=0;x<idpatients.size();x++){
@@ -372,9 +425,9 @@ public String executeReport(final HttpServletRequest request){
 	    	}
 	    	
 	    	
-	    	System.out.println("=========================================");
-		    System.out.println(" patientMap: "+patientMap);
-		    System.out.println("=========================================");
+	    	//System.out.println("=========================================");
+		    //System.out.println(" patientMap: "+patientMap);
+		    //System.out.println("=========================================");
 	    	
 	    	//now create line
 	    	
@@ -393,10 +446,10 @@ public String executeReport(final HttpServletRequest request){
 	    		}
 	    		
 	    		ArrayList<HashMap<String,String>> rpset = patientMap.get(r);
-	    		System.out.println("=========================================");
-	    		System.out.println(" criteria: "+r.getName());
-			    System.out.println(" rpset: "+rpset);
-			    System.out.println("=========================================");
+	    		//System.out.println("=========================================");
+	    		//System.out.println(" criteria: "+r.getName());
+			    //System.out.println(" rpset: "+rpset);
+			   // System.out.println("=========================================");
 	    		if(rpset.size() > 0){
 	    			for(HashMap<String,String> line : rpset) {
 	    				Set<String> keys = line.keySet();
@@ -494,10 +547,10 @@ public String executeReport(final HttpServletRequest request){
     				line1.put(entry.getKey(), Integer.toString(entry.getValue().size()));
     			}else {
     				int s=0;
-    				System.out.println("=======================");
-    				System.out.println("criteria value "+ criteriaValue);
-    				System.out.println("map keyset "+ kks);
-    				System.out.println("=======================");
+    				//System.out.println("=======================");
+    				//System.out.println("criteria value "+ criteriaValue);
+    				//System.out.println("map keyset "+ kks);
+    				//System.out.println("=======================");
     				String[] parts = criteriaValue.split("_");
     				String p1 = parts[0];
     				String p2 = parts[1];
@@ -525,7 +578,7 @@ public String executeReport(final HttpServletRequest request){
     		totals = cdisdb.executeReportCriteriaGraphTotals(filter, header, criteria);
    		}
     }
-    	
+    /*	
 	System.out.println("==============header===================");
 	System.out.println(header);
 	System.out.println("=====================================");
@@ -535,7 +588,7 @@ public String executeReport(final HttpServletRequest request){
 	System.out.println("================totals=================");
 	System.out.println(totals);
 	System.out.println("=====================================");
-    	    
+    */    
     Hashtable<String, Object> reportObject = new Hashtable<>();
     reportObject.put("dataset", set);
     reportObject.put("header", header);
@@ -600,6 +653,283 @@ public String setFrontPageMessage(final HttpServletRequest request){
 	logger.log(Level.INFO,"set front page");
 	return result;
 }
+
+
+@RequestMapping(value = {"/service/action/setFlagPatient"}, method = RequestMethod.POST)
+public String setFlagPatient(final HttpServletRequest request){
+	Gson json = new Gson();
+	
+	String result = "";
+	String sid = request.getParameter("sid").toString();
+	String language = request.getParameter("language").toString();
+	String message = "";
+	String ramq = "";
+	String iduser = "";
+	if(request.getParameter("message") != null){
+		message = request.getParameter("message").toString();
+	}
+	if(request.getParameter("ramq") != null){
+		ramq = request.getParameter("ramq").toString();
+	}
+	if(request.getParameter("iduser") != null){
+		iduser = request.getParameter("iduser").toString();
+	}
+	HashMap j = new HashMap<String, String>();
+	j.put("status", "new");
+	j.put("iduser", iduser);
+	j.put("ramq", ramq);
+	j.put("message", message);
+	
+	try {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH_mm_ss");
+		final DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime dateTime1 = LocalDateTime.now();
+		j.put("timestamp", dateTime1.format(formatter1));
+		Writer writer = new FileWriter(homefolder+System.getProperty("file.separator")+"patientflag"+System.getProperty("file.separator")+"input"+System.getProperty("file.separator")+"fp_"+dateTime1.format(formatter)+".json"); 
+		json.toJson(j, writer);
+	    writer.close();
+	    String messagEmail = "<b><p>Hello CDIS Admin</p></b><p>New patient was flagged with data problems by a user!</p>";
+		mt.sendMailInHtml("CDIS Patient Flagged", messagEmail, ft.getEmailProperty("admin.1"));
+		//ft.setMessage(frontPageFile.getAbsolutePath(), message);
+	} catch (IOException e) {
+		logger.log(Level.ERROR,"error seting front page");
+		e.printStackTrace();
+	}
+
+	ArrayList<Object> obs = new ArrayList<Object>();
+	//obs.add(reports);
+	result = json.toJson(new MessageResponse(true,language,obs));
+	logger.log(Level.INFO,"flag patient");
+	return result;
+}
+
+
+@RequestMapping(value = {"/service/action/fixFlagPatient"}, method = RequestMethod.POST)
+public String fixFlagPatient(final HttpServletRequest request){
+	Gson json = new Gson();
+	
+	String result = "";
+	String sid = request.getParameter("sid").toString();
+	String language = request.getParameter("language").toString();
+	String ramq = "";
+	if(request.getParameter("ramq") != null){
+		ramq = request.getParameter("ramq").toString();
+	}
+	
+	
+	File inputFolder = new File(homefolder+System.getProperty("file.separator")+"patientflag"+System.getProperty("file.separator")+"input"+System.getProperty("file.separator"));
+	
+	if(inputFolder.exists()) {
+		String filePrefix = "fp_";
+		File[] files = inputFolder.listFiles(new FileFilterTool(".json", filePrefix));
+		
+		for(int i=0;i<files.length;i++) {
+			try {
+				HashMap<String, String> flagObj = new HashMap<>();
+				final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH_mm_ss");
+				final DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+				LocalDateTime dateTime1 = LocalDateTime.now();
+				File r = files[i];
+				JsonReader jr = new JsonReader(new FileReader(r));
+				JsonObject jo = JsonParser.parseReader(jr).getAsJsonObject();
+				String ramqFile = jo.get("ramq").getAsString();
+				
+				//System.out.println(" ramqs "+ ramqFile +"     "+ramq);
+				if(ramqFile.equals(ramq)) {
+					flagObj.put("iduser", jo.get("iduser").getAsString());
+					flagObj.put("ramq", jo.get("ramq").getAsString());
+					flagObj.put("timestamp", dateTime1.format(formatter1));
+					flagObj.put("status", "done");
+					flagObj.put("message", jo.get("message").getAsString());
+					
+					jr.close();
+					//rewrite the file
+					Writer writer = new FileWriter(r,false); 
+					json.toJson(flagObj, writer);
+				    writer.close();
+					//move it to archive
+				    Path inputFolderFile = Paths.get(r.getAbsolutePath());
+				    Path archiveFolderFile = Paths.get(homefolder+System.getProperty("file.separator")+"patientflag"+System.getProperty("file.separator")+"archive"+System.getProperty("file.separator")+r.getName());
+				    //System.out.println(" paths "+ inputFolderFile.toString() +"     "+archiveFolderFile.toString());
+				    
+				    Files.move(inputFolderFile, archiveFolderFile);
+					break;
+				}else {
+					jr.close();
+				}
+				jr.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	ArrayList<Object> obs = new ArrayList<Object>();
+	result = json.toJson(new MessageResponse(true,language,obs));
+	logger.log(Level.INFO,"fix flag patient");
+	return result;
+}
+
+
+@RequestMapping(value = {"/service/action/isPatientFlagged"}, method = RequestMethod.POST)
+public String isPatientFlagged(final HttpServletRequest request){
+	Gson json = new Gson();
+	
+	String result = "";
+	String sid = request.getParameter("sid").toString();
+	String language = request.getParameter("language").toString();
+	String ramq = "";
+	if(request.getParameter("ramq") != null){
+		ramq = request.getParameter("ramq").toString();
+	}
+	
+	
+	File inputFolder = new File(homefolder+System.getProperty("file.separator")+"patientflag"+System.getProperty("file.separator")+"input"+System.getProperty("file.separator"));
+	boolean flag = false;
+	if(inputFolder.exists()) {
+		String filePrefix = "fp_";
+		File[] files = inputFolder.listFiles(new FileFilterTool(".json", filePrefix));
+		
+		for(int i=0;i<files.length;i++) {
+			try {
+				File r = files[i];
+				JsonReader jr = new JsonReader(new FileReader(r));
+				JsonObject jo = JsonParser.parseReader(jr).getAsJsonObject();
+				String ramqFile = jo.get("ramq").getAsString();
+				if(ramqFile.equals(ramq)) {
+					flag=true;
+					break;
+				}else {
+					jr.close();
+				}
+				jr.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	ArrayList<Object> obs = new ArrayList<Object>();
+	HashMap<String, Boolean> flagObj = new HashMap<>();
+	flagObj.put("flag", flag);
+	obs.add(flagObj);
+	result = json.toJson(new MessageResponse(true,language,obs));
+	logger.log(Level.INFO,"is flag patient");
+	return result;
+}
+
+
+@RequestMapping(value = {"/service/action/getFlagPatients"}, method = RequestMethod.GET)
+public String getFlagPatients(final HttpServletRequest request) throws FileNotFoundException{
+	Gson json = new Gson();
+	ArrayList<Object> obs = new ArrayList<Object>();
+	String result = "";
+	String language = request.getParameter("language").toString();
+	String sort = "asc";
+	ArrayList<HashMap> flagPatients = new ArrayList<>();
+	
+	File inputFolder = new File(homefolder+System.getProperty("file.separator")+"patientflag"+System.getProperty("file.separator")+"input"+System.getProperty("file.separator"));
+	if(inputFolder.exists()) {
+		String filePrefix = "fp_";
+		File[] files = inputFolder.listFiles(new FileFilterTool(".json", filePrefix));
+		for(int i=0;i<files.length;i++) {
+			try {
+				File r = files[i];
+				JsonReader jr = new JsonReader(new FileReader(r));
+				JsonObject jo = JsonParser.parseReader(jr).getAsJsonObject();
+				HashMap<String, String> rep = new HashMap<>();
+				rep.put("iduser", jo.get("iduser").getAsString());
+				rep.put("ramq", jo.get("ramq").getAsString());
+				rep.put("timestamp", jo.get("timestamp").getAsString());
+				rep.put("status", jo.get("status").getAsString());
+				rep.put("message", jo.get("message").getAsString());
+				flagPatients.add(rep);
+				jr.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	if(sort.equals("asc")) {
+		Collections.sort(flagPatients, new Comparator<HashMap>() {
+		  public int compare(HashMap o1, HashMap o2) {
+			  final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			  LocalDateTime dateTime1 = LocalDateTime.parse(o1.get("timestamp").toString(), formatter);
+			  LocalDateTime dateTime2 = LocalDateTime.parse(o2.get("timestamp").toString(), formatter);
+		      return  dateTime1.compareTo(dateTime2) ;
+		  }
+		});
+	}else {
+		Collections.sort(flagPatients, new Comparator<HashMap>() {
+		  public int compare(HashMap o1, HashMap o2) {
+			  final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			  LocalDateTime dateTime1 = LocalDateTime.parse(o1.get("timestamp").toString(), formatter);
+			  LocalDateTime dateTime2 = LocalDateTime.parse(o2.get("timestamp").toString(), formatter);
+		      return  dateTime2.compareTo(dateTime1) ;
+		  }
+		});
+	}
+	
+	obs.add(flagPatients);
+	result = json.toJson(new MessageResponse(true,language,obs));
+	return result;
+}
+
+
+@RequestMapping(value = {"/service/action/getArchivePatients"}, method = RequestMethod.GET)
+public String getArchivePatients(final HttpServletRequest request) throws FileNotFoundException{
+	Gson json = new Gson();
+	ArrayList<Object> obs = new ArrayList<Object>();
+	String result = "";
+	String language = request.getParameter("language").toString();
+	String sort = "desc";
+	ArrayList<HashMap> flagPatients = new ArrayList<>();
+	
+	File archiveFolder = new File(homefolder+System.getProperty("file.separator")+"patientflag"+System.getProperty("file.separator")+"archive"+System.getProperty("file.separator"));
+	if(archiveFolder.exists()) {
+		String filePrefix = "fp_";
+		File[] files = archiveFolder.listFiles(new FileFilterTool(".json", filePrefix));
+		for(int i=0;i<files.length;i++) {
+			try {
+				File r = files[i];
+				JsonReader jr = new JsonReader(new FileReader(r));
+				JsonObject jo = JsonParser.parseReader(jr).getAsJsonObject();
+				HashMap<String, String> rep = new HashMap<>();
+				rep.put("iduser", jo.get("iduser").getAsString());
+				rep.put("ramq", jo.get("ramq").getAsString());
+				rep.put("timestamp", jo.get("timestamp").getAsString());
+				rep.put("status", jo.get("status").getAsString());
+				rep.put("message", jo.get("message").getAsString());
+				flagPatients.add(rep);
+				jr.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	if(sort.equals("asc")) {
+		Collections.sort(flagPatients, new Comparator<HashMap>() {
+		  public int compare(HashMap o1, HashMap o2) {
+			  final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			  LocalDateTime dateTime1 = LocalDateTime.parse(o1.get("timestamp").toString(), formatter);
+			  LocalDateTime dateTime2 = LocalDateTime.parse(o2.get("timestamp").toString(), formatter);
+		      return  dateTime1.compareTo(dateTime2) ;
+		  }
+		});
+	}else {
+		Collections.sort(flagPatients, new Comparator<HashMap>() {
+		  public int compare(HashMap o1, HashMap o2) {
+			  final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			  LocalDateTime dateTime1 = LocalDateTime.parse(o1.get("timestamp").toString(), formatter);
+			  LocalDateTime dateTime2 = LocalDateTime.parse(o2.get("timestamp").toString(), formatter);
+		      return  dateTime2.compareTo(dateTime1) ;
+		  }
+		});
+	}
+	
+	obs.add(flagPatients);
+	result = json.toJson(new MessageResponse(true,language,obs));
+	return result;
+}
+
 	
 @RequestMapping(value = {"/service/action/sendUserMessage"}, method = RequestMethod.GET)
 public String sendUserMessage(final HttpServletRequest request){
@@ -655,7 +985,7 @@ public String forgotPassword(final HttpServletRequest request){
 	}else{
 		logger.log(Level.INFO,"wrong user");
 		ArrayList<Object> obs = new ArrayList<Object>();
-		result = json.toJson(new MessageResponse("FORGOT-FALSE",false,language,obs));
+		result = json.toJson(new MessageResponse("Username or email is not valid. Contact CDIS Administrator.",false,language,obs));
 	}
 	return result;
 }

@@ -1,33 +1,27 @@
 .grvwcheck{
-    margin:10px;
+    margin:2px;
     padding:2px;
     display: inline-flex;
     flex-direction: row;
     flex-wrap: wrap;
+    color: #707070;
 }
 
 
 .grvwcheck div{
-    margin:3px;
-    padding:5px;
-    border:outset;
-    border-width: 0.1em;
-    background-color: #efefef;
+    margin:2px;
+    padding:2px;
     cursor:pointer;
-    font-weight:600;
 }
 
-.grvwcheck div > i{margin-left:5px;}
-.grvwcheck div > span{margin-left:10px;}
+.grvwcheck div > i{margin:2px;width:20px;text-align: center;}
+.grvwcheck div > span{margin-left:5px;}
 
 .grvwcheck div:hover{
-    background-color:  #cdcdcd;
+    color:  #000000;
 }
 
 
 .grvwcheck div.selected{
-    background-color: #4d4d4d;
-    color:#efefef;
-    border:inset;
-    border-width: 0.1em;
+   color:  #000000;
 }

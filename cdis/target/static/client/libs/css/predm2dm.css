@@ -1,0 +1,35 @@
+#grvPredm2Dm{height:100%;background-color:#ffffff;display:grid;grid-template-columns:100%;}
+#grvPredm2dmGraph{width:1000px;}
+
+.cdisPredm2dm-container{height: 100%;display:grid;grid-template-columns:auto 350px;}
+.cdisPredm2dm-body{display:grid;margin: 0px 10px 0px 10px;grid-template-rows:350px 350px;}
+.cdisPredm2dm-filters{display:grid;margin: 0px 10px 0px 10px;grid-template-rows:70px auto;}
+
+.cdisPredm2dm-table{height: 100%;display:grid;grid-template-rows:30px auto;}
+.cdisPredm2dm-table-header{display:grid;grid-template-columns:auto 100px 150px 150px 180px 190px;background-color:#4b3b3b; font-weight:bold;color:#efefef;padding:3px;}
+.cdisPredm2dm-table-header div{place-self: center;}
+.cdisPredm2dm-table-header div.cdisName{place-self: start;}
+.cdisPredm2dm-table-body{overflow: auto;}
+.cdisPredm2dm-table-body-line{display:grid;grid-template-columns:auto 100px 150px 150px 180px 180px;padding:3px;cursor: pointer;}
+.cdisPredm2dm-table-body-line div{place-self: center;}
+.cdisPredm2dm-table-body-line div.cdisName{place-self: start;}
+.cdisPredm2dm-table-body-line:nth-child(odd) {background-color: #efefef;}
+.cdisPredm2dm-table-body-line:hover{background-color: #5c6c9d;color: #ffffff;}
+.cdisPredm2dm-table-body-line.selected{background-color: #db4437;color: #ffffff;}
+    
+
+
+
+
+
+.cdisPredm2dm-filters .cdisPredm2dm-buttons {display:grid;}
+.cdisPredm2dm-filters .cdisPredm2dm-buttons .cisbutton{background:#ffff14;font-size:120%;font-weight:bold;color:#4d4d4d;padding:15px 15px 15px 15px;margin:10px;}
+.cdisPredm2dm-filters .cdisPredm2dm-buttons .cisbutton:hover{background:#db4437;color:#ffffff;}
+
+
+.cdisPredm2dm-filter{font-size:20px;background-color: #5c6c9d;border-radius: 5px;box-shadow: 0 0 3px rgba(0,0,0,.22),0 3px 4px rgba(0,0,0,.34);}
+.cdisPredm2dm-filter .filter{text-align:left; padding:5px 5px 30px 5px;}
+.cdisPredm2dm-filter .filter .pandi-label{color:#fefefe;font-weight:bold;display:block}
+.cdisPredm2dm-filter .filter select{background:#cdcdcd;padding:5px;border:1px solid #4d4d4d;font-weight:bold;color:#4d4d4d;}
+
+

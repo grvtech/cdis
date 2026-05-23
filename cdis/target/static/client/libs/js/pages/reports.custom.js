@@ -61,15 +61,18 @@ var groupCriteria = [
 let historyReports = null;
 let historyReportToDelete = null;
 let globalGRVMSelect = null;
+let globalCriteriaObjects = {};
+let initReportType = "list";
+
 /*
  * EVENT definitions
  * 
  * */
 
-$("#grvAddReportListCriteria").on("click",{type:"list"},addReportCriteria);
-$("#grvAddReportGraphCriteria").on("click",{type:"graph"},addReportCriteria);
-$("#grvClearReportList").on("click",{type:"list"},clearReportCriteria);
-$("#grvClearReportGraph").on("click",{type:"graph"},clearReportCriteria);
+$("#grvAddReportListCriteria").off("click").on("click",{type:"list"},addReportCriteria);
+$("#grvAddReportGraphCriteria").off("click").on("click",{type:"graph"},addReportCriteria);
+$("#grvClearReportList").off("click").on("click",{type:"list"},clearReportCriteria);
+$("#grvClearReportGraph").off("click").on("click",{type:"graph"},clearReportCriteria);
 
 $("<div>",{class:"cdisCisButton"}).text("Execute Report").appendTo($(".cdisReportListToolbarFooterButtons")).on("click",{type:"list"},executeCustomReport);
 $("<div>",{class:"cdisCisButton"}).text("Execute Report").appendTo($(".cdisReportGraphToolbarFooterButtons")).on("click",{type:"graph"},executeCustomReport);
@@ -83,12 +86,7 @@ $(".cdisSortHistory").on("click",sortHistory);
 if(userProfileObj.role.idrole > 1){$("div [value='hcp']").text("My patients only").attr("value","myhcp");}
 
 let rType = grvwtabs("grvCustomReportType");
-
-//list
-let r1 = grvwradio("grvReportPeriodList");
-r1.on("change",{container:"cdisReportPeriodListContainer",reportContainer:"cdisReportListToolbarBody", object:r1},changeReportPeriod);
-let r2 = grvwradio("grvReportFilterList");
-r2.on("change",{container:"cdisReportFilterListContainer",reportContainer:"cdisReportListToolbarBody", object:r2},changeReportFilter);
+rType.on("change",{},changeTabEvent);
 
 let ramqCriteriaObject = getGeneralCriteriaObject("ramq");
 let ramqObj = {name:ramqCriteriaObject.name,section:ramqCriteriaObject.section, type:ramqCriteriaObject.type,filter:"allvalues",operator:"equal",value:"0",hasdate:"",label:"RAMQ",iddata:"0"};
@@ -96,12 +94,7 @@ addToSummaryObject(ramqObj);
 let chartCriteriaObject = getGeneralCriteriaObject("chart");
 let chartObj = {name:chartCriteriaObject.name,section:chartCriteriaObject.section, type:chartCriteriaObject.type,filter:"allvalues",operator:"equal",value:"0",hasdate:"",label:"Chart",iddata:"0"};
 addToSummaryObject(chartObj);
- 
-console.log(userProfileObj);    
 getUserReportHistory(userProfileObj.user.iduser,"asc");
-$(".cdisCustomReports").height($(".cdisCustomReports").parent().height());
-$("#grvCustomReportType article").height($("#grvCustomReportType").height() - $("#grvCustomReportType ul").height() - 50);
-$(".cdisCustomReportsHistory").height($("#grvCustomReportType article").height()+60);
 
 
 //graph
@@ -123,12 +116,378 @@ compDtype.on("change",{object:compDtype},changeReportComparatorType);
 
 
 initReportComparatorGroups();
+initCriteria(initReportType);
+
 
 
 /* 
  * FUNCTIONS
  * */
+
+$(function() { 
+	let wh = $(window).height();
+	let crh = $(".cdisCustomReports").height();
+	let hc = crh - 200;
+	if(crh >= wh) hc = wh - 200; 
+	$(".cdisCustomCriterias").height(hc-50);
+	$(".cdisCustomReportsHistory").height(hc-40);
+	$(".cdisReportListToolbarBody").height(hc-300);
+	$(".cdisReportGraphToolbarBody").height(hc-300);
+
+});
+
+
+
+
+function changeTabEvent(event){
+	if(initReportType == "list"){
+		initReportType = "graph";
+		initCriteria(initReportType);
+	}else if(initReportType == "graph"){
+		initReportType = "list";
+		initCriteria(initReportType);
+	}
+}
+
+function initCriteria(reportType){
+	//remove datepiker elements
+	$.each(globalCriteriaObjects,function(i,obj){
+		if(obj.type == "datepicker"){
+			obj.object.destroy();
+		}
+	}); 
+	globalCriteriaObjects = {};
+	let container = $(".cdisConfigListPanel");
+	if(reportType == "graph") container = $(".cdisConfigGraphPanel");
+	$(container).find("[type='grvwradio']").each(function(k,v){
+		let eid = $(v).attr("id");
+		let r = grvwradio(eid);
+		r.off("change");
+		r.on("change",{id:eid},changeEventRadioFunction);
+		globalCriteriaObjects[eid] = {type:"radio",object:r};
+	});
+	$(container).find("[type='grvwcheck']").each(function(k,v){
+		let eid = $(v).attr("id");
+		let c = grvwcheck(eid);
+		c.off("change");
+		c.on("change",{id:eid,container:"cdisReportPeriodListContainer",reportContainer:"cdisReportListToolbarBody"},changeEventCheckFunction);
+		globalCriteriaObjects[eid] = {type:"check",object:c};
+	});
+	clearReportCriteria({data:{type:reportType}});
+}
+
+function changeEventRadioFunction(event){
+	const id = event.data.id;
+	if(id == "grvReportPeriodList"){
+		event.data["container"]="cdisReportPeriodListContainer";
+		event.data["reportContainer"]="cdisReportListToolbarBody";
+		changeReportPeriod(event);
+	} 
+	if(id == "grvReportFilterList"){
+		event.data["container"]="cdisReportFilterListContainer";
+		event.data["reportContainer"]="cdisReportListToolbarBody";
+		changeReportFilter(event);
+	} 
+	if(id == "grvReportGraphType"){
+		event.data["container"]="cdisReportGraphTypeContainer";
+		event.data["reportContainer"]="cdisReportGraphToolbarBody";
+		changeReportGraphType(event);
+	} 
+	if(id == "grvReportGraphCriteria"){
+		event.data["container"]="cdisReportGraphCriteriaContainer";
+		event.data["reportContainer"]="cdisReportGraphToolbarBody";
+		changeReportGraphCriteria(event);
+	} 
+	if(id == "grvReportGraphFilter"){
+		event.data["container"]="cdisReportFilterGraphContainer";
+		event.data["reportContainer"]="cdisReportGraphToolbarBody";
+		changeReportFilter(event);
+	} 
+	
+}
+
+
+function changeEventCheckFunction(event){
+	const id = event.data.id;
+	
+	if(id.indexOf("-filter") >= 0) addReportCriteriaFilter(event);
+	else if(id.indexOf("-date") >= 0) addReportCriteriaDate(event);
+	else changeReportCriteria(event);
+}
+
+
+
+function removeCriteriaSummary(name){
+	$("#grvSummary"+name).remove();
+}
+
+function updateCriteriaSummary(event){
+	let id = this.id;
+	if(typeof id == "undefined"){
+		id = this._el.id;
+		this._el.value = formatDate(event); 
+	} 
+	const parts = id.split("-");
+	const name = parts[1];
+	let criteriaObject = getGeneralCriteriaObject(name);
+	
+	let filterValues = "";
+	let filterOperatorValue = "";
+	let filterCheckId = (initReportType == "list")?"grvCriteriaReportList":"grvCriteriaReportGraph";
+	const filterCheckValue = globalCriteriaObjects[filterCheckId+"-"+name+"-filter"].object.getValue();
+	
+	
+	if(filterCheckValue == "&filter"){
+		filterOperatorValue = $("#grvCriteriaFilterOperator-"+name).val();
+		if(criteriaObject.type == "date"){
+			filterOperatorValue = $("#grvCriteriaFilterOperatorDate-"+name).val();
+			filterValues = $("#grvCriteriaFilterValue-"+name+"-Date").val();
+			if(filterOperatorValue == "between"){
+				filterValues = $("#grvCriteriaFilterValue-"+name+"-Date1").val() +"|"+$("#grvCriteriaFilterValue-"+name+"-Date2").val();
+				const p = filterValues.split("|");
+				if(p[0] == "" || p[1] == "")filterValues="0";
+			}
+			if(name.indexOf("CollectedDate") >= 0){
+				filterOperatorValue = $("#grvCriteriaFilterOperatorDate-"+name).val();
+				filterValues = $("#grvCriteriaFilterValue-"+name+"-Date").val();
+				if(filterOperatorValue == "between"){
+					filterValues = $("#grvCriteriaFilterValue-"+name+"-Date1").val() +"|"+$("#grvCriteriaFilterValue-"+name+"-Date2").val();
+					const p = filterValues.split("|");
+					if(p[0] == "" || p[1] == "")filterValues="0";
+				}
+			}				
+		}else if(criteriaObject.type == "select"){
+			filterValues = $("#grvCriteriaFilterValue-"+name).val();
+		 }else if(criteriaObject.type == "value"){
+			if(filterOperatorValue == "between"){
+				filterValues = $("#grvCriteriaFilterValue-"+name+"-Value1").val()+"|"+$("#grvCriteriaFilterValue-"+name+"-Value2").val();
+				const p = filterValues.split("|");
+				if(p[0] == "" || p[1] == "")filterValues="0";
+			}else{
+				filterValues = $("#grvCriteriaFilterValue-"+name+"-Value").val();	
+			}
+			
+		} 
+	}
+			
+	if(filterValues != ""){
+		let obj = {
+				name:$(criteriaObject).attr("name"),
+				section:$(criteriaObject).attr("section"), 
+				type:$(criteriaObject).attr("type"),
+				filter:"filtervalues",
+				operator:filterOperatorValue,
+				value:filterValues,
+				hasdate:$(criteriaObject).attr("hasdate"),
+				label:$(criteriaObject).attr("label"),
+				iddata:$(criteriaObject).attr("iddata")
+		};
+	addToSummaryObject(obj);
+	}
+
+}
+
+function addReportCriteriaFilter(event){
+	let id = event.data.id;
+	let opv = globalCriteriaObjects[id].object.getValue();
+	let parts = id.split("-");
+	let n = parts[1];
+	let nn = n+"-"+initReportType;
+	let idn = (initReportType == "list")?"grvCriteriaReportList-"+n:"grvCriteriaReportGraph-"+n;
+	let idnFilter = (initReportType == "list")?"grvCriteriaReportList-"+n+"-filter":"grvCriteriaReportGraph-"+n+"-filter";
+	let idDate = (initReportType == "list")?"grvCriteriaReportList-"+n+"-date":"grvCriteriaReportGraph-"+n+"-date";
+	let line = $("#grvCriteria-"+nn);
+	let container = $("#grvCriteriaFilterContainer-"+nn);
+	
+	if(container.length <= 0 ){
+		container = $("<div>",{id:"grvCriteriaFilterContainer-"+nn,class:"cdisCriteriaFilterContainer"}).appendTo(line);
+	}
+	
+	if(opv.indexOf("&filter") >=0 ){
+		$("<div>",{class:"operator"}).appendTo(container); 
+		$("<div>",{class:"value"}).appendTo(container);
+		getOperatorForValue(n,container);
+		
+		if(globalCriteriaObjects[idn].object.getValue() != "&1"){
+			globalCriteriaObjects[idn].object.setValue("1");	
+		}else{
+			globalCriteriaObjects[idn].object.setValue("");
+		}
+		
+		//changeReportCriteria({data:{object:globalCriteriaObjects[n].label}});	
+	}else{
+		container.remove();
+		addCriteriaItemToReport(n)
+	}
+}
+
+function addReportCriteriaDate(event){
+	//add mew line and inserted after the value line 
+	let id = event.data.id;
+	let opv = globalCriteriaObjects[id].object.getValue();
+	
+	let parts = id.split("-");
+	let n = parts[1];
+	
+	let ndate = n+"CollectedDate";
+	let idn = "grvCriteriaReportList-"+n;
+	let idnFilter = "grvCriteriaReportList-"+n+"-filter";
+	let filterCheckId = "grvCriteriaReportList";
+	let cc = "cdisCriteriaReportListContainer";
+	let ccf = "grvCriteriaReportList";
+	let tbb = "cdisReportListToolbarBody";
+	if(initReportType == "graph"){
+		idn = "grvCriteriaReportGraph-"+n;
+		idnFilter = "grvCriteriaReportGraph-"+n+"-filter";
+		filterCheckId = "grvCriteriaReportGraph";
+		cc = "cdisCriteriaReportGraphContainer";	
+		ccf = "grvCriteriaReportGraph";
+		tbb = "cdisReportGraphToolbarBody";
+	}
+	
+	
+	let objectCriteria = getGeneralCriteriaObject(ndate);
+	
+	if(opv == "&date"){
+		let dateline = $("<div>",{class:cc+" line",id:"grvCriteria-"+ndate+"-"+initReportType})
+			.append(
+				$("<div>",{id:ccf+"-"+ndate,type:"grvwcheck",value:""})
+					.append($("<div>",{value:"1"}).append($("<i>",{class:"fa"})).append($("<span>").text(objectCriteria.label)))
+				)
+			.append(
+				$("<div>",{id:ccf+"-"+ndate+"-filter",type:"grvwcheck",value:""})
+					.append($("<div>",{value:"filter"}).append($("<i>",{class:"fa"})))
+				)
+			.append($("<div>"));
+		dateline.insertAfter($("#grvCriteria-"+n+"-"+initReportType)).slideDown("slow");
+		let l = grvwcheck(filterCheckId+"-"+ndate);
+		l.on("change",{id:filterCheckId+"-"+ndate,container:cc,reportContainer:tbb},changeReportCriteriaDate)	
+		let f = grvwcheck(filterCheckId+"-"+ndate+"-filter");
+		f.on("change",{id:filterCheckId+"-"+ndate+"-filter",container:cc,reportContainer:tbb},addReportCriteriaFilterDate)
+		
+		globalCriteriaObjects[filterCheckId+"-"+ndate] = {type:"check",object:l};
+		globalCriteriaObjects[filterCheckId+"-"+ndate+"-filter"] = {type:"check",object:f};
+		
+		if(globalCriteriaObjects[filterCheckId+"-"+n].object.getValue() != "&1"){
+			globalCriteriaObjects[filterCheckId+"-"+n].object.setValue("1");	
+		}
+		l.setValue("1");
+	}else{
+		$("#grvCriteria-"+ndate+"-"+initReportType).remove();
+		removeCriteriaSummary(ndate);
+	}
+	
+	
+}
+
+function changeReportCriteriaDate(event){
+	let id = event.data.id;
+	
+	let opv = globalCriteriaObjects[id].object.getValue(); 
+	let parts = id.split("-");
+	let n = parts[parts.length-1];
+	let filterCheckId = (initReportType == "list")?"grvCriteriaReportList":"grvCriteriaReportGraph";
+	
+	if(opv.indexOf("&1") >=0 ){
+		
+		$("#grvCriteria-"+n+"-"+initReportType).css("background-color","#8de3fc");
+		addCriteriaItemToReport(n);
+	}else{
+		$("#grvCriteria-"+n+"-"+initReportType).remove();
+		let pn = n.replaceAll("CollectedDate","");
+		globalCriteriaObjects[filterCheckId+"-"+pn+"-date"].object.removeValue("date");
+		removeCriteriaSummary(n);
+	}
+}
+
+function addReportCriteriaFilterDate(event){
+	let id = event.data.id;
+	let opv = globalCriteriaObjects[id].object.getValue();
+	let parts = id.split("-");
+	let n = parts[1];
+	let line = $("#grvCriteria-"+n+"-"+initReportType);
+	let container = $("#grvCriteriaFilterContainer-"+n+"-"+initReportType);
+	let filterCheckId = (initReportType == "list")?"grvCriteriaReportList":"grvCriteriaReportGraph";
+	
+	if(container.length <= 0 ){
+		container = $("<div>",{id:"grvCriteriaFilterContainer-"+n+"-"+initReportType,class:"cdisCriteriaFilterContainer"}).appendTo(line);
+	}
+	
+	if(opv.indexOf("&filter") >=0 ){
+		$("<div>",{class:"operator"}).appendTo(container); 
+		$("<div>",{class:"value"}).appendTo(container);
+		getOperatorForValue(n,container);
+		if(globalCriteriaObjects[filterCheckId+"-"+n].object.getValue() != "&1"){
+			globalCriteriaObjects[filterCheckId+"-"+n].object.setValue("1");	
+		}
+	}else{
+		container.remove();
+		addCriteriaItemToReport(n);
+	}
+}
  
+function changeReportCriteria(event){
+	
+	let id = event.data.id;
+	let opv = globalCriteriaObjects[id].object.getValue(); 
+	let parts = id.split("-");
+	let n = parts[parts.length-1];
+	let filterCheckId = (initReportType == "list")?"grvCriteriaReportList":"grvCriteriaReportGraph";
+	if(opv.indexOf("&1") >=0 ){
+		
+		$("#grvCriteria-"+n+"-"+initReportType).css("background-color","#8de3fc");
+		if($("#grvSummary"+n).length == 0){
+			addCriteriaItemToReport(n);	
+		}
+		
+	}else{
+		$("#grvCriteria-"+n+"-"+initReportType).css("background-color","");
+		let hcdo = null;
+		if(typeof(globalCriteriaObjects[filterCheckId+"-"+n+"-date"]) != "undefined"){
+			hcdo = globalCriteriaObjects[filterCheckId+"-"+n+"-date"].object;
+			hcdo.removeValue("date");	
+		}
+		globalCriteriaObjects[filterCheckId+"-"+n+"-filter"].object.removeValue("filter");
+		
+		removeCriteriaSummary(n);
+	}
+}
+
+
+
+
+
+function addCriteriaItemToReport(name){
+	let criteriaObject = getGeneralCriteriaObject(name);
+	let obj = {
+			name:$(criteriaObject).attr("name"),
+			section:$(criteriaObject).attr("section"), 
+			type:$(criteriaObject).attr("type"),
+			filter:"0",
+			operator:"0",
+			value:"0",
+			hasdate:$(criteriaObject).attr("hasdate"),
+			label:$(criteriaObject).attr("label"),
+			iddata:$(criteriaObject).attr("iddata")
+	}
+	addToSummaryObject(obj);
+	/**
+	
+	
+	if(checkIncludeDate.indexOf("includeDate") >=0){
+		let objCriteriaDate = getGeneralCriteriaObject(csf.attr("name")+"CollectedDate");
+		let objDate = {name:objCriteriaDate.name,section:objCriteriaDate.section, type:"date",filter:"allvalues",operator:"equal",value:"0",hasdate:"false",label:objCriteriaDate.label,iddata:objCriteriaDate.iddata}
+		addToSummaryObject(objDate);
+	}
+	*/
+	//return true;	
+	 
+}
+
+
+
+
+
 function initReportComparatorGroups(nogroup=2){
 	let container = $(".cdisReportComparatorToolbarBody");
 	container.empty();
@@ -148,7 +507,7 @@ function initReportComparatorGroups(nogroup=2){
 		$(".cdisReportComparatorGroup").css("width","45%");
 	}
 	$(".cdisAddCriteriaToGroup").on("click", function(){
-		//alert($(this).parent().parent().parent().attr("id"));
+		
 		let group = $(this).parent().parent().parent().attr("id");
 		addReportCriteriaGroup(group);
 	});
@@ -169,49 +528,60 @@ function changeReportComparatorType(event){
  function clearReportCriteria(event){
 	let type = event.data.type;
 	let criteriaContainer = null;
-	if(type == "list"){
-		criteriaContainer = $(".cdisReportListToolbarBody");
-		r1.setValue("last");
-		r2.setValue("allhcp");
-		criteriaContainer.empty();
-		let ramqCriteriaObject = getGeneralCriteriaObject("ramq");
-		let ramqObj = {name:ramqCriteriaObject.name,section:ramqCriteriaObject.section, type:ramqCriteriaObject.type,filter:"allvalues",operator:"equal",value:"0",hasdate:"",label:"RAMQ",iddata:"0"};
-		addToSummaryObject(ramqObj);
-		let chartCriteriaObject = getGeneralCriteriaObject("chart");
-		let chartObj = {name:chartCriteriaObject.name,section:chartCriteriaObject.section, type:chartCriteriaObject.type,filter:"allvalues",operator:"equal",value:"0",hasdate:"",label:"Chart",iddata:"0"};
-		addToSummaryObject(chartObj);
-		$(".cdisReportNotes textarea").empty();
-		$(".cdisReportNotes textarea").val("");
-		$(".cdisButtonLastExecutionList").remove();
-	}else if(type == "graph"){
-		criteriaContainer = $(".cdisReportGraphToolbarBody");
-		//criteriaContainer.attr("graphtype","line");
-		p1.setValue("line");
-		p2.setValue("dtype");
-		p3.setValue("allhcp");
-		criteriaContainer.attr("periodreport","last");
-		criteriaContainer.empty();
-		$(".cdisReportGraphNotes textarea").empty();
-		$(".cdisButtonLastExecutionGraph").remove();
-	}else if(type == "comparator"){
-		
-	}
+	let cl = "cdisReportListToolbarBody";
+	let clf = "grvCriteriaReportList";
+	let clt = "cdisReportListTool";
+	let rpid = "grvReportPeriodList";
+	let rfid = "grvReportFilterList";
+	let rgid = "";
+	let rcid = "";
+	let l = "cdisCriteriaReportListContainer";
+	if(initReportType == "graph"){
+		cl = "cdisReportGraphToolbarBody";
+		clf = "grvCriteriaReportGraph";
+		clt = "cdisReportGraphTool";
+		rpid = "";
+		rfid = "grvReportGraphFilter";
+		rgid = "grvReportGraphType";
+		rcid = "grvReportGraphCriteria";
+		l = "cdisCriteriaReportGraphContainer";
+	} 
+	
+	criteriaContainer = $("."+cl);
+	if(typeof(globalCriteriaObjects[rpid]) != "undefined")globalCriteriaObjects[rpid].object.setValue("last");
+	if(typeof(globalCriteriaObjects[rfid]) != "undefined")globalCriteriaObjects[rfid].object.setValue("allhcp");
+	if(typeof(globalCriteriaObjects[rgid]) != "undefined")globalCriteriaObjects[rgid].object.setValue("line");
+	if(typeof(globalCriteriaObjects[rcid]) != "undefined")globalCriteriaObjects[rcid].object.setValue("dtype");
+	
+	$("."+cl+" .cdisReportCriteriaSummary").each(function(k,v){
+		const n = $(v).attr("name");
+		if(n!="ramq" &&  n!="chart"){
+			$("#"+clf+"-"+n).parent().css("background-color","");
+			if(typeof(globalCriteriaObjects[clf+"-"+n+"-date"]) != "undefined")globalCriteriaObjects[clf+"-"+n+"-date"].object.removeValue("date");	
+			if(typeof(globalCriteriaObjects[clf+"-"+n+"-filter"]) != "undefined")globalCriteriaObjects[clf+"-"+n+"-filter"].object.removeValue("filter");
+			if(typeof(globalCriteriaObjects[clf+"-"+n]) != "undefined")globalCriteriaObjects[clf+"-"+n].object.removeValue("1");
+			removeCriteriaSummary(n);	
+		}
+	});
+	$("."+l).css("background-color","");
+	$("."+clt+" .cdisReportNotes textarea").empty();
+	$("."+clt+" .cdisReportNotes textarea").val("");
+	$("."+clt+" .cdisButtonLastExecutionList").remove();
 	criteriaContainer.attr("idreport","0");
 	criteriaContainer.attr("typereport",type);
-	//criteriaContainer.attr("periodreport","last");
 	criteriaContainer.attr("titlereport","Custom Report");
-	//criteriaContainer.attr("filterreport","allhcp");
-	
 }
  
  function changeReportPeriod(event){
 	let containerName = event.data.container;
 	let container = $("."+containerName);
-	let radio = event.data.object;
+	let id = event.data.id;
+	let radio = globalCriteriaObjects[id].object;
 	let radioValue = radio.getValue();
 	let betweenContainer = $(".cdisReportPeriodBetweenContainer");
 	
 	if(betweenContainer.length == 0){
+		$("<div>",{class:"cdisReportPeriodBetweenContainer-gap"}).appendTo(container);
 		betweenContainer = $("<div>",{class:"cdisReportPeriodBetweenContainer"}).appendTo(container);	
 	}
 	betweenContainer.empty();
@@ -222,6 +592,7 @@ function changeReportComparatorType(event){
 		new Datepicker("#grvReportPeriodBetweenValue1",{yearRange:50,onChange:changeDateFormat});
 		new Datepicker("#grvReportPeriodBetweenValue2",{yearRange:50,onChange:changeDateFormat});
 	}else{
+		$(".cdisReportPeriodBetweenContainer-gap").remove();
 		betweenContainer.remove();
 	}
 }
@@ -253,19 +624,37 @@ function changeFormatDatepicker(date){
 	if(typeof date != "undefined"){
 		this._el.value = formatDate(date);
 	}
+	let id = this._el.id;
+}
+
+
+function changeReportGraphType(event){
+	let containerName = event.data.container;
+	let container = $("."+containerName);
+	let id = event.data.id;
+	let radio = globalCriteriaObjects[id].object;
+	let radioValue = radio.getValue();
+	let reportContainer = $("."+event.data.reportContainer);
+	reportContainer.attr("graphtype",radioValue);
 }
 
 
 function changeReportGraphCriteria(event){
 	let containerName = event.data.container;
 	let container = $("."+containerName);
-	let radio = event.data.object;
+	let id = event.data.id;
+	let radio = globalCriteriaObjects[id].object;
 	let radioValue = radio.getValue();
 	let reportContainer = $("."+event.data.reportContainer);
 	let selectContainer = $(".cdisReportGraphCriteriaSelectContainer");
-	if(selectContainer.length == 0 )selectContainer = $("<div>",{class:"cdisReportGraphCriteriaSelectContainer"}).appendTo(container);
+	if(selectContainer.length == 0 ){
+		$("<div>",{class:"cdisReportGraphCriteriaSelectContainer-gap"}).appendTo(container);
+		selectContainer = $("<div>",{class:"cdisReportGraphCriteriaSelectContainer"}).appendTo(container);
+	}
 	selectContainer.empty();
+	reportContainer.attr("criteria",radioValue);
 	if(radioValue == "idcommunity"){
+		reportContainer.attr("criteriavalue","0");
 		$("<div>",{class:"cdisMSIdcommunity",id:"grvReportGraphCriteriaIdcommunity"}).appendTo(selectContainer);
 		let voptions = {"container":"cdisMSIdcommunity","maxSelect":"2","defaultSelected":"0","idrole":userProfileObj.role.idrole};
 		let vlist = [{"name":"All Communities","value":"0"},
@@ -280,7 +669,7 @@ function changeReportGraphCriteria(event){
 				            {"name":"Whapmagoostui","value":"9"}];
 				
 		let ms = new GRVMSelect(vlist,voptions);
-
+		
 		$(ms.object).change(function(){
 			var v = ms.getValue();
 			$(ms.element).attr("value",v);
@@ -291,19 +680,18 @@ function changeReportGraphCriteria(event){
 				sc.empty();
 				$(".cdisReportGraphToolbarBody").attr("periodreport","6");
 				$("<select>",{class:"cdisReportGraphCriteriaPeriod"}). appendTo(sc)
-					.append($("<option>",{value:"6"}).text("in the last 6 months"))
-					.append($("<option>",{value:"12"}).text("in the last 12 months"))
+					.append($("<option>",{value:"6"}).text("last 6 months"))
+					.append($("<option>",{value:"12"}).text("last 12 months"))
 					.append($("<option>",{value:"1"}).text("last year"))
 					.append($("<option>",{value:"2"}).text("last 2 years"))
 					.on("change",function(){
 						$(".cdisReportGraphToolbarBody").attr("periodreport",$(this).val());
 					});
 			}else{
-				let sc = $(".cdisReportGraphCriteriaPeriodContainer");
-				sc.remove();
+				$(".cdisReportGraphCriteriaPeriodContainer").remove();
 				$(".cdisReportGraphToolbarBody").attr("periodreport","last");
 			}			
-			
+			reportContainer.attr("criteriavalue",v);
 		});
 		globalGRVMSelect = ms;
 		//now clean idcommunity from criterias 
@@ -314,9 +702,11 @@ function changeReportGraphCriteria(event){
 		});
 			
 	}else if(radioValue == "dtype"){
+		reportContainer.attr("criteriavalue","all");
 		selectContainer.remove();
 		$(".cdisReportGraphToolbarBody").attr("periodreport","last");
 		//now clean dtype from criterias 
+		$(".cdisReportGraphCriteriaSelectContainer-gap").remove();
 		$.each($(".cdisReportGraphToolbar div"),function(k,v){
 			if($(v).attr("name") == "dtype"){
 				$(v).remove();	
@@ -329,15 +719,17 @@ function changeReportGraphCriteria(event){
  
 function changeReportFilter(event){
 	let containerName = event.data.container;
+	let id = event.data.id;
 	let container = $("."+containerName);
-	let radio = event.data.object;
+	let radio = globalCriteriaObjects[id].object;
 	let radioValue = radio.getValue();
 	let reportContainer = $("."+event.data.reportContainer);
-	let selectContainer = $(".cdisReportFilterListSelectContainer");
-	if(containerName.indexOf("Graph")>=0) selectContainer = $(".cdisReportFilterGraphSelectContainer");
+	let cl = "cdisReportFilterListSelectContainer";
+	if(containerName.indexOf("Graph")>=0) cl = "cdisReportFilterGraphSelectContainer";
+	let selectContainer = $("."+cl);
+	
 	if(selectContainer.length == 0 ){
-		let cl = "cdisReportFilterListSelectContainer";
-		if(containerName.indexOf("Graph")>=0) cl = "cdisReportFilterGraphSelectContainer";
+		$("<div>",{class:cl+"-gap"}).appendTo(container);
 		selectContainer = $("<div>",{class:cl}).appendTo(container);
 	}
 	
@@ -361,6 +753,8 @@ function changeReportFilter(event){
 	}else if(radioValue == "myhcp"){
 		$(reportContainer).attr("filterreport",userObj[0].iduser);
 	}else{
+		$(reportContainer).attr("filterreport","allhcp");
+		$("."+cl+"-gap").remove();
 		selectContainer.remove();
 	}
 }
@@ -571,7 +965,20 @@ function addToSummaryObject(objItem){
 	let activeTab = rType.getActive();
 	let container = $(".cdisReportListToolbarBody");
 	if(activeTab == 1) container = $(".cdisReportGraphToolbarBody");
-	var summary = $("<div>",{id:"grvSummary"+objItem.name,class:"cdisReportCriteriaSummary"}).appendTo(container);
+	var summary = null
+	if($("#grvSummary"+objItem.name).length > 0){
+		let o = $("#grvSummary"+objItem.name)
+		summary = $("<div>",{id:"grvSummary"+objItem.name,class:"cdisReportCriteriaSummary"}).insertAfter(o);
+		o.remove();
+	}else{
+		if(objItem.name.indexOf("CollectedDate") >= 0){
+			let mn = objItem.name.replace("CollectedDate","");
+			summary = $("<div>",{id:"grvSummary"+objItem.name,class:"cdisReportCriteriaSummary"}).insertAfter($("#grvSummary"+mn));
+		}else{
+			summary = $("<div>",{id:"grvSummary"+objItem.name,class:"cdisReportCriteriaSummary"}).appendTo(container);
+		}
+	}
+	
 	summary.attr("section",objItem.section);
 	summary.attr("name",objItem.name);
 	summary.attr("operator",objItem.operator);
@@ -581,24 +988,150 @@ function addToSummaryObject(objItem){
 	summary.attr("filter",objItem.filter);
 	summary.attr("iddata",objItem.iddata);
 	
-	$("<p>").append($("<b>").text("Column : ")).append($("<span>").text(objItem.label)).appendTo(summary);
+	$("<p>").append($("<b>").text(objItem.label)).appendTo(summary);
 	let value = objItem.value;
 	let filter = "no filter";
-	
 	if(objItem.filter == "filtervalues"){
-		if(objItem.type == "select")value = eval("creport_"+objItem.name+"["+value+"]");
+		if(objItem.type == "select" && value != "0")value = eval("creport_"+objItem.name+"["+value+"]");
+		if(typeof value == "undefined") value="0";
 		if(value.indexOf("|") >= 0)value = value.replace("|" , " and ");
-		if(objItem.operator == "all"){
-			filter = "all patients";
+		if(objItem.operator == "all" || value == "0"){
+			filter = "no filter";
 		}else{
-			filter = objItem.operator+" "+value;
+			let op = objItem.operator;
+			if(op == "morethan") op = "more than";
+			if(op == "lessthan") op = "less than";
+			filter = op+" "+value;
 		}
 			
 	}else {
-		filter = "all values";	
+		filter = "no filter";	
 	}
-	$("<p>").append($("<b>").text("[ ")).append($("<i>").text(filter)).append($("<b>").text(" ]")).appendTo(summary);
-	$("<div>",{class:"cdisReportCriteriaSummaryClose"}).append($("<i>",{class:"fa fa-times"})).appendTo(summary).click(function(){$(this).parent().remove();});
+	$("<span>").append($("<i>")).append($("<b>").text(filter)).appendTo(summary);
+	//$("<div>",{class:"cdisReportCriteriaSummaryClose"}).append($("<i>",{class:"fa fa-times"})).appendTo(summary).click(function(){$(this).parent().remove();});
+}
+
+
+
+function checkSummaryObject(objItem){
+	
+	let cl = "cdisReportListToolbarBody";
+	let clf = "grvCriteriaReportList";
+	let clt = "cdisReportListTool";
+	let rpid = "grvReportPeriodList";
+	let rfid = "grvReportFilterList";
+	let rgid = "";
+	let rcid = "";
+	let criteriaContainer = "grvCriteriaFilterContainer-"+objItem.name+"-"+initReportType;
+	if(initReportType == "graph"){
+		cl = "cdisReportGraphToolbarBody";
+		clf = "grvCriteriaReportGraph";
+		clt = "cdisReportGraphTool";
+		rpid = "";
+		rfid = "grvReportGraphFilter";
+		rgid = "grvReportGraphType";
+		rcid = "grvReportGraphCriteria";
+	} 
+	let container = $("."+cl);
+	if(objItem.name.indexOf("CollectedDate") >= 0){
+		let n = objItem.name.replace("CollectedDate","");
+		if(typeof(globalCriteriaObjects[clf+"-"+n+"-date"]) != "undefined"){
+			globalCriteriaObjects[clf+"-"+n+"-date"].object.setValue("date");
+		}
+	}
+	if(typeof(globalCriteriaObjects[clf+"-"+objItem.name]) != "undefined"){
+		globalCriteriaObjects[clf+"-"+objItem.name].object.setValue("1");
+		if(objItem.value != "0"){
+			if(typeof(globalCriteriaObjects[clf+"-"+objItem.name+"-filter"]) != "undefined"){
+				globalCriteriaObjects[clf+"-"+objItem.name+"-filter"].object.setValue("filter");
+				
+				if(objItem.type == "date"){
+					$("#"+criteriaContainer+" #grvCriteriaFilterOperatorDate-"+objItem.name).val(objItem.operator).trigger("change");
+				}else{
+					let op = objItem.operator;
+					if(op == "more than")op="morethan";
+					if(op == "less than")op="lessthan";
+					$("#"+criteriaContainer+" #grvCriteriaFilterOperator-"+objItem.name).val(op).trigger("change");
+				} 
+				if(objItem.type == "select"){
+					$("#"+criteriaContainer+" #grvCriteriaFilterValue-"+objItem.name).val(objItem.value).trigger("change");
+				} 
+				if(objItem.type == "date"){
+					if(objItem.operator == "between"){
+						let parts = objItem.value.split("|");
+						//let m1 = moment(new Date(Number(parts[0])));
+						//let m2 = moment(new Date(Number(parts[1])));
+						globalCriteriaObjects["grvCriteriaFilterValue-"+objItem.name+"-Date1"].object.selectDate(parts[0]);
+						globalCriteriaObjects["grvCriteriaFilterValue-"+objItem.name+"-Date2"].object.selectDate(parts[1]);
+						
+						//$("#"+criteriaContainer+" #grvCriteriaFilterValue-"+objItem.name+"-Date1").val(m1.format('YYYY-MM-DD')).trigger("change");
+						//$("#"+criteriaContainer+" #grvCriteriaFilterValue-"+objItem.name+"-Date2").val(m2.format('YYYY-MM-DD')).trigger("change");	
+					}else{
+						globalCriteriaObjects["grvCriteriaFilterValue-"+objItem.name+"-Date"].object.selectDate(objItem.value);
+					}
+				} 
+				if(objItem.type == "value"){
+					if(objItem.operator == "between"){
+						let parts = objItem.value.split("|");
+						$("#"+criteriaContainer+" #grvCriteriaFilterValue-"+objItem.name+"-Value1").val(parts[0]).trigger("change");
+						$("#"+criteriaContainer+" #grvCriteriaFilterValue-"+objItem.name+"-Value2").val(parts[1]).trigger("change");	
+					}else{
+						
+						$("#"+criteriaContainer+" #grvCriteriaFilterValue-"+objItem.name+"-Value").val(objItem.value).trigger("change");
+					}
+				}
+				
+			}
+		}
+		
+	}
+	
+	/*
+	
+	if($("#grvSummary"+objItem.name).length > 0){
+		let o = $("#grvSummary"+objItem.name)
+		summary = $("<div>",{id:"grvSummary"+objItem.name,class:"cdisReportCriteriaSummary"}).insertAfter(o);
+		o.remove();
+	}else{
+		if(objItem.name.indexOf("CollectedDate") >= 0){
+			let mn = objItem.name.replace("CollectedDate","");
+			summary = $("<div>",{id:"grvSummary"+objItem.name,class:"cdisReportCriteriaSummary"}).insertAfter($("#grvSummary"+mn));
+		}else{
+			summary = $("<div>",{id:"grvSummary"+objItem.name,class:"cdisReportCriteriaSummary"}).appendTo(container);
+		}
+	}
+	
+	summary.attr("section",objItem.section);
+	summary.attr("name",objItem.name);
+	summary.attr("operator",objItem.operator);
+	summary.attr("value",objItem.value);
+	summary.attr("display",objItem.label);
+	summary.attr("type",objItem.type);
+	summary.attr("filter",objItem.filter);
+	summary.attr("iddata",objItem.iddata);
+	
+	$("<p>").append($("<b>").text(objItem.label)).appendTo(summary);
+	let value = objItem.value;
+	let filter = "no filter";
+	if(objItem.filter == "filtervalues"){
+		if(objItem.type == "select" && value != "0")value = eval("creport_"+objItem.name+"["+value+"]");
+		if(typeof value == "undefined") value="0";
+		if(value.indexOf("|") >= 0)value = value.replace("|" , " and ");
+		if(objItem.operator == "all" || value == "0"){
+			filter = "no filter";
+		}else{
+			let op = objItem.operator;
+			if(op == "morethan") op = "more than";
+			if(op == "lessthan") op = "less than";
+			filter = op+" "+value;
+		}
+			
+	}else {
+		filter = "no filter";	
+	}
+	$("<span>").append($("<i>")).append($("<b>").text(filter)).appendTo(summary);
+	//$("<div>",{class:"cdisReportCriteriaSummaryClose"}).append($("<i>",{class:"fa fa-times"})).appendTo(summary).click(function(){$(this).parent().remove();});
+	*/
 }
 
 
@@ -792,14 +1325,13 @@ function getOperatorForValue(name,container){
 	let result = null;
 	 
 	if(cObj.type == "select"){
-		result = $("<input>",{id:"grvCriteriaFilterOperator",value:"equal",readonly:"readonly"}).text("Equal");
+		result = $("<input>",{id:"grvCriteriaFilterOperator-"+name,value:"equal",readonly:"readonly"}).text("Equal");
 		result.appendTo(container.find(".operator"));
 		getFieldForValue(name,container,"equal");
 	}else if(cObj.type == "date"){
-		
 		if($("#grvReportPeriodList").attr("value") == "between"){
 			if(name == "dtypeCollectedDate"){
-				result = $("<select>",{id:"grvCriteriaFilterOperatorDate"});
+				result = $("<select>",{id:"grvCriteriaFilterOperatorDate-"+name});
 				//$("<option>",{value:"0"}).text("Select operator").appendTo(result);
 				$("<option>",{value:"all"}).text("All patients").appendTo(result);
 				$("<option>",{value:"before"}).text("Before").appendTo(result);
@@ -812,14 +1344,14 @@ function getOperatorForValue(name,container){
 					getFieldForValue(name,container,operatorValue)
 				});
 			}else{
-				result = $("<input>",{id:"grvCriteriaFilterOperatorDate",value:"between",readonly:"readonly"}).text("Between");
+				result = $("<input>",{id:"grvCriteriaFilterOperatorDate-"+name,value:"between",readonly:"readonly"}).text("Between");
 			}
 			result.appendTo(container.find(".operator"));
 			let operatorValue = result.val();
 			getFieldForValue(name,container,operatorValue)
 			
 		}else{
-			result = $("<select>",{id:"grvCriteriaFilterOperatorDate"});
+			result = $("<select>",{id:"grvCriteriaFilterOperatorDate-"+name});
 			$("<option>",{value:"0"}).text("Select operator").appendTo(result);
 			$("<option>",{value:"before"}).text("Before").appendTo(result);
 			$("<option>",{value:"after"}).text("After").appendTo(result);
@@ -834,7 +1366,7 @@ function getOperatorForValue(name,container){
 		
 		
 	}else if(cObj.type == "value"){
-		result = $("<select>",{id:"grvCriteriaFilterOperator"});
+		result = $("<select>",{id:"grvCriteriaFilterOperator-"+name});
 		$("<option>",{value:"0"}).text("Select operator").appendTo(result);
 		$("<option>",{value:"equal"}).text("Equal").appendTo(result);
 		$("<option>",{value:"morethan"}).text("More than").appendTo(result);
@@ -867,7 +1399,7 @@ function getFieldForValue(name,container,operatorValue){
 		2 date value for between
 		 
 	 */
-	 let valueName = "grvCriteriaFilterValue";
+	 let valueName = "grvCriteriaFilterValue-"+name;
 	 //if(cObj.hasdate == "true")valueName = valueName+"Date";
 	container.find(".value").empty();
 	if(cObj.type == "select"){
@@ -875,47 +1407,56 @@ function getFieldForValue(name,container,operatorValue){
 		result.appendTo(container.find(".value"));
 		let optionsArray = eval("creport_"+name);
 		$.each(optionsArray,function(i,v){$("<option>",{value:i}).text(optionsArray[i]).appendTo(result);});
+		result.on("change",updateCriteriaSummary);
 	}else if(cObj.type == "date"){
 		
 		if(operatorValue == "between"){
 			let d = $("<div>");
 			d.appendTo(container.find(".value"));
-			result1 = $("<input>",{id:valueName+"Date1", type:"text", class:"between"});
+			result1 = $("<input>",{id:valueName+"-Date1", type:"text", class:"between"}).attr("autocomplete","off");
 			result1.appendTo(d);
 			$("<b>").text("and").appendTo(d);
-			result2 = $("<input>",{id:valueName+"Date2", type:"text", class:"between"});
+			result2 = $("<input>",{id:valueName+"-Date2", type:"text", class:"between"}).attr("autocomplete","off");
 			result2.appendTo(d);
 			if($("#grvReportPeriodList").attr("value")  == "between"){
 				result1.val($("#grvReportPeriodBetweenValue1").val()).prop("readonly",true);
 				result2.val($("#grvReportPeriodBetweenValue2").val()).prop("readonly",true);
 			}else{
-				let dp1 = new Datepicker("#"+valueName+"Date1",{onChange:changeFormatDatepicker});
-				let dp2 = new Datepicker("#"+valueName+"Date2",{onChange:changeFormatDatepicker});	
+				//let dp1 = new Datepicker("#"+valueName+"-Date1",{onChange:updateCriteriaSummary});
+				let dp1 = new grvdatepicker($("#"+valueName+"-Date1"),{onSelect:updateCriteriaSummary});
+				globalCriteriaObjects[valueName+"-Date1"] = {type:"datepicker",object:dp1};
+				//let dp2 = new Datepicker("#"+valueName+"-Date2",{onChange:updateCriteriaSummary});	
+				let dp2 = new grvdatepicker($("#"+valueName+"-Date2"),{onSelect:updateCriteriaSummary});
+				globalCriteriaObjects[valueName+"-Date2"] = {type:"datepicker",object:dp2};
 			}
 		}else if(operatorValue == "all"){
-			result = $("<input>",{id:valueName+"Date", type:"hidden",value:"0"});
+			result = $("<input>",{id:valueName+"-Date", type:"hidden",value:"0"});
 			result.appendTo(container.find(".value"));
+			result.on("change",updateCriteriaSummary);
 		}else{
-			result = $("<input>",{id:valueName+"Date", type:"text"});
+			result = $("<input>",{id:valueName+"-Date", type:"text"}).attr("autocomplete","off");
 			result.appendTo(container.find(".value"));
-			let dp = new Datepicker("#"+valueName+"Date",{onChange:changeFormatDatepicker});
+			let dp = new grvdatepicker($("#"+valueName+"-Date"),{onSelect:updateCriteriaSummary});
+			globalCriteriaObjects[valueName+"-Date"] = {type:"datepicker",object:dp};
 		}
 	
 	}else if(cObj.type == "value"){
 		if(operatorValue == "between"){
 			let d = $("<div>");
 			d.appendTo(container.find(".value"));
-			result1 = $("<input>",{id:valueName+"1", type:"text", class:"between"});
+			result1 = $("<input>",{id:valueName+"-Value1", type:"text", class:"between"});
 			result1.appendTo(d);
+			result1.on("change",updateCriteriaSummary);
 			$("<b>").text("and").appendTo(d);
-			result2 = $("<input>",{id:valueName+"2", type:"text", class:"between"});
+			result2 = $("<input>",{id:valueName+"-Value2", type:"text", class:"between"});
 			result2.appendTo(d);
+			result2.on("change",updateCriteriaSummary);
 		}else{
-			result = $("<input>",{id:valueName, type:"text"});
+			result = $("<input>",{id:valueName+"-Value", type:"text"});
 			result.appendTo(container.find(".value"));
+			result.on("change",updateCriteriaSummary);
 		}
 	}
-	//return result;
 }
 
 
@@ -989,7 +1530,6 @@ function getReportObjectFromCriterias(type){
 		let v = $("#grvReportGraphCriteria").attr("value");
 		let c = $("#grvReportGraphCriteriaIdcommunity").attr("value");//can be 0, 1, 2 ...or 0_1 2_3 ....
 		let gcObj = getGeneralCriteriaObject(v);
-		console.log(gcObj)
 		var criteria = {};
 		criteria["name"] = v;
 		criteria["iddata"] = gcObj.iddata;
@@ -1018,13 +1558,11 @@ function executeCustomReport(event){
 		let type = event.data.type;
 		if(typeof event.data.report == "undefined"){
 			reportObject = getReportObjectFromCriterias(type);
-			console.log(reportObject);
 		}else{
 			reportObject = event.data.report;
 		}
 		executeAsyncReport(reportObject);
 	}
-	
 }
 
 
@@ -1040,7 +1578,6 @@ function executeAsyncReport(reportObject){
 		    dataType: 'json',
 		    async: true,
 		    success: function(msg) {
-				console.log(msg)
 		    	let report = msg.objs[0];
 		    	reportObject["dataset"] = report.dataset;
 		    	reportObject["header"] = report.header;
@@ -1067,7 +1604,6 @@ function drawReportTable(report, percentage=false){
 	//let header = report.criteria;
 	let containerList = $(".cdisReportListContainer");
 	containerList.empty(); 
-	console.log(totals);
 	let type = report.type;
 	if(type == "list")header = report.criteria;
 	//add div for header 
@@ -1128,27 +1664,35 @@ function drawReportTable(report, percentage=false){
 			if(type=="list"){
 				if(arrValue.name=="ramq" || arrValue.name=="chart")c = "";
 				if(isNaN(arrLine[arrValue.name])){
-					if(arrValue.name.indexOf("CollectedDate") >= 0){
-						let m1 = moment(arrLine[arrValue.name]);
-						$("<td>",{class:c}).text(m1.format('YYYY-MM-DD')).appendTo(rline);
+					if(typeof arrLine[arrValue.name] == "undefined" || arrLine[arrValue.name] == null) {
+						$("<td>",{class:c}).text("").appendTo(rline);
 					}else{
-						$("<td>",{class:c}).text(arrLine[arrValue.name]).appendTo(rline);	
-					}
-						
-				}else{
-					 
-					if(type=="list"){
-						if(arrValue.name != "chart" && arrValue.name != "sbp" && arrValue.name != "dbp"){
-							if(arrValue.name == "dtype"){
-								n = report_dtype[Number(arrLine[arrValue.name]).toFixed(0)];
-							}else{
-								n = Number(arrLine[arrValue.name]).toFixed(3);	
-							}
+						if(arrValue.name.indexOf("CollectedDate") >= 0){
+							let m1 = moment(arrLine[arrValue.name]);
+							let m1Str = m1.format('YYYY-MM-DD');
+							$("<td>",{class:c}).text(m1Str).appendTo(rline);
 						}else{
-							n = Number(arrLine[arrValue.name]).toFixed(0);
+							$("<td>",{class:c}).text(arrLine[arrValue.name]).appendTo(rline);	
 						}	
 					}
-					$("<td>",{class:c}).text(n).appendTo(rline);
+				}else{
+					
+					if(typeof arrLine[arrValue.name] == "undefined" || arrLine[arrValue.name]==null){
+						$("<td>",{class:c}).text("").appendTo(rline);
+					} else{
+						if(type=="list"){
+							if(arrValue.name != "chart" && arrValue.name != "sbp" && arrValue.name != "dbp"){
+								if(arrValue.name == "dtype"){
+									n = report_dtype[Number(arrLine[arrValue.name]).toFixed(0)];
+								}else{
+									n = Number(arrLine[arrValue.name]).toFixed(3);	
+								}
+							}else{
+								n = Number(arrLine[arrValue.name]).toFixed(0);
+							}	
+						}
+						$("<td>",{class:c}).text(n).appendTo(rline);
+					}
 				}	
 			}else{
 				let p="";
@@ -1169,10 +1713,8 @@ function drawReportTable(report, percentage=false){
 				
 				if(percentage){
 					let total = getTotalValue(p,totals);
-					console.log(ii+"   ---   "+p+"   ----   "+n+"   --   "+total);
 					n = (100*(n/total)).toFixed(2) + "%";
 				} 
-				
 				$("<td>",{class:c}).text(n).appendTo(rline); 
 			}
 		});
@@ -1234,9 +1776,6 @@ function drawReportGraph(report,percentage=false){
 				preLabel = "Number of patients";
 				if(percentage)preLabel = "Percentage of patients";
 		}
-		
-		//alert(Object.keys(labels));
-		//alert(Object.keys(v));
 		let vs = Object.keys(v);
 		let d = [];
 		
@@ -1255,33 +1794,11 @@ function drawReportGraph(report,percentage=false){
 		data['datasets'][data.datasets.length] = {label:preLabel,data:d,fill:false,borderColor: colorSet[i],backgroundColor: colorSet[i],tension: 0.5};
 	});
 	
-	
-	/*
-	const data = {
-	  labels: labels,
-	  datasets: [{
-	    label: 'My First Dataset',
-	    data: [65, 59, 80, 81, 56, 55, 40],
-	    fill: false,
-	    borderColor: 'rgb(75, 192, 192)',
-	    tension: 0.5
-	  },
-	  {
-	    label: 'My Second Dataset',
-	    data: [35, 29, 10, 41, 56, 75, 90],
-	    fill: false,
-	    borderColor: 'rgb(192, 75, 192)',
-	    tension: 0.1
-	  }]
-	};
-	*/
 	const config = {
 	  type: report.graphtype,
 	  data: data,
 	  plugins: {colors: {enabled: true}}
 	};
-	console.log("data");
-	console.log(data);
 	$("#grvReportGraphContainer").empty();
 	let chartStatus = Chart.getChart("grvReportGraphContainer"); // <canvas> id
 	if (chartStatus != undefined) {
@@ -1291,33 +1808,6 @@ function drawReportGraph(report,percentage=false){
 	
 	let ctx = document.getElementById("grvReportGraphContainer");
 	const mixedChart = new Chart(ctx, config);
-	/*
-	const mixedChart = new Chart(ctx, {
-	    data: {
-	        datasets: [{
-	            type: 'bar',
-	            label: 'Bar Dataset',
-	            data: [10, 20, 30, 40]
-	        }, {
-	            type: 'line',
-	            label: 'Line Dataset',
-	            data: [50, 50, 50, 50],
-	        }],
-	        labels: ['January', 'February', 'March', 'April']
-	    },
-	    options: {
-		    responsive: true,
-		    maintainAspectRatio: false,
-		    scales: {
-		        yAxes: [{
-		            ticks: {
-		                beginAtZero:true
-			            }
-		        }]
-		    }
-		}
-	});
-*/
 }
 
 
@@ -1378,7 +1868,6 @@ function getUserReportHistory(iduser,sort){
 	    dataType: 'json',
 	    async: true,
 	    success: function(msg){
-	    	console.log(msg["objs"]);
 	    	let reports = msg.objs[0];
 	    	historyReports = reports;
 	    	let container = $(".cdisCustomReportsHistoryBody");
@@ -1470,7 +1959,6 @@ function deleteHistoryItemObject(){
 	    dataType: 'json',
 	    async: true,
 	    success: function(msg){
-	    	console.log(msg);
 			if(msg.status == "1"){
 				$("#"+id).remove();
 			}
@@ -1494,7 +1982,7 @@ function deleteHistoryItem(event){
 }
 
 function loadReportCriteriaFromReport(reportId){
-	
+	//aici
 	 $.ajax({
 	    url: "/ncdis/client/reports/history/"+reportId+".json",
 	    type: 'GET',
@@ -1502,31 +1990,115 @@ function loadReportCriteriaFromReport(reportId){
 	    dataType: 'json',
 	    async: true,
 	    success: function(msg){
-	    	console.log(msg);
 	    	let report = msg;
 	    	let type = report.type;
-	    	if(type=="list")rType.setActive(0);
-	    	else rType.setActive(1);
-	    	let container = $(".cdisReportListToolbarBody");
-	    	if(type=="graph") container = $(".cdisReportGraphToolbarBody");
-	    	container.empty();
+			clearReportCriteria({data:{type:type}});
+	    	if(type == "list")rType.setActive(0);
+			if(type == "graph")rType.setActive(1);
+	    	
+			let cl = "cdisReportListToolbarBody";
+			let clf = "grvCriteriaReportList";
+			let clt = "cdisReportListTool";
+			let rpid = "grvReportPeriodList";
+			let rfid = "grvReportFilterList";
+			let rgid = "";
+			let rcid = "";
+			let rfselectContainer = "cdisReportFilterListSelectContainer";
+			if(type == "graph"){
+				cl = "cdisReportGraphToolbarBody";
+				clf = "grvCriteriaReportGraph";
+				clt = "cdisReportGraphTool";
+				rpid = "";
+				rfid = "grvReportGraphFilter";
+				rgid = "grvReportGraphType";
+				rcid = "grvReportGraphCriteria";
+				rfselectContainer = "cdisReportFilterGraphSelectContainer";
+			} 
+			
+	    	let container = $("."+cl);
+	    	
+	    	
+			container.empty();
 	    	container.attr("idreport",report.id);
 	    	container.attr("typereport",report.type);
 	    	container.attr("periodreport",report.period);
 	    	container.attr("titlereport",report.title);
+			
 	    	if(report.filter!="allhcp"){
-				if(type=="list"){
-					r2.setValue("hcpid");
-					$(".cdisReportFilterListSelectContainer select").val(report.filter);	
-				}else{
-					p3.setValue("hcpid")
-					$(".cdisReportFilterGraphSelectContainer select").val(report.filter);
-				}
+				if(typeof(globalCriteriaObjects[rfid]) != "undefined") globalCriteriaObjects[rfid].object.setValue("hcpid");
+				$("."+rfselectContainer+" select").val(report.filter).trigger("change");	
 			}else{
-				if(type=="list")r2.setValue("allhcp");
-				else p3.setValue("allhcp");
+				if(typeof(globalCriteriaObjects[rfid]) != "undefined") {
+					globalCriteriaObjects[rfid].object.setValue("allhcp");
+				}
 			}
-			container.attr("filterreport",report.filter);
+			if(report.period != "last"){
+				if(typeof(globalCriteriaObjects[rpid]) != "undefined"){
+					globalCriteriaObjects[rpid].object.setValue("between");
+					let parts = report.period.split("|");
+					let m1 = moment(new Date(Number(parts[0])));
+					let m2 = moment(new Date(Number(parts[1])));
+					$(".cdisReportPeriodBetweenContainer #grvReportPeriodBetweenValue1").val(m1.format('YYYY-MM-DD'));
+					$(".cdisReportPeriodBetweenContainer #grvReportPeriodBetweenValue2").val(m2.format('YYYY-MM-DD'));
+				}
+				if(typeof(globalCriteriaObjects[rcid]) != "undefined"){
+					globalCriteriaObjects[rcid].object.setValue("idcommunity");
+					globalGRVMSelect.setValue(report.criteria[0].value);
+					$(".cdisReportGraphCriteriaPeriod").val(report.period);
+				} 
+				 
+			}else{
+				if(typeof(globalCriteriaObjects[rpid]) != "undefined") {
+					globalCriteriaObjects[rpid].object.setValue("last");
+				}
+			}
+			
+			if(type=="list"){
+				
+				$.each(report.criteria,function(index, criteria){
+		    		let name = criteria.name;
+		    		let cObj = getGeneralCriteriaObject(name);
+		    		let filterCriteria = "allvalues";
+		    		if((criteria.value != "0" && criteria.operator=="equal") || criteria.operator!="equal"){
+						filterCriteria = "filtervalues";
+					}
+		    		const co = {name:name,section:criteria.section, type:cObj.type,filter:filterCriteria,operator:criteria.operator,value:criteria.value,hasdate:"",label:criteria.display,iddata:criteria.iddata};
+		    		if(name == "ramq" || name=="chart") addToSummaryObject(co);
+					checkSummaryObject(co);
+		 		});
+		 		$(".cdisReportNotes textarea").text("");
+		 		if(report.note != ""){
+					$(".cdisReportNotes textarea").text(window.atob(report.note));
+				}
+				let c = $(".cdisReportListToolbarFooterButtons");
+				c.empty();
+				$("<div>",{class:"cdisCisButton"}).text("Execute Report").appendTo(c).on("click",{type:report.type},executeCustomReport);
+				$("<div>",{class:"cdisCisButton cdisButtonLastExecutionList"}).text("Get Report data from last execution").appendTo(c).on("click",{type:report.type,report:report},executeCustomReport);	
+			}else{
+				$.each(report.subcriteria,function(index, criteria){
+		    		let name = criteria.name;
+		    		let cObj = getGeneralCriteriaObject(name);
+		    		let filterCriteria = "allvalues";
+		    		if((criteria.value != "0" && criteria.operator=="equal") || criteria.operator!="equal"){
+						filterCriteria = "filtervalues";
+					}
+		    		let criteriaObj = {name:name,section:criteria.section, type:cObj.type,filter:filterCriteria,operator:criteria.operator,value:criteria.value,hasdate:"",label:criteria.display,iddata:criteria.iddata};
+		    		//addToSummaryObject(criteriaObj);
+					checkSummaryObject(criteriaObj);
+		 		});
+		 		$(".cdisReportGraphNotes textarea").text("");
+		 		if(report.note != ""){
+					$(".cdisReportGraphNotes textarea").text(window.atob(report.note));
+				}
+				let c = $(".cdisReportGraphToolbarFooterButtons");
+				c.empty();
+				$("<div>",{class:"cdisCisButton"}).text("Execute Report").appendTo(c).on("click",{type:report.type},executeCustomReport);
+				$("<div>",{class:"cdisCisButton cdisButtonLastExecutionGraph"}).text("Get Report data from last execution").appendTo(c).on("click",{type:report.type,report:report},executeCustomReport);
+				
+			}
+			
+			
+			/*
 			if(report.period != "last"){
 				if(type=="list"){
 					r1.setValue("between");	
@@ -1548,47 +2120,8 @@ function loadReportCriteriaFromReport(reportId){
 				if(type=="list") r1.setValue("last");
 			}
 			
-			if(type=="list"){
-				$.each(report.criteria,function(index, criteria){
-		    		let name = criteria.name;
-		    		let cObj = getGeneralCriteriaObject(name);
-		    		let filterCriteria = "allvalues";
-		    		if((criteria.value != "0" && criteria.operator=="equal") || criteria.operator!="equal"){
-						filterCriteria = "filtervalues";
-					}
-		    		let criteriaObj = {name:name,section:criteria.section, type:cObj.type,filter:filterCriteria,operator:criteria.operator,value:criteria.value,hasdate:"",label:criteria.display,iddata:criteria.iddata};
-		    		addToSummaryObject(criteriaObj);
-		 		});
-		 		$(".cdisReportNotes textarea").text("");
-		 		if(report.note != ""){
-					$(".cdisReportNotes textarea").text(window.atob(report.note));
-				}
-				let c = $(".cdisReportListToolbarFooterButtons");
-				c.empty();
-				$("<div>",{class:"cdisCisButton"}).text("Execute Report").appendTo(c).on("click",{type:report.type},executeCustomReport);
-				$("<div>",{class:"cdisCisButton cdisButtonLastExecutionList"}).text("Get Report data from last execution").appendTo(c).on("click",{type:report.type,report:report},executeCustomReport);	
-			}else{
-				$.each(report.subcriteria,function(index, criteria){
-		    		let name = criteria.name;
-		    		let cObj = getGeneralCriteriaObject(name);
-		    		let filterCriteria = "allvalues";
-		    		if((criteria.value != "0" && criteria.operator=="equal") || criteria.operator!="equal"){
-						filterCriteria = "filtervalues";
-					}
-		    		let criteriaObj = {name:name,section:criteria.section, type:cObj.type,filter:filterCriteria,operator:criteria.operator,value:criteria.value,hasdate:"",label:criteria.display,iddata:criteria.iddata};
-		    		addToSummaryObject(criteriaObj);
-		 		});
-		 		$(".cdisReportGraphNotes textarea").text("");
-		 		if(report.note != ""){
-					$(".cdisReportGraphNotes textarea").text(window.atob(report.note));
-				}
-				let c = $(".cdisReportGraphToolbarFooterButtons");
-				c.empty();
-				$("<div>",{class:"cdisCisButton"}).text("Execute Report").appendTo(c).on("click",{type:report.type},executeCustomReport);
-				$("<div>",{class:"cdisCisButton cdisButtonLastExecutionGraph"}).text("Get Report data from last execution").appendTo(c).on("click",{type:report.type,report:report},executeCustomReport);
-				
-			}
 			
+			*/
 	    }
 	});
 }
@@ -1597,7 +2130,6 @@ function buildReportToolbar(reportObject){
 	let container = $(".cdisReportContainerToolbar");
 	// toolbar for list : export to CSV exit
 	// toolbar for graph : print exit
-	console.log(reportObject)
 	let rtype = reportObject.type;
 	let note = reportObject.note;
 	if(note!="")note = window.atob(note);

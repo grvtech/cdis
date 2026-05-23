@@ -1058,6 +1058,23 @@ public String getPvalidationData(final HttpServletRequest request){
 	return result;
 }
 
+
+@RequestMapping(value = {"/service/data/getPredm2dmData"}, method = RequestMethod.GET)
+public String getPredm2dmData(final HttpServletRequest request){
+	Gson json = new Gson();
+	String result = "";
+	//get all data and make filters on client side
+	
+	ArrayList<Object> obs = new ArrayList<>();
+	Hashtable<String, ArrayList<Object>> serie1 = cdisdb.getPredm2dmData();
+	obs.add(serie1);
+	result = json.toJson(new MessageResponse(true,"en",obs));
+	return result;
+}
+
+
+
+
 @RequestMapping(value = {"/service/data/getPandiNow"}, method = RequestMethod.GET)
 public String getPandiNow(final HttpServletRequest request){
 	Gson json = new Gson();
@@ -1084,6 +1101,9 @@ public String getPandiNow(final HttpServletRequest request){
 	
 	return result;
 }
+
+
+
 
 @RequestMapping(value = {"/service/data/getPandiHistory"}, method = RequestMethod.GET)
 public String getPandiHistory(final HttpServletRequest request){

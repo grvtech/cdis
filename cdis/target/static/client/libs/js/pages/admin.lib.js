@@ -9,12 +9,15 @@ var userActionsTop5Array = getUserActionsTop5Dataset();
 var frontPageMessage = "";
 var pendingUsers = 0;
 var hasPending=false;
+var flagPatients = [];
 
 /*
  * MAIN Section 
  * */
 
+
 refreshUserNotes(sid);
+
 //$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});
 /*
  * EVENT definitions
@@ -97,7 +100,17 @@ function loadAdminSection(section){
 			drawTop5Users(userTop5Array);
 			drawTop5UserActions(userActionsTop5Array);
 		});
-	}
+	}	else if(section == "flag"){
+			$(".cdisPage").load("/ncdis/client/templates/admin."+section+".html", function(){
+				/*
+				 * MAIN
+				 * */
+				
+				var tabsFlag = grvwtabs("grvFlagTabs");
+				getFlagPatients();
+				getArchivePatients();
+			});
+		}
 	//initPage();
 }
 
@@ -164,6 +177,92 @@ function getFrontPageMessage(){
 		mes.fail(function( jqXHR, textStatus ) {
 		  alert( "Request failed: " + textStatus );
 		});	
+}
+
+function getFlagPatients(){
+	var mes = $.ajax({
+		  url: "/ncdis/service/action/getFlagPatients?sid="+sid+"&language=en",
+		  type: "GET",
+		  async : false,
+		  cache : false,
+		  dataType: "json"
+		});
+		mes.done(function( json ) {
+			flagPatients = json.objs[0];
+			$("#grvFlagTable tbody").empty();
+			$.each(flagPatients, function(index, data){
+				var tr = $("<tr>",{id:"action-"+index}).appendTo($("#grvFlagTable tbody"));
+				$.each(data, function(key, value){
+					if(value == null) value = '';
+					if(key == "message") value = window.atob(value);
+					$("<td>",{class:key}).appendTo(tr).text(value);
+				})
+				$("<td>",{class:"button"}).appendTo(tr);
+				tr.on("click",function(){
+					$("#grvFlagTable tbody tr").removeClass("selected");
+					$("#grvFlagTable tbody tr .button").empty();
+					$(this).addClass("selected");
+					$(this).find(".button").append($("<div>",{class:"cisbutton"}).text("Fix").on("click",{ramq:$(this).find(".ramq").text()},fixFlagPatient));
+				});
+			});
+			if(flagPatients.length == 0){
+				$("<tr>",{id:"action"})
+				.append($("<td>",{colspan:6,style:"text-align:center;"}).text("Good job! No flagged patient."))
+				.appendTo($("#grvFlagTable tbody"));
+			}
+		});
+		mes.fail(function( jqXHR, textStatus ) {
+		  alert( "Request failed: " + textStatus );
+		});	
+}
+
+
+function getArchivePatients(){
+	var mes = $.ajax({
+		  url: "/ncdis/service/action/getArchivePatients?sid="+sid+"&language=en",
+		  type: "GET",
+		  async : false,
+		  cache : false,
+		  dataType: "json"
+		});
+		mes.done(function( json ) {
+			archivePatients = json.objs[0];
+			$("#grvFlagTableA tbody").empty();
+			$.each(archivePatients, function(index, data){
+				var tr = $("<tr>",{id:"action-"+index}).appendTo($("#grvFlagTableA tbody"));
+				$.each(data, function(key, value){
+					if(value == null) value = '';
+					if(key == "message") value = window.atob(value);
+					$("<td>",{class:key}).appendTo(tr).text(value);
+				})
+
+			});
+		});
+		mes.fail(function( jqXHR, textStatus ) {
+		  alert( "Request failed: " + textStatus );
+		});	
+}
+
+
+
+function fixFlagPatient(event){
+	let ramq = event.data.ramq;
+	let data = "ramq="+ramq;
+	var mes = $.ajax({
+			  url: "/ncdis/service/action/fixFlagPatient?sid="+sid+"&language=en",
+			  type: "POST",
+			  async : false,
+			  data: data,
+			  cache : false,
+			  dataType: "json"
+			});
+			mes.done(function( json ) {
+				getFlagPatients();
+				getArchivePatients();
+			});
+			mes.fail(function( jqXHR, textStatus ) {
+			  alert( "Request failed: " + textStatus );
+			});	
 }
 
 function saveFronPageMessage() {

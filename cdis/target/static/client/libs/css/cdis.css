@@ -92,7 +92,7 @@ CDIS PAGE CSS
 #hcp .hcp-title{font-size:100%;color:#ffffff;background-color:#8aa5f7;font-weight:bold;width:30%;}
 #hcp .hcp-profession{font-size:90%;color:#ffffff;background-color:#000000;text-align:center;width:30%;}
 #hcp .hcp-name{font-size:90%;font-weight:bold;}
-
+.cdisFlagPatientText{width:380px;height:100px;resize:none;}
 
 
 

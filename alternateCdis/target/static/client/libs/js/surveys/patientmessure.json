@@ -1,0 +1,76 @@
+{
+	"title":"",
+	"id":"grvpm1",
+	"pages":[
+		{
+			"title":"Patient messurements",
+			"id":"grvpm1p1",
+			"context":"Please add or modify patient measurements. ",
+			"questions":[
+				{
+					"id":"date",
+					"question":"Select the date of the visit",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvpm1p1a1","answer":"","type":"grvdatepicker","label":"Date", "value":"", "width":150}
+					]
+				}
+			]
+		},
+		{
+			"title":"Patient messurements",
+			"id":"grvpm1p2",
+			"context":"Please add or modify systolic and diastolic blood pressure. ",
+			"questions":[
+				{
+					"id":"sbp",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvpm1p2a2","answer":"","type":"text","label":"SBP", "value":"", "width":100}
+					]
+				},
+				{
+					"id":"dbp",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvpm1p2a3","answer":"","type":"text","label":"DBP", "value":"", "width":100}						
+					]
+				}
+			]
+		},
+		{
+			"title":"Patient messurements",
+			"id":"grvpm1p3",
+			"context":"Please add or modify weight and height of patient. ",
+			"questions":[
+				{
+					"id":"weight",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvpm1p3a4","answer":"","type":"text","label":"Weight", "value":"", "width":100}						
+					]
+				},
+				{
+					"id":"height",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvpm1p3a5","answer":"","type":"text","label":"Height", "value":"", "width":100}						
+					]
+				}
+			]
+		}
+	],
+	"conclusion":{
+		"title":"Patient messurements",
+		"context":"Data saved"
+	}
+}

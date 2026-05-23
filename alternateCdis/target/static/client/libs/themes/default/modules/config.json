@@ -6,7 +6,50 @@
 			"libs":[
 				{"alias":"ailib","file":"/ncdis/client/libs/themes/default/sections/index/apilib.js"},
 				{"alias":"ilib","file":"/ncdis/client/libs/themes/default/sections/index/lib.js"},
+				{"alias":"clib","file":"/ncdis/client/libs/themes/default/sections/cdis/lib.js"},
+				{"alias":"aclib","file":"/ncdis/client/libs/themes/default/sections/cdis/apilib.js"},
+				{"alias":"patientlib","file":"/ncdis/client/libs/js/patientlib.js"},
 				{"alias":"router","file":"/ncdis/client/libs/js/router.js"}
+			]
+		},
+		{
+			"module":"grvwidget",
+			"libs":[
+				
+			]
+		},
+		{
+			"module":"grvdatepicker",
+			"libs":[
+				{"alias":"patientlib","file":"/ncdis/client/libs/js/patientlib.js"}
+			]
+		},
+		{
+			"module":"grvtabs",
+			"libs":[
+				{"alias":"patientlib","file":"/ncdis/client/libs/js/patientlib.js"},
+				{"alias":"applib","file":"/ncdis/client/libs/js/applib.js"}
+			]
+		},
+		{
+			"module":"grvsurvey",
+			"libs":[
+				{"alias":"patientlib","file":"/ncdis/client/libs/js/patientlib.js"}
+			],
+			"surveys":[
+				{"alias":"test1","file":"/ncdis/client/libs/js/surveys/survey1.json"},
+				{"alias":"sbp,dbp","file":"/ncdis/client/libs/js/surveys/bloodpressure.json"},
+				{"alias":"hba1c","file":"/ncdis/client/libs/js/surveys/hba1c.json"},
+				{"alias":"ldl","file":"/ncdis/client/libs/js/surveys/ldl.json"},
+				{"alias":"pcrg","file":"/ncdis/client/libs/js/surveys/pcrg.json"},
+				{"alias":"acratio","file":"/ncdis/client/libs/js/surveys/acratio.json"},
+				{"alias":"egfr","file":"/ncdis/client/libs/js/surveys/egfr.json"},
+				{"alias":"sbp,dbp,weight,height","file":"/ncdis/client/libs/js/surveys/patientmessure.json"},
+				{"alias":"aer,smoke,hipo","file":"/ncdis/client/libs/js/surveys/patientsurvey.json"},
+				{"alias":"foot,neuromd,rpathscr","file":"/ncdis/client/libs/js/surveys/patientscreen.json"},
+				{"alias":"phq2","file":"/ncdis/client/libs/js/surveys/phq2.json"},
+				{"alias":"phq9","file":"/ncdis/client/libs/js/surveys/phq9.json"}
+				
 			]
 		}
 	]

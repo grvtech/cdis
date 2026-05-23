@@ -1,0 +1,35 @@
+{
+	"title":"",
+	"id":"grvpcrg",
+	"pages":[
+		{
+			"title":"",
+			"id":"grvpcrgp1",
+			"context":"",
+			"questions":[
+				{
+					"id":"date",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvpcrgp1q1a1","answer":"","type":"grvdatepicker","label":"Date", "value":"", "width":150}
+					]
+				},
+				{
+					"id":"pcrg",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvpcrgp1q1a2","answer":"","type":"text","label":"PCR mg/g", "value":"", "width":150}
+					]
+				}
+			]
+		}
+	],
+	"conclusion":{
+		"title":"Polymerase Chain Reaction PCR mg/g",
+		"context":"Data saved"
+	}
+}

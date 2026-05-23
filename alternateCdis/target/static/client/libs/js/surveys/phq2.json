@@ -1,0 +1,39 @@
+{
+	"title":"This is first survey",
+	"id":"grvphq2",
+	"pages":[
+		{
+			"title":"The Patient Health Questionaire-2",
+			"id":"grvphq2p1",
+			"context":"Over the past two weeks, how often have you been bothered bya any of the following problems?",
+			"questions":[
+				{
+					"id":"grvphq2p1q1",
+					"question":"1. Little interest or pleasure in doing things",
+					"direction":"v",
+					"type":"radio",
+					"answers":[
+						{"id":"grvphq2p1q1a1","answer":"Not At all","type":"radio","value":0},
+						{"id":"grvphq2p1q1a2","answer":"Several days","type":"radio","value":1},
+						{"id":"grvphq2p1q1a3","answer":"More than half the days","type":"radio","value":2}
+					]
+				},
+				{
+					"id":"grvphq2p1q2",
+					"question":"2. Feeling down, depressed or hoppless",
+					"direction":"v",
+					"type":"radio",
+					"answers":[
+						{"id":"grvphq2p1q2a1","answer":"Not At all","type":"radio","value":0},
+						{"id":"grvphq2p1q2a2","answer":"Several days","type":"radio","value":1},
+						{"id":"grvphq2p1q2a3","answer":"More than half the days","type":"radio","value":2}
+					]
+				}
+			]
+		}
+	],
+	"conclusion":{
+		"title":"The Patient Health Questionaire-2",
+		"context":"Would you like to record this questionaire score in the record of the patient? If yes, please click <div class='cdisCisButton' id='grvPHQ2Score'>Record PHQ-2 Score</div> button."
+	}
+}

@@ -1,0 +1,35 @@
+{
+	"title":"",
+	"id":"grvldl",
+	"pages":[
+		{
+			"title":"",
+			"id":"grvldlp1",
+			"context":"",
+			"questions":[
+				{
+					"id":"date",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvldlp1q1a1","answer":"","type":"grvdatepicker","label":"Date", "value":"", "width":150}
+					]
+				},
+				{
+					"id":"ldl",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvldlp1q1a2","answer":"","type":"text","label":"LDL", "value":"", "width":150}
+					]
+				}
+			]
+		}
+	],
+	"conclusion":{
+		"title":"LDL",
+		"context":"Data saved"
+	}
+}

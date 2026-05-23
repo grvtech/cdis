@@ -1,5 +1,6 @@
 import * as router from './router.js';
 import {appDefine} from './define.js';
+import * as clib from '../themes/default/sections/cdis/lib.js'; 
 
 $(document).ready(function() {
 	let ua = navigator.userAgent;

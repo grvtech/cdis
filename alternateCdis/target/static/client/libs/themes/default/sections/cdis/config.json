@@ -1,0 +1,38 @@
+{
+	"name":"cdis",
+	"path":"/ncdis/client/libs/themes/default/sections/cdis/",
+	"page":"/ncdis/client/libs/themes/default/sections/cdis/index.html",
+	"container":"grvWraper",
+	"ressources":[
+					{
+						"type":"css",
+						"elements":[
+								{"name":"style","file":"/ncdis/client/libs/themes/default/sections/cdis/styles.css","initload":true}
+						]
+					},
+					{
+						"type":"ui",
+						"elements":[
+								{"name":"main","file": "/ncdis/client/libs/themes/default/sections/cdis/template.main.html","initload":true},
+								{"name":"patient","file": "/ncdis/client/libs/themes/default/sections/cdis/template.patient.html","initload":false},
+								{"name":"addpatient","file": "/ncdis/client/libs/themes/default/sections/cdis/template.addpatient.html","initload":false},
+								{"name":"editpatient","file": "/ncdis/client/libs/themes/default/sections/cdis/template.editpatient.html","initload":false},
+								{"name":"lab","file": "/ncdis/client/libs/themes/default/sections/cdis/template.lab.html","initload":false},
+								{"name":"meds","file": "/ncdis/client/libs/themes/default/sections/cdis/template.meds.html","initload":false},
+								{"name":"complications","file": "/ncdis/client/libs/themes/default/sections/cdis/template.complications.html","initload":false},
+								{"name":"renal","file": "/ncdis/client/libs/themes/default/sections/cdis/template.renal.html","initload":false},
+								{"name":"schedulevisits","file": "/ncdis/client/libs/themes/default/sections/cdis/template.schedulevisits.html","initload":false},
+								{"name":"miscellaneous","file": "/ncdis/client/libs/themes/default/sections/cdis/template.miscellaneous.html","initload":false},
+								{"name":"mdvisits","file": "/ncdis/client/libs/themes/default/sections/cdis/template.mdvisits.html","initload":false},
+								{"name":"lipid","file": "/ncdis/client/libs/themes/default/sections/cdis/template.lipid.html","initload":false},
+								{"name":"depression","file": "/ncdis/client/libs/themes/default/sections/cdis/template.depression.html","initload":false},
+								{"name":"notes","file": "/ncdis/client/libs/themes/default/sections/cdis/template.notes.html","initload":false},
+								{"name":"history","file": "/ncdis/client/libs/themes/default/sections/cdis/template.history.html","initload":false},
+								{"name":"editpatientconfirm","file": "/ncdis/client/libs/themes/default/sections/cdis/template.editpatient.confirm.html","initload":false},
+								{"name":"menu","file": "/ncdis/client/libs/themes/default/sections/cdis/template.menu.html","initload":false},
+								{"name":"phq2","file": "/ncdis/client/libs/themes/default/sections/cdis/template.phq2.html","initload":false},
+								{"name":"phq9","file": "/ncdis/client/libs/themes/default/sections/cdis/template.phq9.html","initload":false}
+						]
+					}
+	]
+}

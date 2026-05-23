@@ -1,0 +1,35 @@
+{
+	"title":"",
+	"id":"grvacratio",
+	"pages":[
+		{
+			"title":"",
+			"id":"grvacratiop0",
+			"context":"",
+			"questions":[
+				{
+					"id":"date",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvacratiop1q1a1","answer":"","type":"grvdatepicker","label":"Date", "value":"", "width":150}
+					]
+				},
+				{
+					"id":"acratio",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvacratiop1q1a2","answer":"","type":"text","label":"AC Ratio", "value":"", "width":150}
+					]
+				}
+			]
+		}
+	],
+	"conclusion":{
+		"title":"Albumin-to-Creatinine Ratio",
+		"context":"Data saved"
+	}
+}

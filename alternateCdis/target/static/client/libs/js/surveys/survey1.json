@@ -1,0 +1,94 @@
+{
+	"title":"This is first survey",
+	"id":"grvs1",
+	"pages":[
+		{
+			"title":"Title of page 1",
+			"id":"grvs1p1",
+			"context":"Q1Ths is text that goes with the title and maybe explanantion of questions in page. This can be html.",
+			"questions":[
+				{
+					"id":"grvs1p1q1",
+					"question":"Q1This is first question of survey. Is this ok with you?",
+					"type":"radio",
+					"answers":[
+						{"id":"grvs1p1q1a1","answer":"Yes","type":"radio"},
+						{"id":"grvs1p1q1a2","answer":"No","type":"radio"},
+						{"id":"grvs1p1q1a3","answer":"Maybe","type":"radio"},
+						{"id":"grvs1p1q1a4","answer":"Who knows?","type":"radio"}						
+					]
+				},
+				{
+					"id":"grvs1p1q2",
+					"question":"Q2This is second question of survey. Is this ok with you?",
+					"type":"checkbox",
+					"answers":[
+						{"id":"grvs1p1q2a1","answer":"Yes. This answer is intentionaly long to see how can we manage the multiple line answers in a question.","type":"checkbox"},
+						{"id":"grvs1p1q2a2","answer":"No","type":"checkbox"},
+						{"id":"grvs1p1q2a3","answer":"Maybe","type":"checkbox"},
+						{"id":"grvs1p1q2a4","answer":"Who knows?","type":"checkbox"}						
+					]
+				}
+			]
+		},
+		{
+			"title":"Title of page 2",
+			"id":"grvs1p2",
+			"context":"Ths is text that goes with the title and maybe explanantion of questions in page. This can be html.",
+			"questions":[
+				{
+					"id":"grvs1p2q1",
+					"question":"Q3This is third question of survey. Is this ok with you?",
+					"type":"radio",
+					"answers":[
+						{"id":"grvs1p2q1a1","answer":"Yes","type":"radio"},
+						{"id":"grvs1p2q1a2","answer":"No","type":"radio"},
+						{"id":"grvs1p2q1a3","answer":"Maybe","type":"radio"},
+						{"id":"grvs1p2q1a4","answer":"","type":"text","label":"short"}						
+					]
+				},
+				{
+					"id":"grvs1p2q2",
+					"question":"Q4This is second question of survey. Is this ok with you?",
+					"type":"checkbox",
+					"answers":[
+						{"id":"grvs1p2q2a1","answer":"Yes","type":"checkbox"},
+						{"id":"grvs1p2q2a2","answer":"No","type":"checkbox"},
+						{"id":"grvs1p2q2a3","answer":"Maybe","type":"checkbox"},
+						{"id":"grvs1p2q2a4","answer":"","type":"text","label":"label for text field that is a little bit longer"}						
+					]
+				}
+			]
+		},
+		{
+					"title":"Title of page 3",
+					"id":"grvs1p3",
+					"context":"Ths is text that goes with the title and maybe explanantion of questions in page. This can be html.",
+					"questions":[
+						{
+							"id":"grvs1p3q1",
+							"question":"Q3This is third question of survey. Is this ok with you?",
+							"type":"text",
+							"answers":[
+								{"id":"grvs1p3q1a4","answer":"","type":"text","label":"label for text field"}						
+							]
+						},
+						{
+							"id":"grvs1p3q2",
+							"question":"Q4This is second question of survey. Is this ok with you?",
+							"type":"text",
+							"answers":[
+								{"id":"grvs1p3q2a1","answer":"","type":"text","label":"label for text field1"},
+								{"id":"grvs1p3q2a2","answer":"","type":"text","label":"label for text field2"},
+								{"id":"grvs1p3q2a3","answer":"","type":"text","label":"label for text field3"},
+								{"id":"grvs1p3q2a4","answer":"","type":"text","label":"label for text field4"}						
+							]
+						}
+					]
+				}
+	],
+	"conclusion":{
+		"title":"Congrats for first survey",
+		"context":"text that goes with the congrats. is optional. and in might include html in int like links or buttons or other staff. everything that goes from this page should close the modal popup. By default this page contains a close survey button."
+	}
+}

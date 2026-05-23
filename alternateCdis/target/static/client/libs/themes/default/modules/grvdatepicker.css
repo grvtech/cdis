@@ -1,0 +1,207 @@
+         /* Datepicker Styles */
+        .grvdatepicker {
+            position: absolute;
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            z-index: 1000;
+            font-family: inherit;
+            user-select: none;
+            width: 250px;
+            overflow: hidden;
+        }
+
+        .grvdatepicker-header {
+            background: #8aa5f7;
+            color: white;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .grvdatepicker-title {
+            font-weight: 600;
+            font-size: 0.8vw;
+            cursor: pointer;
+            padding: 5px 5px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .grvdatepicker-title:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        .grvdatepicker-nav {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .grvdatepicker-nav:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        .grvdatepicker-calendar {
+            padding: 5px;
+        }
+
+        .grvdatepicker-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            margin-bottom: 3px;
+        }
+
+        .grvdatepicker-weekday {
+            text-align: center;
+            font-size: 0.7vw;
+            font-weight: 600;
+            color: #7f8c8d;
+            padding: 3px 0;
+        }
+
+        .grvdatepicker-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+        }
+
+        .grvdatepicker-day {
+            text-align: center;
+            padding: 3px 0;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 0.7vw;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .grvdatepicker-day:hover {
+            background-color: #ecf0f1;
+        }
+
+        .grvdatepicker-day.other-month {
+            color: #bdc3c7;
+        }
+
+        .grvdatepicker-day.today {
+            background-color: #e8f4fd;
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .grvdatepicker-day.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .grvdatepicker-day.disabled {
+            color: #bdc3c7;
+            cursor: not-allowed;
+            background: none !important;
+        }
+
+        .grvdatepicker-footer {
+            padding: 10px 15px;
+            border-top: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .grvdatepicker-today-btn, .grvdatepicker-clear-btn {
+            background: none;
+            border: none;
+            color: #3498db;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .grvdatepicker-today-btn:hover,         .grvdatepicker-clear-btn:hover {
+            background-color: #ecf0f1;
+        }
+
+        /* Year Selector Styles */
+        .grvdatepicker-year-selector {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 10;
+            display: none;
+        }
+
+        .grvdatepicker-year-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .grvdatepicker-year-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .grvdatepicker-year-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .grvdatepicker-year-close:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        .grvdatepicker-years {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .grvdatepicker-year {
+            text-align: center;
+            padding: 12px 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .grvdatepicker-year:hover {
+            background-color: #ecf0f1;
+            border-color: #3498db;
+        }
+
+        .grvdatepicker-year.current {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        

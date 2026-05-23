@@ -98,6 +98,59 @@ export class grvvalidation{
 		let vc = this.checkString(o,s);
 		if(vc) return true;
 		else return false;
+	}
+	
+	
+	validateRamq(ramqObj, lnameValue, fnameValue, genderValue, dobValue){
+		let flagRamq =  this.checkEmpty(ramqObj, "RAMQ cannot be empty!");
+		let flagRamqFormat = this.checkRegexp(ramqObj,/^([a-z]){4}([0-9]){8}$/i,"RAMQ must respect format!");
+		let flagRamqDate = false;
+		let flagRamqName = false;
+		let ramqValue = ramqObj.val();
+		if(flagRamq && flagRamqFormat){
+			let dateStr = ramqValue.substring(4,10);
+			var year = Number(dateStr.substring(0,2));
+			var month = Number(dateStr.substring(2,4));
+			var day = Number(dateStr.substring(4,6));
+			//dobvalue should be like YYYY-MM-DD
+			var dobyear = Number(dobValue.substring(2,4));
+			var dobmonth = (genderValue == 2)?Number(dobValue.substring(5,7))+50:Number(dobValue.substring(5,7));	
+			var dobday = Number(dobValue.substring(8,10));
+			if(year == dobyear && month == dobmonth && day == dobday) flagRamqDate = true;
+			else this.updateTips("RAMQ must respect date of birth rule!");
+			
+			let ramqname = ramqValue.substring(0,3).toLowerCase()+ramqValue.substring(3,4).toLowerCase();
+			let name = lnameValue.substring(0,3).toLowerCase()+fnameValue.substring(0,1).toLowerCase();
+			if(ramqname == name )flagRamqName = true;
+			else this.updateTips("RAMQ must respect name rule!");
+			
+			if(flagRamqDate && flagRamqName){
+				return true;
+			}else{
+				return false;
+			}
+		}else{return false;}
+	}
+	
+	validateDiabet(dtypeValue, ddateValue){
+		
+		let flagDtype =  false;
+		if(dtypeValue != 0)flagDtype = true;
+		else this.updateTips("Type of diabetes cannot be unknown");
+	    let flagDdate = false;
+		if(ddateValue != "")flagDdate = true;
+		else this.updateTips("Date of diagnosis cannot be empty");
+		return flagDtype && flagDdate;
+	}
+	
+	validateDeceased(deceasedValue, deceasedDateValue, deceasedCauseValue){
+			let flagDeceased =  false;
+			if(deceasedValue == 1){
+				flagDeceased = (deceasedDateValue == "")?false:true;
+			}else{
+				flagDeceased = true;
+			}
+			return flagDeceased;
 	}	
 }
 

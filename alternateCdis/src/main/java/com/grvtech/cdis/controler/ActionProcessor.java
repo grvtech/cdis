@@ -1067,10 +1067,32 @@ public String getScheduleVisit(final HttpServletRequest request){
 	String language = request.getParameter("language").toString();
 	String sid = request.getParameter("sid").toString();
 	String idpatient = request.getParameter("idpatient").toString();
-	String iduser = request.getParameter("iduser").toString();
-	ScheduleVisit sv  = chbdb.getScheduleVisit(idpatient,iduser);
+	String idprofession = request.getParameter("idprofession").toString();
+	ScheduleVisit sv  = chbdb.getScheduleVisit(idpatient,idprofession);
 	ArrayList<Object> obs = new ArrayList<Object>();
 	obs.add(sv);
+	result = json.toJson(new MessageResponse(true,language,obs));
+	return result;
+}
+
+@RequestMapping(value = {"/service/action/deleteScheduleVisit"}, method = RequestMethod.POST)
+public String deleteScheduleVisit(final HttpServletRequest request){
+	Gson json = new Gson();
+	String result = "";
+	String language = request.getParameter("language").toString();
+	String sid = request.getParameter("sid").toString();
+	String idpatient = request.getParameter("idpatient").toString();
+	String hcpCode = request.getParameter("hcpcode").toString();
+	String idprofession = request.getParameter("idprofesion").toString();
+	String action = request.getParameter("action").toString();
+	if(action.equals("both")) {
+		chbdb.deleteScheduleVisit(idpatient, idprofession);
+		cdisdb.deleteOneHcpOfPatient(idpatient, hcpCode);
+	}else {
+		chbdb.deleteScheduleVisit(idpatient, idprofession);
+	}
+	
+	ArrayList<Object> obs = new ArrayList<Object>();
 	result = json.toJson(new MessageResponse(true,language,obs));
 	return result;
 }
@@ -1088,8 +1110,12 @@ public String setScheduleVisit(final HttpServletRequest request){
 	String idprofesion = request.getParameter("idprofesion").toString();
 	String frequency = request.getParameter("frequency").toString();
 	String hcpcode = request.getParameter("zone").toString();
-	boolean flag  = chbdb.setScheduleVisit(idschedule,iduser,idpatient,scheduledate,idprofesion,frequency);
-	boolean flag1 = cdisdb.setOneHcpOfPatient(idpatient, iduser, hcpcode);
+	if(!frequency.equals("0") && !scheduledate.equals("0")) {
+		boolean flag  = chbdb.setScheduleVisit(idschedule,iduser,idpatient,scheduledate,idprofesion,frequency);
+	}
+	if(!iduser.equals("0")) {
+		boolean flag1 = cdisdb.setOneHcpOfPatient(idpatient, iduser, hcpcode);
+	}
 	ArrayList<Object> obs = new ArrayList<Object>();
 	result = json.toJson(new MessageResponse(true,language,obs));
 	return result;

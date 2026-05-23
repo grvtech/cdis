@@ -1,0 +1,35 @@
+{
+	"title":"",
+	"id":"grvhba1c",
+	"pages":[
+		{
+			"title":"",
+			"id":"grvhba1cp1",
+			"context":"",
+			"questions":[
+				{
+					"id":"date",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvhba1cp1q1a1","answer":"","type":"grvdatepicker","label":"Date", "value":"", "width":150}
+					]
+				},
+				{
+					"id":"hba1c",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvhba1cp1q1a2","answer":"","type":"text","label":"HbA1c", "value":"", "width":150}
+					]
+				}
+			]
+		}
+	],
+	"conclusion":{
+		"title":"HbA1c",
+		"context":"Data saved"
+	}
+}

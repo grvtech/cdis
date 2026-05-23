@@ -1,0 +1,20 @@
+@media print {
+  @page {
+    size: portrait;
+    
+  }
+  thead {
+            display: table-header-group;
+        }
+  body{font-family:Arial;}
+  table{font-size:22px;}
+  table thead.main{background:#ededed;}
+  table tbody .title{font-size:25px;font-weight:bold;border-bottom:2px solid #4d4d4d;padding:20px 0px 3px 0px;}
+  table tbody .value{font-weight:bold;}
+  
+  
+ table.data thead{font-size:22px;font-weight:bold;background:#cdcdcd;}
+ table.data thead th{border-bottom:2px solid #4d4d4d;padding:10px 30px 3px 0px;}
+
+ 
+}

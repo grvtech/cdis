@@ -1,0 +1,62 @@
+{
+	"title":"",
+	"id":"grvps1",
+	"pages":[
+		{
+			"title":"Patient survey",
+			"id":"grvps1p1",
+			"context":"Survey the patient for physical activity, whther is a smoker or not or if the patient had episodes of hypoglicemia.",
+			"questions":[
+				{
+					"id":"date",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvps1p1q1a1","answer":"","type":"grvdatepicker","label":"Date", "value":"", "width":150}
+					]
+				}
+			]
+		},
+		{
+			"title":"Patient survey",
+			"id":"grvps1p2",
+			"context":"",
+			"questions":[
+				{
+					"id":"aer",
+					"question":"How many minutes per week the patient performs physical activity?",
+					"type":"text",
+					"direction":"h",
+					"answers":[
+						{"id":"grvps1p2q1a1","answer":"","type":"text","label":"", "value":"", "width":60}
+					]
+				},
+				{
+					"id":"smoke",
+					"question":"Is the patient a smoker",
+					"type":"radio",
+					"direction":"h",
+					"answers":[
+						{"id":"grvbp1p2q2a1","answer":"Yes","type":"radio","label":"", "value":"1"},
+						{"id":"grvbp1p2q2a2","answer":"No","type":"radio","label":"", "value":"0"},
+						{"id":"grvbp1p2q2a3","answer":"Unknown","type":"radio","label":"", "value":"2"}
+					]
+				},
+				{
+					"id":"hipo",
+					"question":"How many episodes per month the patient had hypoglicemia?",
+					"type":"text",
+					"direction":"h",
+					"answers":[
+						{"id":"grvbp1p2q1a3","answer":"","type":"text","label":"", "value":"", "width":60}						
+					]
+				}
+			]
+		}
+	],
+	"conclusion":{
+		"title":"Patient survey",
+		"context":"Data saved"
+	}
+}

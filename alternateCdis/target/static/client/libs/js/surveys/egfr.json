@@ -1,0 +1,35 @@
+{
+	"title":"",
+	"id":"grvegfr",
+	"pages":[
+		{
+			"title":"",
+			"id":"grvegfrp1",
+			"context":"",
+			"questions":[
+				{
+					"id":"date",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvegfrp1q1a1","answer":"","type":"grvdatepicker","label":"Date", "value":"", "width":150}
+					]
+				},
+				{
+					"id":"egfr",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvegfrp1q1a2","answer":"","type":"text","label":"eGFR", "value":"", "width":150}
+					]
+				}
+			]
+		}
+	],
+	"conclusion":{
+		"title":"Estimated Glomerular Filtration Rate",
+		"context":"Data saved"
+	}
+}

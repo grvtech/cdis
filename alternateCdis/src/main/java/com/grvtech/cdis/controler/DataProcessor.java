@@ -21,6 +21,7 @@ import org.apache.commons.net.util.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,8 +59,6 @@ import com.grvtech.cdis.model.ValueLimit;
 import com.grvtech.cdis.model.Values;
 import com.grvtech.cdis.util.MailTool;
 import com.grvtech.cdis.util.Misc;
-
-
 
 
 @RestController
@@ -653,54 +652,57 @@ public String saveValue(final HttpServletRequest request){
 		String language = request.getParameter("language").toString();
 		Patient pat = null;
 		
+		ArrayList<Object> obs = new ArrayList<Object>();
 		Session session = chbdb.isValidSession(sid);
 		if(session != null){
 			chbdb.setUserSession(session);
+			boolean flag = false;
+			String action = "ADDDATA";
+			if(idvalue.equals("0")){
+				flag = cdisdb.addValue(valueName, valueValue, valueDate, idpatient);
+			}else{
+				flag = cdisdb.editValue(valueName, valueValue, valueDate, idpatient, idvalue);
+				action = "EDITDATA";
+			}
+			
+			
+			pat = cdisdb.getPatientById(Integer.parseInt(idpatient));
+			obs.add(pat);
+			Hcp hcps = cdisdb.getHcpOfPatient(pat.getIdpatient());
+			obs.add(hcps);
+			Diabet latest_diabet = (Diabet) cdisdb.getValues("Diabet", pat.getIdpatient(),"asc");
+			obs.add(latest_diabet);
+			MDVisit latest_mdvisit = (MDVisit) cdisdb.getValues("MDVisit", pat.getIdpatient(),"asc");
+			//obs.add(latest_mdvisit.getLatestMDVisit());
+			obs.add(latest_mdvisit);
+			Renal latest_renal = (Renal) cdisdb.getValues("Renal", pat.getIdpatient(),"asc");
+			//obs.add(latest_renal.getLatestRenal());
+			obs.add(latest_renal);
+			Lipid latest_lipid = (Lipid) cdisdb.getValues("Lipid", pat.getIdpatient(),"asc");
+			//obs.add(latest_lipid.getLatestLipid());
+			obs.add(latest_lipid);
+			Lab latest_lab = (Lab) cdisdb.getValues("Lab", pat.getIdpatient(),"asc");
+			//obs.add(latest_lab.getLatestLab());
+			obs.add(latest_lab);
+			Complications latest_complications = (Complications) cdisdb.getValues("Complications", pat.getIdpatient(),"asc");
+			//obs.add(latest_complications.getLatestComplications());
+			obs.add(latest_complications);
+			Miscellaneous latest_miscellaneous = (Miscellaneous) cdisdb.getValues("Miscellaneous", pat.getIdpatient(),"asc");
+			//obs.add(latest_miscellaneous.getLatestMiscellaneous());
+			obs.add(latest_miscellaneous);
+			Meds latest_meds = (Meds) cdisdb.getValues("Meds", pat.getIdpatient(),"asc");
+			obs.add(latest_meds);
+			Depression latest_dep = (Depression) cdisdb.getValues("Depression", pat.getIdpatient(),"asc");
+			obs.add(latest_dep);
+			//result = json.toJson(new MessageResponse(true,language,obs));
+			Action act = chbdb.getAction(action);
+			User u = chbdb.getUser(sid);
+			chbdb.setEvent(u.getIduser(), act.getIdaction(), "1", sid, pat.getRamq());
+			result = json.toJson(new MessageResponse(true,language,obs));
+		}else {
+			result = json.toJson(new MessageResponse(false,language,obs));
 		}
 		
-		boolean flag = false;
-		String action = "ADDDATA";
-		if(idvalue.equals("0")){
-			flag = cdisdb.addValue(valueName, valueValue, valueDate, idpatient);
-		}else{
-			flag = cdisdb.editValue(valueName, valueValue, valueDate, idpatient, idvalue);
-			action = "EDITDATA";
-		}
-		ArrayList<Object> obs = new ArrayList<Object>();
-		
-		pat = cdisdb.getPatientById(Integer.parseInt(idpatient));
-		obs.add(pat);
-		Hcp hcps = cdisdb.getHcpOfPatient(pat.getIdpatient());
-		obs.add(hcps);
-		Diabet latest_diabet = (Diabet) cdisdb.getValues("Diabet", pat.getIdpatient(),"asc");
-		obs.add(latest_diabet);
-		MDVisit latest_mdvisit = (MDVisit) cdisdb.getValues("MDVisit", pat.getIdpatient(),"asc");
-		//obs.add(latest_mdvisit.getLatestMDVisit());
-		obs.add(latest_mdvisit);
-		Renal latest_renal = (Renal) cdisdb.getValues("Renal", pat.getIdpatient(),"asc");
-		//obs.add(latest_renal.getLatestRenal());
-		obs.add(latest_renal);
-		Lipid latest_lipid = (Lipid) cdisdb.getValues("Lipid", pat.getIdpatient(),"asc");
-		//obs.add(latest_lipid.getLatestLipid());
-		obs.add(latest_lipid);
-		Lab latest_lab = (Lab) cdisdb.getValues("Lab", pat.getIdpatient(),"asc");
-		//obs.add(latest_lab.getLatestLab());
-		obs.add(latest_lab);
-		Complications latest_complications = (Complications) cdisdb.getValues("Complications", pat.getIdpatient(),"asc");
-		//obs.add(latest_complications.getLatestComplications());
-		obs.add(latest_complications);
-		Miscellaneous latest_miscellaneous = (Miscellaneous) cdisdb.getValues("Miscellaneous", pat.getIdpatient(),"asc");
-		//obs.add(latest_miscellaneous.getLatestMiscellaneous());
-		obs.add(latest_miscellaneous);
-		Meds latest_meds = (Meds) cdisdb.getValues("Meds", pat.getIdpatient(),"asc");
-		obs.add(latest_meds);
-		Depression latest_dep = (Depression) cdisdb.getValues("Depression", pat.getIdpatient(),"asc");
-		obs.add(latest_dep);
-		//result = json.toJson(new MessageResponse(true,language,obs));
-		Action act = chbdb.getAction(action);
-		User u = chbdb.getUser(sid);
-		chbdb.setEvent(u.getIduser(), act.getIdaction(), "1", sid, pat.getRamq());
-		result = json.toJson(new MessageResponse(true,language,obs));
 		return result;
 	}
 
@@ -771,21 +773,15 @@ public String savePatientRecord(final HttpServletRequest request){
 		String result = "";
 		String sid = request.getParameter("sid").toString();
 		String language = request.getParameter("language").toString();
-		String casem = request.getParameter("casem").toString();
-		
-		String chr = request.getParameter("chrid")==null||request.getParameter("chrid").equals("")?"0":request.getParameter("chrid").toString();
-		String md = request.getParameter("mdid")==null||request.getParameter("mdid").equals("")?"0":request.getParameter("mdid").toString();
-		String nut = request.getParameter("nutid")==null||request.getParameter("nutid").equals("")?"0":request.getParameter("nutid").toString();
-		String nur = request.getParameter("nurid")==null||request.getParameter("nurid").equals("")?"0":request.getParameter("nurid").toString();
+		String chr = request.getParameter("chr").equals("")?"0":request.getParameter("chr").toString();
+		String md = request.getParameter("md").equals("")?"0":request.getParameter("md").toString();
+		String nut = request.getParameter("nut").equals("")?"0":request.getParameter("nut").toString();
+		String nur = request.getParameter("nur").equals("")?"0":request.getParameter("nur").toString();
 		Patient pat = null;
 		String chart = null, ramq = null, id = null;
-		if(request.getParameter("ramq") != null){
-			ramq = request.getParameter("ramq").toString();
-		}
-		
-		if(request.getParameter("idpatient") != null){
-			id = request.getParameter("idpatient").toString();
-		}
+		if(request.getParameter("ramq") != null){ramq = request.getParameter("ramq").toString();}
+		if(request.getParameter("idpatient") != null){id = request.getParameter("idpatient").toString();}
+
 		ArrayList<Object> obs = new ArrayList<Object>();
 		if(!ramq.equals("") && ramq != null){
 			pat = cdisdb.getPatientByRamq(ramq);
@@ -793,55 +789,55 @@ public String savePatientRecord(final HttpServletRequest request){
 			pat = cdisdb.getPatientById(Integer.parseInt(id));
 		}
 		
-		
 		Session session = chbdb.isValidSession(sid);
+		MessageResponse patient = new MessageResponse();
 		if(session != null){
 			chbdb.setUserSession(session);
-		}
-		
-		Map<String, String[]> args = request.getParameterMap();
-		MessageResponse patient =  pat.setPatient(args);
-		if(patient.getStatus() == 1){
-			patient = cdisdb.updatePatient(pat);
-			String valueName = request.getParameter("diabetcode").toString();
-			String valueValue = request.getParameter("dtype").toString();
-			String valueDate = request.getParameter("ddate").toString();
-			String idvalue = request.getParameter("diabetidvalue").toString();
-			//we add diabet in edit
+			Map<String, String[]> args = request.getParameterMap();
+			patient =  pat.setPatient(args);
 			
-			Diabet latest_diabet = (Diabet) cdisdb.getValues("Diabet", pat.getIdpatient(),"desc");
-			Values dtypes = latest_diabet.getDtype();
-			ArrayList<Value> dtypeArray =  dtypes.getValues();
-			boolean isUpdateDate = false;
-			boolean isUpdateValue = false;
-			for(int i=0;i<dtypeArray.size();i++){
-				Value vdtype = dtypeArray.get(i);
-				String dtypeDateStr = vdtype.getDate();
-				String dtypeValueStr = vdtype.getValue();
-				if(dtypeDateStr.equals(valueDate)){
-					isUpdateDate = true;
-				}
-				if(dtypeValueStr.equals(valueValue)){
-					isUpdateValue = true;
-				}
-			}
+			if(patient.getStatus() == 1){
+				patient = cdisdb.updatePatient(pat);
+				
+				String valueValue = request.getParameter("dtype").toString();
+				String valueDate = request.getParameter("ddate").toString();
+				String valueName = "dtype";
+				//we add diabet in edit
 			
-			if(isUpdateDate && isUpdateValue){
-				patient.setStatus(1);
-			}else if(!isUpdateDate && !isUpdateValue){
-				if(!cdisdb.addValue(valueName, valueValue, valueDate, String.valueOf(pat.getIdpatient()))){
+				Diabet latest_diabet = (Diabet) cdisdb.getValues("Diabet", pat.getIdpatient(),"desc");
+				Values dtypes = latest_diabet.getDtype();
+				ArrayList<Value> dtypeArray =  dtypes.getValues();
+				int idvalue = 0;
+				boolean isUpdateDate = false;
+				boolean isUpdateValue = false;
+				for(int i=0;i<dtypeArray.size();i++){
+					Value vdtype = dtypeArray.get(i);
+					String dtypeDateStr = vdtype.getDate();
+					String dtypeValueStr = vdtype.getValue();
+					if(dtypeDateStr.equals(valueDate)){
+						isUpdateDate = true;
+						idvalue = vdtype.getIdvalue();
+					}
+					if(dtypeValueStr.equals(valueValue)){
+						isUpdateValue = true;
+						idvalue = vdtype.getIdvalue();
+					}
+				}
+			
+				if(isUpdateDate && isUpdateValue){
 					patient.setStatus(1);
+				}else if(!isUpdateDate && !isUpdateValue){
+					if(cdisdb.addValue(valueName, valueValue, valueDate, Integer.toString(pat.getIdpatient()))){
+						patient.setStatus(1);
+					}
+				}else{
+					if(cdisdb.editValue(valueName, valueValue, valueDate, Integer.toString(pat.getIdpatient()), Integer.toString(idvalue))){
+						patient.setStatus(1);
+					}
 				}
-			}else{
-				if(!cdisdb.editValue(valueName, valueValue, valueDate, String.valueOf(pat.getIdpatient()), idvalue)){
-					patient.setStatus(1);
-				}
+				cdisdb.setHcpOfPatient(pat.getIdpatient(), "0", md, nut, nur, chr);
 			}
-			//if(!db.editValue(valueName, valueValue, valueDate, String.valueOf(pat.getIdpatient()), idvalue)){
-			cdisdb.setHcpOfPatient(pat.getIdpatient(), casem, md, nut, nur, chr);
-			
 		}
-		
 		result = json.toJson(patient);
 		Action act = chbdb.getAction("EDITP");
 		User u = chbdb.getUser(sid);
@@ -868,7 +864,7 @@ public String addPatientRecord(final HttpServletRequest request){
 		String result = "";
 		String sid = request.getParameter("sid").toString();
 		String language = request.getParameter("language").toString();
-		String casem = null;
+		String casem = "0";
 		String chr = null;
 		String md = null;
 		String nut = null;
@@ -879,45 +875,41 @@ public String addPatientRecord(final HttpServletRequest request){
 			ramq = request.getParameter("ramq").toString();
 		}
 		
-		if(request.getParameter("casemid") != null){casem = request.getParameter("casemid").toString();}
-		if(request.getParameter("chrid") != null){chr = request.getParameter("chrid").toString();}
-		if(request.getParameter("mdid") != null){md = request.getParameter("mdid").toString();}
-		if(request.getParameter("nutid") != null){nut = request.getParameter("nutid").toString();}
-		if(request.getParameter("nurid") != null){nur = request.getParameter("nurid").toString();}
-		
+		if(request.getParameter("chr") != null){chr = request.getParameter("chr").toString();}
+		if(request.getParameter("md") != null){md = request.getParameter("md").toString();}
+		if(request.getParameter("nut") != null){nut = request.getParameter("nut").toString();}
+		if(request.getParameter("nur") != null){nur = request.getParameter("nur").toString();}
 		
 		Session session = chbdb.isValidSession(sid);
 		if(session != null){
 			chbdb.setUserSession(session);
-		}
-		ArrayList<Object> obs = new ArrayList<Object>();
-		Map<String, String[]> args =  request.getParameterMap();
-		MessageResponse patient =  pat.setPatient(args);
-		if(patient.getStatus() == 1){
-			patient = cdisdb.addPatient(pat);
-			pat = cdisdb.getPatientByRamq(pat.getRamq());
-			String valueName = request.getParameter("diabetcode").toString();
-			String valueValue = request.getParameter("dtype").toString();
-			String valueDate = request.getParameter("ddate").toString();
-			String idvalue = request.getParameter("diabetidvalue").toString();
-			if(!cdisdb.addValue(valueName, valueValue, valueDate, String.valueOf(pat.getIdpatient()))){
-				patient.setStatus(1);
+			ArrayList<Object> obs = new ArrayList<Object>();
+			Map<String, String[]> args =  request.getParameterMap();
+			System.out.println("--------------");
+			System.out.println("---"+args.keySet());
+			System.out.println("---"+args.values());
+			System.out.println("--------------");
+			MessageResponse patient =  pat.setPatient(args);
+			if(patient.getStatus() == 1){
+				patient = cdisdb.addPatient(pat);
+				pat = cdisdb.getPatientByRamq(pat.getRamq());
+				String valueName = "dtype";
+				String valueValue = request.getParameter("dtype").toString();
+				String valueDate = request.getParameter("ddate").toString();
+				cdisdb.addValue(valueName, valueValue, valueDate, String.valueOf(pat.getIdpatient()));
+				cdisdb.setHcpOfPatient(pat.getIdpatient(), casem, md, nut, nur, chr);
 			}
-			cdisdb.setHcpOfPatient(pat.getIdpatient(), casem, md, nut, nur, chr);
+			result = json.toJson(patient);
+			Action act = chbdb.getAction("ADDP");
+			User u = chbdb.getUser(sid);
+			chbdb.setEvent(u.getIduser(), act.getIdaction(), "1", sid, pat.getRamq());
 		}
-		
-		result = json.toJson(patient);
-		Action act = chbdb.getAction("ADDP");
-		User u = chbdb.getUser(sid);
-		chbdb.setEvent(u.getIduser(), act.getIdaction(), "1", sid, pat.getRamq());
 		return result;
 	}
 	
-@RequestMapping(value = {"/service/data/deletePatientRecord"}, method = RequestMethod.GET)
+@PostMapping({"/service/data/deletePatientRecord"})
 public String deletePatientRecord(final HttpServletRequest request){
 	Gson json = new GsonBuilder().serializeNulls().create();
-	
-	
 	String result = "";
 	String sid = request.getParameter("sid").toString();
 	String language = request.getParameter("language").toString();
@@ -928,22 +920,20 @@ public String deletePatientRecord(final HttpServletRequest request){
 	Session session = chbdb.isValidSession(sid);
 	if(session != null){
 		chbdb.setUserSession(session);
-	}
-	
-	ArrayList<Object> obs = new ArrayList<Object>();
-	Session ses = chbdb.isValidSession(sid);
-	if (ses != null){
-		if(cdisdb.deletePatient(idpatient)){
-			Action act = chbdb.getAction("DELP");
-			User u = chbdb.getUser(sid);
-			chbdb.setEvent(u.getIduser(), act.getIdaction(), "1", sid, idpatient);
-			msg = new MessageResponse(act,true,language,null);
+		ArrayList<Object> obs = new ArrayList<Object>();
+		Session ses = chbdb.isValidSession(sid);
+		if (ses != null){
+			if(cdisdb.deletePatient(idpatient)){
+				Action act = chbdb.getAction("DELP");
+				User u = chbdb.getUser(sid);
+				chbdb.setEvent(u.getIduser(), act.getIdaction(), "1", sid, idpatient);
+				msg = new MessageResponse(act,true,language,null);
+			}
+		}else{
+			msg = new MessageResponse(false,language,null);
 		}
-	}else{
-		msg = new MessageResponse(false,language,null);
+		result = json.toJson(msg);
 	}
-	
-	result = json.toJson(msg);
 	return result;
 }
 	

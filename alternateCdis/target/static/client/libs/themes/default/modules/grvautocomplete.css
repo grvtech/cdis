@@ -1,0 +1,10 @@
+.grvautocomplete-container{position:relative;cursor:pointer;font-size:19px;height:100%;padding:0px;box-sizing: border-box;}
+.grvautocomplete-container .noresults, .loading{font-weight:bold;text-align:center;}
+.grvautocomplete-container-input{position:relative;display:block;width:100%;height:100%;}
+.grvautocomplete-input{width:100%;height:100%;padding:0px;border:none;box-sizing: border-box;text-transform: uppercase;background-color:#efefef;vertical-align: top;}
+.grvautocomplete-dropdown{width:100%;background-color:#efefef;display:none;border:1px outset #efefef;}
+.grvautocomplete-dropdown-container{width:100%;height:100%;overflow:auto;}
+.autocomplete-item-header{background-color:#556c79; color:#ffffff;font-weight:bold;padding:5px 0px;}
+.autocomplete-item-body{overflow-y: auto;}
+.autocomplete-item.active {color:#ffffff;background-color:#4d4d4d;}
+.autocomplete-item .match {color:#ffffff;background-color:red;}

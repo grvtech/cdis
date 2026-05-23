@@ -1,11 +1,22 @@
+import * as applib from './../../../../js/applib.js';
+import * as userlib from './../../../../js/userlib.js';
+import * as genericlib from './../../../../js/genericlib.js';
+import * as patientlib from './../../../../js/patientlib.js';
+import * as graphlib from './../../../../js/graphlib.js';
+import * as router from './../../../../js/router.js';
+
+import * as slib from './lib.js';
+import {appDefine} from './../../../../js/define.js';
+import {grvpopup} from './../../modules/grvpopup.js';
+import {shareData} from './define.js'; //define global variables
 /*
  * global variable for list
  * */
 
-var toolbarConfig = {"container":"locallist-toolbar","lists":[{"id":"list103","title":"Patients by HbA1c","selected":"false"},{"id":"list102","title":"Patients with no HbA1C in the ","selected":"false"},{"id":"list101","title":"HbA1c trend","selected":"false"}],"options":[]};
+var toolbarConfig = {"container":"grvLocallistToolbar","lists":[{"id":"list103","title":"Patients by HbA1c","selected":"false"},{"id":"list102","title":"Patients with no HbA1C in the ","selected":"false"},{"id":"list101","title":"HbA1c trend","selected":"false"}],"options":[]};
 var dataperiodValues = [6,12,24,60];
 const listConfig = {
-		"container":"locallist-list",
+		"container":"grvLocallistList",
 		"initFilter":{"list":"list103","idcommunity":"0","dp":"12","dtype":"1_2","age":"0","hba1c":"0","sex":"0","users":"0"},
 		"list101":{"header":["fullname","ramq","chart","age","dduration","trend","last_hba1c","last_hba1c_collecteddate","secondlast_hba1c","secondlast_hba1c_collecteddate"]},
 		"list102":{"header":["fullname","ramq","chart","age","dduration","last_hba1c","last_hba1c_collecteddate"]},
@@ -24,7 +35,8 @@ var periodStatsData = {};
 var valueStatsData = {};
 
 
-function openList(pfilter){
+
+export function openList(pfilter){
 	//create the modal window
 	var id = "locallist";
 	if(pfilter!=null){
@@ -34,9 +46,9 @@ function openList(pfilter){
 	}
 	
 	var modal = $('<div>',{class:"cdisFullscreenLocalList"}).appendTo($("#grvWraper"));
+	$("body").css("overflow","hidden");
 	buildFrameList(modal);
 	setTimeout(loadReport, 10, "locallist");
-	//setTimeout(loadNoHbA1cPatients,100);
 }
 
 /*
@@ -67,19 +79,17 @@ function buildFrameList(container){
 	$('<div>',{class:"cdisName"}).text("CDIS").appendTo(header);
 	$('<div>',{class:"cdisTitle"}).text("Local Patient List").appendTo(header);
 	$('<div>').appendTo(header);
-	$('<div>',{class:"cdisFullscreenLocalListClose"}).html($('<i>',{class:"fa fa-times"})).click(function(){gts(sid,"en");}).appendTo(header);
+	$('<div>',{class:"cdisFullscreenLocalListClose"}).html($('<i>',{class:"fa fa-times"})).click(function(){router.gts(appDefine.sid,appDefine.appLanguage);}).appendTo(header);
 	
 	var body = $('<div>',{class:"cdisFullscreenLocalListBody"}).appendTo(container);
-	$('<div>',{class:"gap"}).appendTo(body);
-	$('<div>',{"id":"locallist-toolbar",class:"fullscreen-modal-toolbar"}).appendTo(body);
-	$('<div>',{class:"gap"}).appendTo(body);
-	
-	
-	$('<div>',{class:"gap"}).appendTo(body);
-	var c = $('<div>',{"id":"locallist-list",class:"fullscreen-modal-list"}).appendTo(body);
+	$('<div>').appendTo(body);
+	$('<div>',{"id":"grvLocallistToolbar",class:"cdisLocallistToolbar"}).appendTo(body);
+	$('<div>').appendTo(body);
+	$('<div>').appendTo(body);
+	var c = $('<div>',{"id":"grvLocallistList",class:"cdisLLList"}).appendTo(body);
 	$('<div>',{class:"gap"}).appendTo(body);
 	
-	setTimeout(showProgress , 10, c);
+	setTimeout(applib.showProgress , 100, c);
 	
 	$('<div>',{class:"cdisFullscreenLocalListFooter"}).appendTo(container);
 	
@@ -105,10 +115,10 @@ function getAllPatients(report, community){
  * function to load the report in the JSON object
  * */
 function loadReport(reportID){
-	var url = "/ncdis/client/reports/report."+reportID+"?ts="+moment();
+	var url = "/ncdis/client/reports/report."+reportID+"?ts="+Date.now();
 	var result = null;
-	var req1 = $.ajax({dataType: "json",url: url,async:false,cache:false});
-	req1.success(function(obj){
+	var req1 = $.ajax({dataType: "json",url: url,async:false,cache:false})
+	.done(function(obj){
 		result = obj;
 		nowReport = obj;
 		globalReport = obj;
@@ -121,7 +131,7 @@ function loadReport(reportID){
 					if(vv != ""){
 						if(!isNaN(vv)){
 							if(!linkedUsersIds.includes(vv)){
-								linkedUsers.push(getUserFromArray(vv));
+								linkedUsers.push(userlib.getUserFromArray(vv));
 								linkedUsersIds.push(vv);
 							}
 						}
@@ -134,15 +144,7 @@ function loadReport(reportID){
 	req1.fail(function( jqXHR, textStatus, errorThrown){console.log("AJAX failed!", jqXHR, textStatus, errorThrown)});
 	return result;
 }
-function loadNoHbA1cPatients(){
-	var url = "/ncdis/client/reports/report.nohba1c?ts="+moment();
-	$.getJSON(url, function(data){
-		globalNoHBA1cReport = data;
-		nowNoHBA1cReport = data;
-	}).fail(function(){
-       alert("An error has occurred.");
-    });
-}
+
 
 
 /*function to display data from the report
@@ -150,17 +152,18 @@ function loadNoHbA1cPatients(){
  * */
 function displayData(report){
 	setTimeout(drawToolbar,100, toolbarConfig);
-	//setTimeout(drawStats,50, statsConfig, report);
 	setTimeout(drawList,200, appFilter.list, listConfig, report);
-	//refreshStats();
-	
 }
+
+
+
+
 function drawToolbar(toolbarConfig){
 	var c = $("#"+toolbarConfig.container);
-	$("<div>",{class:"fs-gap"}).appendTo(c);
-	var fsFilters = $("<div>",{class:"fs-filters"}).appendTo(c);
-	var fsButtons = $("<div>",{class:"fs-buttons"}).appendTo(c);
-	var fsLists = $("<div>",{class:"fs-lists"}).appendTo(c);
+	$("<div>").appendTo(c);
+	var fsFilters = $("<div>",{class:"cdisLLFilters"}).appendTo(c);
+	var fsButtons = $("<div>",{class:"cdisLLButtons"}).appendTo(c);
+	var fsLists = $("<div>",{class:"cdisLLLists"}).appendTo(c);
 	drawToolbarFilters(fsFilters);
 	drawToolbarButtons(fsButtons);
 	drawToolbarLists(fsLists);
@@ -169,13 +172,13 @@ function drawToolbar(toolbarConfig){
 function drawToolbarFilters(container){
 	container.empty();
 	//container
-	var gr2col = $("<div>",{class:"gr-2col1"}).appendTo(container);
-	var gr2col1 = $("<div>",{class:"gr-2col2"}).appendTo(container);
+	var gr2col = $("<div>",{class:"cdisLine1"}).appendTo(container);
+	var gr2col1 = $("<div>",{class:"cdisLine2"}).appendTo(container);
 	//community
-	var grComm = $("<div>",{"id":"toolbarFilterCommunity",class:"gr-comm"}).appendTo(gr2col);
-	$("<div>",{"for":"comm-filter",class:"label-filter"}).text("Community").appendTo(grComm);
-	var grCommS = $("<select>",{"id":"comm-filter",class:""}).appendTo(grComm);
-	$.each(tool_idcommunity, function(j,com){
+	var grComm = $("<div>").appendTo(gr2col);
+	$("<div>",{class:"cdisLLLabel"}).text("Community").appendTo(grComm);
+	var grCommS = $("<select>",{"id":"grvLLCommunityFilter",class:""}).appendTo(grComm);
+	$.each(appDefine.communities, function(j,com){
 		$("<option>",{"value":j}).text(com).appendTo(grCommS);
 	});
 	grCommS.on("change",function(){
@@ -185,10 +188,10 @@ function drawToolbarFilters(container){
 
 	
 	//gender
-	var grGen = $("<div>",{"id":"toolbarFilterGender",class:"gr-gen"}).appendTo(gr2col);
-	$("<div>",{"for":"gen-filter",class:"label-filter"}).text("Gender").appendTo(grGen);
-	var grGenS = $("<select>",{"id":"gen-filter",class:""}).appendTo(grGen);
-	$.each(report_sex, function(j,gen){
+	var grGen = $("<div>").appendTo(gr2col);
+	$("<div>",{class:"cdisLLLabel"}).text("Gender").appendTo(grGen);
+	var grGenS = $("<select>",{"id":"grvLLGenderFilter",class:""}).appendTo(grGen);
+	$.each(appDefine.genders, function(j,gen){
 		$("<option>",{"value":j}).text(gen).appendTo(grGenS);
 	});
 	grGenS.on("change",function(){
@@ -197,14 +200,14 @@ function drawToolbarFilters(container){
 	});
 
 	//users
-	var grUsr = $("<div>",{"id":"toolbarFilterUsers",class:"gr-usr"}).appendTo(gr2col);
-	$("<div>",{"for":"usr-filter",class:"label-filter"}).text("Health Care Workers").appendTo(grUsr);
-	var grUsrS = $("<select>",{"id":"usr-filter",class:""}).appendTo(grUsr);
+	var grUsr = $("<div>").appendTo(gr2col);
+	$("<div>",{class:"cdisLLLabel"}).text("Health Care Workers").appendTo(grUsr);
+	var grUsrS = $("<select>",{"id":"grvLLUserFilter",class:""}).appendTo(grUsr);
 	$("<option>",{"value":0}).text("All users").appendTo(grUsrS);
 	if(linkedUsers.length > 0 ){
 		$.each(linkedUsers,function(iii,vvv){
 			if(vvv != null){
-				$("#usr-filter").append($("<option>",{"value":vvv.iduser}).text(capitalizeFirstLetter(vvv.firstname)+" "+capitalizeFirstLetter(vvv.lastname)));
+				$("#grvLLUserFilter").append($("<option>",{"value":vvv.iduser}).text(genericlib.capitalizeFirstLetter(vvv.firstname)+" "+genericlib.capitalizeFirstLetter(vvv.lastname)));
 			}
 		});
 	}
@@ -216,10 +219,10 @@ function drawToolbarFilters(container){
 	
 	
 	//data period
-	var grDp = $("<div>",{"id":"toolbarFilterDataperiod",class:"gr-dp"}).appendTo(gr2col);
-	$("<div>",{"for":"dp-filter",class:"label-filter"}).text("Data period").appendTo(grDp);
-	var grDpS = $("<select>",{"id":"dp-filter"}).appendTo(grDp);
-	$.each(report_dp, function(x,dp){
+	var grDp = $("<div>").appendTo(gr2col);
+	$("<div>",{class:"cdisLLLabel"}).text("Data period").appendTo(grDp);
+	var grDpS = $("<select>",{"id":"grvLLPeriodFilter"}).appendTo(grDp);
+	$.each(appDefine.periods, function(x,dp){
 		$("<option>",{"value":dataperiodValues[x]}).text(dp).appendTo(grDpS);
 	});
 	grDpS.on("change",function(){
@@ -228,12 +231,12 @@ function drawToolbarFilters(container){
 	});
 	
 	//dtype
-	var grDtype = $("<div>",{"id":"toolbarFilterDtype",class:"gr-dtype"}).appendTo(gr2col);
-	$("<div>",{class:"label-filter"}).text("Type of diabetes").appendTo(grDtype);
+	var grDtype = $("<div>").appendTo(gr2col);
+	$("<div>",{class:"cdisLLLabel"}).text("Type of diabetes").appendTo(grDtype);
 	var grDtypeC = $("<div>",{class:"gr-dtype-checkbox"}).appendTo(grDtype);
 	$("<div>",{"id":"dtype-filter-1",class:"gr-radio","grv-data":"1_2"}).appendTo(grDtypeC).text("Type1 and Type 2");
 	$("<div>",{"id":"dtype-filter-2",class:"gr-radio last","grv-data":"3"}).appendTo(grDtypeC).text("Pre DM");
-	//$("<div>",{"id":"dtype-filter-3",class:"gr-radio last","grv-data":"4"}).appendTo(grDtypeC).text("GDM");
+	
 	$(".gr-dtype-checkbox div").click(function(){
 		var dValue = appFilter.dtype;
 		var rv = $(this).attr("grv-data");
@@ -245,8 +248,8 @@ function drawToolbarFilters(container){
 		appFilter['dtype'] = dValue;
 	});
 	//age
-	var grAge = $("<div>",{"id":"toolbarFilterAge",class:"gr-age"}).appendTo(gr2col1);
-	$("<div>",{class:"label-filter"}).text("Age").appendTo(grAge);
+	var grAge = $("<div>").appendTo(gr2col1);
+	$("<div>",{class:"cdisLLLabel"}).text("Age").appendTo(grAge);
 	var grAgeC = $("<div>",{class:"gr-age-radio gr"}).appendTo(grAge);
 	$("<div>",{"id":"age-filter-1",class:"gr-radio","grv-data":"1"}).appendTo(grAgeC).text("All");
 	$("<div>",{"id":"age-filter-2",class:"gr-radio last","grv-data":"2"}).appendTo(grAgeC).text("Custom");
@@ -255,7 +258,6 @@ function drawToolbarFilters(container){
 	$("<input>",{"type":"text","id":"age-custom-min"}).appendTo(grAgeCustom);
 	$("<label>",{}).appendTo(grAgeCustom).text(" and max");
 	$("<input>",{"type":"text","id":"age-custom-max"}).appendTo(grAgeCustom);
-	//$("<button>",{"id":"age-custom-button",class:"cisbutton"}).text("Set").appendTo(grAgeCustom);
 	$(".gr-age-radio .gr-radio").click(function(){
 		$(".gr-age-radio div").removeClass("selected");
 		$(this).addClass("selected");
@@ -271,63 +273,15 @@ function drawToolbarFilters(container){
 			//draw data
 		}
 	});
-	$("#age-custom-button").click(function(){
-		var min = isNaN($("#age-custom-min").val())?"0":($("#age-custom-min").val() === '')?"0":$("#age-custom-min").val();
-		var max = isNaN($("#age-custom-max").val())?"0":($("#age-custom-max").val() === '')?"0":$("#age-custom-max").val();
-		$("#age-custom-min").val(min);
-		$("#age-custom-max").val(max);
-		appFilter["age"] = min+"_"+max;
-		//draw data
-	});
 	
-	//no display since only all values is present
-	//a1c
-	var grA1c = $("<div>",{"id":"toolbarFilterA1c",class:"gr-a1c"}).appendTo(gr2col1);
-	//$("<div>",{class:"label-filter"}).text("HbA1c").appendTo(grA1c);
-	//var grA1cC = $("<div>",{class:"gr-a1c-radio gr"}).appendTo(grA1c);
-	//$("<div>",{"id":"a1c-filter-0",class:"gr-radio","grv-data":"0"}).appendTo(grA1cC).text("All values");
-	//$("<div>",{"id":"a1c-filter-1",class:"gr-radio","grv-data":"1"}).appendTo(grA1cC).text("Latest value >= 0.075");
-	//$("<div>",{"id":"a1c-filter-2",class:"gr-radio last","grv-data":"2"}).appendTo(grA1cC).text("Custom values");
-	/*
-	var grA1cCustom = $("<div>",{class:"gr-a1c-custom gr-custom"}).appendTo(grA1cC);
-	$("<label>",{}).appendTo(grA1cCustom).text("Between min");
-	$("<input>",{"type":"text","id":"a1c-custom-min"}).appendTo(grA1cCustom);
-	$("<label>",{}).appendTo(grA1cCustom).text(" and max");
-	$("<input>",{"type":"text","id":"a1c-custom-max"}).appendTo(grA1cCustom);
-	//$("<button>",{"id":"a1c-custom-button",class:"cisbutton"}).text("Set").appendTo(grA1cCustom);
-	$(".gr-a1c-radio .gr-radio").click(function(){
-		$(".gr-a1c-radio div").removeClass("selected");
-		$(this).addClass("selected");
-		if($(this).attr("grv-data") == "2"){
-			$(".gr-a1c-custom").css("visibility","visible");
-		}else{
-			$(".gr-a1c-custom").css("visibility","hidden");
-			appFilter["hba1c"] = $(this).attr("grv-data");
-			$("#a1c-custom-min").val("");
-			$("#a1c-custom-max").val("");
-			//draw data
-		}
-	});
-	$("#a1c-custom-button").click(function(){
-		var min = isNaN($("#a1c-custom-min").val())?"0":($("#a1c-custom-min").val() === '')?"0":$("#a1c-custom-min").val();
-		var max = isNaN($("#a1c-custom-max").val())?"0":($("#a1c-custom-max").val() === '')?"0":$("#a1c-custom-max").val();
-		$("#a1c-custom-min").val(min);
-		$("#a1c-custom-max").val(max);
-		appFilter["hba1c"] = min+"_"+max;
-		//draw data
-	});
-	*/
 }
 function drawToolbarButtons(container){
 	//buttons
-	$("<div>",{class:"gr-gap"}).appendTo(container);
-	$("<div>",{class:"gr-gap"}).appendTo(container);
-	
-	$("<div>",{class:"gr-gap"}).appendTo($(".gr-2col2"));
-	var genBtn = $("<button>",{class:"cisbutton"}).text("Generate List").appendTo($(".gr-2col2"));
-	//genBtn.prop("disabled","true");
+	$("<div>").appendTo($(".cdisLine2"));
+	$("<div>").appendTo($(".cdisLine2"));
+	var genBtn = $("<button>",{class:"cdisCisButton"}).text("Generate List").appendTo($(".cdisLine2"));
 	genBtn.click(function(){
-		setTimeout(showProgress,10,$("#locallist-list"));
+		setTimeout(applib.showProgress,10,$("#grvLocallistList"));
 		if($("#age-filter-2").hasClass("selected")){
 			var min = isNaN($("#age-custom-min").val())?"0":($("#age-custom-min").val() === '')?"0":$("#age-custom-min").val();
 			var max = isNaN($("#age-custom-max").val())?"0":($("#age-custom-max").val() === '')?"0":$("#age-custom-max").val();
@@ -335,85 +289,95 @@ function drawToolbarButtons(container){
 			$("#age-custom-max").val(max);
 			appFilter["age"] = min+"_"+max;
 		}
-		//a1c
-		if($("#a1c-filter-2").hasClass("selected")){
-			var min = isNaN($("#a1c-custom-min").val())?"0":($("#a1c-custom-min").val() === '')?"0":$("#a1c-custom-min").val();
-			var max = isNaN($("#a1c-custom-max").val())?"0":($("#a1c-custom-max").val() === '')?"0":$("#a1c-custom-max").val();
-			$("#a1c-custom-min").val(min);
-			$("#a1c-custom-max").val(max);
-			appFilter["hba1c"] = min+"_"+max;
-		}
-		$("#list-list102").text(toolbarConfig.lists[1].title+report_dp[dataperiodValues.indexOf(Number(appFilter.dp))]);
+		
+		$("#list-list102").text(toolbarConfig.lists[1].title+appDefine.periods[dataperiodValues.indexOf(Number(appFilter.dp))]);
 		setTimeout(drawList,100, appFilter.list, listConfig, globalReport) ;
-		//refreshStats();
 	});
 	
-	$("<button>",{class:"cisbutton"}).text("Back to Search").appendTo($(".gr-2col2")).click(function(){
-		//$("#fullscreen_locallist").remove();
-		gts(sid,"en");
-		});
+	$("<button>",{class:"cdisCisButton"}).text("Back to Search").appendTo($(".cdisLine2")).click(function(){
+		router.gts(appDefine.sid,appDefine.appLanguage);
+	});
 	
-	
-	$("<div>",{class:"gr-gap other-buttons"}).appendTo(container);
-	var expBtn = $("<button>",{class:"cisbutton"}).text("Export list to CSV").appendTo(container);
+	$("<div>").appendTo(container);
+	$("<div>").appendTo(container);
+	$("<div>").appendTo(container);
+	var expBtn = $("<button>",{class:"cdisCisButton"}).text("Export list to CSV").appendTo(container);
 	expBtn.click(function(){
-		var fn = "Local_Patient_List-"+moment().format('YYYY-MM-DD_HH:mm:ss.S')+".csv";
+		var fn = "Local_Patient_List-"+genericlib.formatDate(new Date())+".csv";
 		var header = nowReport.data.header;
 		var rows = nowReport.data.datasets;
 		exportToCsv(fn, rows,header);
 	});
 	
-	var prtBtn = $("<button>",{class:"cisbutton"}).text("Print list").appendTo(container);
+	var prtBtn = $("<button>",{class:"cdisCisButton"}).text("Print list").appendTo(container);
 	prtBtn.click(function(){
-		var bconfig = {"width":"300","height":"250"};
-		var bbut = [{"text":"Close","action":"closeGRVPopup"},{"text":"Print","action":"prt"}];
-		var txt = "<p><center><span style='color:red;font-size:35px;'><i class='fa fa-exclamation-circle'></i></span><br><b>The list you are about to print contains confidental information.</b></center></p>";
-		showGRVPopup("Confidential information!",txt,bbut,bconfig);
+		//var bconfig = {"width":"300","height":"250"};
+		//var bbut = [{"text":"Close","action":"closeGRVPopup"},{"text":"Print","action":"prt"}];
+		//var txt = "<p><center><span style='color:red;font-size:35px;'><i class='fa fa-exclamation-circle'></i></span><br><b>The list you are about to print contains confidental information.</b></center></p>";
+		//showGRVPopup("Confidential information!",txt,bbut,bconfig);
+		
+		
+		let config = {
+					width:300,
+					height:250,
+					container:"grvWraper",
+					buttons:[{
+							"text":"Close",
+							"action":"closeGRVPopup",
+							"alias":"this"},
+							{
+								"text":"Print",
+								"action":"printLLContainer","alias":"slib"}],
+					content:txt,
+					title:"Confidential information!"
+			}
+			shareData.pagepopup = new grvpopup(config);
 
 	});
-	/*
-	var prtGBtn = $("<button>",{class:"cisbutton"}).text("Print graphs").appendTo(container);
-	prtGBtn.click(function(){
-		$(".stats-container").printCDISLocalListGraphs();
-		//$("#trend-graph").jqplotViewImage();
-	});
-	*/
-	$("<div>",{class:"gr-gap"}).appendTo(container);
-	$("<div>",{class:"gr-gap"}).appendTo(container);
+	$("<div>").appendTo(container);
+	$("<div>").appendTo(container);
 }
 
-function prt(){
-	$(".list-container").printCDISLocalList();
-	return true;
-};
+
+function loadNoHbA1cPatients(){
+	var url = "/ncdis/client/reports/report.nohba1c?ts="+Date.now();
+	$.getJSON(url, function(data){
+		globalNoHBA1cReport = data;
+		nowNoHBA1cReport = data;
+	}).fail(function(){
+       alert("An error has occurred.");
+    });
+}
+
+
 
 function drawToolbarLists(container){
 	container.empty();
-	container.append($("<div>",{class:"list-gap"}))
-	.append($("<div>",{class:"list-tabs"}))
-	.append($("<div>",{class:"list-gap"}))
-	.append($("<div>",{class:"list-button"}))
-	.append($("<div>",{class:"list-gap"}));
+	container.append($("<div>"))
+	.append($("<div>",{class:"cdisLLTabs"}))
+	.append($("<div>"))
+	.append($("<div>"))
+	.append($("<div>"));
 	$.each(toolbarConfig.lists, function(i, list){
 		var tt = list.title;
 		if(list.id == "list102"){
-			tt += report_dp[dataperiodValues.indexOf(Number(appFilter.dp))];
+			tt += appDefine.periods[dataperiodValues.indexOf(Number(appFilter.dp))];
 		}
-		$("<div>",{"id":"list-"+list.id,class:"list-tab"}).appendTo($(".list-tabs")).text(tt).click(function(){
-			$(".list-container").css("visibility","hiden");
-			$(".list-tab").removeClass("selected");
+		$("<div>",{"id":"list-"+list.id,class:"cdisLLTab"}).appendTo($(".cdisLLTabs")).text(tt).click(function(){
+			$(".cdisLLListContainer").css("visibility","hiden");
+			$(".cdisLLTab").removeClass("selected");
 			$(this).addClass("selected");
 			appFilter["list"] = $(this).attr("id").replace("list-",""); 
-			setTimeout(showProgress,10,$("#locallist-list"));
+			setTimeout(applib.showProgress,10,$("#grvLocallistList"));
 			setTimeout(drawList,1000,appFilter.list, listConfig, globalReport);
 		});
 	});
 }
 function setToolbar(filter){
-	$("#comm-filter").val(filter.idcommunity);
-	$("#gen-filter").val(filter.sex);
-	$("#usr-filter").val(filter.users);
-	$("#dp-filter").val(filter.dp);
+	$("#grvLLCommunityFilter").val(filter.idcommunity);
+	$("#grvLLGenderFilter").val(filter.sex);
+	$("#grvLLUserFilter").val(filter.users);
+	$("#grvLLPeriodFilter").val(filter.dp);
 	
 	var dtypeValue = filter.dtype;
 	$.each($(".gr-dtype-checkbox div"),function(i,e){
@@ -436,29 +400,15 @@ function setToolbar(filter){
 		$("#age-custom-max").val(vs[1]);
 	}
 	
-	var a1cValue = filter.hba1c;
-	if(a1cValue == "0"){
-		$(".gr-a1c-radio div").removeClass("selected");
-		$("#a1c-filter-0").addClass("selected");
-	}else if(a1cValue == "1"){
-		$(".gr-a1c-radio div").removeClass("selected");
-		$("#a1c-filter-1").addClass("selected");
-	}else{
-		$(".gr-a1c-radio div").removeClass("selected");
-		$("#a1c-filter-2").addClass("selected");
-		$(".gr-a1c-custom").css("visibility","visible");
-		var vs = a1cValue.split('_');
-		$("#a1c-custom-min").val(vs[0]);
-		$("#a1c-custom-max").val(vs[1]);
-	}
 	
-	$.each($(".list-tabs .list-tab"), function(i, list){
-		$(".list-tab").removeClass("selected");
+	$.each($(".cdisLLTabs .cdisLLTab"), function(i, list){
+		$(".cdisLLTab").removeClass("selected");
 		$("#list-"+filter.list).addClass("selected");
 	});
 	
 }
 
+/*
 function drawStats(statsConfig, report){
 	//patients  number - percentage improvved a1c from list
 	var container = $("#"+statsConfig.container);
@@ -471,24 +421,28 @@ function drawStats(statsConfig, report){
 	$("<div>",{class:"s-container tp","id":"s2"}).appendTo($(".stats-container"));
 	$("<div>",{class:"s-container tp","id":"s3"}).appendTo($(".stats-container"));
 }
+*/
+
 
 function drawList(listid,listConfig,report){
 	
-	if($(".list-container").length){
-		$(".list-container").remove();
+	if($(".cdisLLListContainer").length){
+		$(".cdisLLListContainer").remove();
 	}
-	var listContainer = $("<div>",{class:"list-container lista"+listid}).appendTo($("#"+listConfig.container));
+	var listContainer = $("<div>",{class:"cdisLLListContainer lista"+listid}).appendTo($("#"+listConfig.container));
 	
-	if($(".list-container .list-header-container").length){
-		$(".list-container .list-header-container").remove();
+	if($(".cdisLLListContainer .cdisLLListHeaderContainer").length){
+		$(".cdisLLListContainer .cdisLLListHeaderContainer").remove();
 	}
-	if($(".list-container .list-body-container").length){
-		$(".list-container .list-body-container").remove();
+	if($(".cdisLLListContainer .cdisLLListBodyContainer").length){
+		$(".cdisLLListContainer .cdisLLListBodyContainer").remove();
 	}
 	
-	var dataContainer = $("<div>",{class:"list-data-container"}).appendTo(listContainer);
-	var headerContainer = $("<div>",{class:"list-header-container"}).appendTo(listContainer);
-	var bodyContainer = $("<div>",{"id":"list-body",class:"list-body-container"}).appendTo(listContainer);
+	var dataContainer = $("<div>",{class:"cdisLLListDataContainer"}).appendTo(listContainer);
+	var headerContainer = $("<div>",{class:"cdisLLListHeaderContainer"}).appendTo(listContainer);
+	var bodyContainer = $("<div>",{"id":"grvLLListBody",class:"cdisLLListBodyContainer"}).appendTo(listContainer);
+	bodyContainer.height($("#"+listConfig.container).height() - dataContainer.height() - headerContainer.height());
+	
 	drawListHeader(dataContainer, listid);
 	var r = applyFilter(report,appFilter);
 	nowReport = getReport(r);
@@ -497,40 +451,40 @@ function drawList(listid,listConfig,report){
 	var stats = drawListTableBody(bodyContainer,r,listid);
 	refreshHeaderStats(stats);
 	listContainer.css("visibility","visible");
-	hideProgress($("#locallist-list"));
+	applib.hideProgress($("#grvLocallistList"));
 }
 
 function drawListHeader(container, listid){
-	$("<div>",{class:"search-button search-"+listid}).appendTo(container).html('<i class="fa fa-search"></i>');
+	$("<div>",{class:"cdisLLSearchButton search-"+listid}).appendTo(container).html('<i class="fa fa-search"></i>');
 	if(listid == "list101"){
-		$("<div>",{class:"list-data-container-panel panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Total")).append($("<div>",{class:"pvalue","id":"pTotal"}));
-		$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Decreased")).append($("<div>",{class:"pvalue","id":"pImproved"})).append($("<div>",{class:"prvalue","id":"prImproved"}));
-		$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Increased")).append($("<div>",{class:"pvalue","id":"pSetback"})).append($("<div>",{class:"prvalue","id":"prSetback"}));
-		$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("No Change")).append($("<div>",{class:"pvalue","id":"pConstant"})).append($("<div>",{class:"prvalue","id":"prConstant"}));
+		$("<div>",{class:"cdisLLListDataContainerPanel panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Total")).append($("<div>",{class:"pvalue","id":"pTotal"}));
+		$("<div>",{class:"cdisLLListDataContainerPanelPr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Decreased")).append($("<div>",{class:"pvalue","id":"pImproved"})).append($("<div>",{class:"prvalue","id":"prImproved"}));
+		$("<div>",{class:"cdisLLListDataContainerPanelPr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Increased")).append($("<div>",{class:"pvalue","id":"pSetback"})).append($("<div>",{class:"prvalue","id":"prSetback"}));
+		$("<div>",{class:"cdisLLListDataContainerPanelPr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("No Change")).append($("<div>",{class:"pvalue","id":"pConstant"})).append($("<div>",{class:"prvalue","id":"prConstant"}));
 	}else if(listid == "list102"){
-		$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Total")).append($("<div>",{class:"pvalue","id":"pTotal"})).append($("<div>",{class:"prvalue","id":"prTotal"}));
+		$("<div>",{class:"cdisLLListDataContainerPanelPr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Total")).append($("<div>",{class:"pvalue","id":"pTotal"})).append($("<div>",{class:"prvalue","id":"prTotal"}));
 	}else if(listid == "list103"){
-		$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Total")).append($("<div>",{class:"pvalue","id":"pTotal"})).append($("<div>",{class:"prvalue","id":"prTotal"}));
+		$("<div>",{class:"cdisLLListDataContainerPanelPr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Total")).append($("<div>",{class:"pvalue","id":"pTotal"})).append($("<div>",{class:"prvalue","id":"prTotal"}));
 		if(appFilter.dtype == "3"){
-			$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Less than 0.06")).append($("<div>",{class:"pvalue","id":"pUnder6"})).append($("<div>",{class:"prvalue","id":"prUnder6"}));
+			$("<div>",{class:"cdisLLListDataContainerPanelPr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Less than 0.06")).append($("<div>",{class:"pvalue","id":"pUnder6"})).append($("<div>",{class:"prvalue","id":"prUnder6"}));
 		}else{
-			$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Less than or equal to 0.07")).append($("<div>",{class:"pvalue","id":"pUnder7"})).append($("<div>",{class:"prvalue","id":"prUnder7"}));
-			$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Less than 0.08")).append($("<div>",{class:"pvalue","id":"pUnder8"})).append($("<div>",{class:"prvalue","id":"prUnder8"}));
-			$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Greater than or equal to 0.09")).append($("<div>",{class:"pvalue","id":"pOver9"})).append($("<div>",{class:"prvalue","id":"prOver9"}));
-			$("<div>",{class:"list-data-container-panel-pr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Average HbA1c")).append($("<div>",{class:"prvalue","id":"prAvg"}));
+			$("<div>",{class:"cdisLLListDataContainerPanelPr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Less than or equal to 0.07")).append($("<div>",{class:"pvalue","id":"pUnder7"})).append($("<div>",{class:"prvalue","id":"prUnder7"}));
+			$("<div>",{class:"cdisLLListDataContainerPanelPr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Less than 0.08")).append($("<div>",{class:"pvalue","id":"pUnder8"})).append($("<div>",{class:"prvalue","id":"prUnder8"}));
+			$("<div>",{class:"cdisLLListDataContainerPanelPr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Greater than or equal to 0.09")).append($("<div>",{class:"pvalue","id":"pOver9"})).append($("<div>",{class:"prvalue","id":"prOver9"}));
+			$("<div>",{class:"cdisLLListDataContainerPanelPr panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Average HbA1c")).append($("<div>",{class:"prvalue","id":"prAvg"}));
 		}
 	}else if(listid == "list104"){
-		$("<div>",{class:"list-data-container-panel panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Total")).append($("<div>",{class:"pvalue","id":"pTotal"}));
+		$("<div>",{class:"cdisLLListDataContainerPanel panel-cell"}).appendTo(container).append($("<div>",{class:"plabel"}).text("Total")).append($("<div>",{class:"pvalue","id":"pTotal"}));
 	}
 	
-	var f = $("<div>",{class:"search-form form-"+listid}).appendTo(container);
-	$("<div>",{class:"search-form-label"}).text("Name").appendTo(f);
-	$("<div>",{class:"search-form-text"}).appendTo(f).append($("<input>",{class:"text-input","id":"text-input-name"}));
-	$("<div>",{class:"search-form-label"}).text("Chart").appendTo(f);
-	$("<div>",{class:"search-form-text"}).appendTo(f).append($("<input>",{class:"text-input","id":"text-input-chart"}));
-	$("<div>",{class:"search-form-button disabled"}).text("Clear list").appendTo(f).click(function(){
-		$(".search-form-text input").val("");
-		drawListTableBody($("#list-body"), nowReport, listid);
+	var f = $("<div>",{class:"cdisLLSearchForm form-"+listid}).appendTo(container);
+	$("<div>",{class:"cdisLLSearchFormLabel"}).text("Name").appendTo(f);
+	$("<div>",{class:"cdisLLSearchFormText"}).appendTo(f).append($("<input>",{class:"text-input","id":"text-input-name"}));
+	$("<div>",{class:"cdisLLSearchFormLabel"}).text("Chart").appendTo(f);
+	$("<div>",{class:"cdisLLSearchFormText"}).appendTo(f).append($("<input>",{class:"text-input","id":"text-input-chart"}));
+	$("<div>",{class:"cdisLLSearchFormButton disabled"}).text("Clear list").appendTo(f).click(function(){
+		$(".cdisLLSearchFormText input").val("");
+		drawListTableBody($("#grvLLListBody"), nowReport, listid);
 		$(this).addClass("disabled");
 	});
 	
@@ -540,22 +494,22 @@ function drawListHeader(container, listid){
 		var p = $(this).parent();
 		if($(this).hasClass("selected")){
 			$(this).removeClass("selected");
-			$(p).find(".search-form").fadeOut(function(){
+			$(p).find(".cdisLLSearchForm").fadeOut(function(){
 				$(p).find(".panel-cell").fadeIn();
 				
 			});
 		}else{
 			$(p).find(".panel-cell").fadeOut(function(){
-				$(p).find(".search-form").css("display","grid");
-				$(p).find(".search-form").fadeIn();
-				$(p).find(".text-input").focus();
+				$(p).find(".cdisLLSearchForm").css("display","grid");
+				$(p).find(".cdisLLSearchForm").fadeIn();
+				$(p).find(".cdisLLSearchFormText input").focus();
 			});
 			$(this).addClass("selected");
 		}
 	});
 	
 
-	$(".text-input").keyup(function(event){
+	$(".cdisLLSearchFormText input").keyup(function(event){
 		var crit = $(this).attr("id").replace("text-input-","");
 		clearTimeout(searchTimer);
 		searchTimer = setTimeout(function(){
@@ -565,10 +519,10 @@ function drawListHeader(container, listid){
 			var v1 = $("#text-input-name").val();
 			var v2 = $("#text-input-chart").val();
 			if(v1.length >= 2 || v2.length >= 2){
-				$(".search-form-button").removeClass("disabled");
-				drawListTableBody($("#list-body"), searchListTerm(nowReport), listid);
+				$(".cdisLLSearchFormButton").removeClass("disabled");
+				drawListTableBody($("#grvLLListBody"), searchListTerm(nowReport), listid);
 			}else{
-				drawListTableBody($("#list-body"), nowReport, listid);
+				drawListTableBody($("#grvLLListBody"), nowReport, listid);
 			}
 		}, 500);
 	});
@@ -657,12 +611,15 @@ function applyFilter(report,filter){
 		 * */
 		if(dpValue != "0"){
 			dpValue = dpValue;
-			var filterDate = moment().subtract(dpValue, 'months');
-			var reportDate = moment(obj.last_hba1c_collecteddate);
-			hasDate = moment(reportDate).isAfter(moment(filterDate));
+			let d = new Date();
+			var filterDate = d.setMonth(d.getMonth() - dpValue);
+			//moment().subtract(dpValue, 'months');
+			//var reportDate = moment(obj.last_hba1c_collecteddate);
+			var reportDate = new Date(obj.last_hba1c_collecteddate);
+			hasDate = (reportDate > new Date(filterDate));
 			
 			if(filter.list == "list102"){
-				hasDate = moment(reportDate).isBefore(moment(filterDate));
+				hasDate = (reportDate < new Date(filterDate));
 			}
 			//alert(moment(reportDate).format("YYYY-MM-DD")+"     "+moment(filterDate).format("YYYY-MM-DD") + "    "+ hasDate);
 		}else{
@@ -731,8 +688,8 @@ function compareAgeAsc(a,b) {if (Number(a.age) < Number(b.age))return -1;if (Num
 function compareAgeDesc(a,b) {if (Number(a.age) < Number(b.age))return 1;if (Number(a.age) > Number(b.age))return -1;return 0;}
 function compareDeltaAsc(a,b) {if (Number(a.delta) < Number(b.delta))return -1;if (Number(a.delta) > Number(b.delta))return 1;return 0;}
 function compareDeltaDesc(a,b) {if (Number(a.delta) < Number(b.delta))return 1;if (Number(a.delta) > Number(b.delta))return -1;return 0;}
-function compareLastDateAsc(a,b) {if (moment(a.last_hba1c_collecteddate).isAfter(moment(b.last_hba1c_collecteddate)))return 1;if (moment(a.last_hba1c_collecteddate).isBefore(moment(b.last_hba1c_collecteddate)))return -1;return 0;}
-function compareLastDateDesc(a,b) {if (moment(a.last_hba1c_collecteddate).isBefore(moment(b.last_hba1c_collecteddate)))return 1;if (moment(a.last_hba1c_collecteddate).isAfter(moment(b.last_hba1c_collecteddate)))return -1;return 0;}
+function compareLastDateAsc(a,b) {if (new Date(a.last_hba1c_collecteddate) > (new Date(b.last_hba1c_collecteddate)))return 1;if (new Date(a.last_hba1c_collecteddate) < (new Date(b.last_hba1c_collecteddate)))return -1;return 0;}
+function compareLastDateDesc(a,b) {if (new Date(a.last_hba1c_collecteddate) < (new Date(b.last_hba1c_collecteddate)))return 1;if (new Date(a.last_hba1c_collecteddate) > (new Date(b.last_hba1c_collecteddate)))return -1;return 0;}
 function compareHBA1cDesc(a,b) {if (a.last_hba1c < b.last_hba1c)return 1;if (a.last_hba1c > b.last_hba1c)return -1;return 0;}
 function compareHBA1cAsc(a,b) {if (a.last_hba1c > b.last_hba1c)return 1;if (a.last_hba1c < b.last_hba1c)return -1;return 0;}
 
@@ -767,7 +724,7 @@ function drawListTableHeader(container, report, listid){
 						rep["data"]["datasets"] = dset.sort(compareDDurationAsc);
 						$(this).find("span").html("&uarr;");
 						$(this).find("span").attr("data",1);
-						drawListTableBody($("#list-body"), rep, listid);
+						drawListTableBody($("#grvLLListBody"), rep, listid);
 					}else if(d == "1"){
 						var rep = {"data":{"header":{},"datasets":{}}};
 						rep["data"]["header"] = report.data.header;
@@ -776,10 +733,10 @@ function drawListTableHeader(container, report, listid){
 						rep["data"]["datasets"] = dset.sort(compareDDurationDesc);
 						$(this).find("span").html("&darr;");
 						$(this).find("span").attr("data",2);
-						drawListTableBody($("#list-body"), rep, listid);
+						drawListTableBody($("#grvLLListBody"), rep, listid);
 					}else if(d == "2"){
 						$(this).removeClass("sortable");
-						drawListTableBody($("#list-body"), nowReport, listid);
+						drawListTableBody($("#grvLLListBody"), nowReport, listid);
 						$(this).find("span").html("&nbsp;");
 						$(this).find("span").attr("data",0);
 					}
@@ -800,7 +757,7 @@ function drawListTableHeader(container, report, listid){
 						rep["data"]["datasets"] = dset.sort(compareHBA1cAsc);
 						$(this).find("span").html("&uarr;");
 						$(this).find("span").attr("data",1);
-						drawListTableBody($("#list-body"), rep, listid);
+						drawListTableBody($("#grvLLListBody"), rep, listid);
 					}else if(d == "1"){
 						var rep = {"data":{"header":{},"datasets":{}}};
 						rep["data"]["header"] = report.data.header;
@@ -809,10 +766,10 @@ function drawListTableHeader(container, report, listid){
 						rep["data"]["datasets"] = dset.sort(compareHBA1cDesc);
 						$(this).find("span").html("&darr;");
 						$(this).find("span").attr("data",2);
-						drawListTableBody($("#list-body"), rep, listid);
+						drawListTableBody($("#grvLLListBody"), rep, listid);
 					}else if(d == "2"){
 						$(this).removeClass("sortable");
-						drawListTableBody($("#list-body"), nowReport, listid);
+						drawListTableBody($("#grvLLListBody"), nowReport, listid);
 						$(this).find("span").html("&nbsp;");
 						$(this).find("span").attr("data",0);
 					}
@@ -833,7 +790,7 @@ function drawListTableHeader(container, report, listid){
 						rep["data"]["datasets"] = dset.sort(compareLastDateAsc);
 						$(this).find("span").html("&uarr;");
 						$(this).find("span").attr("data",1);
-						drawListTableBody($("#list-body"), rep, listid);
+						drawListTableBody($("#grvLLListBody"), rep, listid);
 					}else if(d == "1"){
 						var rep = {"data":{"header":{},"datasets":{}}};
 						rep["data"]["header"] = report.data.header;
@@ -842,10 +799,10 @@ function drawListTableHeader(container, report, listid){
 						rep["data"]["datasets"] = dset.sort(compareLastDateDesc);
 						$(this).find("span").html("&darr;");
 						$(this).find("span").attr("data",2);
-						drawListTableBody($("#list-body"), rep, listid);
+						drawListTableBody($("#grvLLListBody"), rep, listid);
 					}else if(d == "2"){
 						$(this).removeClass("sortable");
-						drawListTableBody($("#list-body"), nowReport, listid);
+						drawListTableBody($("#grvLLListBody"), nowReport, listid);
 						$(this).find("span").html("&nbsp;");
 						$(this).find("span").attr("data",0);
 					}
@@ -866,7 +823,7 @@ function drawListTableHeader(container, report, listid){
 						rep["data"]["datasets"] = dset.sort(compareAgeAsc);
 						$(this).find("span").html("&uarr;");
 						$(this).find("span").attr("data",1);
-						drawListTableBody($("#list-body"), rep, listid);
+						drawListTableBody($("#grvLLListBody"), rep, listid);
 					}else if(d == "1"){
 						var rep = {"data":{"header":{},"datasets":{}}};
 						rep["data"]["header"] = report.data.header;
@@ -875,10 +832,10 @@ function drawListTableHeader(container, report, listid){
 						rep["data"]["datasets"] = dset.sort(compareAgeDesc);
 						$(this).find("span").html("&darr;");
 						$(this).find("span").attr("data",2);
-						drawListTableBody($("#list-body"), rep, listid);
+						drawListTableBody($("#grvLLListBody"), rep, listid);
 					}else if(d == "2"){
 						$(this).removeClass("sortable");
-						drawListTableBody($("#list-body"), nowReport, listid);
+						drawListTableBody($("#grvLLListBody"), nowReport, listid);
 						$(this).find("span").html("&nbsp;");
 						$(this).find("span").attr("data",0);
 					}
@@ -899,7 +856,7 @@ function getReportHeaderConfig(column, headerArray){
 }
 function drawListTableBody(container,report,listid){
 	
-	container.css("height",container.height()+"px");
+	//container.css("height",container.height()+"px");
 	container.empty();
 	var header = eval("listConfig."+listid+".header");
 	var reportHeader = report.data.header;
@@ -912,7 +869,7 @@ function drawListTableBody(container,report,listid){
 	
 	var dataHeaderStats = {};
 	
-	var bc = document.getElementById("list-body");
+	var bc = document.getElementById("grvLLListBody");
 	var c = document.createDocumentFragment();
 	
 	var totalTotal = getAllPatients(globalReport, appFilter.idcommunity);
@@ -956,7 +913,7 @@ function drawListTableBody(container,report,listid){
 	
 	$.each(reportBody,function(i,row){
 		var e = document.createElement("div");
-	    e.className = "list-body-container-line";
+	    e.className = "cdisLLListBodyContainerLine";
 	    e.id = row.ramq+"_"+row.idpatient;
 	    bc.appendChild(e);
 		
@@ -996,13 +953,13 @@ function drawListTableBody(container,report,listid){
 		if(row.delta > 0 ){pSetback++;}
 		if(row.delta == 0 ){pConstant++;}
 		if(row.last_hba1c < 0.06){pUnder++;}else if(row.last_hba1c >= 0.06 && row.last_hba1c <= 0.07){pBetween++;}else if(row.last_hba1c > 0.07){pOver++;}
-		if(moment(row.last_hba1c_collecteddate).isAfter(moment().subtract(1,'month'))){pLastmonth++;}
+		if((new Date(row.last_hba1c_collecteddate)) > (new Date()).setMonth((new Date()).getMonth() - 1)){pLastmonth++;}
 		if(row.last_hba1c <= 0.07){pUnder7++;}
 		if(row.last_hba1c <= 0.06){pUnder6++;}
 		if(row.last_hba1c < 0.08){pUnder8++;}
 		if(row.last_hba1c >= 0.09){pOver9++;}
-		if(moment(row.last_hba1c_collecteddate).isBefore(moment().subtract(5,'year'))){pMorethan5++;}
-		if(moment(row.last_hba1c_collecteddate).isBefore(moment().subtract(10,'year'))){pMorethan10++;}
+		if((new Date(row.last_hba1c_collecteddate)) < ((new Date()).setYear((new Date()).getYear() - 5))){pMorethan5++;}
+		if((new Date(row.last_hba1c_collecteddate)) < ((new Date()).setYear((new Date()).getYear() - 10))){pMorethan10++;}
 	});
 	
 	dataHeaderStats["pImproved"]=pImproved;
@@ -1041,11 +998,11 @@ function drawListTableBody(container,report,listid){
 	dataHeaderStats["prMorethan10"]=Math.round(100*pMorethan10/pTotal)+"%";
 	
 	
-	$(".list-body-container-line").on("click",function(){
+	$(".cdisLLListBodyContainerLine").on("click",function(){
 		var lid = $(this).attr("id");
 		var parts = lid.split("_");
 		if(!$(this).hasClass("selected")){
-			$(".list-body-container-line").removeClass("selected");
+			$(".cdisLLListBodyContainerLine").removeClass("selected");
 			var hasTrend = false;
 			if($(".trend").length){
 				hasTrend = true;
@@ -1056,19 +1013,19 @@ function drawListTableBody(container,report,listid){
 			
 			closeAllPatientView();
 			$(this).addClass("selected");
-			loadPatientObject("ramq",parts[0]);
+			patientlib.getPatientRecord("ramq",parts[0]);
 			var bc = $("#trend_"+parts[1]);
 			var nc = "";
 			if(!hasTrend) {
 				bc =  $("#fullname_"+parts[1]);
 				nc = "fullname-button";
 			}
-			$("<div>",{class:"cisbutton "+nc}).text("view").appendTo(bc).click(function(){
+			$("<div>",{class:"cdisCisButton "+nc}).text("view").appendTo(bc).click(function(){
 				if($(this).hasClass("view-on")){
 					closeAllPatientView();
 					$(this).removeClass("view-on");
 					$(this).text("view");
-					//$(".list-body-container-line").removeClass("selected");
+					
 				}else{
 					$(this).addClass("view-on");
 					$(this).text("close");
@@ -1078,60 +1035,52 @@ function drawListTableBody(container,report,listid){
 		}else{
 			
 		}
-		
-		/*
-		$(".other-buttons").empty();
-		$("<div>",{class:"cisbutton"}).text("View Record").appendTo($(".other-buttons")).click(function(){
-			var r = $(".list-body-container-line.selected").attr("id");
-			gtc(sid,"en",r,"patient");	
-		});
-		*/
 	});
 	return dataHeaderStats;
 }
 function closeAllPatientView(){
-	$(".view-patient-container").slideUp("fast", function() {
-		 $(".grafs-container").css("visibility","hidden");
-		 $(".view-patient-container").remove();
+	$(".cdisViewPatientContainer").slideUp("fast", function() {
+		 $(".cdisGrafsContainer").css("visibility","hidden");
+		 $(".cdisViewPatientContainer").remove();
 	});
 }
 function createPatientView(line){
 	var lid = $(line).attr("id");
 	var parts = lid.split("_");
-	//loadPatientObject("ramq",parts[0]);
-	var viewContainer = $("<div>",{class:"view-patient-container","id":"view-patient_"+lid});
-	viewContainer.append($("<div>",{class:"view-patient-progress"}));
-	var c = $("<div>",{class:"grafs-container"}).appendTo(viewContainer);
+
+	var viewContainer = $("<div>",{class:"cdisViewPatientContainer","id":"view-patient_"+lid});
+	
+	var c = $("<div>",{class:"cdisGrafsContainer"}).appendTo(viewContainer);
 	var gap = $("<div>",{class:"graf-gap"});
 	c.append($("<div>",{class:"graf-gap"})).append($("<div>",{class:"graf-gap"})).append($("<div>",{class:"graf-gap"}));
-	var gc = $("<div>",{class:"view-patient-graphs-container"})
-		.append($("<div>",{class:"view-patient-graph-container","id":"lab_hba1c"}).append($("<div>",{class:"title"}).text("HBA1c (Percentage)")))
-		.append($("<div>",{class:"view-patient-graph-container","id":"lipid_ldl"}).append($("<div>",{class:"title"}).text("LDL (mmol/L)")))   
-		.append($("<div>",{class:"view-patient-graph-container","id":"renal_acratio"}).append($("<div>",{class:"title"}).text("AcRatio (mg/mmol)")))
-		.append($("<div>",{class:"view-patient-graph-container","id":"renal_egfr"}).append($("<div>",{class:"title"}).text("eGFR (ml/min)")));
+	var gc = $("<div>",{class:"cdisViewPatientGraphsContainer"})
+		.append($("<div>",{class:"cdisViewPatientGraphContainer","id":"lab_hba1c"}).append($("<div>",{class:"title"}).text("HBA1c (Percentage)")))
+		.append($("<div>",{class:"cdisViewPatientGraphContainer","id":"lipid_ldl"}).append($("<div>",{class:"title"}).text("LDL (mmol/L)")))   
+		.append($("<div>",{class:"cdisViewPatientGraphContainer","id":"renal_acratio"}).append($("<div>",{class:"title"}).text("AcRatio (mg/mmol)")))
+		.append($("<div>",{class:"cdisViewPatientGraphContainer","id":"renal_egfr"}).append($("<div>",{class:"title"}).text("eGFR (ml/min)")));
 	
-	var bc = $("<div>",{class:"view-patient-buttons-container"}).append($("<div>",{class:"cisbutton view-patient-detail","id":"detail_"+lid}).text("View Patient Detail")).append($("<div>",{class:"cisbutton view-patient-close","id":"close_"+lid}).text("Close"));
-	c.append($("<div>",{class:"graf-gap"})).append(gc).append($("<div>",{class:"graf-gap"}));
-	c.append($("<div>",{class:"graf-gap"})).append(bc).append($("<div>",{class:"graf-gap"}));
+	var bc = $("<div>",{class:"cdisViewPatientButtonsContainer"}).append($("<div>",{class:"cdisCisButton cdisViewPatientDetail","id":"detail_"+lid}).text("View Patient Detail")).append($("<div>",{class:"cdisCisButton cdisViewPatientClose","id":"close_"+lid}).text("Close"));
+	c.append($("<div>")).append(gc).append($("<div>"));
+	c.append($("<div>")).append(bc).append($("<div>"));
 	
 	viewContainer.insertAfter(line);
 	
 	viewContainer.slideDown('slow', function() {
-		$(".grafs-container").css("visibility","visible");
+		$(".cdisGrafsContainer").css("visibility","visible");
 		setTimeout(dg,100);
 	});
 }
 function dg(){
 	var p = "lab_hba1c".split("_");
-	drawGraphValue(p[0],p[1]);
+	graphlib.drawGraphValue(p[0],p[1]);
 	var p1 = "lipid_ldl".split("_");
-	drawGraphValue(p1[0],p1[1]);
+	graphlib.drawGraphValue(p1[0],p1[1]);
 	var p2 = "renal_acratio".split("_");
-	drawGraphValue(p2[0],p2[1]);
+	graphlib.drawGraphValue(p2[0],p2[1]);
 	var p3 = "renal_egfr".split("_");
-	drawGraphValue(p3[0],p3[1]);
+	graphlib.drawGraphValue(p3[0],p3[1]);
 	
-	$(".view-patient-close").click(function(){
+	$(".cdisViewPatientClose").click(function(){
 		var lid = $(this).attr("id").replace("close_","");
 		var parts = lid.split("_");
 		closeAllPatientView();
@@ -1143,7 +1092,7 @@ function dg(){
 		$("#"+lid).removeClass("selected");
 	});
 	
-	$(".view-patient-detail").click(function(){
+	$(".cdisViewPatientDetail").click(function(){
 		var lid = $(this).attr("id").replace("detail_","");
 		var parts = lid.split("_");
 		var fllparams = "&fll=1";
@@ -1151,9 +1100,9 @@ function dg(){
 			fllparams+="&"+"fll_"+k+"="+v
 		});
 		fllparams+="&"+"fll_ramq="+parts[0];
-		gtc(sid,"en",parts[0],"patient",fllparams);	
+		router.gtc(appDefine.sid,appDefine.appLanguage,parts[0],"patient",fllparams);	
 	});
-	$(".view-patient-progress").remove();
+	
 }
 function getColor(indexDelta, totalDelta, delta){
 	var result = "#ffffff";
@@ -1164,11 +1113,11 @@ function getColor(indexDelta, totalDelta, delta){
 		result = "rgb(255,255,0)";
 		
 	}else if(Number(delta) > 0){
-		p = Number(indexDelta)/Number(totalDelta);
+		let p = Number(indexDelta)/Number(totalDelta);
 		g = Math.round(p*255);
 		result = "rgb(255,"+g+",0)";
 	}else if(Number(delta) < 0){
-		p = Number(indexDelta)/Number(totalDelta);
+		let p = Number(indexDelta)/Number(totalDelta);
 		r = Math.round(p*255);
 		result = "rgb("+(255-r)+",255,0)";
 	}
@@ -1176,7 +1125,7 @@ function getColor(indexDelta, totalDelta, delta){
 	return result;
 }
 function renderValue(value,valueConfig){
-	if(isDemo){
+	if(appDefine.isDemo){
 		if(valueConfig.name == "ramq"){
 			//value = makelid(4)+makenid(8);
 			value = "XXXX12345678";
@@ -1206,7 +1155,8 @@ function renderValue(value,valueConfig){
 			
 		}
 	}else if(valueConfig.type == "date" ){
-		return moment(value).format(valueConfig.format);
+		//return moment(value).format(valueConfig.format);
+		return genericlib.formatDate(new Date(value),valueConfig.format);
 	}else if(valueConfig.type == "array"){
 		var arr = eval("report_"+valueConfig.name);
 		return arr[value];
@@ -1305,7 +1255,7 @@ function getValueSeries(){
 	.append($("<div>",{class:"title"}).text(tit))
 	.append($("<div>",{class:"tp-graph","id":"value-graph"}));
 	
-	setTimeout(showProgress,10,$("#value-graph"));
+	setTimeout(applib.showProgress,10,$("#value-graph"));
 	var trendStats = $.ajax({
 		  url: "/ncdis/service/data/getStatsData?sid="+sid+"&language=en",
 		  data : data,
@@ -1314,7 +1264,7 @@ function getValueSeries(){
 			valueStatsData = json.objs[0];
 			$("#value-graph").css("background","#cdcdcd");
 			drawBarLineGraph($("#value-graph"), valueStatsData);
-			hideProgress($("#value-graph"));
+			applib.hideProgress($("#value-graph"));
 		}).fail(function( jqXHR, textStatus ) {
 			
 		  alert( "Request failed: " + textStatus );
@@ -1396,15 +1346,15 @@ function getReportTitle(filter, type){
 		result = "Graphic historical representation of patients"
 	}
 	if(filter.sex != "0"){
-		result = "List of "+report_sex[filter.sex].toLowerCase()+" patients "
+		result = "List of "+appDefine.genders[filter.sex].toLowerCase()+" patients "
 		if(type == "graph"){
-			result = "Graphic historical representation of "+report_sex[filter.sex].toLowerCase()+" patients "
+			result = "Graphic historical representation of "+appDefine.genders[filter.sex].toLowerCase()+" patients "
 		}
 	}
 	if (filter.idcommunity == "0"){
 		result += " from <b>all Cree communities</b> ";
 	}else {
-		result += " from <b>"+ tool_idcommunity[filter.idcommunity]+"</b> ";
+		result += " from <b>"+ appDefine.communities[filter.idcommunity]+"</b> ";
 	}
 	
 	var dtypes = filter.dtype.replace("_","");
@@ -1442,7 +1392,7 @@ function getReportTitle(filter, type){
 	
 	var usersStr = "<br>There is no linkeage between patients and health care workers.";
 	if(filter.users != "0"){
-		usersStr = "<br>Patients are linked to health care worker <b>"+$("#usr-filter option:selected").text()+"</b>";
+		usersStr = "<br>Patients are linked to health care worker <b>"+$("#grvLLUserFilter option:selected").text()+"</b>";
 	}
 	if(type == "list"){
 		result+=usersStr;

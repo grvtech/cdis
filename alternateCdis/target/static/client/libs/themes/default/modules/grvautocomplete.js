@@ -10,9 +10,12 @@ export class grvautocomplete {
 		this.highlight = (config.highlight)?config.highlight:true;
 		this.minLength = (config.minLength)?config.minLength:1;
 		this.maxHeight = (config.maxHeight)?config.maxHeight:300;
-		this.source = config.source; //source is an url api to backend that returns json
+		this.source = config.source; //source is an function api to backend that returns json
+		this.select = config.select; //function triggerd for select
+		this.render = config.render;
 		this.holder = $("<div>",{class:"grvautocomplete-container",id:this.id}).appendTo(this.container);
-		this.input = $("<input>",{class:"grvautocomplete-input",autocomplete:"off"}).appendTo(this.holder);
+		this.inputholder = $("<div>",{class:"grvautocomplete-container-input"}).appendTo(this.holder).css("height",this.container.height());
+		this.input = $("<input>",{class:"grvautocomplete-input",autocomplete:"off",id:this.id}).appendTo(this.inputholder);
 		this.timeout = null;
 		this.isOpen = false;
 		this.dropdown = null;
@@ -20,6 +23,7 @@ export class grvautocomplete {
 		this.loadstyle();
 		this.createDropdown();
 		this.bindEvents();
+		this.input.focus();
 	}            
 	
 	
@@ -52,7 +56,24 @@ export class grvautocomplete {
 				self.hideDropdown();
 			}
 		});
+		this.input.on('autocomplete:select', function(e, item){
+			self.select(item);
+		})
 
+		this.dropdown.on('click.autocomplete', '.autocomplete-item', function(e) {
+			e.stopPropagation();
+			const item = $(this).attr('value');
+			self.selectItem(item);
+			self.select($(this));
+		});
+
+		this.dropdown.on('mouseenter.autocomplete', '.autocomplete-item', function(e) {
+			e.stopPropagation();
+			$('.autocomplete-item').removeClass('active');
+			$(this).addClass('active');
+			self.currentIndex = $(this).data('index');
+		});
+		
 		this.input.on('keydown.autocomplete', function(e) {
 			if (!self.isOpen) return;
 			switch(e.keyCode) {
@@ -70,11 +91,12 @@ export class grvautocomplete {
                    break;
                case 27: // Escape
                    self.hideDropdown();
+				   self.input.val("");
                    break;
            }
 		});
 
-		this.input.on('blur.autocomplete', function() {setTimeout(() => self.hideDropdown(), 150);});
+		this.input.on('blur.autocomplete', function() {setTimeout(() => self.hideDropdown(), 250);});
 
 		$(document).on('click.autocomplete', function(e) {
 			if (!self.input.is(e.target) && !self.dropdown.is(e.target) && !self.dropdown.has(e.target).length) {
@@ -84,11 +106,12 @@ export class grvautocomplete {
 	}
 	
 	createDropdown() {
-		this.dropdown = $('<div>',{class:"grvautocomplete-dropdown"});
+		this.dropdown = $('<div>',{class:"grvautocomplete-dropdown"}).css("max-height",this.maxHeight+"px");
 		this.holder.append(this.dropdown);
 	}
 	
 	search(query) {
+		
 		const self = this;
 		if (typeof this.source === 'function') {
 			this.showLoading();
@@ -100,50 +123,19 @@ export class grvautocomplete {
 	}
 	
 	displayResults(results, query) {
-		const self = this;
 		this.dropdown.empty();
 		this.currentIndex = -1;
-
 		if (results.length === 0) {
-			this.dropdown.html('<div class="no-results">No results found</div>');
+			this.dropdown.html('<div class="noresults">No results found</div>');
 		} else {
-			results.forEach((item, index) => {
-				const $item = $('<div class="autocomplete-item"></div>');
-	                                
-				if (this.highlight) {
-					console.log(item)
-					const highlightedText = this.highlightMatch(item, query);
-					$item.html(highlightedText);
-				} else {
-					$item.text(item);
-				}
-
-				$item.data('index', index).data('value', item);
-				this.dropdown.append($item);
-			});
-
-			this.dropdown.on('click.autocomplete', '.autocomplete-item', function() {
-				const item = $(this).data('value');
-				self.selectItem(item);
-			});
-
-			this.dropdown.on('mouseenter.autocomplete', '.autocomplete-item', function() {
-				$('.autocomplete-item').removeClass('active');
-				$(this).addClass('active');
-				self.currentIndex = $(this).data('index');
-			});
+			console.log("render results");
+			let con = this.render(results,query);
+			console.log(con)
+			this.dropdown.append(con.css("height",this.maxHeight+"px"));
 		}
-
 		this.showDropdown();
 	}
 	
-	
-	highlightMatch(text, query) {
-		const regex = new RegExp(`(${query})`, 'gi');
-		//return text.replace(regex, '<span class="match">$1</span>');
-		return '<span class="match">query</span>';
-	}
-
 	showLoading() {
 		this.dropdown.html('<div class="loading">Searching...</div>');
 		this.showDropdown();
@@ -161,6 +153,7 @@ export class grvautocomplete {
 	hideDropdown() {
 		this.dropdown.hide();
         this.isOpen = false;
+		this.dropdown.empty();
         this.currentIndex = -1;
     }
 
@@ -183,9 +176,12 @@ export class grvautocomplete {
 
 	selectCurrent() {
         const $activeItem = this.dropdown.find('.autocomplete-item.active');
+		console.log("active item")
+		console.log($activeItem.attr('value'))
         if ($activeItem.length) {
-            const item = $activeItem.data('value');
+            const item = $activeItem.attr('value');
             this.selectItem(item);
+			this.select($activeItem);
         }
     }
 
@@ -195,4 +191,7 @@ export class grvautocomplete {
         this.input.trigger('autocomplete:select', [item]);
     }	
 	
+	getValue(){
+		return this.input.val();
+	}
 }

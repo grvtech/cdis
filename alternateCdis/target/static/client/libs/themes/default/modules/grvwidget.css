@@ -1,0 +1,75 @@
+.grvwidget-graph-container{display:grid;grid-template-rows:35px auto;height:100%;font-size:19px;}
+
+.grvwidget-graph-container .header{background-color:#8aa5f7;display:grid;grid-template-columns:50% 50%;border-radius:10px 10px 0px 0px;}
+.grvwidget-graph-container .header .menu{text-align:right;margin-top:auto;margin-bottom:auto;}
+.grvwidget-graph-container .header .menu .cdisCisButton.selected{background-color:red;}
+.grvwidget-graph-container .header .title{font-size:0.9em;line-height:35px;padding-left:5px;font-weight:700;}
+.grvwidget-graph-container .header .title .unit{font-size:0.7em;}
+.grvwidget-graph-container .body{position:relative;height:100%;background:#cdcdcd;font-size:0.8em;border-radius:0px 0px 10px 10px;}
+.grvwidget-graph-container .body .graph{width:100%;height:100%;background:#ededed;border-radius:0px 0px 10px 10px;}
+
+.grvwidget-graph-container .body .table{position:absolute;overflow-y:auto;top:0px;left:0px;display:none;grid-template-rows:30px auto;height:100%;width:50%;z-index:2;background:#ededed;}
+.grvwidget-graph-container .body .table table{padding:0px;border-collapse: collapse;width:100%;}
+.grvwidget-graph-container .body .table table thead{}
+.grvwidget-graph-container .body .table table thead th{background-color:#4d4d4d;color:#fff;position: sticky;top: 0;z-index: 1;padding:5px;}
+.grvwidget-graph-container .body .table table tbody{}
+.grvwidget-graph-container .body .table table tbody tr{width:100%;}
+.grvwidget-graph-container .body .table table tbody .line{cursor:pointer;width:100%;}
+.grvwidget-graph-container .body .table table tbody .line.first{font-weight:700;}
+.grvwidget-graph-container .body .table table tbody .line td{text-align: center;padding:5px;}
+.grvwidget-graph-container .body .table table tbody .line:nth-child(odd){background:#cdcdcd;}
+.grvwidget-graph-container .body .table table tbody .line:nth-child(even){background:#fefefe;}
+.grvwidget-graph-container .body .table table tbody .line:hover{background:#abc2e8;}
+.grvwidget-graph-container .body .table table tbody .line i{display: none;}
+.grvwidget-graph-container .body .table table tbody .line:hover i{display: block;}
+
+.grvwidget-graph-container .body .form{position:absolute;top:0px;left:0px;display:none;height:100%;width:50%;background:#ededed;border-radius:0px 0px 10px 10px;z-index:3;}
+
+.grvwidget-table-container{position:relative;display:grid;grid-template-rows:35px auto;height:100%;font-size:19px;}
+.grvwidget-table-container .header{background-color:#8aa5f7;position:relative;display:grid;grid-template-columns:50% 50%;border-radius:10px 10px 0px 0px;}
+.grvwidget-table-container .header .menu{text-align:right;margin-top:auto;margin-bottom:auto;}
+.grvwidget-table-container .header .menu .cdisCisButton.selected{background-color:red;}
+.grvwidget-table-container .header .title{font-size:0.9em;line-height:35px;padding-left:5px;font-weight:700;}
+.grvwidget-table-container .header .title .unit{font-size:0.7em;}
+.grvwidget-table-container .body{position:relative;height:100%;font-size:0.8em;}
+.grvwidget-table-container .body .table{position:relative;height:100%;width:100%;border-radius:0px 0px 10px 10px;background:#ededed;overflow-y:auto;}
+.grvwidget-table-container .body .table table{padding:0px;border-collapse: collapse;width:100%;}
+.grvwidget-table-container .body .table table thead{}
+.grvwidget-table-container .body .table table thead th{background-color:#4d4d4d;color:#fff;position: sticky;top: 0;z-index: 1;padding:5px;}
+.grvwidget-table-container .body .table table tbody{}
+.grvwidget-table-container .body .table table tbody tr{width:100%;}
+.grvwidget-table-container .body .table table tbody .line{padding:3px;cursor:pointer;width:100%;}
+.grvwidget-table-container .body .table table tbody .line.first{font-weight:700;}
+.grvwidget-table-container .body .table table tbody .line td.data{text-align: center;padding:5px;}
+.grvwidget-table-container .body .table table tbody .line:nth-child(odd){background:#cdcdcd;}
+.grvwidget-table-container .body .table table tbody .line:nth-child(even){background:#fefefe;}
+.grvwidget-table-container .body .table table tbody .line:hover{background:#abc2e8;}
+.grvwidget-table-container .body .table table tbody .line i{display: none;}
+.grvwidget-table-container .body .table table tbody .line:hover i{display: block;}
+
+.grvwidget-table-container .body .form{position:absolute;top:0px;left:0px;display:none;height:100%;width:100%;background:#ededed;border-radius:0px 0px 10px 10px;z-index:3;}
+.grvwidget-table-container .body .form .header-form{display:grid;grid-template-columns:auto 25px;background-color:#4d4d4d;color:#fff;line-height:30px;padding-left:5px;}
+.grvwidget-table-container .body .form .body-form .error{width:100%;height:30px;}
+.grvwidget-table-container .body .form .body-form .label{text-align:center;font-weight:600;width:100%;height:30px;line-height:30px;}
+.grvwidget-table-container .body .form .body-form .value{text-align:center;width:100%;height:30px;line-height:30px;}
+.grvwidget-table-container .body .form .body-form .value input{border:none;width:70px;height:30px;text-align:center;}
+.grvwidget-table-container .body .form .body-form .value span{border:none;width:10px;height:30px;line-height:30px;text-align:center;background:#ffffff;}
+.grvwidget-table-container .body .form .body-form .date{text-align:center;width:130px;height:30px;line-height:30px;background:#fff;margin:auto;}
+.grvwidget-table-container .body .form .body-form .date input{border:none;width:100px;height:28px;text-align:center;}
+.grvwidget-table-container .body .form .body-form .buttons{text-align:center;margin:20px auto;}
+
+
+.grvwidget-history-container{position:relative;margin:auto;width:90%;height:90%;background:#efefef;overflow:hidden;}
+
+
+
+@media only screen and (max-width: 1600px) {
+	.grvwidget-graph-container .body .table .body .line{display:grid;grid-template-columns:50px auto 25px;padding:3px;cursor:pointer;}
+	.grvwidget-graph-container .body .form .body .error{width:100%;height:20px;}
+	.grvwidget-graph-container .body .form .body .label{text-align:center;font-weight:600;width:100%;height:20px;line-height:20px;}
+	.grvwidget-graph-container .body .form .body .value{text-align:center;width:100%;height:20px;line-height:20px;}
+	.grvwidget-graph-container .body .form .body .value input{border:none;width:70px;height:20px;text-align:center;}
+	.grvwidget-graph-container .body .form .body .date{text-align:center;width:130px;height:20px;line-height:20px;background:#fff;margin:auto;}
+	.grvwidget-graph-container .body .form .body .date input{border:none;width:100px;height:18px;text-align:center;}
+	.grvwidget-graph-container .body .form .body .buttons{text-align:center;margin:10px auto;}
+}

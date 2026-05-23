@@ -1,7 +1,7 @@
 {
 	"name":"index",
-	"path":"client/sections/index/",
-	"page":"client/sections/index/ui/index.html",
+	"path":"/ncdis/client/libs/themes/sections/index/",
+	"page":"/ncdis/client/libs/themes/sections/index/index.html",
 	"container":"grvWraper",
 	"frontpageContainer":"grvFrontpage",
 	"ressources":[

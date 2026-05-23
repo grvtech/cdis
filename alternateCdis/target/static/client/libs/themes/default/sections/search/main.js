@@ -6,13 +6,14 @@ import {appDefine} from './../../../../js/define.js';
 
 /*
  * MAIN SECTION
- * */
-
+ * 
+*/
 if (!userlib.isUserLoged(appDefine.sid)){
 	userlib.logoutUser(appDefine.sid);
 }else{
+	appDefine.userObject = userlib.getUserBySession(appDefine.sid);
+	appDefine.users = userlib.getUsers();
 	applib.loadRessources(sectionconfig,slib.initPage);
-	//loadTemplate(page,loadSearchTemplate);
 }
 
 

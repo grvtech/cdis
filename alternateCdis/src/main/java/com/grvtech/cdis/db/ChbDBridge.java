@@ -19,6 +19,7 @@ import com.grvtech.cdis.model.Action;
 import com.grvtech.cdis.model.Cisystem;
 import com.grvtech.cdis.model.Message;
 import com.grvtech.cdis.model.Note;
+import com.grvtech.cdis.model.Patient;
 import com.grvtech.cdis.model.Profile;
 import com.grvtech.cdis.model.Role;
 import com.grvtech.cdis.model.ScheduleVisit;
@@ -467,9 +468,10 @@ public ArrayList<Object> getPatientsList(String criteria, String term, User user
 		url = "select * from dbo.SearchPatient where ramq like '"+term+"%' "+comfilter+" order by ramq";
 	}else if(criteria.equals("fnamelname")){
 		url = "select * from dbo.SearchPatient where fname like '"+term+"%' or lname like '"+term+"%' "+comfilter+" order by fname,lname";
-	}else if(criteria.equals("ipm")){
+	}else if(criteria.equals("giu")){
 		url = "select * from dbo.SearchPatient where giu like '"+term+"%' "+comfilter+" order by giu";
 	}
+	
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(url);
     for(Map row : rows) {
     	SearchPatient sp = new SearchPatient(
@@ -774,16 +776,17 @@ public boolean deletePatientNote(String noteid){
 }
 
 	
-public ScheduleVisit getScheduleVisit(String idpatient, String iduser){
+public ScheduleVisit getScheduleVisit(String idpatient, String idprofession){
 	ScheduleVisit result  = new ScheduleVisit();
-	String sql = "select top 1 case when datediff(month, DATEADD(month, DATEDIFF(month, 0, datevisit), 0), getdate()) > 0 then dateadd(month,frequency * ceiling( datediff(month, DATEADD(month, DATEDIFF(month, 0, datevisit), 0), getdate() ) / cast(frequency as float)) ,datevisit) else	datevisit end as nextdate , idpatient,iduser, idprofesion, frequency from ncdis.ncdis.schedulevisits  where idpatient="+idpatient+" and iduser="+iduser+" order by datevisit desc";
+	String sql = "select top 1 case when datediff(month, DATEADD(month, DATEDIFF(month, 0, datevisit), 0), getdate()) > 0 then dateadd(month,frequency * ceiling( datediff(month, DATEADD(month, DATEDIFF(month, 0, datevisit), 0), getdate() ) / cast(frequency as float)) ,datevisit) else	datevisit end as nextdate , idpatient,iduser, idprofesion, frequency from ncdis.ncdis.schedulevisits  where idpatient="+idpatient+" and idprofesion="+idprofession+" order by idschedulevisits desc";
 	List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 	for(Map row : rows) {
 		if(row != null) {
 			result = new ScheduleVisit(row.get("idpatient").toString(), row.get("iduser").toString(), row.get("nextdate").toString(), row.get("frequency").toString(), row.get("idprofesion").toString());
 		}
     }
-	logger.log(Level.INFO, "Get Scheduled Visits iduser:"+iduser+"   idpatient:"+idpatient );
+	logger.log(Level.INFO, "Get Scheduled Visits idprofession:"+idprofession+"   idpatient:"+idpatient );
+	//logger.log(Level.INFO, "Get Scheduled Visits idprofession  SQL:"+sql );
 	return result;
 }
 
@@ -802,7 +805,18 @@ public boolean setScheduleVisit(String idschedule, String iduser, String idpatie
 	return result;
 }
 
-	
+public boolean deleteScheduleVisit(String idpatient, String idprofesion){
+	//to delete schedule you set idprofession 0 for all schedules of specific profession
+	boolean result = false;
+	String sql = "update ncdis.ncdis.schedulevisits set idprofesion='0' where idpatient='"+idpatient+"' and idprofesion='"+idprofesion+"'";
+	jdbcTemplate.update(sql);
+	result = true;
+	logger.log(Level.INFO, "Delete Scheduled  Visit   idpatient:"+idpatient+ " and idprossion="+idprofesion );
+	return result;
+}
+
+
+
 public ArrayList<Object> getUserPatients(String iduser, String hcpcat){
 	ArrayList<Object> result = new ArrayList<>();
     String sql = "SELECT pp.idpatient,concat(pp.fname,' ',pp.lname) as fullname, pp.ramq,pp.chart,pp.idcommunity, cc.name_en as community"
@@ -881,7 +895,7 @@ public Hashtable<String,ArrayList<ArrayList<String>>> getUserDashboard(String id
 	    result.put("actions",actions);
 	    
 	    
-	    String sql2 = "select top 10 data, cast(max(created) as date) as date from ncdis.ncdis.events "
+	    String sql2 = "select top 20 data, cast(max(created) as date) as date from ncdis.ncdis.events "
 	    		+ "where iduser="+iduser+" and data is not null and created between DATEDIFF(day,30,getdate())  and getdate() "
 	    		+ "group by data order by date desc";
 	    
@@ -889,10 +903,17 @@ public Hashtable<String,ArrayList<ArrayList<String>>> getUserDashboard(String id
 	    ArrayList<ArrayList<String>> history = new ArrayList();
 	    for(int i=0;i<rs2.size();i++) {
 	    	Map<String,Object> line = rs2.get(i);
-	    	ArrayList<String> l = new ArrayList();
+	    	ArrayList<String> l = new ArrayList<String>();
 	    	l.add(line.get("date").toString());
+	    	String data = line.get("data").toString();
 	    	l.add(line.get("data").toString());
-	    	history.add(l);
+	    	if(data.length() == 12 && history.size() <= 10) {
+	    		String sqlxx = "select top 1 active from ncdis.ncdis.patient where ramq='"+data+"'";
+	    		String active = jdbcTemplate.queryForObject(sqlxx, String.class);
+	    		if(active.equals("1")) {
+	    			history.add(l);
+	    		}
+	    	}
 	    }
 	    result.put("history",history);
 	    

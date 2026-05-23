@@ -1,0 +1,32 @@
+<div class="cdisSectionContainer">
+	<div id="grvMenu"></div>
+	<div>
+		<div class="cdisPanelSection">
+			<div class="pheader">
+				<h1>Renal</h1>
+				<span>
+					<label>(Place cursor over selected points of the graph to highlight value and date)</label><br/>
+					<i>Data in this section is updated automatically from Omnilab.</i>	
+				</span>
+				<div style="vertical-align:middle;text-align:right;padding:10px;">
+					<div class="cdisCisButton" onclick="printSectionGraphs('Glucose Control')" title="Print all graphs in section">Print All Graphs</div>
+				</div>
+			</div>	
+			
+		 	<div style="display:grid;grid-template-rows:repeat(3 1fr);row-gap:20px;padding:20px;">
+				<div style="display:grid;grid-template-columns:1fr 1fr;column-gap:20px;">
+					<div class="uss" type="grvwidget" data="acratio"></div>
+					<div class="uss" type="grvwidget" data="egfr"></div>
+				</div>
+				<div style="display:grid;grid-template-columns:1fr 1fr;column-gap:20px;">
+					<div class="uss" type="grvwidget" data="pcr"></div>
+					<div class="uss" type="grvwidget" data="pcrg"></div>
+				</div>
+				<div style="display:grid;grid-template-columns:1fr 1fr;column-gap:20px;">
+					<div class="uss" type="grvwidget" data="crea"></div>
+				</div>
+			</div> 
+		</div>
+	</div>
+	<div id="grvRight"></div>
+</div>

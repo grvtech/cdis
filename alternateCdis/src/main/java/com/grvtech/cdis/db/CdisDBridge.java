@@ -115,6 +115,7 @@ public class CdisDBridge {
         	HashMap<String, String> line = new HashMap<>();
             line.put("iduser",row.get("iduser").toString());
             line.put("name",(row.get("name")==null?"":row.get("name").toString()));
+            line.put("criteria",hcp);
             result.add(line);
         }
         logger.log(Level.INFO, "Get HCPs hcp:"+hcp + "Search term :"+term );
@@ -254,9 +255,9 @@ public class CdisDBridge {
 				+ "'"+sdf.format(new Date())+"'"+","
 				+ "'1')";
 		logger.log(Level.INFO, query);
-	    int stat = jdbcTemplate.update(query);
+	    jdbcTemplate.update(query);
 	    logger.log(Level.INFO, "Add Patient ramq:"+pat.getRamq() );    
-	    result.setStatus(stat);
+	    result.setStatus(1);
 	return result;
 }
 	
@@ -303,6 +304,9 @@ public boolean setHcpOfPatient(int idpatient,  String casem, String md, String n
 	boolean result = false;
 	deleteHcpOfPatient(idpatient);
 	String sql = "insert into ncdis.patient_hcp (idpatient, casem, md, nut, nur,chr, idsystem) values ("+idpatient+",0,'"+md+"','"+nut+"','"+nur+"','"+chr+"',1)";
+	System.out.println("----------------");
+	System.out.println(sql);
+	System.out.println("----------------");
 	jdbcTemplate.update(sql);
 	result = true;
 	logger.log(Level.INFO, "Set HCP by IDpatient  idpatient:"+idpatient+ " HCPS casem:"+casem+"  MD:"+md+"  nut:"+nut+"  nur:"+nur+" chr:"+chr );
@@ -318,7 +322,17 @@ public boolean setOneHcpOfPatient(String idpatient,  String iduser, String hcpco
 	logger.log(Level.INFO, "Set ONE HCP by IDpatient  idpatient:"+idpatient+ " iduser:"+iduser+"  code:"+hcpcode );
 	return result;
 }
-	
+
+public boolean deleteOneHcpOfPatient(String idpatient, String hcpcode){
+	boolean result = false;
+	String sql= "update ncdis.ncdis.patient_hcp set "+hcpcode+"='0' where idpatient="+idpatient;
+	jdbcTemplate.update(sql);
+	result = true;
+	logger.log(Level.INFO, "Delete ONE HCP by IDpatient  idpatient:"+idpatient+ " code:"+hcpcode );
+	return result;
+}
+
+
 	
 public Object getValues(String section, int idpatient, String sort){
 	Object result = null;

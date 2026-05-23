@@ -64,37 +64,36 @@ export	function gts(s,l,plus){
 		var p = window.btoa("sid="+s+"&language="+l+"&ts="+Math.floor(Date.now() / 1000)+plus);
 		window.location = getRoute("search",getTheme())+"?"+p;
 	}
-/*	
-export	function gtsplus(s,l,plus){
-		var p = window.btoa("sid="+sid+"&language="+l+"&ts="+Math.floor(Date.now() / 1000)+plus);
-		window.location = "search.html?"+p;
-	}
-*/
-export	function gtc(s,l,r,sec){
-		var p = window.btoa("sid="+s+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+Math.floor(Date.now() / 1000));
-		window.location = "cdis.html?"+p;
-	}/*go to cdis*/
-export	function gtcplus(s,l,r,sec,plus){
-		var pp = "sid="+s+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+Math.floor(Date.now() / 1000)+plus;
-		var p = window.btoa("sid="+sid+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+Math.floor(Date.now() / 1000)+plus);
-		window.location = "cdis.html?"+p;
-	}/*go to cdis*/
+
+/*go to cdis*/
+export	function gtc(s,l,r,sec,plus=""){
+		var p = window.btoa("sid="+s+"&language="+l+"&section="+sec+"&ramq="+r+"&ts="+Math.floor(Date.now() / 1000)+plus);
+		window.location = getRoute("cdis",getTheme())+"?"+p;
+}
+
+/*go to reports*/
 export	function gtr(s,l,rid){
 		var p = window.btoa("sid="+s+"&language="+l+"&reportid="+rid+"&ts="+Math.floor(Date.now() / 1000));
-		window.location = "reports.html?"+p;
-	}/*go to reports*/
+		window.location =  getRoute("reports",getTheme())+"?"+p;
+}
+
+/*go to options*/
 export	function gto(s,l,sec){
 		var p = window.btoa("sid="+s+"&language="+l+"&section="+sec+"&ts="+Math.floor(Date.now() / 1000));
-		window.location = "options.html?"+p;
-	}/*go to options*/
+		window.location = getRoute("options",getTheme())+"?"+p;
+}
+
+/*go to admin*/
 export	function gta(s,l,sec){
 		var p = window.btoa("sid="+s+"&language="+l+"&section="+sec+"&ts="+Math.floor(Date.now() / 1000));
-		window.location = "admin.html?"+p;
-	}/*go to admin*/
+		window.location = getRoute("admin",getTheme())+"?"+p;
+}
+
+/*go to note*/
 export	function gtn(s,l,r,idn){
 		var p = window.btoa("sid="+s+"&language="+l+"&section=notes&ramq="+r+"&idnote="+idn+"&ts="+Math.floor(Date.now() / 1000));
 		window.location = "cdis.html?"+p;
-	}/*go to admin*/
+}
 
 		
 /**

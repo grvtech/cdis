@@ -4,19 +4,7 @@
 
 
 
-function setEvent(eventcode){
-	var request = $.ajax({
-		  url: "/ncdis/service/action/setEvent?sid="+sid+"&eventcode="+eventcode+"&language=en&ts="+moment(),
-		  type: "GET",
-		  dataType: "json"
-		});
-		request.done(function( json ) {
-			var sObj = json.objs[0];
-		});
-		request.fail(function( jqXHR, textStatus ) {
-		  alert( "Request failed: " + textStatus );
-		});
-}
+
 
 function getUser(iduser){
 	var uObj = null;
@@ -93,7 +81,7 @@ function getUserMessages(userId){
 
 
 
-function getUsers(){
+export function getUsers(){
 	var result = [];
 	var request = $.ajax({
 		  url: "/ncdis/service/data/getUsers?language=en",
@@ -151,73 +139,9 @@ function getUserNotes(sessionid){
 }
 
 
-function refreshUserNotes(sessionid){
-	var request = $.ajax({
-		  url: "/ncdis/service/action/getUserNotes?language=en&sid="+sessionid,
-		  type: "GET",
-		  async : true,
-		  cache : false,
-		  dataType: "json"
-		});
-		request.done(function( json ) {
-			userNotes = json.objs[0];
-			if(userNotes.length > 0 ){
-				$(".cdisHeaderMenu .messages").show();
-				var cn = null;
-				if($(".cdisHeaderMenu .messages .number").length > 0 ){
-					cn = $(".cdisHeaderMenu .messages .number");
-				}else{
-					cn = $("<div>",{class:"number"}).appendTo($(".cdisHeaderMenu .messages"));
-				}
-				
-				cn.text(userNotes.length);
-				prepareMessageWidget(userNotes);
-			}else{
-				$(".cdisHeaderMenu .messages").hide();
-			}
-			setTimeout(refreshUserNotes,30000,sessionid);
-		});
-		request.fail(function( jqXHR, textStatus ) {
-		  alert( "Request failed: " + textStatus );
-		});
-}
 
-function prepareMessageWidget(notes){
-	if($(".cdisHeaderMenu .messages").length > 0 ){
-		var mw = $(".cdisHeaderMenu .messages");
-		var meev = getEvents(mw[0]);
-		
-		if(typeof(meev) == "undefined" || meev.mouseover.length <= 1 ){
-			mw.on("mouseenter",function(){
-				if($(".cdisMessagesDetailsContainer").length > 0){
-					$(".cdisMessagesDetailsContainer").remove();
-				}
-				var mdc = $("<div>",{class:"cdisMessagesDetailsContainer"}).appendTo($("#grvWraper"));
-				mdc.empty();
-				mdc.append($("<div>",{class:"arrow-up"})).append($("<div>",{class:"cdisMessagesDetails"}));
-				$.each(userNotes,function(i,not){
-					var uzer = getUser(not.iduser);
-					var patient = getPatientInfo(not.idpatient);
-					$("<div>",{class:"cdisMessage"})
-						.append($("<span>").html("New message from <b>"+uzer.firstname+" "+uzer.lastname+ "</b> for the patient <b>"+patient.ramq+"</b>"))
-						.append($("<div>",{class:"cdisCisButton"}).text("View").click(function(){
-							gtc(sid,"en",patient.ramq,"notes");
-						}))
-					.appendTo($(".cdisMessagesDetails"));
-				});
-				$(".cdisMessagesDetailsContainer").show("fade",600);
-			}).on("mouseleave",function(){
-				setTimeout(function(){
-					if($(".cdisMessagesDetailsContainer:hover").length > 0){
-						$(".cdisMessagesDetailsContainer").on("mouseleave",function(){$(".cdisMessagesDetailsContainer").remove();});
-					}else{
-						$(".cdisMessagesDetailsContainer").remove();
-					}
-				},700);
-			});
-		}
-	}
-}
+
+
 
 
 
@@ -519,7 +443,6 @@ function prepareDecesed(data){
 }
 
 function prepareDiabet(data){
-	
 	if($.type(data.dtype) != "undefined" ){
 		$.each(data.dtype.values, function(index, obj){
 			if(obj.dtype == "10"){

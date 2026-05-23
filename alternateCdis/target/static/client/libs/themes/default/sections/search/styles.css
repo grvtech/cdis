@@ -71,28 +71,21 @@ input:focus,select:focus,textarea:focus,button:focus {outline: none;}
 .cdisSectionButton{border:none;width:25px;height:25px;padding:0px;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius:2px;cursor: pointer;}
 
 /*button - round*/
-.cdisFlogout span{display:block;width:100%;height:100%;margin:0px;background:no-repeat url(../../images/work/logout_off.png) center center;-webkit-transition: 0.3s ease-in;-moz-transition: 0.3s ease-in;-o-transition: 0.3s ease-in;transition: 0.3s ease-in;}
-.cdisFlogout:hover span{background:no-repeat url(../../images/work/logout_on.png) center center;-webkit-transform: rotateX(180deg);transform: rotateX(180deg);}
-.cdisFreports{background-color:var(--main-bg-header);}
-.cdisFreports span{display:block;width:100%;height:100%;margin:0px;background:no-repeat url(../../images/work/reports_off.png) center center;-webkit-transition: 0.3s ease-in;-moz-transition: 0.3s ease-in;-o-transition: 0.3s ease-in;transition: 0.3s ease-in;}
-.cdisFreports:hover span{background:no-repeat url(../../images/work/reports_on.png) center center;-webkit-transform: rotateY(360deg);transform: rotateY(360deg);}
-.cdisFnew{background:var(--main-bg-header);}
-.cdisFnew span{display:block;width:100%;height:100%;margin:0px;background:no-repeat url(../../images/work/add_off.png) center center;-webkit-transition: 0.3s ease-in;-moz-transition: 0.3s ease-in;-o-transition: 0.3s ease-in;transition: 0.3s ease-in;}
-.cdisFnew span:hover{background:no-repeat url(../../images/work/add_on.png) center center;-webkit-transform: rotate(180deg);}
-.cdisFback span{display:block;width:100%;height:100%;margin:0px;background:no-repeat url(../images/ic_search_wht_24dp_r1_1.png) center center;-webkit-transition: 0.3s ease-in;-moz-transition: 0.3s ease-in;-o-transition: 0.3s ease-in;transition: 0.3s ease-in;}
+
+.cdisFlogout i{display:block;margin:auto;color:var(--main-white);line-height:50px;font-size:1.2vw;transition: 0.3s ease-in;}
+.cdisFlogout:hover i{transform: rotateY(180deg);}
+
+.cdisFreports i{display:block;margin:auto;color:var(--main-white);line-height:50px;font-size:1.2vw;transition: 0.3s ease-in;}
+.cdisFreports:hover i{transform: rotateY(360deg);}
+
+.cdisFnew i{display:block;margin:auto;color:var(--main-white);line-height:50px;font-size:1.2vw;transition: 0.3s ease-in;}
+.cdisFnew:hover i{transform: rotate(180deg);}
 
 /*panel - generic*/
 .cdisPanelFull{width:1000px;margin:20px auto 20px auto;}
 
 /*text - error*/
 .cdisErrorMessageForm{color: #ff0000;font-size: 14px;font-weight: 700;line-height: 36px;font-family: Arial;}
-
-/*jqplot - specific*/
-.jqplot-cursor-tooltip{background-color:#cdcdcd;color:var(--main-black);}
-.jqplot-highlighter{background-color:#efefef;color:var(--main-black);font-size:0.5vw;font-weight:bold;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);}
-.jqplot-cdistarget{}
-.pointLabels{color:var(--main-black); font-family:Arial;font-size:15px;}
-.jqplot-point-label {border: 1px solid #cdcdcd;padding: 2px 2px;background-color: rgba(242, 242, 252,0.9);color:var(--main-black);font-family:Arial;font-size:9px;fot-weight:bold;}
 
 /*tooltip - generic*/
 #tooltip_cdis {background: var(--main-black);color:#fff;font-family:Sans-Serif;font-size:100%;border: 1px solid var(--main-black);padding: 3px 5px;z-index:99999;}
@@ -161,9 +154,9 @@ SEARCH PAGE CSS
 
 .cdisSearchMessage{width:100%;background-color:#ededed;}
 .cdisDashboardMenu{width:100%;text-align:right;padding:5px;}
+.cdisLabel{width:auto; text-align:center;font-size:220%;color:#ffffff;margin:0px;}
 
-
-.cdisNotesAlert{position:relative;height:100px;width:1000px;margin:auto;z-index:2;background-color:#efefef;display:none;overflow-x: hidden;padding:5px;}
+.cdisNotesAlert{position:relative;height:100px;width:1000px;margin:auto;z-index:2;background-color:#efefef;display:block;overflow-x: hidden;padding:5px;}
 .cdisNotesAlert .cdisNoteMessage{position:relative;background-color:#fefefe;text-align:left;font-size:90%;line-height:25px;margin:3px;padding:3px;}
 .cdisNotesAlert .cdisNoteMessageButton{position:absolute;color:#cdcdcd;font-size:80%;cursor:pointer;right:15px;width:auto;top:2px;}
 .cdisNotesAlert .cdisNoteMessageButton:hover{color:#4d4d4d;font-weight:bold;}
@@ -177,6 +170,7 @@ SEARCH PAGE CSS
 .cdisDashboardUserTableValueLine:hover{background-color:#4b3b3b;color:#ffffff;font-weight:bold;}
 .cdisDashboardUserTableValueHeader{background-color:#4d4d4d;color:#ffffff;font-weight:bold;padding-left:3px;}
 .cdisActivityGraph{width:700px; height:200px;margin-left:10px;}
+.cdisActivityGraph canvas{width:700px; height:200px;margin-left:10px;}
 .cdisActivityGraph .jqplot-title{font-size:0.9em;font-weight:bold;}
 
 
@@ -215,4 +209,134 @@ SEARCH PAGE CSS
 }
 
 
+ /*
+ LOCALLIST STYLE
+ */
+ 
+ 
+/*main container*/
+.cdisFullscreenLocalList{position:absolute;background-color:#8492ad;width:100%;height:100%;top:0px;left:0px;z-index:100000;display: grid;grid-template-rows:50px auto 25px;font-size: 13px;}
+.cdisFullscreenLocalListClose{height:30px;width:30px;color:#fff;background:#db4437;line-height:30px;text-align:center;font-size:1rem;position:absolute;top:5px;right:0px;}
+
+/*footer of the container*/
+.cdisFullscreenLocalListFooter{height:100%;background-color:#efefef;}
+.cdisFullscreenLocalListBody{display:grid;grid-template-rows:220px auto;grid-template-columns:10% auto 10%;background-color:#8492ad;}
+
+/*#5c6c9d     #8492ad*/
+#grvLocallistList{position:relative;}
+
+
+.cdisLocallistList{background:#5c6c9d;display:grid;grid-template-rows:auto; grid-template-columns:auto;padding:10px;}
+.cdisLLListContainer{display:grid;grid-template-rows:40px 40px auto;visibility:hidden;}
+.cdisLLListHeaderContainer{display:grid;}
+.cdisLLListHeaderContainer > * {display:flex;justify-content:center;align-items:center;text-align:center;font-weight:bold;background-color:#adadad;color:#ffffff;}
+.cdisLLListHeaderContainer .head{cursor:pointer;}
+.cdisLLListBodyContainer{background-color:#ffffff;overflow:auto;}
+.cdisLLListBodyContainerLine{cursor:pointer;}
+.cdisLLListBodyContainerLine:nth-child(even){background-color:#cdcdcd;}
+.cdisLLListBodyContainerLine.selected{background-color:#db4437;color:#ffffff;}
+.cdisLLListBodyContainerLine > * {display:flex;justify-content:center;align-items:center;text-align:center;padding:2px 0px 2px 0px;}
+.cdisLLListBodyContainerLine:hover{background-color:#5c6c9d;color:#ffffff;}
+.cdisLLListDataContainer{background:#5c6c9d;}
+
+.cdisLLListContainer .cdisLLListDataContainer .cdisLLSearchForm{display:none;grid-template-columns:150px auto 100px 150px 100px;grid-column-start: 2;grid-column-end: span 6;}
+.cdisLLListContainer .cdisLLListDataContainer .cdisLLSearchFormLabel{display:flex;justify-content:center;align-items:center;background-color:#4d4d4d;color:#efefef;font-size:0.9vw;}
+.cdisLLListContainer .cdisLLListDataContainer .cdisLLSearchFormText{display:flex;justify-content:center;align-items:center;width:100%;height:100%;background-color:#efefef;font-size:0.9vw;}
+.cdisLLListContainer .cdisLLListDataContainer .cdisLLSearchFormButton{display:flex;justify-content:center;align-items:center;width:100%;height:100%;background-color:#4b3b3b;font-size:0.9vw;color:#efefef;cursor:pointer;}
+.cdisLLListContainer .cdisLLListDataContainer .cdisLLSearchFormButton.disabled{background-color:#cdcdcd;font-size:0.9vw;color:#adadad;}
+.cdisLLListContainer .cdisLLListDataContainer .cdisLLSearchFormText input{width:100%;height:100%;background-color: transparent;font-size:0.9vw;border:none;}
+.cdisLLListContainer .cdisLLListDataContainer .cdisLLSearchButton{display:flex;justify-content:center;align-items:center;background-color:#4d4d4d;color:#efefef;font-size:1.1vw;cursor:pointer;}
+.cdisLLListContainer .cdisLLListDataContainer .cdisLLSearchButton.selected{background-color:#db4437;}
+
+.cdisLLListContainer.listalist101 .cdisLLListDataContainer{display:grid;grid-template-columns:40px repeat(4, minmax(0, 1fr));column-gap:10px;padding-top:5px;}
+.cdisLLListContainer.listalist101 .cdisLLListDataContainer .cdisLLListDataContainerPanel{display:grid;grid-template-columns:70% 30%;font-weight:bold;font-size:0.8vw;background-color:#cdcdcd;}
+.cdisLLListContainer.listalist101 .cdisLLListDataContainer .cdisLLListDataContainerPanelPr{display:grid;grid-template-columns:50% 25% 25%;font-weight:bold;font-size:0.8vw;background-color:#cdcdcd;}
+.cdisLLListContainer.listalist101 .cdisLLListDataContainer .plabel{display:flex;justify-content:center;align-items:center;}
+.cdisLLListContainer.listalist101 .cdisLLListDataContainer .pvalue{display:flex;justify-content:center;align-items:center;background-color:#4d4d4d;color:#efefef;}
+.cdisLLListContainer.listalist101 .cdisLLListDataContainer .prvalue{display:flex;justify-content:center;align-items:center;background-color:#4bb2c5;color:#4d4d4d;}
+.cdisLLListContainer.listalist101 .cdisLLListHeaderContainer{grid-template-columns:auto 130px 60px 60px 100px 60px 130px 130px 130px 140px;}
+.cdisLLListContainer.listalist101 .cdisLLListBodyContainerLine{display:grid;grid-template-columns:auto 130px 60px 60px 100px 60px 130px 130px 130px 140px;}
+
+.cdisLLListContainer.listalist102 .cdisLLListDataContainer{display:grid;grid-template-columns:40px repeat(3, minmax(0, 1fr));column-gap:10px;padding-top:5px;}
+.cdisLLListContainer.listalist102 .cdisLLListDataContainer .cdisLLListDataContainerPanel{display:grid;grid-template-columns:70% 30%;font-weight:bold;font-size:0.8vw;background-color:#cdcdcd;}
+.cdisLLListContainer.listalist102 .cdisLLListDataContainer .cdisLLListDataContainerPanelPr{display:grid;grid-template-columns:50% 25% 25%;font-weight:bold;font-size:0.8vw;background-color:#cdcdcd;}
+.cdisLLListContainer.listalist102 .cdisLLListDataContainer .plabel{display:flex;justify-content:center;align-items:center;}
+.cdisLLListContainer.listalist102 .cdisLLListDataContainer .pvalue{display:flex;justify-content:center;align-items:center;background-color:#4d4d4d;color:#efefef;}
+.cdisLLListContainer.listalist102 .cdisLLListDataContainer .prvalue{display:flex;justify-content:center;align-items:center;background-color:#4bb2c5;color:#4d4d4d;}
+.cdisLLListContainer.listalist102 .cdisLLListHeaderContainer{grid-template-columns:auto 170px 60px 60px 170px  200px 215px;}
+.cdisLLListContainer.listalist102 .cdisLLListBodyContainerLine{display:grid;grid-template-columns:auto 170px 60px 60px 170px 200px 200px;}
+
+
+.cdisLLListContainer.listalist103 .cdisLLListDataContainer{display:grid;grid-template-columns:40px repeat(5, minmax(0, 1fr));column-gap:10px;padding-top:5px;}
+.cdisLLListContainer.listalist103 .cdisLLListDataContainer .cdisLLListDataContainerPanel{display:grid;grid-template-columns:70% 30%;font-weight:bold;font-size:0.8vw;background-color:#cdcdcd;}
+.cdisLLListContainer.listalist103 .cdisLLListDataContainer .cdisLLListDataContainerPanelPr{display:grid;grid-template-columns:50% 25% 25%;font-weight:bold;font-size:0.8vw;background-color:#cdcdcd;}
+.cdisLLListContainer.listalist103 .cdisLLListDataContainer .plabel{display:flex;justify-content:center;align-items:center;}
+.cdisLLListContainer.listalist103 .cdisLLListDataContainer .pvalue{display:flex;justify-content:center;align-items:center;background-color:#4d4d4d;color:#efefef;}
+.cdisLLListContainer.listalist103 .cdisLLListDataContainer .prvalue{display:flex;justify-content:center;align-items:center;background-color:#4bb2c5;color:#4d4d4d;}
+.cdisLLListContainer.listalist103 .cdisLLListHeaderContainer{grid-template-columns:auto 170px 60px 60px 170px 200px 215px;}
+.cdisLLListContainer.listalist103 .cdisLLListBodyContainerLine{display:grid;grid-template-columns:auto 170px 60px 60px 170px 200px 200px;}
+
+.cdisLLListContainer.listalist104 .cdisLLListDataContainer{display:grid;grid-template-columns:40px repeat(1, minmax(0, 1fr));column-gap:10px;padding-bottom:5px;}
+.cdisLLListContainer.listalist104 .cdisLLListDataContainer .cdisLLListDataContainerPanel{display:grid;grid-template-columns:70% 30%;font-weight:bold;font-size:0.8vw;background-color:#cdcdcd;}
+.cdisLLListContainer.listalist104 .cdisLLListDataContainer .cdisLLListDataContainerPanelPr{display:grid;grid-template-columns:50% 25% 25%;font-weight:bold;font-size:0.8vw;background-color:#cdcdcd;}
+.cdisLLListContainer.listalist104 .cdisLLListDataContainer .plabel{display:flex;justify-content:center;align-items:center;}
+.cdisLLListContainer.listalist104 .cdisLLListDataContainer .pvalue{display:flex;justify-content:center;align-items:center;background-color:#4d4d4d;color:#efefef;}
+.cdisLLListContainer.listalist104 .cdisLLListDataContainer .prvalue{display:flex;justify-content:center;align-items:center;background-color:#4bb2c5;color:#4d4d4d;}
+.cdisLLListContainer.listalist104 .cdisLLListHeaderContainer{grid-template-columns:auto 130px 60px 60px 100px 100px 115px ;}
+.cdisLLListContainer.listalist104 .cdisLLListBodyContainerLine{display:grid;grid-template-columns:auto 130px 60px 60px 100px 100px 100px;}
+
+.cdisLLListContainer .fullname{text-align:left;display:flex;justify-content:flex-start;padding-left:10px;}
+.cdisLLListContainer .fullname-button{margin-left:20px;font-size:0.6vw;padding:2px 7px 2px 7px;}
+.cdisLLListContainer .trend{text-align:center;font-size:0.6vw;}
+.cdisLLListContainer .trend > * {margin:0px;padding:2px 7px 2px 7px;}
+.cdisLLListContainer .sortable span{color:#ffffff;font-size:1.3vw;}
+.cdisLLListContainer .sortable {background-color:#4d4d4d;cursor:pointer;}
+
+.cdisLocallistToolbar{background:#8492ad;display:grid;grid-template-rows:10px auto 30px 30px;row-gap:10px;font-weight:bold;font-family:Sans-Serif;}
+.cdisLocallistToolbar .panel .header{text-align:left;padding:3px 3px 3px 7px; color:#4d4d4d;font-size:1vw;}
+.cdisLocallistToolbar .cdisLLFilters select{background:#cdcdcd;padding:5px;border:1px solid #4d4d4d;}
+.cdisLocallistToolbar .cdisLLFilters{margin:0px 10px 0px 10px;background-color:#5c6c9d;border-radius:5px;box-shadow: 0 0 3px rgba(0,0,0,.22),0 3px 4px rgba(0,0,0,.34);}
+.cdisLocallistToolbar .cdisLLFilters .cdisLLLabel{color:#fefefe;}
+.cdisLocallistToolbar .cdisLLFilters .gr .gr-custom{visibility:hidden;}
+.cdisLocallistToolbar .cdisLLFilters .gr .gr-custom label{padding: 0px 3px 0px 3px;line-height:27px;}
+.cdisLocallistToolbar .cdisLLFilters .gr .gr-custom input[type=text]{width:40px;padding:2px 2px 2px 2px; border:1px solid #4d4d4d; margin:0px 2px 0px 2px;text-align:center;}
+.cdisLocallistToolbar .cdisLLFilters .gr-dtype-checkbox{display:grid;grid-template-columns:auto auto auto;}
+.cdisLocallistToolbar .cdisLLFilters .gr-age-radio{display:grid;grid-template-columns:auto auto auto;}
+.cdisLocallistToolbar .cdisLLFilters .gr-a1c-radio{display:grid;grid-template-columns:170px;}
+.cdisLocallistToolbar .cdisLLFilters .gr-radio{border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-left:1px solid #4d4d4d;padding:1px;line-height:27px;color:#4d4d4d;background:#cdcdcd;text-align:center;cursor:pointer;}
+.cdisLocallistToolbar .cdisLLFilters .gr-radio:hover{background:#adadad;}
+.cdisLocallistToolbar .cdisLLFilters .gr-radio.last{border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;}
+.cdisLocallistToolbar .cdisLLFilters .gr-radio.selected{background-color:#4b3b3b;color:#ffffff;}
+.cdisLocallistToolbar .cdisLLFilters .cdisLine1{display:grid;grid-template-columns:auto auto auto auto auto;padding:3px 2px;grid-column-gap:5px;padding:5px;}
+.cdisLocallistToolbar .cdisLLFilters .cdisLine2{display:grid;grid-template-columns:auto auto auto 150px 150px;padding:3px 2px;grid-column-gap:5px;padding:5px;}
+.cdisLocallistToolbar .cdisLLFilters .cdisLine2 .cisbutton{background:#ffff14;font-size:120%;font-weight:bold;color:#4d4d4d;}
+.cdisLocallistToolbar .cdisLLFilters .cdisLine2 .cisbutton:hover{background:#db4437;color:#ffffff;}
+.cdisLocallistToolbar .cdisLLButtons{display:grid;grid-template-columns:10px 150px auto 150px 150px 150px 10px;padding:3px 2px;grid-column-gap:5px;}
+.cdisLocallistToolbar .cdisLLLists{display:grid;grid-template-columns:50px auto 50px 100px 30px;background-color:#8492ad;padding-top:3px;}
+.cdisLocallistToolbar .cdisLLLists .cdisLLTabs{display:grid;grid-template-columns:auto auto auto;align-items: stretch;grid-column-gap:10px;}
+.cdisLocallistToolbar .cdisLLLists .cdisLLTabs .cdisLLTab{text-align:center;background-color:#cdcdcd;color:#4d4d4d;cursor:pointer;line-height:27px;}
+.cdisLocallistToolbar .cdisLLLists .cdisLLTabs .cdisLLTab.selected{background-color:#5c6c9d;color:#ffffff;}
+
+
+.cdisViewPatientContainer{height:270px;margin:0px;display:none;position:relative;}
+.cdisGrafsContainer{height:100%;width:100%;background-color:#adadad;visibility:hidden;display:grid;grid-template-columns:10px auto 10px;grid-template-rows:10px auto 40px;}
+
+
+
+.cdisViewPatientGraphsContainer{display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));column-gap:5px;}
+.cdisViewPatientGraphContainer{display:grid;grid-template-rows:20px auto;}
+.cdisViewPatientGraphContainer .title{padding-left:25px;font-weight:bold;}
+.cdisViewPatientButtonsContainer{display:flex;justify-content:flex-end;align-items:center;}
+
+
+@media screen  and  (max-width: 1370px) {
+	.cdisLLListContainer.listalist101 .cdisLLListHeaderContainer{grid-template-columns:auto 130px 60px 60px 100px 60px 100px 100px 100px 115px;}
+	.cdisLLListContainer.listalist101 .cdisLLListBodyContainerLine{display:grid;grid-template-columns:auto 130px 60px 60px 100px 60px 100px 100px 100px 100px;}
+}
+
+@media screen  and  (min-width: 1370px) and  (max-width: 1599px) {
+}
+
+@media screen  and  (min-width: 1950px) {
+}
  

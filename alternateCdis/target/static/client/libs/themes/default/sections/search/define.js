@@ -1,3 +1,5 @@
 export const shareData = {
-	pagepopup : null
+	pagepopup : null,
+	criteriaObject:null,
+	autocomleteObject:null
 }; 

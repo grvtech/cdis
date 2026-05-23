@@ -1,0 +1,63 @@
+{
+	"title":"",
+	"id":"grvpscreen1",
+	"pages":[
+		{
+			"title":"Patient Screening",
+			"id":"grvpscreen1p1",
+			"context":"Please select the date when patient screeng took place",
+			"questions":[
+				{
+					"id":"date",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvpscreen1p1q1a1","answer":"","type":"grvdatepicker","label":"Date", "value":"", "width":150}
+					]
+				}
+			]
+		},
+		{
+			"title":"Patient Screening",
+			"id":"grvpscreen1p2",
+			"context":"",
+			"questions":[
+				{
+					"id":"foot",
+					"question":"What is the result of the visual foot exam ?",
+					"type":"radio",
+					"direction":"h",
+					"answers":[
+						{"id":"grvpscreen1p2q1a1","answer":"Normal","type":"radio","label":"", "value":"0", "width":100},
+						{"id":"grvpscreen1p2q1a2","answer":"Abnormal","type":"radio","label":"", "value":"1", "width":100}
+					]
+				},
+				{
+					"id":"neuromd",
+					"question":"What is the result of the 10 Monofiligram test?",
+					"type":"radio",
+					"direction":"h",
+					"answers":[
+						{"id":"grvpscreen1p2q2a1","answer":"Normal","type":"radio","label":"", "value":"0", "width":100},
+						{"id":"grvpscreen1p2q2a2","answer":"Abnormal","type":"radio","label":"", "value":"1", "width":100}
+					]
+				},
+				{
+					"id":"rpathscr",
+					"question":"What is the result of the Rethinopaty Screening?",
+					"type":"radio",
+					"direction":"h",
+					"answers":[
+						{"id":"grvpscreen1p2q3a1","answer":"Normal","type":"radio","label":"", "value":"0", "width":100},
+						{"id":"grvpscreen1p2q3a2","answer":"Abnormal","type":"radio","label":"", "value":"1", "width":100}
+					]
+				}
+			]
+		}
+	],
+	"conclusion":{
+		"title":"Blood presure",
+		"context":"Data saved"
+	}
+}

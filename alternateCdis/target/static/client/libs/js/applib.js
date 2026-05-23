@@ -1,4 +1,4 @@
-
+import {appDefine} from './define.js';
 
 /**
  * PUBLIC FUNCTIONS
@@ -37,6 +37,20 @@ export function loadRessources(config, callback){
 	});
 }
 
+export function loadRessourcesUi(config, name, container, callback){
+	$.each(config.ressources, function(i,v){
+		if(v.type == "ui"){
+			$.each(v.elements,function(j,element){
+				if(element.name == name){
+					container.load(element.file, callback);
+				}	
+			});
+		}
+	});
+}
+
+
+
 export function getTemplatePath(name, config){
 	let path = "";
 	let rs = config.ressources;
@@ -70,6 +84,61 @@ export function getTemplateContent(template){
 	return templateContent;
 }
 
+export function getEvents(element) {
+	//let eid = $.data(element);
+	//console.log(eid)
+	//let alleevents = $.cache[eid].events;
+	let alleevents = $._data(element, "events");
+	//var elemEvents = $._data(element, "events");
+	
+    //var allDocEvnts = $._data(document, "events");
+	//let did = $.data(document);
+	//let alldevents = $.cache[did].events;
+	let alldevents = $._data(document, "events");;
+	
+    for(var evntType in alldevents) {
+        //if(allDocEvnts.hasOwnProperty(evntType)) {
+			if(Object.prototype.hasOwnProperty.call(alldevents, evntType)) {
+            var evts = alldevents[evntType];
+            for(var i = 0; i < evts.length; i++) {
+                if($(element).is(evts[i].selector)) {
+                    if(alleevents == null) {
+                        alleevents = {};
+                    }
+                    //if(!elemEvents.hasOwnProperty(evntType)) {
+					if(!Object.prototype.hasOwnProperty.call(element, evntType)) {
+                        alleevents[evntType] = [];
+                    }
+                    alleevents[evntType].push(evts[i]);
+                }
+            }
+        }
+    }
+	
+    return alleevents;
+}
+
+
+export function showProgress(container){
+	if(!appDefine.progressOn){
+		$(container).css("position","relative");
+		var p = $('<div>',{id:"progress",class:"fullscreen-progress"}).appendTo(container);
+		var c = $('<div>',{class:"fullscreen-progress-container"}).appendTo(p);
+		var l = $('<div>',{class:"fullscreen-progress-container-logo"}).appendTo(c);
+		var t = $('<div>',{class:"fullscreen-progress-container-text"}).appendTo(c);
+		appDefine.progressOn=true;
+	}
+}
+
+export function hideProgress(container){
+	$(container).find($("#progress")).hide(500, function(){
+		$(container).find($("#progress")).remove();
+		appDefine.progressOn=false;
+	}).delay(500, function(){
+		$(container).find($("#progress")).remove();
+		appDefine.progressOn=false;
+	});
+}
 
 
 

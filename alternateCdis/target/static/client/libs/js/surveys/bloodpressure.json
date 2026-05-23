@@ -1,0 +1,58 @@
+{
+	"title":"",
+	"id":"grvbp1",
+	"pages":[
+		{
+			"title":"Collected date",
+			"id":"grvbp1p0",
+			"context":"Please select the date when blood pressure was mesured",
+			"questions":[
+				{
+					"id":"date",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvbp1p1q1a0","answer":"","type":"grvdatepicker","label":"Date", "value":"", "width":150}
+					]
+				}
+			]
+		},
+		{
+			"title":"Systolic blood pressure",
+			"id":"grvbp1p1",
+			"context":"Please modify the systolic blood pressure of the patient",
+			"questions":[
+				{
+					"id":"sbp",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvbp1p1q1a1","answer":"","type":"text","label":"SBP", "value":"", "width":100}
+					]
+				}
+			]
+		},
+		{
+			"title":"Diastolic blood pressure",
+			"id":"grvbp1p2",
+			"context":"Please modify the diastolic blood pressure of the patient",
+			"questions":[
+				{
+					"id":"dbp",
+					"question":"",
+					"type":"text",
+					"direction":"v",
+					"answers":[
+						{"id":"grvbp1p2q1a1","answer":"","type":"text","label":"DBP", "value":"", "width":100}						
+					]
+				}
+			]
+		}
+	],
+	"conclusion":{
+		"title":"Blood presure",
+		"context":"Data saved"
+	}
+}

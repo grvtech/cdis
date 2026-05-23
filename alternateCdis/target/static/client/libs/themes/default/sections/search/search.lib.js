@@ -38,8 +38,11 @@ $('#grvLocallistButton').click(function(){
  * */
 
 refreshUserNotes(sid);
+
 $('#search').focus();
+
 drawUserDashboard();
+
 if(userNotes.length > 0){
 	$(".cdisNotesAlert").show();
 	$.each(userNotes, function(i,not){
@@ -181,23 +184,7 @@ function openLinkPatientsList(){
 	}
 }	
 
-function getUserDashboard(){
-	var iduser = userObj[0].iduser;
-	var data = "iduser="+iduser+"&language=en";
-	$.ajax({
-		  url: "/ncdis/service/data/getUserDashboard",
-		  type: "POST",
-		  async : false,
-		  cache : false,
-		  data : data,
-		  dataType: "json"
-		}).done(function( json ) {
-			userDashboardObj = json.objs[0];
-			if(isDemo)userDashboardObj = demoData(userDashboardObj,"userdashboard");
-		}).fail(function( jqXHR, textStatus ) {
-			alert( "Request failed: " + textStatus );
-	});	
-}	
+
 
 function drawUserDashboard(){
 	var container = $(".cdisDashboardUser");
@@ -246,7 +233,7 @@ function drawUserDashboard(){
 	
 }
 
-function compareDateAsc(a,b) {if (moment(a[0]).isAfter(moment(b[0])))return 1;if (moment(a[0]).isBefore(moment(b[0])))return -1;return 0;}
+
 
 function drawLineGraphDashboard(container, series, ticks){
 	$(container).empty();
